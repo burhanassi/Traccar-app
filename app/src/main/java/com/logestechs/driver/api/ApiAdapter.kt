@@ -1,0 +1,58 @@
+package com.logestechs.driver.api
+
+import com.logestechs.driver.BuildConfig
+import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.SharedPreferenceWrapper
+import com.yariksoffice.lingver.Lingver
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
+
+object ApiAdapter {
+    private val loggingInterceptor = HttpLoggingInterceptor()
+    private val headerInterceptor = Interceptor { chain ->
+        val builder = chain.request().newBuilder()
+
+        builder.header(
+            "Authorization-Token",
+            SharedPreferenceWrapper.getLoginResponse()?.authToken ?: "",
+        )
+        builder.header(
+            "languageCode",
+            Lingver.getInstance().getLocale().toString()
+        )
+
+        return@Interceptor chain.proceed(builder.build())
+    }
+
+    val apiClient: LogesTechsDriverApi = Retrofit.Builder()
+        .baseUrl(AppConstants.BASE_URL)
+        .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(LogesTechsDriverApi::class.java)
+
+
+    private val okHttpClient: OkHttpClient
+        get() {
+            if (BuildConfig.DEBUG) {
+                return OkHttpClient.Builder()
+                    .connectTimeout(200, TimeUnit.SECONDS)
+                    .readTimeout(200, TimeUnit.SECONDS)
+                    .writeTimeout(200, TimeUnit.SECONDS)
+                    .addInterceptor(headerInterceptor)
+                    .addInterceptor(loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
+                    .build()
+            } else {
+                return OkHttpClient.Builder()
+                    .connectTimeout(200, TimeUnit.SECONDS)
+                    .readTimeout(200, TimeUnit.SECONDS)
+                    .writeTimeout(200, TimeUnit.SECONDS)
+                    .addInterceptor(headerInterceptor)
+                    .build()
+            }
+        }
+}

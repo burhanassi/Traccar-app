@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LogesTechsDriver</string>
+    <string name="msg_please_wait">الرجاء الإنتظار…</string>
+    <string name="error_general">عذراً، حدث خطأ ما، سيتم معالجته بأقرب وقت</string>
+    <string name="error_check_internet_connection">الرجاء التحقق من الاتصال بالانترنت</string>
+</resources>

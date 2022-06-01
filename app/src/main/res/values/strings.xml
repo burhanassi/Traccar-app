@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">LogesTechsDriver</string>
+    <string name="msg_please_wait">Please Wait…</string>
+    <string name="error_general">Something went wrong</string>
+    <string name="error_check_internet_connection">Please connect to the internet</string>
+
 </resources>

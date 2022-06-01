@@ -1,0 +1,86 @@
+package com.logestechs.driver.utils
+
+import android.annotation.SuppressLint
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.TextView
+import android.widget.Toast
+import com.logestechs.driver.R
+
+class Helper {
+    companion object {
+        fun isInternetAvailable(context: Context?): Boolean {
+            var result = false
+            if (context != null) {
+                val connectivityManager =
+                    context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    val networkCapabilities = connectivityManager.activeNetwork ?: return false
+                    val actNw =
+                        connectivityManager.getNetworkCapabilities(networkCapabilities)
+                            ?: return false
+                    result = when {
+                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                        else -> false
+                    }
+                } else {
+                    connectivityManager.run {
+                        connectivityManager.activeNetworkInfo?.run {
+                            result = when (type) {
+                                ConnectivityManager.TYPE_WIFI -> true
+                                ConnectivityManager.TYPE_MOBILE -> true
+                                ConnectivityManager.TYPE_ETHERNET -> true
+                                else -> false
+                            }
+                        }
+                    }
+                }
+            }
+            return result
+        }
+
+        @SuppressLint("InflateParams")
+        fun showErrorMessage(context: Context?, message: String?) {
+            if (context != null) {
+                val layoutInflater = LayoutInflater.from(context)
+                val layout: View = layoutInflater.inflate(R.layout.custom_toast_fail, null)
+                val text = layout.findViewById<TextView>(R.id.text)
+                text.text = message
+                val toast = Toast(context)
+                toast.setGravity(Gravity.TOP, 0, 70)
+                toast.duration = Toast.LENGTH_LONG
+                toast.view = layout
+                toast.show()
+            }
+        }
+
+        @SuppressLint("InflateParams")
+        fun showSuccessMessage(context: Context?, message: String?) {
+            if (context != null) {
+                val layoutInflater = LayoutInflater.from(context)
+                val layout: View = layoutInflater.inflate(R.layout.custom_toast_success, null)
+                val text = layout.findViewById<TextView>(R.id.text)
+                text.text = message
+                val toast = Toast(context)
+                toast.setGravity(Gravity.TOP, 0, 70)
+                toast.duration = Toast.LENGTH_LONG
+                toast.view = layout
+                toast.show()
+            }
+        }
+
+        fun logException(exception: Exception, stackTrace: String) {
+//            FirebaseCrashlytics.getInstance().log(stackTrace)
+//            FirebaseCrashlytics.getInstance()
+//                .recordException(exception)
+        }
+
+    }
+}
