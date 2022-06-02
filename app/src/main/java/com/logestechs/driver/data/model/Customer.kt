@@ -18,7 +18,7 @@ data class Customer(
     val isDeleted: Boolean? = null,
     val isAutoApprovePackages: Boolean? = null,
     val isShowSenderAddressInPackageReport: Boolean? = null,
-    val packages: List<Package?>? = null,
+    val packages: ArrayList<Package?>? = null,
     val createdDate: String? = null,
     val companyID: Long? = null,
     val imageURL: String? = null,

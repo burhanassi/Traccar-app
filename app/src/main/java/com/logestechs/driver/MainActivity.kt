@@ -1,13 +1,17 @@
 package com.logestechs.driver
 
 import android.os.Bundle
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.LoginRequestBody
+import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.data.model.Device
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.SharedPreferenceWrapper
+import com.logestechs.driver.utils.adapters.PendingPackageCustomerCellAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -42,6 +46,8 @@ class MainActivity : LogesTechsActivity() {
             "logestechs",
             "MOBILE"
         )
+
+        val token = SharedPreferenceWrapper.getLoginResponse()?.authToken
         showWaitDialog()
         if (Helper.isInternetAvailable(this)) {
             GlobalScope.launch(Dispatchers.IO) {
@@ -107,10 +113,34 @@ class MainActivity : LogesTechsActivity() {
                     if (response?.isSuccessful == true && response.body() != null) {
                         val body = response.body()
                         withContext(Dispatchers.Main) {
-                            Helper.showErrorMessage(
-                                context = this@MainActivity,
-                                message = body?.customers?.size.toString()
+
+                            val rvCustomers = findViewById<RecyclerView>(
+                                R.id.rv_customers
                             )
+                            // Initialise the Linear layout manager
+                            // Initialise the Linear layout manager
+                            val layoutManager = LinearLayoutManager(
+                                this@MainActivity
+                            )
+                            // Pass the arguments
+                            // to the parentItemAdapter.
+                            // These arguments are passed
+                            // using a method ParentItemList()
+                            // Pass the arguments
+                            // to the parentItemAdapter.
+                            // These arguments are passed
+                            // using a method ParentItemList()
+                            val adapter = PendingPackageCustomerCellAdapter(
+                                body?.customers ?: ArrayList<Customer>(), this@MainActivity
+                            )
+                            // Set the layout manager
+                            // and adapter for items
+                            // of the parent recyclerview
+                            // Set the layout manager
+                            // and adapter for items
+                            // of the parent recyclerview
+                            rvCustomers.adapter = adapter
+                            rvCustomers.layoutManager = layoutManager
                         }
                     } else {
                         try {

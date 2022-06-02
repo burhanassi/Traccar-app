@@ -16,7 +16,7 @@ interface LogesTechsDriverApi {
 
     @GET("${AppConstants.PATH}api/driver/customers/pending")
     suspend fun getPendingPackages(
-        @Query("isGrouped") isGrouped: Boolean = true,
+        @Query("is-grouped") isGrouped: Boolean = true,
         @Query("pageSize") pageSize: Int = AppConstants.DEFAULT_PAGE_SIZE,
         @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
     ): Response<GetPendingPackagesResponse?>?

@@ -11,12 +11,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginBottom="3dp"
+            android:layout_marginBottom="5dp"
             android:background="@drawable/background_oval_white"
-            android:elevation="5dp"
+            android:animateLayoutChanges="true"
             android:orientation="vertical"
+            android:elevation="2dp"
             tools:ignore="UselessParent">
 
             <LinearLayout
@@ -41,14 +42,32 @@
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="15dp"
                     android:textSize="12sp"
+                    style="@style/LogesTechsMedium"
                     tools:text="تم مراجعة طرد رقم #100919003663" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <LinearLayout
+                    android:layout_width="125dp"
+                    android:layout_height="54dp"
+                    android:layout_gravity="end"
+                    android:background="@drawable/backround_card_semi_circle_small">
+
+                </LinearLayout>
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/child_recyclerview"
+                android:id="@+id/rv_packages"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="visible" />
+                android:visibility="gone" />
         </LinearLayout>
 
 
