@@ -13,10 +13,12 @@ class AppConstants {
         const val BASE_URL = BuildConfig.base_url
         const val PATH = BuildConfig.path
 
-        const val TEST_BASE_URL = "https://pal-ship.com:8080"
-        const val PRODUCTION_BASE_URL = "https://apis.pal-ship.com"
 
         const val ERROR_KEY = "error"
+
+        //Default Api Params
+        const val DEFAULT_PAGE_SIZE = 50
+        const val DEFAULT_PAGE = 1
     }
 }
 

@@ -7,9 +7,11 @@ import com.logestechs.driver.utils.LogesTechsApp.Companion.prefs
 class SharedPreferenceWrapper {
     companion object {
         //login response
-        fun saveLoginResponse(loginResponse: LoginResponse) {
-            val json = Gson().toJson(loginResponse)
-            prefs.push(SharedPrefsKeys.LOGIN_RESPONSE.value, json)
+        fun saveLoginResponse(loginResponse: LoginResponse?) {
+            if (loginResponse != null) {
+                val json = Gson().toJson(loginResponse)
+                prefs.push(SharedPrefsKeys.LOGIN_RESPONSE.value, json)
+            }
         }
 
         fun getLoginResponse(): LoginResponse? {

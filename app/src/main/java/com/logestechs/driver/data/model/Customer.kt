@@ -1,0 +1,32 @@
+package com.logestechs.driver.data.model
+
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
+data class Customer(
+    val id: Long? = null,
+    val firstName: String? = null,
+    val lastName: String? = null,
+    val middleName: String? = null,
+    val email: String? = null,
+    val phone: String? = null,
+    val addressID: Long? = null,
+    val hubID: Long? = null,
+    val address: Address? = null,
+    val packagesNo: Int? = null,
+    val isDeleted: Boolean? = null,
+    val isAutoApprovePackages: Boolean? = null,
+    val isShowSenderAddressInPackageReport: Boolean? = null,
+    val packages: List<Package?>? = null,
+    val createdDate: String? = null,
+    val companyID: Long? = null,
+    val imageURL: String? = null,
+    val verificationDate: String? = null,
+    val businessName: String? = null,
+    val city: String? = null,
+    val customerName: String? = null,
+    val packagesNumber: Int? = null,
+    val customerId: Long? = null,
+    val isAlternateWhatsApp: Boolean? = null,
+) : Parcelable

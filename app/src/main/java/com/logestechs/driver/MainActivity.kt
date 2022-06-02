@@ -50,18 +50,71 @@ class MainActivity : LogesTechsActivity() {
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
-                    if (response.isSuccessful && response.body() != null) {
-                        val body = response.body()!!
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        val body = response.body()
                         SharedPreferenceWrapper.saveLoginResponse(body)
+                        withContext(Dispatchers.Main) {
+                            callGetPendingPackages()
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    this@MainActivity,
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    this@MainActivity,
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(this@MainActivity, e.message)
+                        } else {
+                            Helper.showErrorMessage(this@MainActivity, e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                this, getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
+    private fun callGetPendingPackages() {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(this)) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.getPendingPackages()
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        val body = response.body()
                         withContext(Dispatchers.Main) {
                             Helper.showErrorMessage(
                                 context = this@MainActivity,
-                                message = response.body()?.authToken
+                                message = body?.customers?.size.toString()
                             )
                         }
                     } else {
                         try {
-                            val jObjError = JSONObject(response.errorBody()!!.string())
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
                             withContext(Dispatchers.Main) {
                                 Helper.showErrorMessage(
                                     this@MainActivity,
