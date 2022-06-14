@@ -26,3 +26,8 @@ enum class AppLanguages(val value: String) {
     ARABIC("ar"),
     ENGLISH("en")
 }
+
+enum class IntentAnimation(val value: String) {
+    RTL("right-to-left"),
+    LTR("left-to-right")
+}

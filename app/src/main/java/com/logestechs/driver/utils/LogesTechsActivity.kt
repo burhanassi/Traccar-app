@@ -1,6 +1,7 @@
 package com.logestechs.driver.utils
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.logestechs.driver.utils.customViews.WaitDialog
 import java.lang.ref.WeakReference
@@ -14,7 +15,7 @@ abstract class LogesTechsActivity : AppCompatActivity() {
             if (mWaitDialog == null) {
                 mWaitDialog = WaitDialog(this)
             }
-            mWaitDialog!!.showDialog()
+            mWaitDialog?.showDialog()
         }
     }
 
@@ -25,5 +26,12 @@ abstract class LogesTechsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         LogesTechsApp.instance.currentActivity = WeakReference(this)
+    }
+
+    fun hideStatusBar() {
+        val decorView = window.decorView
+        val uiOptions =
+            View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        decorView.systemUiVisibility = uiOptions
     }
 }
