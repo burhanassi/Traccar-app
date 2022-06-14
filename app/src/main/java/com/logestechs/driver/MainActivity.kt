@@ -4,9 +4,7 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.api.ApiAdapter
-import com.logestechs.driver.api.requests.LoginRequestBody
 import com.logestechs.driver.data.model.Customer
-import com.logestechs.driver.data.model.Device
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsActivity
@@ -35,24 +33,23 @@ class MainActivity : LogesTechsActivity() {
             uuid = UUID.randomUUID().toString()
             SharedPreferenceWrapper.saveUUID(uuid)
         }
-        val loginRequestBody = LoginRequestBody(
-            "driver@gmail.com",
-            "test123",
-            Device(
-                uuid,
-                "ANDROID",
-                "cUqOpVF5T3iPU6-89fXa-O:APA91bHbjiqNuinIymIdRNEd91IvB6rUzPJpXxHQZV48ByJPh_6z22HctRWz7AKICX8zE1WIJqQ1UtnQvg4F9QFIyO-6i8Mz82wsr5zU1MuUQKxRw_602H_vaUuhQNymRbwBekuie4vH"
-            ),
-            "logestechs",
-            "MOBILE"
-        )
+//        val loginRequestBody = LoginRequestBody(
+//            "driver@gmail.com",
+//            "test123",
+//            Device(
+//                uuid,
+//                "ANDROID",
+//                "cUqOpVF5T3iPU6-89fXa-O:APA91bHbjiqNuinIymIdRNEd91IvB6rUzPJpXxHQZV48ByJPh_6z22HctRWz7AKICX8zE1WIJqQ1UtnQvg4F9QFIyO-6i8Mz82wsr5zU1MuUQKxRw_602H_vaUuhQNymRbwBekuie4vH"
+//            ),
+//            "logestechs"
+//        )
 
         val token = SharedPreferenceWrapper.getLoginResponse()?.authToken
         showWaitDialog()
         if (Helper.isInternetAvailable(this)) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.login(loginRequestBody)
+                    val response = ApiAdapter.apiClient.login(null)
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }

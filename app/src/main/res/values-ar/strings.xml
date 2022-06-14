@@ -4,4 +4,13 @@
     <string name="msg_please_wait">الرجاء الإنتظار…</string>
     <string name="error_general">عذراً، حدث خطأ ما، سيتم معالجته بأقرب وقت</string>
     <string name="error_check_internet_connection">الرجاء التحقق من الاتصال بالانترنت</string>
+    <string name="login_hello">مرحبا!</string>
+    <string name="login_please_login">الرجاء تسجيل دخول السائق</string>
+    <string name="button_login">دخول</string>
+    <string name="text_logestechs">LOGESTECHS</string>
+    <string name="power_beyond_cargo">POWER BEYOND CARGO</string>
+    <string name="hint_name">الاسم</string>
+    <string name="hint_email">اسم المستخدم (او الايميل)</string>
+    <string name="hint_password">كلمة المرور</string>
+    <string name="hint_company_name">إسم الشركة</string>
 </resources>

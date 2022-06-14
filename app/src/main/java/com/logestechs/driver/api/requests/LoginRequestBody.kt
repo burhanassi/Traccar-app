@@ -8,9 +8,8 @@ import kotlinx.android.parcel.Parcelize
 data class LoginRequestBody(
     val email: String? = null,
     val password: String? = null,
-    val device: Device? = null,
     val businessName: String? = null,
-    val clientType: String? = null
+    val device: Device? = null
 
 ) : Parcelable
 

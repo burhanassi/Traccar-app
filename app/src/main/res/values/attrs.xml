@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="OutlinedEditText">
+        <attr name="hintText" format="string" />
+        <attr name="imageStart" format="reference" />
+        <attr name="isPassword" format="boolean" />
+        <attr name="isDropdown" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="StatusSelector">
+        <attr name="textStatus" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="PresetSelector">
+        <attr name="textPreset" format="string" />
+    </declare-styleable>
+</resources>

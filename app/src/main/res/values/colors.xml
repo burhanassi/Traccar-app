@@ -16,8 +16,15 @@
     <color name="toastSuccessBackground">#CC2ED47A</color>
     <color name="toastErrorBackground">#CCF24462</color>
 
+    <color name="c3">#F24645</color>
+    <color name="c4">#FCA429</color>
+    <color name="detailsTextBlack">#606060</color>
+    <color name="selectedBottomBarItemTint">#F24462</color>
+    <color name="borderOutlinedEditText">#979797</color>
+
     <color name="fontTrackHint">#676767</color>
     <color name="fontTitleBlack">#4E4E4E</color>
     <color name="fontTitleLight">#8F8F8F</color>
     <color name="fontTitleOrange">#F96756</color>
+    <color name="pink_carnation">#F24462</color>
 </resources>

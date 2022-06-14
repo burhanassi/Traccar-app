@@ -3,8 +3,8 @@ package com.logestechs.driver.ui.splash
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import com.logestechs.driver.MainActivity
 import com.logestechs.driver.R
+import com.logestechs.driver.ui.login.LoginActivity
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.AppLanguages
 import com.logestechs.driver.utils.IntentAnimation
@@ -23,7 +23,7 @@ class SplashActivity : LogesTechsActivity() {
     private fun navigateIntoApp() {
         Handler().postDelayed({
             var mIntent: Intent? = null
-            mIntent = Intent(this, MainActivity::class.java)
+            mIntent = Intent(this, LoginActivity::class.java)
 
             startActivity(mIntent)
             if (Lingver.getInstance().getLocale().toString() == AppLanguages.ARABIC.value) {
