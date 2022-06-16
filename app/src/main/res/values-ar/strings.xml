@@ -13,4 +13,16 @@
     <string name="hint_email">اسم المستخدم (او الايميل)</string>
     <string name="hint_password">كلمة المرور</string>
     <string name="hint_company_name">إسم الشركة</string>
+    <string name="dashboard_packages_number">عدد الطرود</string>
+    <string name="dashboard_delivered">تم توصيلها</string>
+    <string name="dashboard_cod_sum">مجموع\nالتحصيلات</string>
+    <string name="dashboard_mass_cod_reports_sum">مجموع تقارير التحصيلات المحمولة</string>
+    <string name="dashboard_scan_new_package_barcode">مسح كود\n طرود جديدة</string>
+    <string name="dashboard_accepted_packages">طرود جاهزة\nللتحميل من الزبائن</string>
+    <string name="dashboard_pending_packages">طلبات جديدة\nبإنتظار الموافقة</string>
+    <string name="dashboard_in_car_packages">طرود في\nالمركبة</string>
+    <string name="dashboard_failed">عالق</string>
+    <string name="dashboard_postponed">مؤجل</string>
+
+
 </resources>

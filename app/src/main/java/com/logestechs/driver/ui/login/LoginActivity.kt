@@ -28,6 +28,7 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.buttonLogin.setOnClickListener(this)
+        binding.imageViewLanguage.setOnClickListener(this)
 
     }
 
@@ -36,9 +37,16 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
 
             R.id.imageView_language -> handleLanguage()
             R.id.button_login -> {
-                if (validateInput()) {
-                    callLoginApi()
+                var mIntent: Intent? = null
+                mIntent = Intent(this, DashboardActivity::class.java)
+
+                startActivity(mIntent)
+                if (Lingver.getInstance().getLocale().toString() == AppLanguages.ARABIC.value) {
+                    CustomIntent.customType(this, IntentAnimation.RTL.value)
+                } else {
+                    CustomIntent.customType(this, IntentAnimation.LTR.value)
                 }
+                finish()
             }
         }
     }
