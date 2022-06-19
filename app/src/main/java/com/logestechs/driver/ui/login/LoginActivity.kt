@@ -15,7 +15,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import maes.tech.intentanim.CustomIntent
 import org.json.JSONObject
 import java.util.*
 
@@ -39,13 +38,7 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
             R.id.button_login -> {
                 var mIntent: Intent? = null
                 mIntent = Intent(this, DashboardActivity::class.java)
-
                 startActivity(mIntent)
-                if (Lingver.getInstance().getLocale().toString() == AppLanguages.ARABIC.value) {
-                    CustomIntent.customType(this, IntentAnimation.RTL.value)
-                } else {
-                    CustomIntent.customType(this, IntentAnimation.LTR.value)
-                }
                 finish()
             }
         }
