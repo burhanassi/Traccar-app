@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Build
+import android.text.InputType
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.EditText
@@ -46,6 +47,7 @@ class OutlinedEditText : LinearLayout {
     val isPassword = 2
 
     lateinit var editText: EditText
+    lateinit var buttonShowPassword: EditText
 
     private fun init(attrs: AttributeSet?) {
         LayoutInflater.from(context).inflate(R.layout.view_outlined_edit_text, this, true)
@@ -72,7 +74,8 @@ class OutlinedEditText : LinearLayout {
                     ), null
                 )
             }
-
+            editText.inputType =
+                (InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD)
         } else {
 
             if (Lingver.getInstance().getLocale().toString() == AppLanguages.ARABIC.value) {

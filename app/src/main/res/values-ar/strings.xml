@@ -25,5 +25,8 @@
     <string name="dashboard_postponed">مؤجل</string>
     <string name="dashboard_other_options">خيارات اخرى</string>
     <string name="dashboard_mass_cod_reports">تحصيل الزبائن</string>
+    <string name="error_insert_valid_password">يجب أن تتألف كلمة المرور من 6 احرف وارقام على الاقل</string>
+    <string name="error_insert_valid_email">يرجى ادخال عنوان بريد الكتروني او اسم مستخدم من ٦ احرف او اكثر</string>
+    <string name="error_fill_all_mandatory_fields">الرجاء تعبئة جميع الحقول المطلوبة</string>
 
 </resources>

@@ -36,22 +36,37 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
 
             R.id.imageView_language -> handleLanguage()
             R.id.button_login -> {
-                var mIntent: Intent? = null
-                mIntent = Intent(this, DashboardActivity::class.java)
-                startActivity(mIntent)
-                finish()
+                if (validateInput()) {
+                    if (binding.etEmail.getText().length >= 6) {
+                        if (Helper.validatePassword(binding.etPassword.getText())) {
+                            callLoginApi()
+                        } else {
+                            binding.etPassword.makeInvalid()
+                            Helper.showErrorMessage(
+                                this@LoginActivity,
+                                getString(R.string.error_insert_valid_password)
+                            )
+                        }
+                    } else {
+                        binding.etEmail.makeInvalid()
+                        Helper.showErrorMessage(
+                            this@LoginActivity,
+                            getString(R.string.error_insert_valid_email)
+                        )
+                    }
+                } else {
+                    Helper.showErrorMessage(
+                        this@LoginActivity,
+                        getString(R.string.error_fill_all_mandatory_fields)
+                    )
+                }
             }
         }
     }
 
-    private fun navigateFromLoginToSummary() {
+    private fun navigateFromLoginToDashboard() {
         val mIntent = Intent(this, DashboardActivity::class.java)
         startActivity(mIntent)
-        if (Lingver.getInstance().getLocale().toString() == AppLanguages.ARABIC.value) {
-            CustomIntent.customType(this, IntentAnimation.RTL.value)
-        } else {
-            CustomIntent.customType(this, IntentAnimation.LTR.value)
-        }
         finish()
     }
 
@@ -128,10 +143,10 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
                         hideWaitDialog()
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
-                        val body = response.body()!!
+                        val body = response.body()
                         SharedPreferenceWrapper.saveLoginResponse(body)
                         withContext(Dispatchers.Main) {
-                            navigateFromLoginToSummary()
+                            navigateFromLoginToDashboard()
                         }
                     } else {
                         try {
