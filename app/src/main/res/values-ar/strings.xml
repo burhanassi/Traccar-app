@@ -23,6 +23,7 @@
     <string name="dashboard_in_car_packages">طرود في\nالمركبة</string>
     <string name="dashboard_failed">عالق</string>
     <string name="dashboard_postponed">مؤجل</string>
-
+    <string name="dashboard_other_options">خيارات اخرى</string>
+    <string name="dashboard_mass_cod_reports">تحصيل الزبائن</string>
 
 </resources>

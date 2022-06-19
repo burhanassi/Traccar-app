@@ -22,4 +22,6 @@
     <string name="dashboard_in_car_packages">In Car\nPackages</string>
     <string name="dashboard_failed">Failed</string>
     <string name="dashboard_postponed">Postponed</string>
+    <string name="dashboard_other_options">Other Options</string>
+    <string name="dashboard_mass_cod_reports">Mass Reports</string>
 </resources>

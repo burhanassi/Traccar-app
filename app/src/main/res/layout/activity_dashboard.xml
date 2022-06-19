@@ -12,11 +12,13 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:overScrollMode="never">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
                 android:clipChildren="false"
                 android:orientation="vertical">
 
@@ -286,7 +288,6 @@
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="24dp"
-                    android:layout_marginBottom="12dp"
                     android:baselineAligned="false"
                     android:clipChildren="false">
 
@@ -310,7 +311,122 @@
                         app:titleText="@{@string/dashboard_postponed}" />
 
                 </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/button_show_dashboard_sub_entries"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="20dp"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:background="@color/pink_cinderella" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginEnd="6dp"
+                        android:background="@drawable/background_dashboard_expand_button">
+
+                        <TextView
+                            style="@style/LogesTechsLight"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="32dp"
+                            android:layout_marginBottom="1dp"
+                            android:text="@string/dashboard_other_options"
+                            android:textColor="@color/fontTitleOrange"
+                            android:textSize="14sp" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginEnd="8dp"
+                            android:src="@drawable/ic_arrow_down_pink"
+                            tools:ignore="ContentDescription" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:background="@color/pink_cinderella" />
+                </LinearLayout>
+
+                <HorizontalScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="73dp"
+                    android:animateLayoutChanges="true"
+                    android:overScrollMode="never">
+
+                    <LinearLayout
+                        android:id="@+id/container_dashboard_sub_entries"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <include
+                            android:id="@+id/dash_sub_entry_mass_cod_reports"
+                            layout="@layout/item_dashboard_sub_entry"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="24dp"
+                            android:layout_marginEnd="10dp"
+                            app:iconSrc="@{@drawable/ic_mass_cod_reports_gray}"
+                            app:titleText="@{@string/dashboard_mass_cod_reports}" />
+
+                        <include
+                            android:id="@+id/dash_sub_entry_postponed_packages"
+                            layout="@layout/item_dashboard_sub_entry"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            app:iconSrc="@{@drawable/ic_postponed_gray}"
+                            app:titleText="@{@string/dashboard_postponed}" />
+
+                        <include
+                            android:id="@+id/dash_sub_entry_failed_packages"
+                            layout="@layout/item_dashboard_sub_entry"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            app:iconSrc="@{@drawable/ic_failed_gray}"
+                            app:titleText="@{@string/dashboard_failed}" />
+
+                    </LinearLayout>
+
+                </HorizontalScrollView>
             </LinearLayout>
         </ScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_gravity="bottom"
+            android:background="@color/red_flamingo"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:src="@drawable/ic_logestechs_full_logo_white" />
+        </LinearLayout>
     </FrameLayout>
 </layout>
