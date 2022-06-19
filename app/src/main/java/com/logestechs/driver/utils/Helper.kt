@@ -3,6 +3,7 @@ package com.logestechs.driver.utils
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -13,6 +14,7 @@ import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
 import com.logestechs.driver.R
+
 
 class Helper {
     companion object {
@@ -90,6 +92,21 @@ class Helper {
                 window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                 window.statusBarColor = colorID
             }
+        }
+
+        fun validatePassword(password: String): Boolean {
+            if (password.length >= 6)
+                return true
+            return false
+        }
+
+        fun restartApplication(context: Context) {
+            val packageManager = context.packageManager
+            val intent = packageManager.getLaunchIntentForPackage(context.packageName)
+            val componentName = intent?.component
+            val mainIntent = Intent.makeRestartActivityTask(componentName)
+            context.startActivity(mainIntent)
+            Runtime.getRuntime().exit(0)
         }
 
     }
