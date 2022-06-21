@@ -144,4 +144,8 @@ class OutlinedEditText : LinearLayout {
         return edit_text.text.toString()
     }
 
+    fun isEmpty(): Boolean {
+        return editText.text.trim().isEmpty()
+    }
+
 }

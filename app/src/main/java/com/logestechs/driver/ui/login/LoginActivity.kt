@@ -96,21 +96,21 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
     private fun validateInput(): Boolean {
         var isValid = true
 
-        if (binding.etCompanyName.getText().isEmpty()) {
+        if (binding.etCompanyName.isEmpty()) {
             binding.etCompanyName.makeInvalid()
             isValid = false
         } else {
             binding.etCompanyName.makeValid()
         }
 
-        if (binding.etEmail.getText().isEmpty()) {
+        if (binding.etEmail.isEmpty()) {
             binding.etEmail.makeInvalid()
             isValid = false
         } else {
             binding.etEmail.makeValid()
         }
 
-        if (binding.etPassword.getText().isEmpty()) {
+        if (binding.etPassword.isEmpty()) {
             binding.etPassword.makeInvalid()
             isValid = false
         } else {
@@ -118,7 +118,6 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
         }
         return isValid
     }
-
 
     //APIs
     private fun callLoginApi() {
