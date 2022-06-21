@@ -1,5 +1,6 @@
 package com.logestechs.driver.utils
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -57,5 +58,9 @@ abstract class LogesTechsActivity : AppCompatActivity() {
         } else {
             CustomIntent.customType(this, IntentAnimation.RTL.value)
         }
+    }
+
+    fun getContext(): Context {
+        return this
     }
 }

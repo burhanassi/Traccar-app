@@ -1,0 +1,22 @@
+package com.logestechs.driver.api.responses
+
+
+import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
+data class GetDashboardInfoResponse(
+    @SerializedName("acceptedPackagesCount")
+    var acceptedPackagesCount: Int? = null,
+    @SerializedName("carriedCodSum")
+    var carriedCodSum: Int? = null,
+    @SerializedName("carriedMassReportsSum")
+    var carriedMassReportsSum: Int? = null,
+    @SerializedName("deliveredPackagesCount")
+    var deliveredPackagesCount: Int? = null,
+    @SerializedName("inCarPackagesCount")
+    var inCarPackagesCount: Int? = null,
+    @SerializedName("pendingPackagesCount")
+    var pendingPackagesCount: Int? = null
+) : Parcelable

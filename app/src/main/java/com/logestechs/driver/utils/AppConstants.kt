@@ -31,3 +31,14 @@ enum class IntentAnimation(val value: String) {
     RTL("right-to-left"),
     LTR("left-to-right")
 }
+
+enum class AppCurrency(val value: String) {
+    NIS("₪"),
+    JOD("JOD"),
+    BHD("BHD"),
+    KWD("KWD"),
+    IQD("IQD"),
+    SAR("SAR"),
+    LYD("LYD"),
+    OMR("OMR")
+}

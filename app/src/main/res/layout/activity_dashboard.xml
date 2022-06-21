@@ -34,7 +34,7 @@
                 </FrameLayout>
 
                 <ImageView
-                    android:id="@+id/image_view_customer_logo"
+                    android:id="@+id/image_view_driver_logo"
                     android:layout_width="93dp"
                     android:layout_height="82dp"
                     android:layout_gravity="center"
@@ -78,6 +78,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/text_in_car_packages_count"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
@@ -85,9 +86,10 @@
                             android:layout_marginEnd="8dp"
                             android:fontFamily="@font/roboto_bold"
                             android:gravity="center"
-                            android:text="24"
+                            android:text="0"
                             android:textColor="@color/pink_carnation"
-                            android:textSize="30sp" />
+                            android:textSize="30sp"
+                            tools:ignore="HardcodedText" />
 
                         <TextView
                             style="@style/LogesTechsMedium"
@@ -115,6 +117,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/text_delivered_packages_count"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
@@ -122,9 +125,10 @@
                             android:layout_marginEnd="8dp"
                             android:fontFamily="@font/roboto_bold"
                             android:gravity="center"
-                            android:text="30"
+                            android:text="0"
                             android:textColor="@color/pink_carnation"
-                            android:textSize="30sp" />
+                            android:textSize="30sp"
+                            tools:ignore="HardcodedText" />
 
                         <TextView
                             style="@style/LogesTechsMedium"
@@ -153,6 +157,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/text_cod_sum"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
@@ -161,9 +166,11 @@
                             android:layout_marginEnd="8dp"
                             android:fontFamily="@font/roboto_bold"
                             android:gravity="center"
-                            android:text="3400 $"
+                            android:text="0"
                             android:textColor="@color/fontTitleLight"
-                            android:textSize="30sp" />
+                            android:textDirection="ltr"
+                            android:textSize="30sp"
+                            tools:ignore="HardcodedText" />
 
                         <TextView
                             style="@style/LogesTechsMedium"
@@ -188,6 +195,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/text_mass_cod_reports_sum"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
@@ -196,9 +204,11 @@
                             android:layout_marginEnd="8dp"
                             android:fontFamily="@font/roboto_bold"
                             android:gravity="center"
-                            android:text="3500 $"
+                            android:text="0"
                             android:textColor="@color/fontTitleLight"
-                            android:textSize="30sp" />
+                            android:textDirection="ltr"
+                            android:textSize="30sp"
+                            tools:ignore="HardcodedText" />
 
                         <TextView
                             style="@style/LogesTechsMedium"

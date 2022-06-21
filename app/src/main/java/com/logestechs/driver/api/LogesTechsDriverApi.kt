@@ -1,6 +1,7 @@
 package com.logestechs.driver.api
 
 import com.logestechs.driver.api.requests.LoginRequestBody
+import com.logestechs.driver.api.responses.GetDashboardInfoResponse
 import com.logestechs.driver.api.responses.GetPendingPackagesResponse
 import com.logestechs.driver.api.responses.LoginResponse
 import com.logestechs.driver.utils.AppConstants
@@ -20,5 +21,8 @@ interface LogesTechsDriverApi {
         @Query("pageSize") pageSize: Int = AppConstants.DEFAULT_PAGE_SIZE,
         @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
     ): Response<GetPendingPackagesResponse?>?
+
+    @GET("${AppConstants.PATH}api/driver/dashboard")
+    suspend fun getDashboardInfo(): Response<GetDashboardInfoResponse?>?
 }
 

@@ -109,5 +109,13 @@ class Helper {
             Runtime.getRuntime().exit(0)
         }
 
+        fun getCompanyCurrency(): String {
+            val currency = SharedPreferenceWrapper.getLoginResponse()?.user?.currency
+            return if (currency == "NIS") {
+                AppCurrency.NIS.value
+            } else {
+                currency ?: ""
+            }
+        }
     }
 }
