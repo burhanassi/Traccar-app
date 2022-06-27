@@ -27,5 +27,7 @@
     <string name="error_insert_valid_password">Password should contain at lease 6 characters or numbers</string>
     <string name="error_insert_valid_email">Please insert a valid email</string>
     <string name="error_fill_all_mandatory_fields">Please fill all required fields</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

@@ -8,6 +8,7 @@ import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.responses.GetDashboardInfoResponse
 import com.logestechs.driver.databinding.ActivityDashboardBinding
+import com.logestechs.driver.ui.driverPackagesByStatusViewPager.DriverPackagesByStatusViewPagerActivity
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.AppLanguages
 import com.logestechs.driver.utils.Helper
@@ -39,6 +40,7 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
     private fun initOnClickListeners() {
         binding.buttonShowDashboardSubEntries.setOnClickListener(this)
         binding.imageViewDriverLogo.setOnClickListener(this)
+        binding.dashEntryPendingPackages.root.setOnClickListener(this)
     }
 
     @SuppressLint("SetTextI18n")
@@ -83,6 +85,11 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
                 finish()
+            }
+
+            R.id.dash_entry_pending_packages -> {
+                val mIntent = Intent(this, DriverPackagesByStatusViewPagerActivity::class.java)
+                startActivity(mIntent)
             }
         }
     }

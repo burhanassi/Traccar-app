@@ -11,7 +11,7 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="white">#FFFFFF</color>
     <color name="dashboard_item_white">#99FFFFFF</color>
     <color name="transparent">#00000000</color>
     <color name="toastSuccessBackground">#CC2ED47A</color>
@@ -22,6 +22,11 @@
     <color name="detailsTextBlack">#606060</color>
     <color name="selectedBottomBarItemTint">#F24462</color>
     <color name="borderOutlinedEditText">#979797</color>
+    <color name="peach_orange">#FFD599</color>
+    <color name="peach_orange_line_break">#4DFFD599</color>
+    <color name="peach_orange_tab_pager_bar">#59FFD599</color>
+    <color name="navajo_white">#FEDBA9</color>
+    <color name="orange_mango_tango">#D77D00</color>
 
     <color name="fontTrackHint">#676767</color>
     <color name="fontTitleBlack">#4E4E4E</color>
