@@ -32,5 +32,7 @@
     <string name="packages_view_pager_pending_packages">طلبات جديدة بإنتظار الموافقة</string>
     <string name="packages_view_pager_in_car_packages">طرود في المركبة</string>
     <string name="packages_view_pager_delivered">تم توصيلها</string>
+    <string name="button_accept">موافقة</string>
+    <string name="title_package">طرد</string>
 
 </resources>

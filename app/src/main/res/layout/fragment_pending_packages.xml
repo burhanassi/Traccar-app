@@ -11,8 +11,11 @@
             android:id="@+id/rv_customers"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingTop="4dp"
+            android:paddingBottom="80dp"
             tools:listitem="@layout/item_pending_package_customer_cell" />
-
     </LinearLayout>
 
 </layout>

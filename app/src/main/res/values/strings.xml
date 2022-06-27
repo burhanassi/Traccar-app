@@ -31,4 +31,6 @@
     <string name="packages_view_pager_pending_packages">Pending Packages</string>
     <string name="packages_view_pager_in_car_packages">In Car Packages</string>
     <string name="packages_view_pager_delivered">Delivered</string>
+    <string name="button_accept">Accept</string>
+    <string name="title_package">Package</string>
 </resources>

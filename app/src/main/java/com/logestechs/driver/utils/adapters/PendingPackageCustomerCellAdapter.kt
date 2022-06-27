@@ -4,8 +4,10 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.logestechs.driver.R
 import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemPendingPackageCustomerCellBinding
@@ -46,6 +48,7 @@ class PendingPackageCustomerCellAdapter(
     }
 
     fun update(list: ArrayList<Customer?>) {
+        this.customersList.clear()
         this.customersList.addAll(list)
         this.notifyDataSetChanged()
     }
@@ -57,13 +60,11 @@ class PendingPackageCustomerCellAdapter(
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(customer: Customer?) {
-            binding.textTitle.text = customer?.firstName
+            binding.itemSenderName.textItem.text = customer?.firstName
+            binding.itemSenderAddress.textItem.text = customer?.address?.toStringAddress()
+            binding.textCount.text = customer?.packagesNo.toString()
             binding.root.setOnClickListener {
-                if (binding.rvPackages.visibility == View.VISIBLE) {
-                    binding.rvPackages.visibility = View.GONE
-                } else {
-                    binding.rvPackages.visibility = View.VISIBLE
-                }
+                handleVisibility()
             }
 
             val layoutManager = PeekingLinearLayoutManager(
@@ -83,6 +84,35 @@ class PendingPackageCustomerCellAdapter(
             binding.rvPackages.adapter = childItemAdapter
             binding.rvPackages
                 .setRecycledViewPool(mAdapter.viewPool)
+        }
+
+
+        private fun handleVisibility() {
+            if (binding.rvPackages.visibility == View.VISIBLE) {
+                binding.rvPackages.visibility = View.GONE
+                binding.buttonsContainer.visibility = View.VISIBLE
+
+                if (mAdapter.context != null) {
+                    binding.imageArrow.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            mAdapter.context!!,
+                            R.drawable.ic_card_arrow_down_pink
+                        )
+                    )
+                }
+            } else {
+                binding.rvPackages.visibility = View.VISIBLE
+                binding.buttonsContainer.visibility = View.GONE
+
+                if (mAdapter.context != null) {
+                    binding.imageArrow.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            mAdapter.context!!,
+                            R.drawable.ic_card_arrow_up_pink
+                        )
+                    )
+                }
+            }
         }
     }
 }
