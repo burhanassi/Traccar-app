@@ -229,14 +229,10 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
     }
 
     private fun callGetDashboardInfo() {
-        showWaitDialog()
         if (Helper.isInternetAvailable(this)) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response = ApiAdapter.apiClient.getDashboardInfo()
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
                     if (response?.isSuccessful == true && response.body() != null) {
                         val data = response.body()
                         withContext(Dispatchers.Main) {
@@ -263,9 +259,6 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
                         }
                     }
                 } catch (e: Exception) {
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
                     Helper.logException(e, Throwable().stackTraceToString())
                     withContext(Dispatchers.Main) {
                         if (e.message != null && e.message!!.isNotEmpty()) {
@@ -277,7 +270,6 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
                 }
             }
         } else {
-            hideWaitDialog()
             Helper.showErrorMessage(
                 getContext(), getString(R.string.error_check_internet_connection)
             )
