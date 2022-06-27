@@ -12,7 +12,7 @@ import com.logestechs.driver.databinding.ItemPendingPackageCustomerCellBinding
 import com.logestechs.driver.utils.customViews.PeekingLinearLayoutManager
 
 class PendingPackageCustomerCellAdapter(
-    private var customersList: List<Customer?>,
+    private var customersList: ArrayList<Customer?>,
     var context: Context?
 ) :
     RecyclerView.Adapter<PendingPackageCustomerCellAdapter.CustomerViewHolder>() {
@@ -43,6 +43,11 @@ class PendingPackageCustomerCellAdapter(
 
     override fun getItemCount(): Int {
         return customersList.size
+    }
+
+    fun update(list: ArrayList<Customer?>) {
+        this.customersList.addAll(list)
+        this.notifyDataSetChanged()
     }
 
     class CustomerViewHolder(

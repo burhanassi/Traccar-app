@@ -53,6 +53,7 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
     }
 
     private fun initViewPager() {
+        binding.viewPager.isUserInputEnabled = false
         packagesByStatusViewPagerAdapter =
             PackagesByStatusViewPagerAdapter(supportFragmentManager, lifecycle)
         binding.viewPager.adapter = packagesByStatusViewPagerAdapter
