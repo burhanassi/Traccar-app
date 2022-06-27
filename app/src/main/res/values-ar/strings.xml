@@ -28,5 +28,9 @@
     <string name="error_insert_valid_password">يجب أن تتألف كلمة المرور من 6 احرف وارقام على الاقل</string>
     <string name="error_insert_valid_email">يرجى ادخال عنوان بريد الكتروني او اسم مستخدم من ٦ احرف او اكثر</string>
     <string name="error_fill_all_mandatory_fields">الرجاء تعبئة جميع الحقول المطلوبة</string>
+    <string name="packages_view_pager_accepted_packages">طرود جاهزة للتحميل من الزبائن</string>
+    <string name="packages_view_pager_pending_packages">طلبات جديدة بإنتظار الموافقة</string>
+    <string name="packages_view_pager_in_car_packages">طرود في المركبة</string>
+    <string name="packages_view_pager_delivered">تم توصيلها</string>
 
 </resources>

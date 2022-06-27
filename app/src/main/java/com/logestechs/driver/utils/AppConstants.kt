@@ -42,3 +42,7 @@ enum class AppCurrency(val value: String) {
     LYD("LYD"),
     OMR("OMR")
 }
+
+enum class IntentExtrasKeys() {
+    SELECTED_PACKAGES_TAB
+}

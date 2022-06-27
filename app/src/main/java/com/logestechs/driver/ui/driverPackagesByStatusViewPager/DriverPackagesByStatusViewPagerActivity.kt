@@ -11,26 +11,52 @@ import androidx.core.graphics.drawable.DrawableCompat
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.logestechs.driver.R
+import com.logestechs.driver.api.ApiAdapter
+import com.logestechs.driver.api.responses.GetDashboardInfoResponse
 import com.logestechs.driver.databinding.ActivityDriverPackagesByStatusViewPagerBinding
+import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
 
 
 class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnClickListener {
     private lateinit var binding: ActivityDriverPackagesByStatusViewPagerBinding
     private lateinit var packagesByStatusViewPagerAdapter: PackagesByStatusViewPagerAdapter
 
+    private var selectedTabIndex = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverPackagesByStatusViewPagerBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        getExtras()
         initListeners()
         initViewPager()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        callGetDashboardInfo()
+    }
+
+    private fun getExtras() {
+        val extras = intent.extras
+        if (extras != null) {
+            selectedTabIndex = extras.getInt(IntentExtrasKeys.SELECTED_PACKAGES_TAB.name)
+        }
     }
 
     private fun initViewPager() {
         packagesByStatusViewPagerAdapter =
             PackagesByStatusViewPagerAdapter(supportFragmentManager, lifecycle)
         binding.viewPager.adapter = packagesByStatusViewPagerAdapter
+        binding.viewPager.setCurrentItem(selectedTabIndex, false)
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             val inflater = LayoutInflater.from(tab.parent?.context)
             val binding = inflater.inflate(R.layout.tab_item_indicator, tab.view, false)
@@ -45,8 +71,12 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
                             this,
                             R.drawable.ic_pending_packages_tab_item
                         )
-                    );
-                    makeTabUnselected(imageViewTabIcon, textViewCount, imageViewTriangleIcon)
+                    )
+                    if (position == selectedTabIndex) {
+                        makeTabSelected(imageViewTabIcon, textViewCount, imageViewTriangleIcon)
+                    } else {
+                        makeTabUnselected(imageViewTabIcon, textViewCount, imageViewTriangleIcon)
+                    }
                 }
                 1 -> {
                     imageViewTabIcon.setImageDrawable(
@@ -54,8 +84,12 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
                             this,
                             R.drawable.ic_accepted_packages_tab_item
                         )
-                    );
-                    makeTabSelected(imageViewTabIcon, textViewCount, imageViewTriangleIcon)
+                    )
+                    if (position == selectedTabIndex) {
+                        makeTabSelected(imageViewTabIcon, textViewCount, imageViewTriangleIcon)
+                    } else {
+                        makeTabUnselected(imageViewTabIcon, textViewCount, imageViewTriangleIcon)
+                    }
                 }
                 2 -> {
                     imageViewTabIcon.setImageDrawable(
@@ -63,8 +97,12 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
                             this,
                             R.drawable.ic_in_car_packages_tab_item
                         )
-                    );
-                    makeTabUnselected(imageViewTabIcon, textViewCount, imageViewTriangleIcon)
+                    )
+                    if (position == selectedTabIndex) {
+                        makeTabSelected(imageViewTabIcon, textViewCount, imageViewTriangleIcon)
+                    } else {
+                        makeTabUnselected(imageViewTabIcon, textViewCount, imageViewTriangleIcon)
+                    }
                 }
                 3 -> {
                     imageViewTabIcon.setImageDrawable(
@@ -72,11 +110,16 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
                             this,
                             R.drawable.ic_delivered_packages_tab_item
                         )
-                    );
-                    makeTabUnselected(imageViewTabIcon, textViewCount, imageViewTriangleIcon)
+                    )
+                    if (position == selectedTabIndex) {
+                        makeTabSelected(imageViewTabIcon, textViewCount, imageViewTriangleIcon)
+                    } else {
+                        makeTabUnselected(imageViewTabIcon, textViewCount, imageViewTriangleIcon)
+                    }
                 }
             }
             tab.customView = binding
+            updateTitle(selectedTabIndex)
         }.attach()
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -87,6 +130,8 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
                     customView.findViewById<ImageView>(R.id.image_view_triangle)
                 val textViewCount = customView.findViewById<TextView>(R.id.text_view_count)
                 makeTabSelected(imageViewTabIcon, textViewCount, imageViewTriangleIcon)
+                selectedTabIndex = tab.position
+                updateTitle(selectedTabIndex)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -106,11 +151,11 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
                     customView.findViewById<ImageView>(R.id.image_view_triangle)
                 val textViewCount = customView.findViewById<TextView>(R.id.text_view_count)
                 makeTabSelected(imageViewTabIcon, textViewCount, imageViewTriangleIcon)
+                selectedTabIndex = tab.position
+                updateTitle(selectedTabIndex)
             }
 
         })
-
-        this.binding.tabLayout.getTabAt(1)?.select()
     }
 
     private fun initListeners() {
@@ -129,7 +174,6 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
         triangleIcon.visibility = View.VISIBLE
 
         countTextView.setBackgroundResource(R.drawable.background_dashboard_item_count)
-
     }
 
     private fun makeTabUnselected(
@@ -145,11 +189,98 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
         countTextView.setBackgroundResource(R.drawable.background_dashboard_item_count_unselected)
     }
 
+    private fun updateTitle(index: Int) {
+        when (index) {
+            0 -> {
+                binding.textTitle.text = getString(R.string.packages_view_pager_pending_packages)
+            }
+
+            1 -> {
+                binding.textTitle.text = getString(R.string.packages_view_pager_accepted_packages)
+            }
+
+            2 -> {
+                binding.textTitle.text = getString(R.string.packages_view_pager_in_car_packages)
+            }
+
+            3 -> {
+                binding.textTitle.text = getString(R.string.dashboard_delivered)
+            }
+        }
+    }
+
+    private fun updateCountValues(data: GetDashboardInfoResponse?) {
+        binding.tabLayout.getTabAt(0)?.customView?.findViewById<TextView>(R.id.text_view_count)?.text =
+            data?.pendingPackagesCount.toString()
+        binding.tabLayout.getTabAt(1)?.customView?.findViewById<TextView>(R.id.text_view_count)?.text =
+            data?.acceptedPackagesCount.toString()
+        binding.tabLayout.getTabAt(2)?.customView?.findViewById<TextView>(R.id.text_view_count)?.text =
+            data?.inCarPackagesCount.toString()
+        binding.tabLayout.getTabAt(3)?.customView?.findViewById<TextView>(R.id.text_view_count)?.text =
+            data?.deliveredPackagesCount.toString()
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_back -> {
                 onBackPressed()
             }
+        }
+    }
+
+    private fun callGetDashboardInfo() {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(this)) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.getDashboardInfo()
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        val data = response.body()
+                        withContext(Dispatchers.Main) {
+                            updateCountValues(data)
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()?.string() ?: "")
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                getContext(), getString(R.string.error_check_internet_connection)
+            )
         }
     }
 }

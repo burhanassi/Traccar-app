@@ -9,10 +9,7 @@ import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.responses.GetDashboardInfoResponse
 import com.logestechs.driver.databinding.ActivityDashboardBinding
 import com.logestechs.driver.ui.driverPackagesByStatusViewPager.DriverPackagesByStatusViewPagerActivity
-import com.logestechs.driver.utils.AppConstants
-import com.logestechs.driver.utils.AppLanguages
-import com.logestechs.driver.utils.Helper
-import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.*
 import com.yariksoffice.lingver.Lingver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -29,7 +26,6 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initOnClickListeners()
-
     }
 
     override fun onResume() {
@@ -41,6 +37,8 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
         binding.buttonShowDashboardSubEntries.setOnClickListener(this)
         binding.imageViewDriverLogo.setOnClickListener(this)
         binding.dashEntryPendingPackages.root.setOnClickListener(this)
+        binding.dashEntryAcceptedPackages.root.setOnClickListener(this)
+        binding.dashEntryInCarPackages.root.setOnClickListener(this)
     }
 
     @SuppressLint("SetTextI18n")
@@ -89,6 +87,19 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
 
             R.id.dash_entry_pending_packages -> {
                 val mIntent = Intent(this, DriverPackagesByStatusViewPagerActivity::class.java)
+                mIntent.putExtra(IntentExtrasKeys.SELECTED_PACKAGES_TAB.name, 0)
+                startActivity(mIntent)
+            }
+
+            R.id.dash_entry_accepted_packages -> {
+                val mIntent = Intent(this, DriverPackagesByStatusViewPagerActivity::class.java)
+                mIntent.putExtra(IntentExtrasKeys.SELECTED_PACKAGES_TAB.name, 1)
+                startActivity(mIntent)
+            }
+
+            R.id.dash_entry_in_car_packages -> {
+                val mIntent = Intent(this, DriverPackagesByStatusViewPagerActivity::class.java)
+                mIntent.putExtra(IntentExtrasKeys.SELECTED_PACKAGES_TAB.name, 2)
                 startActivity(mIntent)
             }
         }

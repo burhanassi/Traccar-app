@@ -31,6 +31,18 @@
             android:layout_height="35dp"
             android:background="@color/peach_orange_tab_pager_bar">
 
+            <TextView
+                android:id="@+id/text_title"
+                style="@style/LogesTechsBold"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_weight="1"
+                android:textColor="@color/fontTrackHint"
+                android:textSize="14sp" />
+
         </LinearLayout>
 
         <androidx.viewpager2.widget.ViewPager2
