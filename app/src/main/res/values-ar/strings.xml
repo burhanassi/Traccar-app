@@ -34,5 +34,6 @@
     <string name="packages_view_pager_delivered">تم توصيلها</string>
     <string name="button_accept">موافقة</string>
     <string name="title_package">طرد</string>
-
+    <string name="title_reject_customer_packages">رفض طرود الزبون</string>
+    <string name="title_reject_package">رفض الطرد</string>
 </resources>

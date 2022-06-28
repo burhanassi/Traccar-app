@@ -1,9 +1,12 @@
 package com.logestechs.driver.utils.adapters
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,10 +15,12 @@ import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemPendingPackageCustomerCellBinding
 import com.logestechs.driver.utils.customViews.PeekingLinearLayoutManager
+import com.logestechs.driver.utils.interfaces.PendingPackagesCardListener
 
 class PendingPackageCustomerCellAdapter(
     private var customersList: ArrayList<Customer?>,
-    var context: Context?
+    var context: Context?,
+    var listener: PendingPackagesCardListener?
 ) :
     RecyclerView.Adapter<PendingPackageCustomerCellAdapter.CustomerViewHolder>() {
 
@@ -47,6 +52,7 @@ class PendingPackageCustomerCellAdapter(
         return customersList.size
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun update(list: ArrayList<Customer?>) {
         this.customersList.clear()
         this.customersList.addAll(list)
@@ -70,6 +76,27 @@ class PendingPackageCustomerCellAdapter(
                 onCardClick(adapterPosition)
             }
 
+            binding.buttonAccept.setOnClickListener {
+                mAdapter.listener?.acceptCustomerPackages(customer?.id)
+            }
+
+            binding.buttonContextMenu.setOnClickListener {
+                val popup = PopupMenu(mAdapter.context, binding.buttonContextMenu)
+
+                popup.inflate(R.menu.pending_customer_packages_context_menu)
+
+                popup.setOnMenuItemClickListener { item: MenuItem? ->
+
+                    when (item?.itemId) {
+                        R.id.action_reject_customer_packages -> {
+                            mAdapter.listener?.rejectCustomerPackages(customer?.id)
+                        }
+                    }
+                    true
+                }
+                popup.show()
+            }
+
             val layoutManager = PeekingLinearLayoutManager(
                 binding.rvPackages
                     .context,
@@ -81,7 +108,8 @@ class PendingPackageCustomerCellAdapter(
 
             val childItemAdapter = PendingPackageCellAdapter(
                 customer?.packages ?: ArrayList<Package>(),
-                mAdapter.context
+                mAdapter.context,
+                mAdapter.listener
             )
             binding.rvPackages.layoutManager = layoutManager
             binding.rvPackages.adapter = childItemAdapter

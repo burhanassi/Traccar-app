@@ -27,7 +27,6 @@ data class Customer(
     val city: String? = null,
     val customerName: String? = null,
     val packagesNumber: Int? = null,
-    val customerId: Long? = null,
     val isAlternateWhatsApp: Boolean? = null,
     @Transient
     var isExpanded: Boolean = false

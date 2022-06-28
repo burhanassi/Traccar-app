@@ -14,13 +14,14 @@ import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsFragment
 import com.logestechs.driver.utils.adapters.PendingPackageCustomerCellAdapter
+import com.logestechs.driver.utils.interfaces.PendingPackagesCardListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
-class PendingPackagesFragment : LogesTechsFragment() {
+class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListener {
 
     private var _binding: FragmentPendingPackagesBinding? = null
     private val binding get() = _binding!!
@@ -63,7 +64,7 @@ class PendingPackagesFragment : LogesTechsFragment() {
             context
         )
         binding.rvCustomers.adapter = PendingPackageCustomerCellAdapter(
-            ArrayList(), super.getContext()
+            ArrayList(), super.getContext(), listener = this
         )
         binding.rvCustomers.layoutManager = layoutManager
     }
@@ -122,5 +123,22 @@ class PendingPackagesFragment : LogesTechsFragment() {
                 super.getContext(), getString(R.string.error_check_internet_connection)
             )
         }
+    }
+
+    // card interface
+    override fun acceptPackage(packageId: Long?) {
+        Helper.showErrorMessage(super.getContext(), "accept package id ${packageId}")
+    }
+
+    override fun acceptCustomerPackages(customerId: Long?) {
+        Helper.showErrorMessage(super.getContext(), "accept customer id ${customerId}")
+    }
+
+    override fun rejectPackage(packageId: Long?) {
+        Helper.showErrorMessage(super.getContext(), "reject package id ${packageId}")
+    }
+
+    override fun rejectCustomerPackages(customerId: Long?) {
+        Helper.showErrorMessage(super.getContext(), "reject customer id ${customerId}")
     }
 }

@@ -2,14 +2,19 @@ package com.logestechs.driver.utils.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
+import com.logestechs.driver.R
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemPendingPackageCellBinding
+import com.logestechs.driver.utils.interfaces.PendingPackagesCardListener
 
 class PendingPackageCellAdapter(
     private var packagesList: List<Package?>,
-    var context: Context?
+    var context: Context?,
+    var listener: PendingPackagesCardListener?
 ) :
     RecyclerView.Adapter<PendingPackageCellAdapter.PendingPackageViewHolder>() {
 
@@ -55,6 +60,29 @@ class PendingPackageCellAdapter(
         fun bind(pkg: Package?) {
             binding.itemSenderName.textItem.text = pkg?.getFullSenderName()
             binding.itemSenderAddress.textItem.text = pkg?.originAddress?.toStringAddress()
+
+            binding.buttonAccept.setOnClickListener {
+                mAdapter.listener?.acceptPackage(pkg?.id)
+            }
+
+
+            binding.buttonContextMenu.setOnClickListener {
+                val popup = PopupMenu(mAdapter.context, binding.buttonContextMenu)
+
+                popup.inflate(R.menu.pending_customer_packages_context_menu)
+
+                popup.setOnMenuItemClickListener { item: MenuItem? ->
+
+                    when (item?.itemId) {
+                        R.id.action_reject_customer_packages -> {
+                            mAdapter.listener?.rejectPackage(pkg?.id)
+                        }
+                    }
+                    true
+                }
+
+                popup.show()
+            }
         }
     }
 }
