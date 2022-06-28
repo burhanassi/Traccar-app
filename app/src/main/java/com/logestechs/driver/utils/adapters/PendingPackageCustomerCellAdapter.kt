@@ -63,8 +63,11 @@ class PendingPackageCustomerCellAdapter(
             binding.itemSenderName.textItem.text = customer?.getFullName()
             binding.itemSenderAddress.textItem.text = customer?.address?.toStringAddress()
             binding.textCount.text = customer?.packagesNo.toString()
+
+            handleCardExpansion(adapterPosition)
+
             binding.root.setOnClickListener {
-                handleVisibility()
+                onCardClick(adapterPosition)
             }
 
             val layoutManager = PeekingLinearLayoutManager(
@@ -86,9 +89,9 @@ class PendingPackageCustomerCellAdapter(
                 .setRecycledViewPool(mAdapter.viewPool)
         }
 
-
-        private fun handleVisibility() {
-            if (binding.rvPackages.visibility == View.VISIBLE) {
+        private fun onCardClick(position: Int) {
+            if (mAdapter.customersList[position]?.isExpanded == true) {
+                mAdapter.customersList[position]?.isExpanded = false
                 binding.rvPackages.visibility = View.GONE
                 binding.buttonsContainer.visibility = View.VISIBLE
 
@@ -101,6 +104,7 @@ class PendingPackageCustomerCellAdapter(
                     )
                 }
             } else {
+                mAdapter.customersList[position]?.isExpanded = true
                 binding.rvPackages.visibility = View.VISIBLE
                 binding.buttonsContainer.visibility = View.GONE
 
@@ -109,6 +113,35 @@ class PendingPackageCustomerCellAdapter(
                         ContextCompat.getDrawable(
                             mAdapter.context!!,
                             R.drawable.ic_card_arrow_up_pink
+                        )
+                    )
+                }
+            }
+        }
+
+        private fun handleCardExpansion(position: Int) {
+            if (mAdapter.customersList[position]?.isExpanded == true) {
+
+                binding.rvPackages.visibility = View.VISIBLE
+                binding.buttonsContainer.visibility = View.GONE
+
+                if (mAdapter.context != null) {
+                    binding.imageArrow.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            mAdapter.context!!,
+                            R.drawable.ic_card_arrow_up_pink
+                        )
+                    )
+                }
+            } else {
+                binding.rvPackages.visibility = View.GONE
+                binding.buttonsContainer.visibility = View.VISIBLE
+
+                if (mAdapter.context != null) {
+                    binding.imageArrow.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            mAdapter.context!!,
+                            R.drawable.ic_card_arrow_down_pink
                         )
                     )
                 }

@@ -29,6 +29,8 @@ data class Customer(
     val packagesNumber: Int? = null,
     val customerId: Long? = null,
     val isAlternateWhatsApp: Boolean? = null,
+    @Transient
+    var isExpanded: Boolean = false
 ) : Parcelable {
     fun getFullName(): String {
         return if (middleName?.trim().isNullOrEmpty()) {
