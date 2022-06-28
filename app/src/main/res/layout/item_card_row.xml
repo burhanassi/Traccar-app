@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:src="@drawable/background_card_row_icon_circle"
-                android:visibility="@{isIconCircleVisible ? View.VISIBLE : View.GONE}"
+                android:visibility="@{isIconCircleVisible ? View.VISIBLE : View.GONE, default=gone}"
                 tools:ignore="ContentDescription" />
 
             <ImageView
@@ -66,7 +66,7 @@
             android:layout_gravity="center_vertical"
             android:padding="2dp"
             android:src="@drawable/ic_copy_gray"
-            android:visibility="@{isCopyVisible ? View.VISIBLE : View.GONE}"
+            android:visibility="@{isCopyVisible ? View.VISIBLE : View.GONE, default=gone}"
             tools:ignore="ContentDescription" />
     </LinearLayout>
 </layout>
