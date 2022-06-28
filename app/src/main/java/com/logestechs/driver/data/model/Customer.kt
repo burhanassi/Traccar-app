@@ -29,4 +29,12 @@ data class Customer(
     val packagesNumber: Int? = null,
     val customerId: Long? = null,
     val isAlternateWhatsApp: Boolean? = null,
-) : Parcelable
+) : Parcelable {
+    fun getFullName(): String {
+        return if (middleName?.trim().isNullOrEmpty()) {
+            "$firstName $lastName"
+        } else {
+            "$firstName $middleName $lastName"
+        }
+    }
+}

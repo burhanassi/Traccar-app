@@ -53,7 +53,8 @@ class PendingPackageCellAdapter(
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(pkg: Package?) {
-            binding.textTitle.text = pkg?.barcode
+            binding.itemSenderName.textItem.text = pkg?.getFullSenderName()
+            binding.itemSenderAddress.textItem.text = pkg?.originAddress?.toStringAddress()
         }
     }
 }

@@ -60,7 +60,7 @@ class PendingPackageCustomerCellAdapter(
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(customer: Customer?) {
-            binding.itemSenderName.textItem.text = customer?.firstName
+            binding.itemSenderName.textItem.text = customer?.getFullName()
             binding.itemSenderAddress.textItem.text = customer?.address?.toStringAddress()
             binding.textCount.text = customer?.packagesNo.toString()
             binding.root.setOnClickListener {

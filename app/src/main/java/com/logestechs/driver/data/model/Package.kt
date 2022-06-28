@@ -88,4 +88,12 @@ data class Package(
     val adminNotes: String? = null,
     var isDone: Boolean? = true,
 
-    ) : Parcelable
+    ) : Parcelable {
+    fun getFullSenderName(): String {
+        return if (senderMiddleName?.trim().isNullOrEmpty()) {
+            "$senderFirstName $senderLastName"
+        } else {
+            "$senderFirstName $senderMiddleName $senderLastName"
+        }
+    }
+}
