@@ -14,7 +14,8 @@ import com.logestechs.driver.utils.interfaces.PendingPackagesCardListener
 class PendingPackageCellAdapter(
     private var packagesList: List<Package?>,
     var context: Context?,
-    var listener: PendingPackagesCardListener?
+    var listener: PendingPackagesCardListener?,
+    var parentIndex: Int
 ) :
     RecyclerView.Adapter<PendingPackageCellAdapter.PendingPackageViewHolder>() {
 
@@ -43,7 +44,6 @@ class PendingPackageCellAdapter(
         position: Int
     ) {
         val pkg: Package? = packagesList[position]
-        pendingPackageViewHolder.setIsRecyclable(false)
         pendingPackageViewHolder.bind(pkg)
     }
 
@@ -62,7 +62,7 @@ class PendingPackageCellAdapter(
             binding.itemSenderAddress.textItem.text = pkg?.originAddress?.toStringAddress()
 
             binding.buttonAccept.setOnClickListener {
-                mAdapter.listener?.acceptPackage(pkg?.id)
+                mAdapter.listener?.acceptPackage(mAdapter.parentIndex, adapterPosition)
             }
 
 
@@ -75,7 +75,7 @@ class PendingPackageCellAdapter(
 
                     when (item?.itemId) {
                         R.id.action_reject_customer_packages -> {
-                            mAdapter.listener?.rejectPackage(pkg?.id)
+                            mAdapter.listener?.rejectPackage(mAdapter.parentIndex, adapterPosition)
                         }
                     }
                     true

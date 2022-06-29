@@ -18,7 +18,7 @@ import com.logestechs.driver.utils.customViews.PeekingLinearLayoutManager
 import com.logestechs.driver.utils.interfaces.PendingPackagesCardListener
 
 class PendingPackageCustomerCellAdapter(
-    private var customersList: ArrayList<Customer?>,
+    var customersList: ArrayList<Customer?>,
     var context: Context?,
     var listener: PendingPackagesCardListener?
 ) :
@@ -44,7 +44,6 @@ class PendingPackageCustomerCellAdapter(
         position: Int
     ) {
         val customer: Customer? = customersList[position]
-        customerViewHolder.setIsRecyclable(false)
         customerViewHolder.bind(customer)
     }
 
@@ -57,6 +56,12 @@ class PendingPackageCustomerCellAdapter(
         this.customersList.clear()
         this.customersList.addAll(list)
         this.notifyDataSetChanged()
+    }
+
+    fun deleteItem(index: Int) {
+        customersList.removeAt(index)
+        notifyItemRemoved(index)
+        notifyItemRangeChanged(index, customersList.size)
     }
 
     class CustomerViewHolder(
@@ -77,7 +82,7 @@ class PendingPackageCustomerCellAdapter(
             }
 
             binding.buttonAccept.setOnClickListener {
-                mAdapter.listener?.acceptCustomerPackages(customer?.id)
+                mAdapter.listener?.acceptCustomerPackages(adapterPosition)
             }
 
             binding.buttonContextMenu.setOnClickListener {
@@ -89,7 +94,7 @@ class PendingPackageCustomerCellAdapter(
 
                     when (item?.itemId) {
                         R.id.action_reject_customer_packages -> {
-                            mAdapter.listener?.rejectCustomerPackages(customer?.id)
+                            mAdapter.listener?.rejectCustomerPackages(adapterPosition)
                         }
                     }
                     true
@@ -109,7 +114,8 @@ class PendingPackageCustomerCellAdapter(
             val childItemAdapter = PendingPackageCellAdapter(
                 customer?.packages ?: ArrayList<Package>(),
                 mAdapter.context,
-                mAdapter.listener
+                mAdapter.listener,
+                adapterPosition
             )
             binding.rvPackages.layoutManager = layoutManager
             binding.rvPackages.adapter = childItemAdapter
