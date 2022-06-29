@@ -12,14 +12,12 @@ import com.logestechs.driver.databinding.ItemPendingPackageCellBinding
 import com.logestechs.driver.utils.interfaces.PendingPackagesCardListener
 
 class PendingPackageCellAdapter(
-    private var packagesList: List<Package?>,
+    var packagesList: List<Package?>,
     var context: Context?,
     var listener: PendingPackagesCardListener?,
     var parentIndex: Int
 ) :
     RecyclerView.Adapter<PendingPackageCellAdapter.PendingPackageViewHolder>() {
-
-    private val viewPool = RecyclerView.RecycledViewPool()
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
@@ -49,6 +47,10 @@ class PendingPackageCellAdapter(
 
     override fun getItemCount(): Int {
         return packagesList.size
+    }
+
+    fun removeItem(position: Int) {
+        notifyItemRemoved(position)
     }
 
     class PendingPackageViewHolder(

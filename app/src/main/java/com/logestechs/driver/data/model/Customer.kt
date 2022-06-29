@@ -14,7 +14,7 @@ data class Customer(
     val addressID: Long? = null,
     val hubID: Long? = null,
     val address: Address? = null,
-    val packagesNo: Int? = null,
+    var packagesNo: Int? = null,
     val isDeleted: Boolean? = null,
     val isAutoApprovePackages: Boolean? = null,
     val isShowSenderAddressInPackageReport: Boolean? = null,

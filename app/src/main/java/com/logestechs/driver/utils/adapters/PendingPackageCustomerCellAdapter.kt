@@ -24,8 +24,6 @@ class PendingPackageCustomerCellAdapter(
 ) :
     RecyclerView.Adapter<PendingPackageCustomerCellAdapter.CustomerViewHolder>() {
 
-    private val viewPool = RecyclerView.RecycledViewPool()
-
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
         i: Int
@@ -65,7 +63,7 @@ class PendingPackageCustomerCellAdapter(
     }
 
     class CustomerViewHolder(
-        private var binding: ItemPendingPackageCustomerCellBinding,
+        var binding: ItemPendingPackageCustomerCellBinding,
         private var parent: ViewGroup,
         private var mAdapter: PendingPackageCustomerCellAdapter
     ) :
@@ -119,8 +117,6 @@ class PendingPackageCustomerCellAdapter(
             )
             binding.rvPackages.layoutManager = layoutManager
             binding.rvPackages.adapter = childItemAdapter
-            binding.rvPackages
-                .setRecycledViewPool(mAdapter.viewPool)
         }
 
         private fun onCardClick(position: Int) {

@@ -14,12 +14,10 @@ import com.logestechs.driver.databinding.FragmentPendingPackagesBinding
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsFragment
+import com.logestechs.driver.utils.adapters.PendingPackageCellAdapter
 import com.logestechs.driver.utils.adapters.PendingPackageCustomerCellAdapter
 import com.logestechs.driver.utils.interfaces.PendingPackagesCardListener
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.json.JSONObject
 
 class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListener {
@@ -138,9 +136,7 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             Helper.showSuccessMessage(super.getContext(), "Customer Accepted")
-                            (binding.rvCustomers.adapter as PendingPackageCustomerCellAdapter).deleteItem(
-                                parentIndex
-                            )
+                            removeCustomerCell(parentIndex)
                         }
 
                     } else {
@@ -182,17 +178,22 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
         }
     }
 
-    private fun callAcceptPackage(packageId: Long?, parentIndex: Int) {
+    private fun callAcceptPackage(packageId: Long?, parentIndex: Int, childIndex: Int) {
+        showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response = ApiAdapter.apiClient.acceptPackage(packageId)
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             Helper.showSuccessMessage(super.getContext(), "Package Accepted")
+                            removePackageCell(parentIndex, childIndex)
+                        }
+                        launch {
+                            delay(500)
+                            withContext(Dispatchers.Main) {
+                                hideWaitDialog()
+                            }
                         }
                     } else {
                         try {
@@ -247,9 +248,7 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             Helper.showSuccessMessage(super.getContext(), "Customer Rejected")
-                            (binding.rvCustomers.adapter as PendingPackageCustomerCellAdapter).deleteItem(
-                                parentIndex
-                            )
+                            removeCustomerCell(parentIndex)
                         }
                     } else {
                         try {
@@ -290,7 +289,7 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
         }
     }
 
-    private fun callRejectPackage(packageId: Long?) {
+    private fun callRejectPackage(packageId: Long?, parentIndex: Int, childIndex: Int) {
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
@@ -298,12 +297,16 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
                         packageId,
                         RejectPackageRequestBody("inner package test note")
                     )
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             Helper.showSuccessMessage(super.getContext(), "Package Rejected")
+                            removePackageCell(parentIndex, childIndex)
+                        }
+                        launch {
+                            delay(500)
+                            withContext(Dispatchers.Main) {
+                                hideWaitDialog()
+                            }
                         }
                     } else {
                         try {
@@ -341,6 +344,32 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
             Helper.showErrorMessage(
                 super.getContext(), getString(R.string.error_check_internet_connection)
             )
+        }
+    }
+
+
+    //Recycler view manipulation
+    private fun removeCustomerCell(parentIndex: Int) {
+        (binding.rvCustomers.adapter as PendingPackageCustomerCellAdapter).deleteItem(
+            parentIndex
+        )
+    }
+
+    private fun removePackageCell(parentIndex: Int, childIndex: Int) {
+        val parentAdapter = binding.rvCustomers.adapter as PendingPackageCustomerCellAdapter
+        val customerViewHolder =
+            (binding.rvCustomers.findViewHolderForAdapterPosition(parentIndex) as PendingPackageCustomerCellAdapter.CustomerViewHolder)
+        val childRecyclerViewAdapter =
+            customerViewHolder.binding.rvPackages.adapter as PendingPackageCellAdapter
+
+        if (parentAdapter.customersList[parentIndex]?.packages?.size == 1) {
+            removeCustomerCell(parentIndex)
+        } else {
+            parentAdapter.customersList[parentIndex]?.packages?.removeAt(childIndex)
+            parentAdapter.customersList[parentIndex]?.packagesNo =
+                (parentAdapter.customersList[parentIndex]?.packagesNo ?: 1) - 1
+            parentAdapter.notifyItemChanged(parentIndex)
+            childRecyclerViewAdapter.removeItem(childIndex)
         }
     }
 
@@ -349,7 +378,7 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
         callAcceptPackage(
             (binding.rvCustomers.adapter as PendingPackageCustomerCellAdapter).customersList[parentIndex]?.packages?.get(
                 childIndex
-            )?.id, parentIndex
+            )?.id, parentIndex, childIndex
         )
     }
 
@@ -364,7 +393,7 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
         callRejectPackage(
             (binding.rvCustomers.adapter as PendingPackageCustomerCellAdapter).customersList[parentIndex]?.packages?.get(
                 childIndex
-            )?.id
+            )?.id, parentIndex, childIndex
         )
     }
 
