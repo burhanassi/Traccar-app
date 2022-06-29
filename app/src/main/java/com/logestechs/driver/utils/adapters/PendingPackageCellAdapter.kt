@@ -42,6 +42,7 @@ class PendingPackageCellAdapter(
         position: Int
     ) {
         val pkg: Package? = packagesList[position]
+        pendingPackageViewHolder.setIsRecyclable(false);
         pendingPackageViewHolder.bind(pkg)
     }
 
