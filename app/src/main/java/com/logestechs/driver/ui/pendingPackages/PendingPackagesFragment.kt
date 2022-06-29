@@ -51,6 +51,7 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
+        initListeners()
     }
 
     override fun onResume() {
@@ -66,6 +67,21 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
             ArrayList(), super.getContext(), listener = this
         )
         binding.rvCustomers.layoutManager = layoutManager
+    }
+
+    private fun initListeners() {
+        binding.refreshLayoutCustomers.setOnRefreshListener {
+            callGetPendingPackages()
+        }
+    }
+
+    override fun hideWaitDialog() {
+        super.hideWaitDialog()
+        try {
+            binding.refreshLayoutCustomers.isRefreshing = false
+        } catch (e: java.lang.Exception) {
+            Helper.logException(e, Throwable().stackTraceToString())
+        }
     }
 
     //APIs
