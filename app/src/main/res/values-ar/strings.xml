@@ -37,4 +37,5 @@
     <string name="title_reject_customer_packages">رفض طرود الزبون</string>
     <string name="title_reject_package">رفض الطرد</string>
     <string name="message_no_packages">لا يوجد طرود \nالرجاء سحب الشاشة لأسفل لتحديث القائمة</string>
+    <string name="success_operation_completed">تمت العملية بنجاح</string>
 </resources>

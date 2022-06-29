@@ -166,7 +166,10 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            Helper.showSuccessMessage(super.getContext(), "Customer Accepted")
+                            Helper.showSuccessMessage(
+                                super.getContext(),
+                                getString(R.string.success_operation_completed)
+                            )
                             removeCustomerCell(parentIndex)
                             activityDelegate?.updateCountValues()
                         }
@@ -218,7 +221,10 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
                     val response = ApiAdapter.apiClient.acceptPackage(packageId)
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            Helper.showSuccessMessage(super.getContext(), "Package Accepted")
+                            Helper.showSuccessMessage(
+                                super.getContext(),
+                                getString(R.string.success_operation_completed)
+                            )
                             removePackageCell(parentIndex, childIndex)
                             activityDelegate?.updateCountValues()
                         }
@@ -280,7 +286,10 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            Helper.showSuccessMessage(super.getContext(), "Customer Rejected")
+                            Helper.showSuccessMessage(
+                                super.getContext(),
+                                getString(R.string.success_operation_completed)
+                            )
                             removeCustomerCell(parentIndex)
                             activityDelegate?.updateCountValues()
                         }
@@ -333,7 +342,10 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
                     )
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            Helper.showSuccessMessage(super.getContext(), "Package Rejected")
+                            Helper.showSuccessMessage(
+                                super.getContext(),
+                                getString(R.string.success_operation_completed)
+                            )
                             removePackageCell(parentIndex, childIndex)
                             activityDelegate?.updateCountValues()
                         }
