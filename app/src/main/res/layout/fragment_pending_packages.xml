@@ -3,9 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.pendingPackages.PendingPackagesFragment">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/beige_bridal_heath">
+
+        <TextView
+            android:id="@+id/text_no_packages_found"
+            style="@style/LogesTechsMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/message_no_packages"
+            android:textColor="@color/fontTrackHint"
+            android:textSize="17sp"
+            android:visibility="gone" />
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/refresh_layout_customers"
@@ -23,7 +36,6 @@
                 android:scrollbars="vertical"
                 tools:listitem="@layout/item_pending_package_customer_cell" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    </LinearLayout>
+    </FrameLayout>
 
 </layout>

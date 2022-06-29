@@ -75,6 +75,16 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
         }
     }
 
+    private fun handleNoPackagesLabelVisibility(count: Int) {
+        if (count > 0) {
+            binding.textNoPackagesFound.visibility = View.GONE
+            binding.rvCustomers.visibility = View.VISIBLE
+        } else {
+            binding.textNoPackagesFound.visibility = View.VISIBLE
+            binding.rvCustomers.visibility = View.GONE
+        }
+    }
+
     override fun hideWaitDialog() {
         super.hideWaitDialog()
         try {
@@ -100,6 +110,7 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
                             (binding.rvCustomers.adapter as PendingPackageCustomerCellAdapter).update(
                                 body?.customers as ArrayList<Customer?>
                             )
+                            handleNoPackagesLabelVisibility(body.customers.size)
                         }
                     } else {
                         try {

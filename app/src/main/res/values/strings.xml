@@ -35,4 +35,5 @@
     <string name="title_package">Package</string>
     <string name="title_reject_customer_packages">Reject Customer Packages</string>
     <string name="title_reject_package">Reject Package</string>
+    <string name="message_no_packages">No packages were found \n Please pull the list down to refresh</string>
 </resources>
