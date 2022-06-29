@@ -10,6 +10,7 @@ import com.logestechs.driver.R
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemPendingPackageCellBinding
 import com.logestechs.driver.utils.interfaces.PendingPackagesCardListener
+import com.logestechs.driver.utils.setThrottleClickListener
 
 class PendingPackageCellAdapter(
     var packagesList: List<Package?>,
@@ -64,20 +65,17 @@ class PendingPackageCellAdapter(
             binding.itemSenderName.textItem.text = pkg?.getFullSenderName()
             binding.itemSenderAddress.textItem.text = pkg?.originAddress?.toStringAddress()
 
-            binding.buttonAccept.setOnClickListener {
+            binding.buttonAccept.setThrottleClickListener({
                 mAdapter.listener?.acceptPackage(mAdapter.parentIndex, adapterPosition)
-            }
-
+            })
 
             binding.buttonContextMenu.setOnClickListener {
                 val popup = PopupMenu(mAdapter.context, binding.buttonContextMenu)
-
-                popup.inflate(R.menu.pending_customer_packages_context_menu)
-
+                popup.inflate(R.menu.pending_package_context_menu)
                 popup.setOnMenuItemClickListener { item: MenuItem? ->
 
                     when (item?.itemId) {
-                        R.id.action_reject_customer_packages -> {
+                        R.id.action_reject_package -> {
                             mAdapter.listener?.rejectPackage(mAdapter.parentIndex, adapterPosition)
                         }
                     }

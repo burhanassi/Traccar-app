@@ -16,6 +16,7 @@ import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemPendingPackageCustomerCellBinding
 import com.logestechs.driver.utils.customViews.PeekingLinearLayoutManager
 import com.logestechs.driver.utils.interfaces.PendingPackagesCardListener
+import com.logestechs.driver.utils.setThrottleClickListener
 
 class PendingPackageCustomerCellAdapter(
     var customersList: ArrayList<Customer?>,
@@ -79,9 +80,9 @@ class PendingPackageCustomerCellAdapter(
                 onCardClick(adapterPosition)
             }
 
-            binding.buttonAccept.setOnClickListener {
+            binding.buttonAccept.setThrottleClickListener({
                 mAdapter.listener?.acceptCustomerPackages(adapterPosition)
-            }
+            })
 
             binding.buttonContextMenu.setOnClickListener {
                 val popup = PopupMenu(mAdapter.context, binding.buttonContextMenu)
