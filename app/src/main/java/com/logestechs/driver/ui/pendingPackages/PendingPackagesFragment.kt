@@ -16,6 +16,7 @@ import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsFragment
 import com.logestechs.driver.utils.adapters.PendingPackageCellAdapter
 import com.logestechs.driver.utils.adapters.PendingPackageCustomerCellAdapter
+import com.logestechs.driver.utils.interfaces.DriverPackagesByStatusViewPagerActivityDelegate
 import com.logestechs.driver.utils.interfaces.PendingPackagesCardListener
 import kotlinx.coroutines.*
 import org.json.JSONObject
@@ -24,6 +25,7 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
 
     private var _binding: FragmentPendingPackagesBinding? = null
     private val binding get() = _binding!!
+    private var activityDelegate: DriverPackagesByStatusViewPagerActivityDelegate? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +54,7 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
         initListeners()
+        activityDelegate = activity as DriverPackagesByStatusViewPagerActivityDelegate
     }
 
     override fun onResume() {
@@ -110,6 +113,7 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
                             (binding.rvCustomers.adapter as PendingPackageCustomerCellAdapter).update(
                                 body?.customers as ArrayList<Customer?>
                             )
+                            activityDelegate?.updateCountValues()
                             handleNoPackagesLabelVisibility(body.customers.size)
                         }
                     } else {
@@ -164,6 +168,7 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
                         withContext(Dispatchers.Main) {
                             Helper.showSuccessMessage(super.getContext(), "Customer Accepted")
                             removeCustomerCell(parentIndex)
+                            activityDelegate?.updateCountValues()
                         }
 
                     } else {
@@ -215,6 +220,7 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
                         withContext(Dispatchers.Main) {
                             Helper.showSuccessMessage(super.getContext(), "Package Accepted")
                             removePackageCell(parentIndex, childIndex)
+                            activityDelegate?.updateCountValues()
                         }
                         launch {
                             delay(500)
@@ -276,6 +282,7 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
                         withContext(Dispatchers.Main) {
                             Helper.showSuccessMessage(super.getContext(), "Customer Rejected")
                             removeCustomerCell(parentIndex)
+                            activityDelegate?.updateCountValues()
                         }
                     } else {
                         try {
@@ -328,6 +335,7 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
                         withContext(Dispatchers.Main) {
                             Helper.showSuccessMessage(super.getContext(), "Package Rejected")
                             removePackageCell(parentIndex, childIndex)
+                            activityDelegate?.updateCountValues()
                         }
                         launch {
                             delay(500)

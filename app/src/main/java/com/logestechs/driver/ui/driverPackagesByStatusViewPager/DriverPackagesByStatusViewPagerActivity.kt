@@ -18,6 +18,7 @@ import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.interfaces.DriverPackagesByStatusViewPagerActivityDelegate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -25,7 +26,8 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 
-class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnClickListener {
+class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnClickListener,
+    DriverPackagesByStatusViewPagerActivityDelegate {
     private lateinit var binding: ActivityDriverPackagesByStatusViewPagerBinding
     private lateinit var packagesByStatusViewPagerAdapter: PackagesByStatusViewPagerAdapter
 
@@ -275,5 +277,9 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
                 getContext(), getString(R.string.error_check_internet_connection)
             )
         }
+    }
+
+    override fun updateCountValues() {
+        callGetDashboardInfo()
     }
 }
