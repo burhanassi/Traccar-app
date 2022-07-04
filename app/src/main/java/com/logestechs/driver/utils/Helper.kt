@@ -18,6 +18,7 @@ import com.logestechs.driver.R
 
 class Helper {
     companion object {
+        var toast: Toast? = null
         fun isInternetAvailable(context: Context?): Boolean {
             var result = false
             if (context != null) {
@@ -53,30 +54,32 @@ class Helper {
         @SuppressLint("InflateParams")
         fun showErrorMessage(context: Context?, message: String?) {
             if (context != null) {
+                toast?.cancel()
                 val layoutInflater = LayoutInflater.from(context)
                 val layout: View = layoutInflater.inflate(R.layout.custom_toast_fail, null)
                 val text = layout.findViewById<TextView>(R.id.text)
                 text.text = message
-                val toast = Toast(context)
-                toast.setGravity(Gravity.TOP, 0, 70)
-                toast.duration = Toast.LENGTH_LONG
-                toast.view = layout
-                toast.show()
+                toast = Toast(context)
+                toast?.setGravity(Gravity.TOP, 0, 70)
+                toast?.duration = Toast.LENGTH_LONG
+                toast?.view = layout
+                toast?.show()
             }
         }
 
         @SuppressLint("InflateParams")
         fun showSuccessMessage(context: Context?, message: String?) {
             if (context != null) {
+                toast?.cancel()
                 val layoutInflater = LayoutInflater.from(context)
                 val layout: View = layoutInflater.inflate(R.layout.custom_toast_success, null)
                 val text = layout.findViewById<TextView>(R.id.text)
                 text.text = message
-                val toast = Toast(context)
-                toast.setGravity(Gravity.TOP, 0, 70)
-                toast.duration = Toast.LENGTH_LONG
-                toast.view = layout
-                toast.show()
+                toast = Toast(context)
+                toast?.setGravity(Gravity.TOP, 0, 70)
+                toast?.duration = Toast.LENGTH_LONG
+                toast?.view = layout
+                toast?.show()
             }
         }
 
