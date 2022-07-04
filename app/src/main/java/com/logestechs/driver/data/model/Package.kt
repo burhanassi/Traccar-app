@@ -2,6 +2,7 @@ package com.logestechs.driver.data.model
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import com.logestechs.driver.utils.BarcodeScanType
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -95,5 +96,22 @@ data class Package(
         } else {
             "$senderFirstName $senderMiddleName $senderLastName"
         }
+    }
+
+    fun getFullReceiverName(): String {
+        return if (receiverMiddleName?.trim().isNullOrEmpty()) {
+            "$receiverFirstName $receiverLastName"
+        } else {
+            "$receiverFirstName $receiverMiddleName $receiverLastName"
+        }
+    }
+
+    fun getPickupScannedItem(): ScannedItem {
+        return ScannedItem(
+            id = this.id,
+            barcode = this.barcode,
+            barcodeScanType = BarcodeScanType.PACKAGE_PICKUP,
+            data = this
+        )
     }
 }

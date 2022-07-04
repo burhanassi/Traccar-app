@@ -38,4 +38,7 @@
     <string name="title_reject_package">رفض الطرد</string>
     <string name="message_no_packages">لا يوجد طرود \nالرجاء سحب الشاشة لأسفل لتحديث القائمة</string>
     <string name="success_operation_completed">تمت العملية بنجاح</string>
+    <string name="button_insert_barcode">إدخال باركود</string>
+    <string name="title_scanned_packages">الطرود المقروءة</string>
+    <string name="button_done">تم</string>
 </resources>

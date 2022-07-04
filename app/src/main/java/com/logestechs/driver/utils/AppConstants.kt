@@ -46,3 +46,7 @@ enum class AppCurrency(val value: String) {
 enum class IntentExtrasKeys() {
     SELECTED_PACKAGES_TAB
 }
+
+enum class BarcodeScanType {
+    PACKAGE_PICKUP
+}

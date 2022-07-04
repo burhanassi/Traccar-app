@@ -5,6 +5,7 @@ import com.logestechs.driver.api.requests.RejectPackageRequestBody
 import com.logestechs.driver.api.responses.GetDashboardInfoResponse
 import com.logestechs.driver.api.responses.GetPendingPackagesResponse
 import com.logestechs.driver.api.responses.LoginResponse
+import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.utils.AppConstants
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -41,5 +42,8 @@ interface LogesTechsDriverApi {
         @Path("packageId") packageId: Long?,
         @Body body: RejectPackageRequestBody
     ): Response<ResponseBody?>?
+
+    @PUT("${AppConstants.PATH}api/driver/packages/pickup")
+    suspend fun pickupPackage(@Query("barcode") barcode: String): Response<Package?>?
 }
 

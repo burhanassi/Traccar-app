@@ -1,0 +1,213 @@
+package com.logestechs.driver.ui.barcodeScanner
+
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.media.AudioManager
+import android.media.ToneGenerator
+import android.os.*
+import android.view.SurfaceHolder
+import android.view.View
+import androidx.core.app.ActivityCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.vision.CameraSource
+import com.google.android.gms.vision.Detector
+import com.google.android.gms.vision.Detector.Detections
+import com.google.android.gms.vision.barcode.Barcode
+import com.google.android.gms.vision.barcode.BarcodeDetector
+import com.logestechs.driver.R
+import com.logestechs.driver.api.ApiAdapter
+import com.logestechs.driver.databinding.ActivityBarcodeScannerBinding
+import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.BarcodeScanType
+import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.adapters.ScannedBarcodeCellAdapter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.io.IOException
+
+
+class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener {
+    private lateinit var binding: ActivityBarcodeScannerBinding
+
+    private var barcodeDetector: BarcodeDetector? = null
+    private var cameraSource: CameraSource? = null
+    private val REQUEST_CAMERA_PERMISSION = 201
+
+    private var scanType: BarcodeScanType = BarcodeScanType.PACKAGE_PICKUP
+    var scannedItemsHashMap: HashMap<String, String> = HashMap()
+
+
+    private var toneGen1: ToneGenerator? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityBarcodeScannerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+        initialiseDetectorsAndSources()
+        initRecycler()
+        initListeners()
+    }
+
+    private fun initListeners() {
+        binding.buttonDone.setOnClickListener(this)
+    }
+
+    private fun initRecycler() {
+        binding.rvScannedBarcodes.apply {
+            layoutManager = LinearLayoutManager(this@BarcodeScannerActivity)
+            adapter = ScannedBarcodeCellAdapter(ArrayList())
+        }
+    }
+
+    private fun vibrate() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager =
+                getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibratorManager.defaultVibrator
+            vibratorManager.defaultVibrator.vibrate(
+                VibrationEffect.createOneShot(
+                    200,
+                    VibrationEffect.DEFAULT_AMPLITUDE
+                )
+            )
+
+        } else {
+            @Suppress("DEPRECATION")
+            val vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
+            vibrator.vibrate(200)
+        }
+    }
+
+    private fun initialiseDetectorsAndSources() {
+
+        barcodeDetector = BarcodeDetector.Builder(this)
+            .setBarcodeFormats(Barcode.ALL_FORMATS)
+            .build()
+        cameraSource = CameraSource.Builder(this, barcodeDetector)
+            .setRequestedPreviewSize(1920, 1080)
+            .setAutoFocusEnabled(true) //you should add this feature
+            .build()
+
+        binding.surfaceView.holder?.addCallback(object : SurfaceHolder.Callback {
+            override fun surfaceCreated(holder: SurfaceHolder) {
+                try {
+                    if (ActivityCompat.checkSelfPermission(
+                            this@BarcodeScannerActivity,
+                            Manifest.permission.CAMERA
+                        ) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        cameraSource?.start(binding.surfaceView.holder)
+                    } else {
+                        ActivityCompat.requestPermissions(
+                            this@BarcodeScannerActivity,
+                            arrayOf(Manifest.permission.CAMERA),
+                            REQUEST_CAMERA_PERMISSION
+                        )
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun surfaceChanged(
+                holder: SurfaceHolder,
+                format: Int,
+                width: Int,
+                height: Int
+            ) {
+            }
+
+            override fun surfaceDestroyed(holder: SurfaceHolder) {
+                cameraSource?.stop()
+            }
+        })
+        barcodeDetector?.setProcessor(object : Detector.Processor<Barcode> {
+            override fun release() {
+            }
+
+            override fun receiveDetections(detections: Detections<Barcode>) {
+                val barcodes = detections.detectedItems
+                if (barcodes.size() != 0) {
+                    val scannedBarcode = barcodes.valueAt(0).displayValue
+                    if (!scannedItemsHashMap.containsKey(scannedBarcode)) {
+                        scannedItemsHashMap[scannedBarcode] = scannedBarcode
+                        callPickupPackage(scannedBarcode)
+                        toneGen1?.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
+                        vibrate()
+                    }
+                }
+            }
+        })
+    }
+
+    private fun callPickupPackage(barcode: String) {
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.pickupPackage(barcode)
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).insertItem(
+                                response.body()?.getPickupScannedItem()
+                            )
+                        }
+                    } else {
+                        scannedItemsHashMap.remove(barcode)
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    scannedItemsHashMap.remove(barcode)
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            scannedItemsHashMap.remove(barcode)
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.button_done -> {
+                onBackPressed()
+            }
+        }
+
+    }
+}

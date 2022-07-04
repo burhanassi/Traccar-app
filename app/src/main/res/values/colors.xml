@@ -23,6 +23,7 @@
     <color name="selectedBottomBarItemTint">#F24462</color>
     <color name="borderOutlinedEditText">#979797</color>
     <color name="peach_orange">#FFD599</color>
+    <color name="peach_orange_barcode_scanner_bottom">#E6FFD599</color>
     <color name="peach_orange_line_break">#4DFFD599</color>
     <color name="peach_orange_tab_pager_bar">#59FFD599</color>
     <color name="navajo_white">#FEDBA9</color>
