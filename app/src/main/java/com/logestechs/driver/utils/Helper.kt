@@ -120,5 +120,62 @@ class Helper {
                 currency ?: ""
             }
         }
+
+        fun replaceArabicNumbers(original: String): String? {
+            return original
+                .replace("٠".toRegex(), "0")
+                .replace("١".toRegex(), "1")
+                .replace("٢".toRegex(), "2")
+                .replace("٣".toRegex(), "3")
+                .replace("٤".toRegex(), "4")
+                .replace("٥".toRegex(), "5")
+                .replace("٦".toRegex(), "6")
+                .replace("٧".toRegex(), "7")
+                .replace("٨".toRegex(), "8")
+                .replace("٩".toRegex(), "9")
+        }
+
+        fun formatNumberForWhatsApp(mobileNumber: String?, isSecondary: Boolean = false): String {
+            var number = mobileNumber ?: ""
+            if (isSecondary) {
+                return if (number.length == 10) {
+                    number.drop(1)
+                    number = "+972$number"
+                    number
+                } else if (number.length == 9 && number[0] == '5') {
+                    number = "+972$number"
+                    number
+                } else if (number.length == 12) {
+                    number = "+$number"
+                    number
+                } else {
+                    number
+                }
+            } else {
+                when (getCompanyCurrency()) {
+                    AppCurrency.NIS.value -> {
+                        return if (number.length == 10) {
+                            number.drop(1)
+                            number = "+970$number"
+                            number
+                        } else if (number.length == 9 && number[0] == '5') {
+                            number = "+970$number"
+                            number
+                        } else if (number.length == 12) {
+                            number = "+$number"
+                            number
+                        } else {
+                            number
+                        }
+                    }
+                }
+            }
+            return number
+        }
+
+        fun getGoogleNavigationUrl(userLat: Double?, userLng: Double?): String? {
+            return "http://maps.google.com/maps?daddr=" +
+                    userLat + ", " + userLng
+        }
     }
 }

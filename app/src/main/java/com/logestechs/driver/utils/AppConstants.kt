@@ -19,6 +19,13 @@ class AppConstants {
         //Default Api Params
         const val DEFAULT_PAGE_SIZE = 50
         const val DEFAULT_PAGE = 1
+
+
+        //permission codes
+        const val PERMISSIONS_REQUEST_PHONE_CALL = 1
+        const val PERMISSIONS_REQUEST_PHONE_CAMERA = 2
+        const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 3
+        const val PERMISSIONS_REQUEST_SEND_SMS = 4
     }
 }
 

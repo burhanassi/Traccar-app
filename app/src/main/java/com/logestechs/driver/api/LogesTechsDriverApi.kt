@@ -2,6 +2,7 @@ package com.logestechs.driver.api
 
 import com.logestechs.driver.api.requests.LoginRequestBody
 import com.logestechs.driver.api.requests.RejectPackageRequestBody
+import com.logestechs.driver.api.responses.GetAcceptedPackagesResponse
 import com.logestechs.driver.api.responses.GetDashboardInfoResponse
 import com.logestechs.driver.api.responses.GetPendingPackagesResponse
 import com.logestechs.driver.api.responses.LoginResponse
@@ -45,5 +46,11 @@ interface LogesTechsDriverApi {
 
     @PUT("${AppConstants.PATH}api/driver/packages/pickup")
     suspend fun pickupPackage(@Query("barcode") barcode: String): Response<Package?>?
+
+    @GET("${AppConstants.PATH}api/driver/customers/accepted")
+    suspend fun getAcceptedPackages(
+        @Query("is-grouped") isGrouped: Boolean = true,
+    ): Response<GetAcceptedPackagesResponse?>?
+
 }
 

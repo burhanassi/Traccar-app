@@ -7,5 +7,5 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class GetPendingPackagesResponse(
-    val customers: List<Customer?>? = null,
+    var customers: ArrayList<Customer?>? = null,
 ) : Parcelable

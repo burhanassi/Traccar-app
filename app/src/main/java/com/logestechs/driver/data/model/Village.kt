@@ -6,15 +6,18 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Village(
-    val name: String? = null,
-    val id: Long? = null,
+    var name: String? = null,
+    var id: Long? = null,
 
-    val cityName: String? = null,
+    var cityName: String? = null,
     @SerializedName("cityId")
-    val cityID: Long? = null,
+    var cityID: Long? = null,
 
-    val regionName: String? = null,
+    var regionName: String? = null,
     @SerializedName("regionId")
-    val regionID: Long? = null,
-
-    ) : Parcelable
+    var regionID: Long? = null,
+    var packages: List<Package?>? = null,
+    var customers: List<Customer?>? = null,
+    var numberOfPackages: Int? = null,
+    var isExpanded: Boolean = false
+) : Parcelable

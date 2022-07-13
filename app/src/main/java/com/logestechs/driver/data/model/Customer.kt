@@ -11,6 +11,7 @@ data class Customer(
     val middleName: String? = null,
     val email: String? = null,
     val phone: String? = null,
+    val phone2: String? = null,
     val addressID: Long? = null,
     val hubID: Long? = null,
     val address: Address? = null,

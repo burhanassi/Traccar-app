@@ -114,7 +114,7 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
                                 body?.customers as ArrayList<Customer?>
                             )
                             activityDelegate?.updateCountValues()
-                            handleNoPackagesLabelVisibility(body.customers.size)
+                            handleNoPackagesLabelVisibility(body.customers?.size ?: 0)
                         }
                     } else {
                         try {
