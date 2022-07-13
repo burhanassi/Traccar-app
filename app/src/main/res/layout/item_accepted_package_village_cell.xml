@@ -39,6 +39,7 @@
                     bind:itemSrc="@{@drawable/ic_location_pin_gray}" />
 
                 <LinearLayout
+                    android:id="@+id/container_oval_count"
                     android:layout_width="144dp"
                     android:layout_height="58dp"
                     android:background="@drawable/background_card_semi_circle"

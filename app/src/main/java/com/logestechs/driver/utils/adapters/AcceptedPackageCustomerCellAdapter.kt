@@ -68,6 +68,7 @@ class AcceptedPackageCustomerCellAdapter(
         fun bind(customer: Customer?) {
             binding.itemSenderName.textItem.text = customer?.getFullName()
             binding.itemSenderAddress.textItem.text = customer?.address?.toStringAddress()
+            binding.textCount.text = customer?.packagesNo.toString()
 
             binding.imageViewCall.setOnClickListener {
                 if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
@@ -132,6 +133,8 @@ class AcceptedPackageCustomerCellAdapter(
                 binding.imageViewLocation.visibility = View.GONE
             }
 
+
+            binding.buttonContextMenu.visibility = View.GONE
             binding.buttonContextMenu.setOnClickListener {
                 val popup = PopupMenu(mAdapter.context, binding.buttonContextMenu)
                 popup.inflate(R.menu.pending_package_context_menu)

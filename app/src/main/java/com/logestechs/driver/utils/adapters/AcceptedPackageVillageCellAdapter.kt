@@ -70,6 +70,11 @@ class AcceptedPackageVillageCellAdapter(
 
             handleCardExpansion(adapterPosition)
 
+            binding.containerOvalCount.background = ContextCompat.getDrawable(
+                mAdapter.context!!,
+                R.drawable.background_card_semi_circle
+            )
+
             binding.root.setOnClickListener {
                 onCardClick(adapterPosition)
             }
@@ -97,6 +102,10 @@ class AcceptedPackageVillageCellAdapter(
             if (mAdapter.villagesList[position]?.isExpanded == true) {
                 mAdapter.villagesList[position]?.isExpanded = false
                 binding.rvPackages.visibility = View.GONE
+                binding.containerOvalCount.background = ContextCompat.getDrawable(
+                    mAdapter.context!!,
+                    R.drawable.background_card_semi_circle
+                )
 
                 if (mAdapter.context != null) {
                     binding.imageArrow.setImageDrawable(
@@ -109,6 +118,7 @@ class AcceptedPackageVillageCellAdapter(
             } else {
                 mAdapter.villagesList[position]?.isExpanded = true
                 binding.rvPackages.visibility = View.VISIBLE
+                binding.containerOvalCount.background = null
 
                 if (mAdapter.context != null) {
                     binding.imageArrow.setImageDrawable(
