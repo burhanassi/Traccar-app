@@ -1,5 +1,6 @@
 package com.logestechs.driver.ui.acceptedPackages
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,12 +9,16 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
+import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.data.model.Village
 import com.logestechs.driver.databinding.FragmentAcceptedPackagesBinding
+import com.logestechs.driver.ui.barcodeScanner.BarcodeScannerActivity
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsFragment
 import com.logestechs.driver.utils.adapters.AcceptedPackageVillageCellAdapter
+import com.logestechs.driver.utils.interfaces.AcceptedPackagesCardListener
 import com.logestechs.driver.utils.interfaces.DriverPackagesByStatusViewPagerActivityDelegate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -21,12 +26,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
-class AcceptedPackagesFragment : LogesTechsFragment() {
+class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListener {
 
     private var _binding: FragmentAcceptedPackagesBinding? = null
     private val binding get() = _binding!!
     private var activityDelegate: DriverPackagesByStatusViewPagerActivityDelegate? = null
     private var doesUpdateData = true
+    private var enableUpdateData = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,15 +76,22 @@ class AcceptedPackagesFragment : LogesTechsFragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        doesUpdateData = false
+        if (enableUpdateData) {
+            doesUpdateData = true
+            enableUpdateData = false
+        } else {
+            doesUpdateData = false
+        }
     }
 
     private fun initRecycler() {
         val layoutManager = LinearLayoutManager(
-            context
+            super.getContext()
         )
         binding.rvVillages.adapter = AcceptedPackageVillageCellAdapter(
-            ArrayList(), super.getContext()
+            ArrayList(),
+            super.getContext(),
+            this
         )
         binding.rvVillages.layoutManager = layoutManager
     }
@@ -164,5 +177,12 @@ class AcceptedPackagesFragment : LogesTechsFragment() {
                 super.getContext(), getString(R.string.error_check_internet_connection)
             )
         }
+    }
+
+    override fun scanForPickup(customer: Customer?) {
+        enableUpdateData = true
+        val mIntent = Intent(super.getContext(), BarcodeScannerActivity::class.java)
+        mIntent.putExtra(IntentExtrasKeys.CUSTOMER_WITH_PACKAGES_FOR_PICKUP.name, customer)
+        startActivity(mIntent)
     }
 }

@@ -13,10 +13,12 @@ import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.data.model.Village
 import com.logestechs.driver.databinding.ItemAcceptedPackageVillageCellBinding
 import com.logestechs.driver.utils.customViews.PeekingLinearLayoutManager
+import com.logestechs.driver.utils.interfaces.AcceptedPackagesCardListener
 
 class AcceptedPackageVillageCellAdapter(
     var villagesList: ArrayList<Village?>,
     var context: Context?,
+    var listener: AcceptedPackagesCardListener
 ) :
     RecyclerView.Adapter<AcceptedPackageVillageCellAdapter.AcceptedPackageVillageViewHolder>() {
 
@@ -91,7 +93,7 @@ class AcceptedPackageVillageCellAdapter(
             val childItemAdapter = AcceptedPackageCustomerCellAdapter(
                 village?.customers ?: ArrayList<Customer>(),
                 mAdapter.context,
-                null,
+                mAdapter.listener,
                 adapterPosition
             )
             binding.rvPackages.layoutManager = layoutManager

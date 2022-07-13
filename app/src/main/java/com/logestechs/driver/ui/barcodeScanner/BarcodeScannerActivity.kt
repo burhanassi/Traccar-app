@@ -17,11 +17,9 @@ import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
+import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.databinding.ActivityBarcodeScannerBinding
-import com.logestechs.driver.utils.AppConstants
-import com.logestechs.driver.utils.BarcodeScanType
-import com.logestechs.driver.utils.Helper
-import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.ScannedBarcodeCellAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -40,6 +38,7 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener {
 
     private var scanType: BarcodeScanType = BarcodeScanType.PACKAGE_PICKUP
     var scannedItemsHashMap: HashMap<String, String> = HashMap()
+    var customer: Customer? = null
 
 
     private var toneGen1: ToneGenerator? = null
@@ -52,6 +51,14 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener {
         initialiseDetectorsAndSources()
         initRecycler()
         initListeners()
+        getExtras()
+    }
+
+    private fun getExtras() {
+        val extras = intent.extras
+        if (extras != null) {
+            customer = extras.getParcelable(IntentExtrasKeys.CUSTOMER_WITH_PACKAGES_FOR_PICKUP.name)
+        }
     }
 
     private fun initListeners() {

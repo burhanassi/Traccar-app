@@ -133,6 +133,9 @@ class AcceptedPackageCustomerCellAdapter(
                 binding.imageViewLocation.visibility = View.GONE
             }
 
+            binding.buttonScanPackagesBarcodes.setOnClickListener {
+                mAdapter.listener?.scanForPickup(customer)
+            }
 
             binding.buttonContextMenu.visibility = View.GONE
             binding.buttonContextMenu.setOnClickListener {
