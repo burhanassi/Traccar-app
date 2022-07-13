@@ -150,15 +150,19 @@ abstract class LogesTechsActivity : AppCompatActivity() {
     }
 
     fun showLocationInGoogleMaps(address: Address?) {
-        val locationDirection: String? = Helper.getGoogleNavigationUrl(
-            address?.latitude,
-            address?.longitude
-        )
-
-        val intent = Intent(
-            Intent.ACTION_VIEW,
-            Uri.parse(locationDirection)
-        )
-        this.startActivity(intent)
+        val packageManager: PackageManager = this.packageManager
+        val intent = Intent(Intent.ACTION_VIEW)
+        try {
+            val locationDirection: String? = Helper.getGoogleNavigationUrl(
+                address?.latitude,
+                address?.longitude
+            )
+            intent.data = Uri.parse(locationDirection)
+            if (intent.resolveActivity(packageManager) != null) {
+                this.startActivity(intent)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }
