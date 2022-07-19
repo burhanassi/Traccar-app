@@ -32,6 +32,8 @@
                 android:clipToPadding="false"
                 android:overScrollMode="never"
                 android:paddingTop="4dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
                 android:paddingBottom="80dp"
                 android:scrollbars="vertical"
                 tools:listitem="@layout/item_accepted_package_village_cell" />

@@ -1,5 +1,6 @@
 package com.logestechs.driver.utils.adapters
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -9,6 +10,7 @@ import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.data.model.Customer
+import com.logestechs.driver.data.model.GroupedPackages
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemInCarPackageCellBinding
 import com.logestechs.driver.utils.AppCurrency
@@ -21,7 +23,8 @@ class InCarPackageCellAdapter(
     var packagesList: ArrayList<Package?>,
     var context: Context?,
     var listener: AcceptedPackagesCardListener?,
-    var parentIndex: Int
+    var parentIndex: Int?,
+    var isGrouped: Boolean = true
 ) :
     RecyclerView.Adapter<InCarPackageCellAdapter.AcceptedPackageCustomerCellViewHolder>() {
 
@@ -36,10 +39,12 @@ class InCarPackageCellAdapter(
                 false
             )
 
-        inflater.root.layoutParams = ViewGroup.LayoutParams(
-            (viewGroup.width * 0.7).toInt(),
-            ViewGroup.LayoutParams.MATCH_PARENT
-        )
+        if (isGrouped) {
+            inflater.root.layoutParams = ViewGroup.LayoutParams(
+                (viewGroup.width * 0.7).toInt(),
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
         return AcceptedPackageCustomerCellViewHolder(inflater, viewGroup, this)
     }
 
@@ -58,6 +63,13 @@ class InCarPackageCellAdapter(
 
     fun removeItem(position: Int) {
         notifyItemRemoved(position)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun update(list: ArrayList<Package?>) {
+        this.packagesList.clear()
+        this.packagesList.addAll(list)
+        this.notifyDataSetChanged()
     }
 
     class AcceptedPackageCustomerCellViewHolder(

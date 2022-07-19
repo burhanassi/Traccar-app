@@ -16,6 +16,7 @@ import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.InCarPackagesViewMode
 import com.logestechs.driver.utils.LogesTechsFragment
+import com.logestechs.driver.utils.adapters.InCarPackageCellAdapter
 import com.logestechs.driver.utils.adapters.InCarPackageGroupedCellAdapter
 import com.logestechs.driver.utils.interfaces.DriverPackagesByStatusViewPagerActivityDelegate
 import kotlinx.coroutines.Dispatchers
@@ -129,20 +130,36 @@ class InCarPackagesFragment : LogesTechsFragment() {
 
 
     private fun getPackagesBySelectedMode() {
-        String.toString()
-        when (selectedViewMode) {
-            InCarPackagesViewMode.BY_VILLAGE -> {
-                callGetInCarPackagesGrouped()
+        if (selectedViewMode == InCarPackagesViewMode.BY_VILLAGE
+            || selectedViewMode == InCarPackagesViewMode.BY_VILLAGE
+            || selectedViewMode == InCarPackagesViewMode.BY_VILLAGE) {
+            if (binding.rvPackages.adapter !is InCarPackageGroupedCellAdapter) {
+                val layoutManager = LinearLayoutManager(
+                    super.getContext()
+                )
+                binding.rvPackages.adapter = InCarPackageGroupedCellAdapter(
+                    ArrayList(),
+                    super.getContext(),
+                    null
+                )
+                binding.rvPackages.layoutManager = layoutManager
             }
-            InCarPackagesViewMode.BY_CUSTOMER -> {
-                callGetInCarPackagesGrouped()
+            callGetInCarPackagesGrouped()
+        } else {
+            if (binding.rvPackages.adapter !is InCarPackageCellAdapter) {
+                val layoutManager = LinearLayoutManager(
+                    super.getContext()
+                )
+                binding.rvPackages.adapter = InCarPackageCellAdapter(
+                    ArrayList(),
+                    super.getContext(),
+                    null,
+                    null,
+                    isGrouped = false
+                )
+                binding.rvPackages.layoutManager = layoutManager
             }
-            InCarPackagesViewMode.BY_RECEIVER -> {
-                callGetInCarPackagesGrouped()
-            }
-            InCarPackagesViewMode.UNGROUPED -> {
-                callGetInCarPackagesGrouped()
-            }
+            callGetInCarPackagesUngrouped()
         }
     }
 
@@ -179,6 +196,64 @@ class InCarPackagesFragment : LogesTechsFragment() {
                             )
                             activityDelegate?.updateCountValues()
                             handleNoPackagesLabelVisibility(body.numberOfPackages ?: 0)
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
+    private fun callGetInCarPackagesUngrouped() {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.getInCarPackagesUngrouped()
+
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        val body = response.body()
+                        withContext(Dispatchers.Main) {
+                            (binding.rvPackages.adapter as InCarPackageCellAdapter).update(
+                                body?.pkgs ?: ArrayList()
+                            )
+                            activityDelegate?.updateCountValues()
+                            handleNoPackagesLabelVisibility(body?.numberOfPackages ?: 0)
                         }
                     } else {
                         try {
