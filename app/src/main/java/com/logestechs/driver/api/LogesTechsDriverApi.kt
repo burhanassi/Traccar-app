@@ -2,10 +2,7 @@ package com.logestechs.driver.api
 
 import com.logestechs.driver.api.requests.LoginRequestBody
 import com.logestechs.driver.api.requests.RejectPackageRequestBody
-import com.logestechs.driver.api.responses.GetAcceptedPackagesResponse
-import com.logestechs.driver.api.responses.GetDashboardInfoResponse
-import com.logestechs.driver.api.responses.GetPendingPackagesResponse
-import com.logestechs.driver.api.responses.LoginResponse
+import com.logestechs.driver.api.responses.*
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.utils.AppConstants
 import okhttp3.ResponseBody
@@ -51,6 +48,31 @@ interface LogesTechsDriverApi {
     suspend fun getAcceptedPackages(
         @Query("is-grouped") isGrouped: Boolean = true,
     ): Response<GetAcceptedPackagesResponse?>?
+
+    @GET("${AppConstants.PATH}api/driver/packages/in-car/by-villages")
+    suspend fun getInCarPackagesByVillage(
+        @Query("status") packageStatus: String? = null,
+        @Query("search") search: String? = null
+    ): Response<GetInCarPackagesGroupedResponse?>?
+
+    @GET("${AppConstants.PATH}api/driver/packages/in-car/by-customers")
+    suspend fun getInCarPackagesByCustomer(
+        @Query("status") packageStatus: String? = null,
+        @Query("search") search: String? = null
+        ): Response<GetInCarPackagesGroupedResponse?>?
+
+    @GET("${AppConstants.PATH}api/driver/packages/in-car/by-receivers")
+    suspend fun getInCarPackagesByReceiver(
+        @Query("status") packageStatus: String? = null,
+        @Query("search") search: String? = null
+    ): Response<GetInCarPackagesGroupedResponse?>?
+
+    @GET("${AppConstants.PATH}api/driver/packages/in-car/un-grouped")
+    suspend fun getInCarPackagesUngrouped(
+        @Query("status") packageStatus: String? = null,
+        @Query("search") search: String? = null
+    ): Response<GetInCarPackagesUngroupedResponse?>?
+
 
 }
 

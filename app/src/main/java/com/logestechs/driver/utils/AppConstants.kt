@@ -58,3 +58,10 @@ enum class IntentExtrasKeys() {
 enum class BarcodeScanType {
     PACKAGE_PICKUP
 }
+
+enum class InCarPackagesViewMode {
+    BY_VILLAGE,
+    BY_CUSTOMER,
+    BY_RECEIVER,
+    UNGROUPED
+}
