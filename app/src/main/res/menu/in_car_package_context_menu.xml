@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_return_package"
+        android:title="@string/action_return_package" />
+
+    <item
+        android:id="@+id/action_postpone_package"
+        android:title="@string/action_postpone_package" />
+
+    <item
+        android:id="@+id/action_edit_package_type"
+        android:title="@string/change_package_type" />
+
+    <item
+        android:id="@+id/action_edit_package_cod"
+        android:title="@string/change_package_cod" />
+
+    <item
+        android:id="@+id/action_fail_delivery"
+        android:title="@string/action_fail_delivery" />
+
+    <item
+        android:id="@+id/action_add_note"
+        android:title="@string/add_note" />
+
+</menu>

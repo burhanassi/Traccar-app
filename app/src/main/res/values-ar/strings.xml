@@ -43,4 +43,12 @@
     <string name="button_done">تم</string>
     <string name="error_phone_permission">الرجاء اعطاء صلاحية الإتصال</string>
     <string name="button_scan_packages_barcodes">مسح كودات الطرود</string>
+    <string name="cod">التحصيل</string>
+    <string name="button_deliver_package">توصيل الطرد</string>
+    <string name="action_return_package">إرجاع</string>
+    <string name="action_postpone_package">تأجيل</string>
+    <string name="action_fail_delivery">فشل في التوصيل</string>
+    <string name="change_package_type">تعديل نوع الطرد</string>
+    <string name="change_package_cod">تعديل قيمة التحصيل</string>
+    <string name="add_note">إضافة ملاحظة</string>
 </resources>

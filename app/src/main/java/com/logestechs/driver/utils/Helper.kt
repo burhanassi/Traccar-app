@@ -14,6 +14,9 @@ import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
 import com.logestechs.driver.R
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.*
 
 
 class Helper {
@@ -176,6 +179,17 @@ class Helper {
         fun getGoogleNavigationUrl(userLat: Double?, userLng: Double?): String? {
             return "http://maps.google.com/maps?daddr=" +
                     userLat + ", " + userLng
+        }
+
+        fun Double.format(): String {
+            return if (this % 1.0 != 0.0) {
+                val decimalSymbol = DecimalFormatSymbols(Locale.US)
+                val df = DecimalFormat("##.###")
+                df.decimalFormatSymbols = decimalSymbol
+                df.format(this).toString()
+            } else {
+                (this.toInt().toString())
+            }
         }
     }
 }

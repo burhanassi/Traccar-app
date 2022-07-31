@@ -42,4 +42,12 @@
     <string name="button_done">Done</string>
     <string name="error_phone_permission">The app needs phone permission</string>
     <string name="button_scan_packages_barcodes">Scan Packages Barcodes</string>
+    <string name="cod">COD</string>
+    <string name="button_deliver_package">Deliver Package</string>
+    <string name="action_return_package">Return</string>
+    <string name="action_postpone_package">Postpone</string>
+    <string name="action_fail_delivery">Fail Delivery</string>
+    <string name="change_package_type">Change Package Type</string>
+    <string name="change_package_cod">Change Package COD</string>
+    <string name="add_note">Add Note</string>
 </resources>

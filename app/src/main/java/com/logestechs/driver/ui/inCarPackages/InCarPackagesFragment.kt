@@ -10,7 +10,6 @@ import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.responses.GetInCarPackagesGroupedResponse
 import com.logestechs.driver.data.model.GroupedPackages
-import com.logestechs.driver.data.model.Village
 import com.logestechs.driver.databinding.FragmentInCarPackagesBinding
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
@@ -34,7 +33,7 @@ class InCarPackagesFragment : LogesTechsFragment() {
     private var doesUpdateData = true
     private var enableUpdateData = false
 
-    var selectedViewMode: InCarPackagesViewMode = InCarPackagesViewMode.BY_VILLAGE
+    var selectedViewMode: InCarPackagesViewMode = InCarPackagesViewMode.UNGROUPED
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,8 +130,9 @@ class InCarPackagesFragment : LogesTechsFragment() {
 
     private fun getPackagesBySelectedMode() {
         if (selectedViewMode == InCarPackagesViewMode.BY_VILLAGE
-            || selectedViewMode == InCarPackagesViewMode.BY_VILLAGE
-            || selectedViewMode == InCarPackagesViewMode.BY_VILLAGE) {
+            || selectedViewMode == InCarPackagesViewMode.BY_CUSTOMER
+            || selectedViewMode == InCarPackagesViewMode.BY_RECEIVER
+        ) {
             if (binding.rvPackages.adapter !is InCarPackageGroupedCellAdapter) {
                 val layoutManager = LinearLayoutManager(
                     super.getContext()

@@ -9,13 +9,9 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
-import com.logestechs.driver.data.model.Customer
-import com.logestechs.driver.data.model.GroupedPackages
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemInCarPackageCellBinding
-import com.logestechs.driver.utils.AppCurrency
-import com.logestechs.driver.utils.Helper
-import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.Helper.Companion.format
 import com.logestechs.driver.utils.interfaces.AcceptedPackagesCardListener
 
 
@@ -79,93 +75,45 @@ class InCarPackageCellAdapter(
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(pkg: Package?) {
-            binding.itemSenderName.textItem.text = pkg?.senderFirstName
+            binding.itemSenderName.textItem.text = pkg?.getFullSenderName()
             binding.itemSenderAddress.textItem.text = pkg?.originAddress?.toStringAddress()
-//            binding.textCount.text = p?.packagesNo.toString()
 
-//            binding.imageViewCall.setOnClickListener {
-//                if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
-//                    (mAdapter.context as LogesTechsActivity).callMobileNumber(customer?.phone)
-//                }
-//            }
-//
-//            binding.imageViewSms.setOnClickListener {
-//                if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
-//                    (mAdapter.context as LogesTechsActivity).sendSms(
-//                        customer?.phone,
-//                        "Your package will be delivered soon by driver ahmad"
-//                    )
-//                }
-//            }
-//
-//            binding.imageViewWhatsApp.setOnClickListener {
-//                if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
-//                    (mAdapter.context as LogesTechsActivity).sendWhatsAppMessage(
-//                        Helper.formatNumberForWhatsApp(
-//                            customer?.phone
-//                        ), "Your package will be delivered soon by driver ahmad"
-//                    )
-//                }
-//            }
-//
-//            if (Helper.getCompanyCurrency() == AppCurrency.NIS.value) {
-//                binding.imageViewWhatsAppSecondary.visibility = View.VISIBLE
-//                binding.imageViewWhatsAppSecondary.setOnClickListener {
-//                    if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
-//                        (mAdapter.context as LogesTechsActivity).sendWhatsAppMessage(
-//                            Helper.formatNumberForWhatsApp(
-//                                customer?.phone,
-//                                true
-//                            ), "Your package will be delivered soon by driver ahmad"
-//                        )
-//                    }
-//                }
-//            } else {
-//                binding.imageViewWhatsAppSecondary.visibility = View.GONE
-//            }
-//
-//            if (customer?.phone2?.isNotEmpty() == true) {
-//                binding.imageViewCallSecondary.visibility = View.VISIBLE
-//                binding.imageViewCallSecondary.setOnClickListener {
-//                    if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
-//                        (mAdapter.context as LogesTechsActivity).callMobileNumber(customer.phone2)
-//                    }
-//                }
-//            } else {
-//                binding.imageViewCallSecondary.visibility = View.GONE
-//            }
-//
-//            if ((customer?.address?.latitude != null && customer.address.latitude != 0.0) && (customer.address.longitude != null && customer.address.longitude != 0.0)) {
-//                binding.imageViewLocation.visibility = View.VISIBLE
-//                binding.imageViewLocation.setOnClickListener {
-//                    if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
-//                        (mAdapter.context as LogesTechsActivity).showLocationInGoogleMaps(customer.address)
-//                    }
-//                }
-//            } else {
-//                binding.imageViewLocation.visibility = View.GONE
-//            }
-//
-//            binding.buttonScanPackagesBarcodes.setOnClickListener {
-//                mAdapter.listener?.scanForPickup(customer)
-//            }
-//
-//            binding.buttonContextMenu.visibility = View.GONE
-//            binding.buttonContextMenu.setOnClickListener {
-//                val popup = PopupMenu(mAdapter.context, binding.buttonContextMenu)
-//                popup.inflate(R.menu.pending_package_context_menu)
-//                popup.setOnMenuItemClickListener { item: MenuItem? ->
-//
-//                    when (item?.itemId) {
-//                        R.id.action_reject_package -> {
+            binding.itemReceiverName.textItem.text = pkg?.getFullReceiverName()
+            binding.itemReceiverAddress.textItem.text = pkg?.destinationAddress?.toStringAddress()
+
+            binding.textCod.text = pkg?.cod?.format()
+
+            binding.itemPackageBarcode.textItem.text = pkg?.barcode
+
+            if (pkg?.notes?.trim().isNullOrEmpty()) {
+                binding.itemNotes.root.visibility = View.GONE
+            } else {
+                binding.itemNotes.root.visibility = View.VISIBLE
+                binding.itemNotes.textItem.text = pkg?.notes
+            }
+
+            if (pkg?.quantity != null && pkg.quantity != 0) {
+                binding.itemPackageQuantity.root.visibility = View.VISIBLE
+                binding.itemPackageQuantity.textItem.text = pkg.quantity.toString()
+            } else {
+                binding.itemPackageQuantity.root.visibility = View.GONE
+            }
+
+            binding.buttonContextMenu.setOnClickListener {
+                val popup = PopupMenu(mAdapter.context, binding.buttonContextMenu)
+                popup.inflate(R.menu.in_car_package_context_menu)
+                popup.setOnMenuItemClickListener { item: MenuItem? ->
+
+                    when (item?.itemId) {
+                        R.id.action_add_note -> {
 //                            mAdapter.listener?.scanForPickup(customer)
-//                        }
-//                    }
-//                    true
-//                }
-//
-//                popup.show()
-//            }
+                        }
+                    }
+                    true
+                }
+
+                popup.show()
+            }
         }
     }
 }
