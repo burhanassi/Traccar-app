@@ -83,6 +83,7 @@ class InCarPackagesFragment : LogesTechsFragment() {
         initRecycler()
         initListeners()
         activityDelegate = activity as DriverPackagesByStatusViewPagerActivityDelegate
+        binding.textTitle.text = getString(R.string.packages_view_pager_in_car_packages)
     }
 
     private fun initRecycler() {

@@ -193,23 +193,20 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
     }
 
     private fun updateTitle(index: Int) {
-        when (index) {
-            0 -> {
-                binding.textTitle.text = getString(R.string.packages_view_pager_pending_packages)
-            }
-
-            1 -> {
-                binding.textTitle.text = getString(R.string.packages_view_pager_accepted_packages)
-            }
-
-            2 -> {
-                binding.textTitle.text = getString(R.string.packages_view_pager_in_car_packages)
-            }
-
-            3 -> {
-                binding.textTitle.text = getString(R.string.dashboard_delivered)
-            }
-        }
+//        when (index) {
+//            0 -> {
+//            }
+//
+//            1 -> {
+//            }
+//
+//            2 -> {
+//            }
+//
+//            3 -> {
+//                binding.textTitle.text = getString(R.string.dashboard_delivered)
+//            }
+//        }
     }
 
     private fun updateCountValues(data: GetDashboardInfoResponse?) {

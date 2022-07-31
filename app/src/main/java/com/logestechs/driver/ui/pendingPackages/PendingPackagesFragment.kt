@@ -55,6 +55,7 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
         initRecycler()
         initListeners()
         activityDelegate = activity as DriverPackagesByStatusViewPagerActivityDelegate
+        binding.textTitle.text = getString(R.string.packages_view_pager_accepted_packages)
     }
 
     override fun onResume() {
