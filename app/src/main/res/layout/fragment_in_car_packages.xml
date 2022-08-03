@@ -11,20 +11,52 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="35dp"
+            android:gravity="center_vertical"
             android:background="@color/peach_orange_tab_pager_bar">
 
             <TextView
                 android:id="@+id/text_title"
                 style="@style/LogesTechsBold"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_weight="1"
                 android:textColor="@color/fontTrackHint"
                 android:textSize="14sp" />
 
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_view_mode"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_search_gray"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_button_sms"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_status_filter"
+                tools:ignore="ContentDescription" />
         </LinearLayout>
 
         <FrameLayout
