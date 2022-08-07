@@ -22,7 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_view_mode_white"
+                android:src="@drawable/ic_status_filter_white"
                 tools:ignore="ContentDescription" />
         </FrameLayout>
 
@@ -36,6 +36,7 @@
             app:cardCornerRadius="10dp">
 
             <LinearLayout
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/transparent"
@@ -49,6 +50,16 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
                     android:background="@drawable/ic_close_white" />
+
+                <TextView
+                    style="@style/LogesTechsMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/status"
+                    android:textColor="@color/fontTrackHint" />
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -98,7 +109,7 @@
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="12dp"
-                    android:layout_marginBottom="30dp"
+                    android:layout_marginBottom="16dp"
                     android:orientation="horizontal">
 
                     <com.logestechs.driver.utils.customViews.StatusSelector
@@ -118,6 +129,16 @@
 
                 </LinearLayout>
 
+                <Button
+                    android:id="@+id/button_done"
+                    style="@style/LogesTechsMedium"
+                    android:layout_width="150dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/background_logestechs_button"
+                    android:text="@string/button_done"
+                    android:textColor="#fff" />
             </LinearLayout>
 
 

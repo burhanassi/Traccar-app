@@ -191,5 +191,31 @@ class Helper {
                 (this.toInt().toString())
             }
         }
+
+        fun getLocalizedInCarStatus(
+            context: Context?,
+            inCarPackageStatus: InCarPackageStatus
+        ): String {
+            when (inCarPackageStatus) {
+                InCarPackageStatus.TO_DELIVER -> {
+                    return context?.getString(R.string.in_car_status_to_deliver) ?: ""
+                }
+                InCarPackageStatus.ALL -> {
+                    return context?.getString(R.string.in_car_status_all) ?: ""
+                }
+                InCarPackageStatus.POSTPONED -> {
+                    return context?.getString(R.string.in_car_status_postponed) ?: ""
+                }
+                InCarPackageStatus.COD -> {
+                    return context?.getString(R.string.in_car_status_cod) ?: ""
+                }
+                InCarPackageStatus.FAILED -> {
+                    return context?.getString(R.string.in_car_status_failed) ?: ""
+                }
+                else -> {
+                    return ""
+                }
+            }
+        }
     }
 }

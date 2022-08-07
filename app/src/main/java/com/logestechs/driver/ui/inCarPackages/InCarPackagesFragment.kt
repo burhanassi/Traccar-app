@@ -11,14 +11,13 @@ import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.responses.GetInCarPackagesGroupedResponse
 import com.logestechs.driver.data.model.GroupedPackages
 import com.logestechs.driver.databinding.FragmentInCarPackagesBinding
-import com.logestechs.driver.utils.AppConstants
-import com.logestechs.driver.utils.Helper
-import com.logestechs.driver.utils.InCarPackagesViewMode
-import com.logestechs.driver.utils.LogesTechsFragment
+import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.InCarPackageCellAdapter
 import com.logestechs.driver.utils.adapters.InCarPackageGroupedCellAdapter
+import com.logestechs.driver.utils.dialogs.InCarStatusFilterDialog
 import com.logestechs.driver.utils.dialogs.InCarViewModeDialog
 import com.logestechs.driver.utils.interfaces.DriverPackagesByStatusViewPagerActivityDelegate
+import com.logestechs.driver.utils.interfaces.InCarStatusFilterDialogListener
 import com.logestechs.driver.utils.interfaces.InCarViewModeDialogListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -28,7 +27,7 @@ import org.json.JSONObject
 import retrofit2.Response
 
 class InCarPackagesFragment : LogesTechsFragment(), View.OnClickListener,
-    InCarViewModeDialogListener {
+    InCarViewModeDialogListener, InCarStatusFilterDialogListener {
     private var _binding: FragmentInCarPackagesBinding? = null
     private val binding get() = _binding!!
 
@@ -37,6 +36,7 @@ class InCarPackagesFragment : LogesTechsFragment(), View.OnClickListener,
     private var enableUpdateData = false
 
     var selectedViewMode: InCarPackagesViewMode = InCarPackagesViewMode.BY_VILLAGE
+    var selectedStatus: InCarPackageStatus = InCarPackageStatus.TO_DELIVER
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,6 +87,8 @@ class InCarPackagesFragment : LogesTechsFragment(), View.OnClickListener,
         initListeners()
         activityDelegate = activity as DriverPackagesByStatusViewPagerActivityDelegate
         binding.textTitle.text = getString(R.string.packages_view_pager_in_car_packages)
+        binding.textSelectedStatus.text =
+            "(${Helper.getLocalizedInCarStatus(super.getContext(), selectedStatus)})"
     }
 
     private fun initRecycler() {
@@ -103,6 +105,9 @@ class InCarPackagesFragment : LogesTechsFragment(), View.OnClickListener,
 
     private fun initListeners() {
         binding.refreshLayoutPackages.setOnRefreshListener {
+            selectedStatus = InCarPackageStatus.TO_DELIVER
+            binding.textSelectedStatus.text =
+                "(${Helper.getLocalizedInCarStatus(super.getContext(), selectedStatus)})"
             getPackagesBySelectedMode()
         }
 
@@ -174,16 +179,16 @@ class InCarPackagesFragment : LogesTechsFragment(), View.OnClickListener,
                     var response: Response<GetInCarPackagesGroupedResponse?>? = null
                     response = when (selectedViewMode) {
                         InCarPackagesViewMode.BY_VILLAGE -> {
-                            ApiAdapter.apiClient.getInCarPackagesByVillage()
+                            ApiAdapter.apiClient.getInCarPackagesByVillage(status = selectedStatus.value)
                         }
                         InCarPackagesViewMode.BY_CUSTOMER -> {
-                            ApiAdapter.apiClient.getInCarPackagesByCustomer()
+                            ApiAdapter.apiClient.getInCarPackagesByCustomer(status = selectedStatus.value)
                         }
                         InCarPackagesViewMode.BY_RECEIVER -> {
-                            ApiAdapter.apiClient.getInCarPackagesByReceiver()
+                            ApiAdapter.apiClient.getInCarPackagesByReceiver(status = selectedStatus.value)
                         }
                         else -> {
-                            ApiAdapter.apiClient.getInCarPackagesByVillage()
+                            ApiAdapter.apiClient.getInCarPackagesByVillage(status = selectedStatus.value)
                         }
                     }
 
@@ -243,7 +248,8 @@ class InCarPackagesFragment : LogesTechsFragment(), View.OnClickListener,
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.getInCarPackagesUngrouped()
+                    val response =
+                        ApiAdapter.apiClient.getInCarPackagesUngrouped(status = selectedStatus.value)
 
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
@@ -299,6 +305,7 @@ class InCarPackagesFragment : LogesTechsFragment(), View.OnClickListener,
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_status_filter -> {
+                InCarStatusFilterDialog(requireContext(), this, selectedStatus).showDialog()
             }
 
             R.id.button_view_mode -> {
@@ -309,6 +316,13 @@ class InCarPackagesFragment : LogesTechsFragment(), View.OnClickListener,
 
     override fun onViewModeChanged(selectedViewMode: InCarPackagesViewMode) {
         this.selectedViewMode = selectedViewMode
+        getPackagesBySelectedMode()
+    }
+
+    override fun onStatusChanged(selectedStatus: InCarPackageStatus) {
+        this.selectedStatus = selectedStatus
+        binding.textSelectedStatus.text =
+            "(${Helper.getLocalizedInCarStatus(super.getContext(), selectedStatus)})"
         getPackagesBySelectedMode()
     }
 }

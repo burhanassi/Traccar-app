@@ -65,3 +65,12 @@ enum class InCarPackagesViewMode(val value: String) {
     BY_CUSTOMER("BY_CUSTOMER"),
     BY_RECEIVER("BY_RECEIVER")
 }
+
+enum class InCarPackageStatus(val value: String) {
+    ALL("ALL"),
+    TO_DELIVER("TO_DELIVER"),
+    RETURNED("RETURNED"),
+    POSTPONED("POSTPONED"),
+    COD("COD"),
+    FAILED("FAILED")
+}

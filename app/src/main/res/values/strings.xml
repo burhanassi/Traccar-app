@@ -60,4 +60,5 @@
     <string name="view_mode_vendors">Vendors</string>
     <string name="view_mode_receivers">Receivers</string>
     <string name="view_mode">View Mode</string>
+    <string name="status">Status</string>
 </resources>

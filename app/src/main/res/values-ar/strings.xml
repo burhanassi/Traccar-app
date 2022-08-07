@@ -61,4 +61,5 @@
     <string name="view_mode_vendors">تجار</string>
     <string name="view_mode_receivers">مستلمون</string>
     <string name="view_mode">طريقة العرض</string>
+    <string name="status">الحالة</string>
 </resources>
