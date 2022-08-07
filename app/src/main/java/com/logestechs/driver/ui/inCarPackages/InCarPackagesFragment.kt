@@ -194,7 +194,7 @@ class InCarPackagesFragment : LogesTechsFragment(), View.OnClickListener,
                         val body = response.body()
                         withContext(Dispatchers.Main) {
                             (binding.rvPackages.adapter as InCarPackageGroupedCellAdapter).update(
-                                body?.inCarPackages as ArrayList<GroupedPackages?>
+                                body?.inCarPackages as ArrayList<GroupedPackages?>, selectedViewMode
                             )
                             activityDelegate?.updateCountValues()
                             handleNoPackagesLabelVisibility(body.numberOfPackages ?: 0)

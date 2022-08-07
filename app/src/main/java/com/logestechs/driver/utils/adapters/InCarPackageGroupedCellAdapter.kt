@@ -9,10 +9,9 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
-import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.data.model.GroupedPackages
-import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemInCarPackageGroupedCellBinding
+import com.logestechs.driver.utils.InCarPackagesViewMode
 import com.logestechs.driver.utils.customViews.PeekingLinearLayoutManager
 import com.logestechs.driver.utils.interfaces.AcceptedPackagesCardListener
 
@@ -23,6 +22,7 @@ class InCarPackageGroupedCellAdapter(
 ) :
     RecyclerView.Adapter<InCarPackageGroupedCellAdapter.InCarGroupedPackageViewHolder>() {
 
+    private var selectedViewMode: InCarPackagesViewMode? = null
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
         i: Int
@@ -49,9 +49,10 @@ class InCarPackageGroupedCellAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun update(list: ArrayList<GroupedPackages?>) {
+    fun update(list: ArrayList<GroupedPackages?>, selectedViewMode: InCarPackagesViewMode?) {
         this.packagesList.clear()
         this.packagesList.addAll(list)
+        this.selectedViewMode = selectedViewMode
         this.notifyDataSetChanged()
     }
 
@@ -68,7 +69,36 @@ class InCarPackageGroupedCellAdapter(
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(groupedPackage: GroupedPackages?) {
-            binding.itemVillageName.textItem.text = groupedPackage?.label
+            if (mAdapter.context != null) {
+                when (mAdapter.selectedViewMode) {
+                    InCarPackagesViewMode.BY_VILLAGE -> {
+                        binding.itemTitle.iconImageView.background = ContextCompat.getDrawable(
+                            mAdapter.context!!,
+                            R.drawable.ic_location_pin_gray
+                        )
+                    }
+                    InCarPackagesViewMode.BY_RECEIVER -> {
+                        binding.itemTitle.iconImageView.background = ContextCompat.getDrawable(
+                            mAdapter.context!!,
+                            R.drawable.ic_receiver_gray
+                        )
+                    }
+                    InCarPackagesViewMode.BY_CUSTOMER -> {
+                        binding.itemTitle.iconImageView.background = ContextCompat.getDrawable(
+                            mAdapter.context!!,
+                            R.drawable.ic_sender_gray
+                        )
+                    }
+                    else -> {
+                        binding.itemTitle.iconImageView.background = ContextCompat.getDrawable(
+                            mAdapter.context!!,
+                            R.drawable.ic_location_pin_gray
+                        )
+                    }
+                }
+            }
+
+            binding.itemTitle.textItem.text = groupedPackage?.label
             binding.textCount.text = groupedPackage?.pkgs?.size.toString()
 
             handleCardExpansion(adapterPosition)
