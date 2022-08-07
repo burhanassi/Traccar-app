@@ -8,12 +8,14 @@ import android.view.LayoutInflater
 import androidx.databinding.DataBindingUtil
 import com.logestechs.driver.R
 import com.logestechs.driver.databinding.DialogInCarViewModeBinding
+import com.logestechs.driver.utils.InCarPackagesViewMode
 import com.logestechs.driver.utils.LogesTechsApp
 import com.logestechs.driver.utils.interfaces.InCarViewModeDialogListener
 
 class InCarViewModeDialog(
     var context: Context,
-    var delegate: InCarViewModeDialogListener
+    var delegate: InCarViewModeDialogListener,
+    var selectedViewMode: InCarPackagesViewMode
 ) {
 
     lateinit var binding: DialogInCarViewModeBinding
@@ -28,26 +30,70 @@ class InCarViewModeDialog(
         )
         dialogBuilder.setView(binding.root)
         val alertDialog = dialogBuilder.create()
+        this.binding = binding
+        binding.buttonCancel.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        binding.selectorVillages.setOnClickListener {
+            selectedViewMode = InCarPackagesViewMode.BY_VILLAGE
+            binding.selectorVillages.makeSelected()
+            binding.selectorReceivers.makeUnselected()
+            binding.selectorVendors.makeUnselected()
+            binding.selectorPackages.makeUnselected()
+        }
+
+        binding.selectorPackages.setOnClickListener {
+            selectedViewMode = InCarPackagesViewMode.PACKAGES
+            binding.selectorVillages.makeUnselected()
+            binding.selectorReceivers.makeUnselected()
+            binding.selectorVendors.makeUnselected()
+            binding.selectorPackages.makeSelected()
+        }
+
+        binding.selectorVendors.setOnClickListener {
+            selectedViewMode = InCarPackagesViewMode.BY_CUSTOMER
+            binding.selectorVillages.makeUnselected()
+            binding.selectorReceivers.makeUnselected()
+            binding.selectorVendors.makeSelected()
+            binding.selectorPackages.makeUnselected()
+        }
+
+        binding.selectorReceivers.setOnClickListener {
+            selectedViewMode = InCarPackagesViewMode.BY_RECEIVER
+            binding.selectorVillages.makeUnselected()
+            binding.selectorReceivers.makeSelected()
+            binding.selectorVendors.makeUnselected()
+            binding.selectorPackages.makeUnselected()
+        }
 
 
-//        binding.buttonCancel.setOnClickListener {
-//            alertDialog.dismiss()
-//        }
+        binding.buttonDone.setOnClickListener {
+            alertDialog.dismiss()
+            delegate.onViewModeChanged(selectedViewMode)
+        }
 
-//        binding.buttonDone.setOnClickListener {
-//            if (binding.etNotes.text.toString().isNotEmpty()) {
-//                delegate.addNote(pkg, binding.etNotes.text.toString())
-//                alertDialog.dismiss()
-//            } else {
-//                Helper.showErrorMessage(
-//                    context,
-//                    getStringForFragment(R.string.please_insert_note)
-//                )
-//            }
-//        }
+        handleSelection()
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.setCanceledOnTouchOutside(false)
         alertDialog.show()
+    }
+
+    private fun handleSelection() {
+        when (selectedViewMode) {
+            InCarPackagesViewMode.PACKAGES -> {
+                binding.selectorPackages.makeSelected()
+            }
+            InCarPackagesViewMode.BY_VILLAGE -> {
+                binding.selectorVillages.makeSelected()
+            }
+            InCarPackagesViewMode.BY_CUSTOMER -> {
+                binding.selectorVendors.makeSelected()
+            }
+            InCarPackagesViewMode.BY_RECEIVER -> {
+                binding.selectorReceivers.makeSelected()
+            }
+        }
     }
 
     private fun getStringForFragment(resId: Int): String {

@@ -59,9 +59,9 @@ enum class BarcodeScanType {
     PACKAGE_PICKUP
 }
 
-enum class InCarPackagesViewMode {
-    BY_VILLAGE,
-    BY_CUSTOMER,
-    BY_RECEIVER,
-    UNGROUPED
+enum class InCarPackagesViewMode(val value: String) {
+    PACKAGES("PACKAGES"),
+    BY_VILLAGE("BY_VILLAGE"),
+    BY_CUSTOMER("BY_CUSTOMER"),
+    BY_RECEIVER("BY_RECEIVER")
 }

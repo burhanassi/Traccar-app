@@ -17,7 +17,9 @@ import com.logestechs.driver.utils.InCarPackagesViewMode
 import com.logestechs.driver.utils.LogesTechsFragment
 import com.logestechs.driver.utils.adapters.InCarPackageCellAdapter
 import com.logestechs.driver.utils.adapters.InCarPackageGroupedCellAdapter
+import com.logestechs.driver.utils.dialogs.InCarViewModeDialog
 import com.logestechs.driver.utils.interfaces.DriverPackagesByStatusViewPagerActivityDelegate
+import com.logestechs.driver.utils.interfaces.InCarViewModeDialogListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -25,7 +27,8 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import retrofit2.Response
 
-class InCarPackagesFragment : LogesTechsFragment() {
+class InCarPackagesFragment : LogesTechsFragment(), View.OnClickListener,
+    InCarViewModeDialogListener {
     private var _binding: FragmentInCarPackagesBinding? = null
     private val binding get() = _binding!!
 
@@ -33,7 +36,7 @@ class InCarPackagesFragment : LogesTechsFragment() {
     private var doesUpdateData = true
     private var enableUpdateData = false
 
-    var selectedViewMode: InCarPackagesViewMode = InCarPackagesViewMode.UNGROUPED
+    var selectedViewMode: InCarPackagesViewMode = InCarPackagesViewMode.BY_VILLAGE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,13 +103,11 @@ class InCarPackagesFragment : LogesTechsFragment() {
 
     private fun initListeners() {
         binding.refreshLayoutPackages.setOnRefreshListener {
-            selectedViewMode = if (selectedViewMode == InCarPackagesViewMode.BY_VILLAGE) {
-                InCarPackagesViewMode.UNGROUPED
-            } else {
-                InCarPackagesViewMode.BY_VILLAGE
-            }
             getPackagesBySelectedMode()
         }
+
+        binding.buttonViewMode.setOnClickListener(this)
+        binding.buttonStatusFilter.setOnClickListener(this)
     }
 
     private fun handleNoPackagesLabelVisibility(count: Int) {
@@ -293,5 +294,21 @@ class InCarPackagesFragment : LogesTechsFragment() {
                 super.getContext(), getString(R.string.error_check_internet_connection)
             )
         }
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.button_status_filter -> {
+            }
+
+            R.id.button_view_mode -> {
+                InCarViewModeDialog(requireContext(), this, selectedViewMode).showDialog()
+            }
+        }
+    }
+
+    override fun onViewModeChanged(selectedViewMode: InCarPackagesViewMode) {
+        this.selectedViewMode = selectedViewMode
+        getPackagesBySelectedMode()
     }
 }

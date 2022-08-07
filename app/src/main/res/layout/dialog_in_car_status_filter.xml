@@ -50,14 +50,22 @@
                     android:layout_marginEnd="8dp"
                     android:background="@drawable/ic_close_white" />
 
-                <TextView
-                    style="@style/LogesTechsMedium"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/view_mode"
-                    android:textColor="@color/fontTrackHint" />
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:orientation="horizontal">
+
+                    <com.logestechs.driver.utils.customViews.StatusSelector
+                        android:id="@+id/selector_to_deliver"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:textStatus="@string/in_car_status_to_deliver" />
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -68,19 +76,19 @@
                     android:orientation="horizontal">
 
                     <com.logestechs.driver.utils.customViews.StatusSelector
-                        android:id="@+id/selector_villages"
+                        android:id="@+id/selector_all"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:layout_weight="1"
-                        app:textStatus="@string/view_mode_villages" />
+                        app:textStatus="@string/in_car_status_all" />
 
                     <com.logestechs.driver.utils.customViews.StatusSelector
-                        android:id="@+id/selector_packages"
+                        android:id="@+id/selector_failed"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:textStatus="@string/view_mode_packages" />
+                        app:textStatus="@string/in_car_status_failed" />
 
                 </LinearLayout>
 
@@ -90,36 +98,26 @@
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="12dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="30dp"
                     android:orientation="horizontal">
 
                     <com.logestechs.driver.utils.customViews.StatusSelector
-                        android:id="@+id/selector_vendors"
+                        android:id="@+id/selector_postponed"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:layout_weight="1"
-                        app:textStatus="@string/view_mode_vendors" />
+                        app:textStatus="@string/in_car_status_postponed" />
 
                     <com.logestechs.driver.utils.customViews.StatusSelector
-                        android:id="@+id/selector_receivers"
+                        android:id="@+id/selector_cod"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:textStatus="@string/view_mode_receivers" />
+                        app:textStatus="@string/in_car_status_cod" />
 
                 </LinearLayout>
 
-                <Button
-                    android:id="@+id/button_done"
-                    style="@style/LogesTechsMedium"
-                    android:layout_width="150dp"
-                    android:layout_height="35dp"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/background_logestechs_button"
-                    android:text="@string/button_done"
-                    android:textColor="#fff" />
             </LinearLayout>
 
 
