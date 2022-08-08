@@ -61,4 +61,7 @@
     <string name="view_mode_receivers">Receivers</string>
     <string name="view_mode">View Mode</string>
     <string name="status">Status</string>
+    <string name="insert_barcode_for_pickup">Insert Barcode For Pickup</string>
+    <string name="button_pickup">Pickup</string>
+    <string name="barcode">Barcode</string>
 </resources>

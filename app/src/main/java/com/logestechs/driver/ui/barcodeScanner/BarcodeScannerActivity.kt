@@ -21,6 +21,8 @@ import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.databinding.ActivityBarcodeScannerBinding
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.ScannedBarcodeCellAdapter
+import com.logestechs.driver.utils.dialogs.InsertBarcodeDialog
+import com.logestechs.driver.utils.interfaces.InsertBarcodeDialogListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -29,7 +31,8 @@ import org.json.JSONObject
 import java.io.IOException
 
 
-class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener {
+class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
+    InsertBarcodeDialogListener {
     private lateinit var binding: ActivityBarcodeScannerBinding
 
     private var barcodeDetector: BarcodeDetector? = null
@@ -40,6 +43,9 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener {
     var scannedItemsHashMap: HashMap<String, String> = HashMap()
     var customer: Customer? = null
 
+    private var currentBarcodeRead: String? = null
+    private val confirmTarget = 3
+    private var confirmCounter = 0
 
     private var toneGen1: ToneGenerator? = null
 
@@ -63,6 +69,7 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener {
 
     private fun initListeners() {
         binding.buttonDone.setOnClickListener(this)
+        binding.buttonInsertBarcode.setOnClickListener(this)
     }
 
     private fun initRecycler() {
@@ -142,15 +149,29 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener {
                 val barcodes = detections.detectedItems
                 if (barcodes.size() != 0) {
                     val scannedBarcode = barcodes.valueAt(0).displayValue
-                    if (!scannedItemsHashMap.containsKey(scannedBarcode)) {
-                        scannedItemsHashMap[scannedBarcode] = scannedBarcode
-                        callPickupPackage(scannedBarcode)
-                        toneGen1?.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
-                        vibrate()
+                    if (scannedBarcode != currentBarcodeRead) {
+                        confirmCounter = 0
+                        currentBarcodeRead = scannedBarcode
+                    } else {
+                        confirmCounter++
+                        if (confirmCounter >= confirmTarget) {
+                            currentBarcodeRead = null
+                            confirmCounter = 0
+                            handleDetectedBarcode(scannedBarcode)
+                        }
                     }
                 }
             }
         })
+    }
+
+    private fun handleDetectedBarcode(barcode: String) {
+        if (!scannedItemsHashMap.containsKey(barcode)) {
+            scannedItemsHashMap[barcode] = barcode
+            callPickupPackage(barcode)
+            toneGen1?.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
+            vibrate()
+        }
     }
 
     private fun callPickupPackage(barcode: String) {
@@ -214,7 +235,18 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener {
             R.id.button_done -> {
                 onBackPressed()
             }
+
+            R.id.button_insert_barcode -> {
+                InsertBarcodeDialog(this, this).showDialog()
+            }
         }
 
+    }
+
+    override fun onBarcodeInserted(barcode: String) {
+        if (!scannedItemsHashMap.containsKey(barcode)) {
+            scannedItemsHashMap[barcode] = barcode
+            callPickupPackage(barcode)
+        }
     }
 }

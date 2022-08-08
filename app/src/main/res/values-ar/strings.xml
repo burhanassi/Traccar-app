@@ -62,4 +62,7 @@
     <string name="view_mode_receivers">مستلمون</string>
     <string name="view_mode">طريقة العرض</string>
     <string name="status">الحالة</string>
+    <string name="insert_barcode_for_pickup">إدخال باركود طرد للتحميل</string>
+    <string name="button_pickup">تحميل</string>
+    <string name="barcode">الباركود</string>
 </resources>
