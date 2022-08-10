@@ -26,12 +26,19 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        initData()
         initOnClickListeners()
     }
 
     override fun onResume() {
         super.onResume()
         callGetDashboardInfo()
+    }
+
+    private fun initData() {
+        if (SharedPreferenceWrapper.getFailureReasons() == null) {
+            getFailureReasons()
+        }
     }
 
     private fun initOnClickListeners() {
@@ -166,6 +173,24 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
             Helper.showErrorMessage(
                 getContext(), getString(R.string.error_check_internet_connection)
             )
+        }
+    }
+
+    private fun getFailureReasons() {
+        if (Helper.isInternetAvailable(this)) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.getFailureReasons()
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        val data = response.body()
+                        withContext(Dispatchers.Main) {
+                            SharedPreferenceWrapper.saveFailureReasons(data)
+                        }
+                    }
+                } catch (e: Exception) {
+                    Helper.logException(e, Throwable().stackTraceToString())
+                }
+            }
         }
     }
 }

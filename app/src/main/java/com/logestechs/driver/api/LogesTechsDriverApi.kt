@@ -73,6 +73,8 @@ interface LogesTechsDriverApi {
         @Query("search") search: String? = null
     ): Response<GetInCarPackagesUngroupedResponse?>?
 
+    @GET("${AppConstants.PATH}api/driver/all-failure-reasons")
+    suspend fun getFailureReasons(): Response<GetFailureReasonsResponse?>?
 
 }
 

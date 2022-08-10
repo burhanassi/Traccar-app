@@ -1,6 +1,7 @@
 package com.logestechs.driver.utils
 
 import com.google.gson.Gson
+import com.logestechs.driver.api.responses.GetFailureReasonsResponse
 import com.logestechs.driver.api.responses.LoginResponse
 import com.logestechs.driver.utils.LogesTechsApp.Companion.prefs
 
@@ -36,6 +37,28 @@ class SharedPreferenceWrapper {
         fun getUUID(): String {
             return prefs.pull(SharedPrefsKeys.UUID_KEY.value, "")
         }
+
+        //Failure Reasons
+        fun saveFailureReasons(getFailureReasonsResponse: GetFailureReasonsResponse?) {
+            if (getFailureReasonsResponse != null) {
+                val json = Gson().toJson(getFailureReasonsResponse)
+                prefs.push(SharedPrefsKeys.FAILURE_REASONS_KEY.value, json)
+            }
+        }
+
+        fun getFailureReasons(): GetFailureReasonsResponse? {
+            val json = prefs.pull(SharedPrefsKeys.FAILURE_REASONS_KEY.value, "")
+
+            return if (json.isEmpty()) {
+                return null
+            } else {
+                Gson().fromJson(json, GetFailureReasonsResponse::class.java)
+            }
+        }
+
+        fun deleteFailureReasons() {
+            prefs.push(SharedPrefsKeys.FAILURE_REASONS_KEY.value, "")
+        }
     }
 }
 
@@ -43,4 +66,5 @@ class SharedPreferenceWrapper {
 private enum class SharedPrefsKeys(val value: String) {
     LOGIN_RESPONSE("login_response"),
     UUID_KEY("uuid_key"),
+    FAILURE_REASONS_KEY("failure_reasons_key")
 }
