@@ -67,4 +67,5 @@
     <string name="barcode">الباركود</string>
     <string name="title_return">إرجاع</string>
     <string name="title_please_select_reason">الرجاء إختيار او توضيح السبب</string>
+    <string name="receiver_paid_cost">المستلم دفع الأجور</string>
 </resources>

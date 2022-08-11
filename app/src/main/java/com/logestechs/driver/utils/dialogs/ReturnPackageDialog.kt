@@ -6,17 +6,21 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.logestechs.driver.R
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.DialogReturnPackageBinding
 import com.logestechs.driver.utils.LogesTechsApp
+import com.logestechs.driver.utils.SharedPreferenceWrapper
+import com.logestechs.driver.utils.adapters.RadioGroupListAdapter
+import com.logestechs.driver.utils.interfaces.RadioGroupListListener
 import com.logestechs.driver.utils.interfaces.ReturnPackageDialogListener
 
 class ReturnPackageDialog(
     var context: Context,
     var listener: ReturnPackageDialogListener?,
     var pkg: Package?
-) {
+) : RadioGroupListListener {
 
     lateinit var binding: DialogReturnPackageBinding
     lateinit var alertDialog: AlertDialog
@@ -40,6 +44,14 @@ class ReturnPackageDialog(
             listener?.onPackageReturned(pkg)
         }
 
+        binding.rvReasons.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = RadioGroupListAdapter(
+                SharedPreferenceWrapper.getFailureReasons()?.returnShipment,
+                this@ReturnPackageDialog
+            )
+        }
+
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.setCanceledOnTouchOutside(false)
         alertDialog.show()
@@ -47,5 +59,9 @@ class ReturnPackageDialog(
 
     private fun getStringForFragment(resId: Int): String {
         return LogesTechsApp.instance.resources.getString(resId)
+    }
+
+    override fun onItemSelected(title: String?) {
+        binding.etReason.setText(title)
     }
 }
