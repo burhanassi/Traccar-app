@@ -65,4 +65,6 @@
     <string name="insert_barcode_for_pickup">إدخال باركود طرد للتحميل</string>
     <string name="button_pickup">تحميل</string>
     <string name="barcode">الباركود</string>
+    <string name="title_return">إرجاع</string>
+    <string name="title_please_select_reason">الرجاء إختيار او توضيح السبب</string>
 </resources>

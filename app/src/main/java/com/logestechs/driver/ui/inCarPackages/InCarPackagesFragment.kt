@@ -10,6 +10,7 @@ import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.responses.GetInCarPackagesGroupedResponse
 import com.logestechs.driver.data.model.GroupedPackages
+import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.FragmentInCarPackagesBinding
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.InCarPackageCellAdapter
@@ -17,6 +18,7 @@ import com.logestechs.driver.utils.adapters.InCarPackageGroupedCellAdapter
 import com.logestechs.driver.utils.dialogs.InCarStatusFilterDialog
 import com.logestechs.driver.utils.dialogs.InCarViewModeDialog
 import com.logestechs.driver.utils.interfaces.DriverPackagesByStatusViewPagerActivityDelegate
+import com.logestechs.driver.utils.interfaces.InCarPackagesCardListener
 import com.logestechs.driver.utils.interfaces.InCarStatusFilterDialogListener
 import com.logestechs.driver.utils.interfaces.InCarViewModeDialogListener
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +29,7 @@ import org.json.JSONObject
 import retrofit2.Response
 
 class InCarPackagesFragment : LogesTechsFragment(), View.OnClickListener,
-    InCarViewModeDialogListener, InCarStatusFilterDialogListener {
+    InCarViewModeDialogListener, InCarStatusFilterDialogListener, InCarPackagesCardListener {
     private var _binding: FragmentInCarPackagesBinding? = null
     private val binding get() = _binding!!
 
@@ -98,7 +100,7 @@ class InCarPackagesFragment : LogesTechsFragment(), View.OnClickListener,
         binding.rvPackages.adapter = InCarPackageGroupedCellAdapter(
             ArrayList(),
             super.getContext(),
-            null
+            this
         )
         binding.rvPackages.layoutManager = layoutManager
     }
@@ -147,7 +149,7 @@ class InCarPackagesFragment : LogesTechsFragment(), View.OnClickListener,
                 binding.rvPackages.adapter = InCarPackageGroupedCellAdapter(
                     ArrayList(),
                     super.getContext(),
-                    null
+                    this
                 )
                 binding.rvPackages.layoutManager = layoutManager
             }
@@ -160,7 +162,7 @@ class InCarPackagesFragment : LogesTechsFragment(), View.OnClickListener,
                 binding.rvPackages.adapter = InCarPackageCellAdapter(
                     ArrayList(),
                     super.getContext(),
-                    null,
+                    this,
                     null,
                     isGrouped = false
                 )
@@ -324,5 +326,9 @@ class InCarPackagesFragment : LogesTechsFragment(), View.OnClickListener,
         binding.textSelectedStatus.text =
             "(${Helper.getLocalizedInCarStatus(super.getContext(), selectedStatus)})"
         getPackagesBySelectedMode()
+    }
+
+    override fun onPackageReturned(pkg: Package?) {
+        Helper.showErrorMessage(super.getContext(), "" + pkg?.id)
     }
 }

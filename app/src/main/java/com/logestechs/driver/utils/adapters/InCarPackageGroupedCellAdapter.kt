@@ -13,12 +13,12 @@ import com.logestechs.driver.data.model.GroupedPackages
 import com.logestechs.driver.databinding.ItemInCarPackageGroupedCellBinding
 import com.logestechs.driver.utils.InCarPackagesViewMode
 import com.logestechs.driver.utils.customViews.PeekingLinearLayoutManager
-import com.logestechs.driver.utils.interfaces.AcceptedPackagesCardListener
+import com.logestechs.driver.utils.interfaces.InCarPackagesCardListener
 
 class InCarPackageGroupedCellAdapter(
     var packagesList: ArrayList<GroupedPackages?>,
     var context: Context?,
-    var listener: AcceptedPackagesCardListener?
+    var listener: InCarPackagesCardListener?
 ) :
     RecyclerView.Adapter<InCarPackageGroupedCellAdapter.InCarGroupedPackageViewHolder>() {
 

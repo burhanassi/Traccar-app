@@ -12,22 +12,25 @@ import com.logestechs.driver.R
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemInCarPackageCellBinding
 import com.logestechs.driver.utils.Helper.Companion.format
-import com.logestechs.driver.utils.interfaces.AcceptedPackagesCardListener
+import com.logestechs.driver.utils.dialogs.ReturnPackageDialog
+import com.logestechs.driver.utils.interfaces.InCarPackagesCardListener
+import com.logestechs.driver.utils.interfaces.ReturnPackageDialogListener
 
 
 class InCarPackageCellAdapter(
     var packagesList: ArrayList<Package?>,
     var context: Context?,
-    var listener: AcceptedPackagesCardListener?,
+    var listener: InCarPackagesCardListener?,
     var parentIndex: Int?,
     var isGrouped: Boolean = true
 ) :
-    RecyclerView.Adapter<InCarPackageCellAdapter.AcceptedPackageCustomerCellViewHolder>() {
+    RecyclerView.Adapter<InCarPackageCellAdapter.InCarPackageCellViewHolder>(),
+    ReturnPackageDialogListener {
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
         i: Int
-    ): AcceptedPackageCustomerCellViewHolder {
+    ): InCarPackageCellViewHolder {
         val inflater =
             ItemInCarPackageCellBinding.inflate(
                 LayoutInflater.from(viewGroup.context),
@@ -41,11 +44,11 @@ class InCarPackageCellAdapter(
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
         }
-        return AcceptedPackageCustomerCellViewHolder(inflater, viewGroup, this)
+        return InCarPackageCellViewHolder(inflater, viewGroup, this)
     }
 
     override fun onBindViewHolder(
-        InCarPackageViewHolder: AcceptedPackageCustomerCellViewHolder,
+        InCarPackageViewHolder: InCarPackageCellViewHolder,
         position: Int
     ) {
         val pkg: Package? = packagesList[position]
@@ -68,7 +71,7 @@ class InCarPackageCellAdapter(
         this.notifyDataSetChanged()
     }
 
-    class AcceptedPackageCustomerCellViewHolder(
+    class InCarPackageCellViewHolder(
         private var binding: ItemInCarPackageCellBinding,
         private var parent: ViewGroup,
         private var mAdapter: InCarPackageCellAdapter
@@ -104,10 +107,14 @@ class InCarPackageCellAdapter(
                 popup.inflate(R.menu.in_car_package_context_menu)
                 popup.setOnMenuItemClickListener { item: MenuItem? ->
 
-                    when (item?.itemId) {
-                        R.id.action_add_note -> {
-//                            mAdapter.listener?.scanForPickup(customer)
+                    if (mAdapter.context != null) {
+                        when (item?.itemId) {
+                            R.id.action_return_package -> {
+                                ReturnPackageDialog(mAdapter.context!!, mAdapter, pkg).showDialog()
+                            }
                         }
+                    } else {
+
                     }
                     true
                 }
@@ -115,5 +122,9 @@ class InCarPackageCellAdapter(
                 popup.show()
             }
         }
+    }
+
+    override fun onPackageReturned(pkg: Package?) {
+        listener?.onPackageReturned(pkg)
     }
 }
