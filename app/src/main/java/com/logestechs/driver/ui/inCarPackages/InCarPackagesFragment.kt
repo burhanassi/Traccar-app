@@ -8,9 +8,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
+import com.logestechs.driver.api.requests.ReturnPackageRequestBody
 import com.logestechs.driver.api.responses.GetInCarPackagesGroupedResponse
 import com.logestechs.driver.data.model.GroupedPackages
-import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.FragmentInCarPackagesBinding
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.InCarPackageCellAdapter
@@ -304,6 +304,66 @@ class InCarPackagesFragment : LogesTechsFragment(), View.OnClickListener,
         }
     }
 
+    private fun callReturnPackage(packageId: Long?, body: ReturnPackageRequestBody?) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.returnPackage(
+                        packageId,
+                        body
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            Helper.showSuccessMessage(
+                                super.getContext(),
+                                getString(R.string.success_operation_completed)
+                            )
+                            activityDelegate?.updateCountValues()
+                            getPackagesBySelectedMode()
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_status_filter -> {
@@ -328,7 +388,7 @@ class InCarPackagesFragment : LogesTechsFragment(), View.OnClickListener,
         getPackagesBySelectedMode()
     }
 
-    override fun onPackageReturned(pkg: Package?) {
-        Helper.showErrorMessage(super.getContext(), "" + pkg?.id)
+    override fun onPackageReturned(body: ReturnPackageRequestBody?) {
+        callReturnPackage(body?.packageId, body)
     }
 }

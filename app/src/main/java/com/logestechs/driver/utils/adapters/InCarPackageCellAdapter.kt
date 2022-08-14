@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
+import com.logestechs.driver.api.requests.ReturnPackageRequestBody
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemInCarPackageCellBinding
 import com.logestechs.driver.utils.Helper.Companion.format
@@ -124,7 +125,7 @@ class InCarPackageCellAdapter(
         }
     }
 
-    override fun onPackageReturned(pkg: Package?) {
-        listener?.onPackageReturned(pkg)
+    override fun onPackageReturned(returnPackageRequestBody: ReturnPackageRequestBody?) {
+        listener?.onPackageReturned(returnPackageRequestBody)
     }
 }

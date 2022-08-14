@@ -43,6 +43,14 @@ class RadioGroupListAdapter(
         }
     }
 
+    fun getSelectedItem(): String? {
+        return if (selectedPosition != null) {
+            list?.entries?.elementAt(selectedPosition!!)?.key
+        } else {
+            null
+        }
+    }
+
     class RadioGroupListViewHolder(
         private val binding: ItemRadioGroupListBinding,
         private var parent: ViewGroup,

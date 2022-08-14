@@ -1,7 +1,7 @@
 package com.logestechs.driver.utils.interfaces
 
-import com.logestechs.driver.data.model.Package
+import com.logestechs.driver.api.requests.ReturnPackageRequestBody
 
 interface InCarPackagesCardListener {
-    fun onPackageReturned(pkg: Package?)
+    fun onPackageReturned(body: ReturnPackageRequestBody?)
 }

@@ -67,4 +67,5 @@
     <string name="title_return">Return</string>
     <string name="title_please_select_reason">Please select a reason</string>
     <string name="receiver_paid_cost">Receiver paid costs</string>
+    <string name="error_insert_message_text">Please insert message text</string>
 </resources>

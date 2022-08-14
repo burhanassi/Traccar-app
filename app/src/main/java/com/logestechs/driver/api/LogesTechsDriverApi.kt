@@ -2,6 +2,7 @@ package com.logestechs.driver.api
 
 import com.logestechs.driver.api.requests.LoginRequestBody
 import com.logestechs.driver.api.requests.RejectPackageRequestBody
+import com.logestechs.driver.api.requests.ReturnPackageRequestBody
 import com.logestechs.driver.api.responses.*
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.utils.AppConstants
@@ -75,6 +76,12 @@ interface LogesTechsDriverApi {
 
     @GET("${AppConstants.PATH}api/driver/all-failure-reasons")
     suspend fun getFailureReasons(): Response<GetFailureReasonsResponse?>?
+
+    @PUT("${AppConstants.PATH}api/driver/packages/{packageId}/return")
+    suspend fun returnPackage(
+        @Path("packageId") long: Long?,
+        @Body body: ReturnPackageRequestBody?
+    ): Response<ResponseBody>?
 
 }
 
