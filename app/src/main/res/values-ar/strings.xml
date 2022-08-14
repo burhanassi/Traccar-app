@@ -48,6 +48,7 @@
     <string name="action_return_package">إرجاع</string>
     <string name="action_postpone_package">تأجيل</string>
     <string name="action_fail_delivery">فشل في التوصيل</string>
+    <string name="title_fail_delivery">فشل في التوصيل</string>
     <string name="change_package_type">تعديل نوع الطرد</string>
     <string name="change_package_cod">تعديل قيمة التحصيل</string>
     <string name="add_note">إضافة ملاحظة</string>

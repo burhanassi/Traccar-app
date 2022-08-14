@@ -9,11 +9,14 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
+import com.logestechs.driver.api.requests.FailDeliveryRequestBody
 import com.logestechs.driver.api.requests.ReturnPackageRequestBody
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemInCarPackageCellBinding
 import com.logestechs.driver.utils.Helper.Companion.format
+import com.logestechs.driver.utils.dialogs.FailDeliveryDialog
 import com.logestechs.driver.utils.dialogs.ReturnPackageDialog
+import com.logestechs.driver.utils.interfaces.FailDeliveryDialogListener
 import com.logestechs.driver.utils.interfaces.InCarPackagesCardListener
 import com.logestechs.driver.utils.interfaces.ReturnPackageDialogListener
 
@@ -26,7 +29,8 @@ class InCarPackageCellAdapter(
     var isGrouped: Boolean = true
 ) :
     RecyclerView.Adapter<InCarPackageCellAdapter.InCarPackageCellViewHolder>(),
-    ReturnPackageDialogListener {
+    ReturnPackageDialogListener,
+    FailDeliveryDialogListener {
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
@@ -113,6 +117,10 @@ class InCarPackageCellAdapter(
                             R.id.action_return_package -> {
                                 ReturnPackageDialog(mAdapter.context!!, mAdapter, pkg).showDialog()
                             }
+
+                            R.id.action_fail_delivery -> {
+                                FailDeliveryDialog(mAdapter.context!!, mAdapter, pkg).showDialog()
+                            }
                         }
                     } else {
 
@@ -127,5 +135,9 @@ class InCarPackageCellAdapter(
 
     override fun onPackageReturned(returnPackageRequestBody: ReturnPackageRequestBody?) {
         listener?.onPackageReturned(returnPackageRequestBody)
+    }
+
+    override fun onFailDelivery(body: FailDeliveryRequestBody?) {
+        listener?.onFailDelivery(body)
     }
 }

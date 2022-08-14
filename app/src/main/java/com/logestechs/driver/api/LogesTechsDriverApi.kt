@@ -1,5 +1,6 @@
 package com.logestechs.driver.api
 
+import com.logestechs.driver.api.requests.FailDeliveryRequestBody
 import com.logestechs.driver.api.requests.LoginRequestBody
 import com.logestechs.driver.api.requests.RejectPackageRequestBody
 import com.logestechs.driver.api.requests.ReturnPackageRequestBody
@@ -83,5 +84,9 @@ interface LogesTechsDriverApi {
         @Body body: ReturnPackageRequestBody?
     ): Response<ResponseBody>?
 
+    @PUT("${AppConstants.PATH}api/driver/packages/{packageId}/fail")
+    suspend fun failDelivery(
+        @Path("packageId") long: Long?,
+        @Body body: FailDeliveryRequestBody?
+    ): Response<ResponseBody>?
 }
-

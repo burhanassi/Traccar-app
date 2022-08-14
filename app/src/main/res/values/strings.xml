@@ -47,6 +47,7 @@
     <string name="action_return_package">Return</string>
     <string name="action_postpone_package">Postpone</string>
     <string name="action_fail_delivery">Fail Delivery</string>
+    <string name="title_fail_delivery">Fail Delivery</string>
     <string name="change_package_type">Change Package Type</string>
     <string name="change_package_cod">Change Package COD</string>
     <string name="add_note">Add Note</string>
