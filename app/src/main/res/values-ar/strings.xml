@@ -72,4 +72,8 @@
     <string name="error_insert_message_text">الرجاء إدخال نص الرسالة</string>
     <string name="title_postpone">تأجيل</string>
     <string name="error_select_postpone_date">اختر تاريخ التأجيل</string>
+    <string name="package_type_cod">تحصيل عند الاستلام</string>
+    <string name="package_type_regular">مدفوع مسبقا</string>
+    <string name="package_type_swap">تبديل</string>
+    <string name="package_type_bring">إحضار</string>
 </resources>

@@ -92,4 +92,10 @@ interface LogesTechsDriverApi {
         @Path("packageId") long: Long?,
         @Body body: PostponePackageRequestBody?
     ): Response<ResponseBody>?
+
+    @PUT("${AppConstants.PATH}api/driver/packages/{packageId}/shipment-type")
+    suspend fun changePackageType(
+        @Path("packageId") long: Long?,
+        @Body body: ChangePackageTypeRequestBody?
+    ): Response<ResponseBody>?
 }

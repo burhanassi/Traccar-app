@@ -9,7 +9,7 @@ import com.logestechs.driver.utils.interfaces.RadioGroupListListener
 
 
 class RadioGroupListAdapter(
-    var list: HashMap<String, String>?,
+    var list: LinkedHashMap<String, String>?,
     var listener: RadioGroupListListener?
 ) :
     RecyclerView.Adapter<RadioGroupListAdapter.RadioGroupListViewHolder>() {
@@ -49,6 +49,11 @@ class RadioGroupListAdapter(
         } else {
             null
         }
+    }
+
+    fun selectItem(position: Int) {
+        selectedPosition = position
+        notifyItemChanged(position)
     }
 
     class RadioGroupListViewHolder(

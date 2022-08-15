@@ -7,10 +7,10 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class GetFailureReasonsResponse(
     @SerializedName("POSTPONE")
-    var postpone: HashMap<String, String>?,
+    var postpone: LinkedHashMap<String, String>?,
     @SerializedName("RETURN")
-    var returnShipment: HashMap<String, String>?,
+    var returnShipment: LinkedHashMap<String, String>?,
     @SerializedName("FAIL")
-    var fail: HashMap<String, String>?
+    var fail: LinkedHashMap<String, String>?
 ) : Parcelable
 

@@ -227,5 +227,18 @@ class Helper {
                 }
             }
         }
+
+        fun getPackageTypes(): LinkedHashMap<String, String> {
+            var map = LinkedHashMap<String, String>()
+            map[PackageType.COD.name] =
+                LogesTechsApp.instance.resources.getString(R.string.package_type_cod)
+            map[PackageType.REGULAR.name] =
+                LogesTechsApp.instance.resources.getString(R.string.package_type_regular)
+            map[PackageType.SWAP.name] =
+                LogesTechsApp.instance.resources.getString(R.string.package_type_swap)
+            map[PackageType.BRING.name] =
+                LogesTechsApp.instance.resources.getString(R.string.package_type_bring)
+            return map
+        }
     }
 }
