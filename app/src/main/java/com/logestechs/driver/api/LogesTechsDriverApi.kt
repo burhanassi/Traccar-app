@@ -98,4 +98,10 @@ interface LogesTechsDriverApi {
         @Path("packageId") long: Long?,
         @Body body: ChangePackageTypeRequestBody?
     ): Response<ResponseBody>?
+
+    @PUT("${AppConstants.PATH}api/driver/packages/{packageId}/notes")
+    suspend fun addPackageNote(
+        @Path("packageId") long: Long?,
+        @Body body: AddNoteRequestBody?
+    ): Response<ResponseBody>?
 }

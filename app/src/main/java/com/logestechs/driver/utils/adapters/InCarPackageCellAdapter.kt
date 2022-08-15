@@ -9,17 +9,11 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
-import com.logestechs.driver.api.requests.ChangePackageTypeRequestBody
-import com.logestechs.driver.api.requests.FailDeliveryRequestBody
-import com.logestechs.driver.api.requests.PostponePackageRequestBody
-import com.logestechs.driver.api.requests.ReturnPackageRequestBody
+import com.logestechs.driver.api.requests.*
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemInCarPackageCellBinding
 import com.logestechs.driver.utils.Helper.Companion.format
-import com.logestechs.driver.utils.dialogs.ChangePackageTypeDialog
-import com.logestechs.driver.utils.dialogs.FailDeliveryDialog
-import com.logestechs.driver.utils.dialogs.PostponePackageDialog
-import com.logestechs.driver.utils.dialogs.ReturnPackageDialog
+import com.logestechs.driver.utils.dialogs.*
 import com.logestechs.driver.utils.interfaces.*
 
 
@@ -34,7 +28,8 @@ class InCarPackageCellAdapter(
     ReturnPackageDialogListener,
     FailDeliveryDialogListener,
     PostponePackageDialogListener,
-    ChangePackageTypeDialogListener {
+    ChangePackageTypeDialogListener,
+    AddPackageNoteDialogListener {
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
@@ -140,6 +135,10 @@ class InCarPackageCellAdapter(
                             R.id.action_fail_delivery -> {
                                 FailDeliveryDialog(mAdapter.context!!, mAdapter, pkg).showDialog()
                             }
+
+                            R.id.action_add_note -> {
+                                AddPackageNoteDialog(mAdapter.context!!, mAdapter, pkg).showDialog()
+                            }
                         }
                     } else {
 
@@ -166,5 +165,9 @@ class InCarPackageCellAdapter(
 
     override fun onPackageTypeChanged(changePackageTypeRequestBody: ChangePackageTypeRequestBody) {
         listener?.onPackageTypeChanged(changePackageTypeRequestBody)
+    }
+
+    override fun onPackageNoteAdded(addNoteRequestBody: AddNoteRequestBody?) {
+        listener?.onPackageNoteAdded(addNoteRequestBody)
     }
 }
