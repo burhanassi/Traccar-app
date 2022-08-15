@@ -10,14 +10,17 @@ import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.api.requests.FailDeliveryRequestBody
+import com.logestechs.driver.api.requests.PostponePackageRequestBody
 import com.logestechs.driver.api.requests.ReturnPackageRequestBody
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemInCarPackageCellBinding
 import com.logestechs.driver.utils.Helper.Companion.format
 import com.logestechs.driver.utils.dialogs.FailDeliveryDialog
+import com.logestechs.driver.utils.dialogs.PostponePackageDialog
 import com.logestechs.driver.utils.dialogs.ReturnPackageDialog
 import com.logestechs.driver.utils.interfaces.FailDeliveryDialogListener
 import com.logestechs.driver.utils.interfaces.InCarPackagesCardListener
+import com.logestechs.driver.utils.interfaces.PostponePackageDialogListener
 import com.logestechs.driver.utils.interfaces.ReturnPackageDialogListener
 
 
@@ -30,7 +33,8 @@ class InCarPackageCellAdapter(
 ) :
     RecyclerView.Adapter<InCarPackageCellAdapter.InCarPackageCellViewHolder>(),
     ReturnPackageDialogListener,
-    FailDeliveryDialogListener {
+    FailDeliveryDialogListener,
+    PostponePackageDialogListener {
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
@@ -118,6 +122,14 @@ class InCarPackageCellAdapter(
                                 ReturnPackageDialog(mAdapter.context!!, mAdapter, pkg).showDialog()
                             }
 
+                            R.id.action_postpone_package -> {
+                                PostponePackageDialog(
+                                    mAdapter.context!!,
+                                    mAdapter,
+                                    pkg
+                                ).showDialog()
+                            }
+
                             R.id.action_fail_delivery -> {
                                 FailDeliveryDialog(mAdapter.context!!, mAdapter, pkg).showDialog()
                             }
@@ -139,5 +151,9 @@ class InCarPackageCellAdapter(
 
     override fun onFailDelivery(body: FailDeliveryRequestBody?) {
         listener?.onFailDelivery(body)
+    }
+
+    override fun onPackagePostponed(postponePackageRequestBody: PostponePackageRequestBody) {
+        listener?.onPackagePostponed(postponePackageRequestBody)
     }
 }

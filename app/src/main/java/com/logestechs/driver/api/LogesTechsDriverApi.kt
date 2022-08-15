@@ -1,9 +1,6 @@
 package com.logestechs.driver.api
 
-import com.logestechs.driver.api.requests.FailDeliveryRequestBody
-import com.logestechs.driver.api.requests.LoginRequestBody
-import com.logestechs.driver.api.requests.RejectPackageRequestBody
-import com.logestechs.driver.api.requests.ReturnPackageRequestBody
+import com.logestechs.driver.api.requests.*
 import com.logestechs.driver.api.responses.*
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.utils.AppConstants
@@ -88,5 +85,11 @@ interface LogesTechsDriverApi {
     suspend fun failDelivery(
         @Path("packageId") long: Long?,
         @Body body: FailDeliveryRequestBody?
+    ): Response<ResponseBody>?
+
+    @PUT("${AppConstants.PATH}api/driver/packages/{packageId}/postpone")
+    suspend fun postponePackage(
+        @Path("packageId") long: Long?,
+        @Body body: PostponePackageRequestBody?
     ): Response<ResponseBody>?
 }

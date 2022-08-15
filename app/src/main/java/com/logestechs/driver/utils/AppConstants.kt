@@ -39,6 +39,17 @@ enum class IntentAnimation(val value: String) {
     LTR("left-to-right")
 }
 
+enum class DateFormats(val value: String) {
+    DEFAULT_FORMAT("yyyy-MM-dd"),
+    SERVER_FORMAT("yyyy-MM-dd'T'HH:mm:ss"),
+    TRACK_NODE_DATE_FORMAT("yy-MM-dd"),
+    TRACK_NODE_TIME_FORMAT("hh:mm aa"),
+    NOTIFICATION_LIST_ITEM_FORMAT("dd-MM-yyyy, hh:mm aa"),
+    NOTIFICATION_DAY_FORMAT("EEEE"),
+    DATE_FILTER_FORMAT("yyyy/MM/dd")
+
+}
+
 enum class AppCurrency(val value: String) {
     NIS("₪"),
     JOD("JOD"),
