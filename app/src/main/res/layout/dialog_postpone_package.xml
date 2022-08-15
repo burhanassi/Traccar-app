@@ -55,11 +55,12 @@
                         tools:ignore="UseCompoundDrawables">
 
                         <ImageView
+                            android:id="@+id/image_view_calendar"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_marginStart="10dp"
                             android:layout_marginTop="8dp"
-                            android:background="@drawable/ic_calendar_gray"
+                            android:src="@drawable/ic_calendar_gray"
                             tools:ignore="ContentDescription" />
 
                         <TextView

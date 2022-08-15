@@ -52,15 +52,28 @@ class PostponePackageDialog(
 
         binding.buttonDone.setOnClickListener {
             if (binding.etReason.text.toString().isNotEmpty()) {
-                alertDialog.dismiss()
-                listener?.onPackagePostponed(
-                    PostponePackageRequestBody(
-                        binding.etReason.text.toString(),
-                        (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
-                        binding.textDate.text.toString(),
-                        pkg?.id
+                if (binding.textDate.text.toString().isNotEmpty()) {
+                    alertDialog.dismiss()
+                    listener?.onPackagePostponed(
+                        PostponePackageRequestBody(
+                            binding.etReason.text.toString(),
+                            (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
+                            binding.textDate.text.toString(),
+                            pkg?.id
+                        )
                     )
-                )
+                } else {
+                    Helper.showErrorMessage(
+                        context,
+                        getStringForFragment(R.string.error_select_postpone_date)
+                    )
+                    Helper.changeImageStrokeColor(
+                        binding.imageViewCalendar,
+                        R.color.red_flamingo,
+                        context
+                    )
+                }
+
             } else {
                 Helper.showErrorMessage(
                     context,
@@ -80,6 +93,11 @@ class PostponePackageDialog(
                         binding.textDate.text =
                             myCalendar.time.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
                                 .format(DateTimeFormatter.ofPattern(DateFormats.DEFAULT_FORMAT.value))
+                        Helper.changeImageStrokeColor(
+                            binding.imageViewCalendar,
+                            R.color.fontTrackHint,
+                            context
+                        )
                     }
                 }
 

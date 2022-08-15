@@ -71,4 +71,5 @@
     <string name="receiver_paid_cost">المستلم دفع الأجور</string>
     <string name="error_insert_message_text">الرجاء إدخال نص الرسالة</string>
     <string name="title_postpone">تأجيل</string>
+    <string name="error_select_postpone_date">اختر تاريخ التأجيل</string>
 </resources>

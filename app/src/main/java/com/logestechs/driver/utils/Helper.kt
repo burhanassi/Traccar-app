@@ -11,8 +11,11 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import com.logestechs.driver.R
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -98,6 +101,13 @@ class Helper {
                 window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                 window.statusBarColor = colorID
             }
+        }
+
+        fun changeImageStrokeColor(imageView: ImageView?, color: Int, context: Context?) {
+            DrawableCompat.setTint(
+                DrawableCompat.wrap(imageView?.drawable!!),
+                ContextCompat.getColor(context!!, color)
+            )
         }
 
         fun validatePassword(password: String): Boolean {
