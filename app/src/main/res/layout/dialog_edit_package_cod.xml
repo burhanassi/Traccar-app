@@ -39,9 +39,9 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="9dp"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:paddingBottom="10dp">
 
                     <include
                         android:id="@+id/item_package_barcode"
@@ -49,7 +49,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:layout_marginTop="17dp"
+                        android:layout_marginTop="10dp"
                         android:layout_marginEnd="8dp"
                         app:itemSrc="@{@drawable/ic_package_gray}" />
 

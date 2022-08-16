@@ -58,13 +58,18 @@ class ChangeCodDialog(
         }
 
         binding.buttonDone.setOnClickListener {
-            alertDialog.dismiss()
-            listener?.onCodChanged(
-                CodChangeRequestBody(
-                    pkg?.id,
-                    binding.etCodValue.editText.text.toString().toDouble()
+            if (binding.etCodValue.editText.text.toString().isNotEmpty()) {
+                alertDialog.dismiss()
+                binding.etCodValue.makeValid()
+                listener?.onCodChanged(
+                    CodChangeRequestBody(
+                        pkg?.id,
+                        binding.etCodValue.editText.text.toString().toDouble()
+                    )
                 )
-            )
+            } else {
+                binding.etCodValue.makeInvalid()
+            }
         }
 
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
