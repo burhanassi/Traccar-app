@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.databinding.DataBindingUtil
 import com.logestechs.driver.R
 import com.logestechs.driver.api.requests.CodChangeRequestBody
@@ -72,9 +73,20 @@ class ChangeCodDialog(
             }
         }
 
+        binding.root.setOnClickListener {
+            clearFocus()
+        }
+
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.setCanceledOnTouchOutside(false)
         alertDialog.show()
+    }
+
+    private fun clearFocus() {
+        val imm =
+            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+        binding.etCodValue.clearFocus()
     }
 
     private fun getStringForFragment(resId: Int): String {
