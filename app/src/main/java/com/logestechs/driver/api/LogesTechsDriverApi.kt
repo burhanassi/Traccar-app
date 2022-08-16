@@ -104,4 +104,9 @@ interface LogesTechsDriverApi {
         @Path("packageId") long: Long?,
         @Body body: AddNoteRequestBody?
     ): Response<ResponseBody>?
+
+    @POST("${AppConstants.PATH}api/driver/cod/request/new")
+    suspend fun codChangeRequest(
+        @Body body: CodChangeRequestBody?
+    ): Response<ResponseBody>?
 }

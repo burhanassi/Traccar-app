@@ -76,4 +76,6 @@
     <string name="package_type_regular">مدفوع مسبقا</string>
     <string name="package_type_swap">تبديل</string>
     <string name="package_type_bring">إحضار</string>
+    <string name="title_change_cod">تعديل قيمة التحصيل</string>
+    <string name="button_cancel">إلغاء</string>
 </resources>

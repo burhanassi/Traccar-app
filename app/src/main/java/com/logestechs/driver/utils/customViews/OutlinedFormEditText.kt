@@ -3,6 +3,7 @@ package com.logestechs.driver.utils.customViews
 import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build
+import android.text.InputType
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -44,6 +45,9 @@ class OutlinedFormEditText : RelativeLayout {
     @StyleableRes
     val isDropdown = 2
 
+    @StyleableRes
+    val isNumeric = 3
+
     lateinit var editText: EditText
     lateinit var textView: TextView
     lateinit var formButton: LinearLayout
@@ -55,7 +59,8 @@ class OutlinedFormEditText : RelativeLayout {
     private fun init(attrs: AttributeSet?) {
         LayoutInflater.from(context).inflate(R.layout.view_outlined_form_edit_text, this, true)
 
-        val sets = intArrayOf(R.attr.hintText, R.attr.imageStart, R.attr.isDropdown)
+        val sets =
+            intArrayOf(R.attr.hintText, R.attr.imageStart, R.attr.isDropdown, R.attr.isNumeric)
         val typedArray = context.obtainStyledAttributes(attrs, sets)
 
         editText = edit_text
@@ -78,6 +83,10 @@ class OutlinedFormEditText : RelativeLayout {
         }
 
         text_view.text = typedArray.getText(textHint)?.toString()
+
+        if (typedArray.getBoolean(isNumeric, false)) {
+            editText.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+        }
 
         typedArray.recycle()
 

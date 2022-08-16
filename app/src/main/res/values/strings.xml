@@ -75,4 +75,6 @@
     <string name="package_type_regular">Prepaid</string>
     <string name="package_type_swap">Swap</string>
     <string name="package_type_bring">Bring</string>
+    <string name="title_change_cod">Change COD</string>
+    <string name="button_cancel">Cancel</string>
 </resources>

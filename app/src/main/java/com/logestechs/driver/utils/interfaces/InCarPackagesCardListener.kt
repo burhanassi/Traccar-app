@@ -8,4 +8,5 @@ interface InCarPackagesCardListener {
     fun onPackagePostponed(body: PostponePackageRequestBody?)
     fun onPackageTypeChanged(body: ChangePackageTypeRequestBody?)
     fun onPackageNoteAdded(body: AddNoteRequestBody?)
+    fun onCodChanged(body: CodChangeRequestBody?)
 }

@@ -19,6 +19,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import com.logestechs.driver.R
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -55,6 +56,15 @@ class Helper {
                 }
             }
             return result
+        }
+
+        fun formatServerDate(source: String?, format: DateFormats): String {
+            if (source != null) {
+                val parser = SimpleDateFormat(DateFormats.SERVER_FORMAT.value, Locale.US)
+                val formatter = SimpleDateFormat(format.value, Locale.US)
+                return formatter.format(parser.parse(source)!!)
+            }
+            return ""
         }
 
         @SuppressLint("InflateParams")

@@ -29,7 +29,8 @@ class InCarPackageCellAdapter(
     FailDeliveryDialogListener,
     PostponePackageDialogListener,
     ChangePackageTypeDialogListener,
-    AddPackageNoteDialogListener {
+    AddPackageNoteDialogListener,
+    ChangeCodDialogListener {
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
@@ -139,6 +140,10 @@ class InCarPackageCellAdapter(
                             R.id.action_add_note -> {
                                 AddPackageNoteDialog(mAdapter.context!!, mAdapter, pkg).showDialog()
                             }
+
+                            R.id.action_edit_package_cod -> {
+                                ChangeCodDialog(mAdapter.context!!, mAdapter, pkg).showDialog()
+                            }
                         }
                     } else {
 
@@ -169,5 +174,9 @@ class InCarPackageCellAdapter(
 
     override fun onPackageNoteAdded(addNoteRequestBody: AddNoteRequestBody?) {
         listener?.onPackageNoteAdded(addNoteRequestBody)
+    }
+
+    override fun onCodChanged(codChangeRequestBody: CodChangeRequestBody?) {
+        listener?.onCodChanged(codChangeRequestBody)
     }
 }
