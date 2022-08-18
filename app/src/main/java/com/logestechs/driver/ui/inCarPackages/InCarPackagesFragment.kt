@@ -1,5 +1,6 @@
 package com.logestechs.driver.ui.inCarPackages
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +12,9 @@ import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.*
 import com.logestechs.driver.api.responses.GetInCarPackagesGroupedResponse
 import com.logestechs.driver.data.model.GroupedPackages
+import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.FragmentInCarPackagesBinding
+import com.logestechs.driver.ui.packageDelivery.PackageDeliveryActivity
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.InCarPackageCellAdapter
 import com.logestechs.driver.utils.adapters.InCarPackageGroupedCellAdapter
@@ -735,6 +738,12 @@ class InCarPackagesFragment : LogesTechsFragment(),
 
     override fun onCodChanged(body: CodChangeRequestBody?) {
         callCodChangeRequestApi(body)
+    }
+
+    override fun onDeliverPackage(pkg: Package?) {
+        val mIntent = Intent(context, PackageDeliveryActivity::class.java)
+        mIntent.putExtra(IntentExtrasKeys.PACKAGE_TO_DELIVER.name, pkg)
+        startActivity(mIntent)
     }
 
     override fun onPackageSearch(keyword: String?) {

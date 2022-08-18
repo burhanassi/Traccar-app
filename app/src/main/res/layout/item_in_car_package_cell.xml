@@ -320,7 +320,7 @@
                     android:gravity="end">
 
                     <Button
-                        android:id="@+id/button_scan_packages_barcodes"
+                        android:id="@+id/button_deliver_package"
                         style="@style/LogesTechsMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="35dp"

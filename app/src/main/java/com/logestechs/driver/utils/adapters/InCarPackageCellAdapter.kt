@@ -153,6 +153,10 @@ class InCarPackageCellAdapter(
 
                 popup.show()
             }
+
+            binding.buttonDeliverPackage.setOnClickListener {
+                mAdapter.listener?.onDeliverPackage(pkg)
+            }
         }
     }
 
