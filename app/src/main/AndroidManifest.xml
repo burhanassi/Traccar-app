@@ -45,10 +45,12 @@
             android:value="barcode" />
 
         <activity
+            android:name=".ui.singleScanBarcodeScanner.SingleScanBarcodeScanner"
+            android:exported="false" />
+        <activity
             android:name=".ui.barcodeScanner.BarcodeScannerActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />
-
         <activity
             android:name=".ui.driverPackagesByStatusViewPager.DriverPackagesByStatusViewPagerActivity"
             android:exported="false"

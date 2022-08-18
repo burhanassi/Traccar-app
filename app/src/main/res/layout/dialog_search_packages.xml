@@ -77,11 +77,13 @@
                         app:hintText="@string/hint_search_word" />
 
                     <ImageView
+                        android:id="@+id/button_scan"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_gravity="bottom"
                         android:layout_marginEnd="16dp"
-                        android:src="@drawable/ic_scan_barcode_pink" />
+                        android:src="@drawable/ic_scan_barcode_pink"
+                        tools:ignore="ContentDescription" />
                 </LinearLayout>
 
 

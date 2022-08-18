@@ -63,7 +63,8 @@ enum class AppCurrency(val value: String) {
 
 enum class IntentExtrasKeys() {
     SELECTED_PACKAGES_TAB,
-    CUSTOMER_WITH_PACKAGES_FOR_PICKUP
+    CUSTOMER_WITH_PACKAGES_FOR_PICKUP,
+    SINGLE_SCAN_BARCODE_SCANNER_LISTENER
 }
 
 enum class BarcodeScanType {
