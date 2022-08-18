@@ -77,4 +77,7 @@
     <string name="package_type_bring">Bring</string>
     <string name="title_change_cod">Change COD</string>
     <string name="button_cancel">Cancel</string>
+    <string name="button_search">Search</string>
+    <string name="title_insert_search_word">Please insert search word</string>
+    <string name="hint_search_word">Search Word</string>
 </resources>

@@ -22,7 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_keyboard_white"
+                android:src="@drawable/ic_search_white"
                 tools:ignore="ContentDescription" />
         </FrameLayout>
 
@@ -56,18 +56,34 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="8dp"
-                    android:text="@string/insert_barcode_for_pickup"
+                    android:text="@string/title_insert_search_word"
                     android:textColor="@color/fontTrackHint" />
 
-                <com.logestechs.driver.utils.customViews.OutlinedFormEditText
-                    android:id="@+id/et_barcode"
+
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="55dp"
-                    android:layout_marginStart="55dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="55dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    app:hintText="@string/barcode" />
+                    android:orientation="horizontal">
+
+                    <com.logestechs.driver.utils.customViews.OutlinedFormEditText
+                        android:id="@+id/et_search_word"
+                        android:layout_width="0dp"
+                        android:layout_height="55dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        app:hintText="@string/hint_search_word" />
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="bottom"
+                        android:layout_marginEnd="16dp"
+                        android:src="@drawable/ic_scan_barcode_pink" />
+                </LinearLayout>
+
 
                 <Button
                     android:id="@+id/button_pickup"
@@ -77,11 +93,10 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/background_logestechs_button"
-                    android:text="@string/button_pickup"
+                    android:text="@string/button_search"
                     android:textColor="#fff" />
+
             </LinearLayout>
-
-
         </androidx.cardview.widget.CardView>
     </LinearLayout>
 </layout>

@@ -78,4 +78,7 @@
     <string name="package_type_bring">إحضار</string>
     <string name="title_change_cod">تعديل قيمة التحصيل</string>
     <string name="button_cancel">إلغاء</string>
+    <string name="button_search">بحث</string>
+    <string name="title_insert_search_word">الرجاء ادخال كلمة البحث</string>
+    <string name="hint_search_word">كلمة البحث</string>
 </resources>
