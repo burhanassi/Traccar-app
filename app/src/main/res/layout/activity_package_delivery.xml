@@ -12,6 +12,81 @@
             android:id="@+id/toolbar_main"
             layout="@layout/toolbar_main" />
 
-    </LinearLayout>
+        <com.logestechs.driver.utils.customViews.CustomScrollView
+            android:id="@+id/container_scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fadeScrollbars="false">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="500dp" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="5"
+                    android:background="@drawable/background_signature_view_border"
+                    android:padding="5dp">
+
+
+                    <android.gesture.GestureOverlayView
+                        android:id="@+id/gesture_view_signature"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:background="@drawable/background_signature_view"
+                        android:clickable="false"
+                        android:eventsInterceptionEnabled="true"
+                        android:fadeEnabled="false"
+                        android:fadeOffset="10000000"
+                        android:gestureColor="@color/colorAccent"
+                        android:gestureStrokeLengthThreshold="0.1"
+                        android:gestureStrokeType="multiple"
+                        android:longClickable="false"
+                        android:orientation="vertical"
+                        android:splitMotionEvents="true"
+                        android:uncertainGestureColor="#000000">
+
+                    </android.gesture.GestureOverlayView>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/button_clear_signature"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="end"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginRight="20dp"
+                        android:src="@drawable/common_google_signin_btn_text_dark_focused"
+                        android:textColor="@color/white" />
+                </FrameLayout>
+
+                <Button
+                    android:id="@+id/button_deliver_package"
+                    style="@style/LogesTechsMedium"
+                    android:layout_width="289dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="52dp"
+                    android:background="@drawable/background_logestechs_button"
+                    android:text="@string/button_deliver_package"
+                    android:textColor="#fff" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="500dp" />
+            </LinearLayout>
+        </com.logestechs.driver.utils.customViews.CustomScrollView>
+    </LinearLayout>
 </layout>
