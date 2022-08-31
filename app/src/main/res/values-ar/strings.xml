@@ -81,4 +81,15 @@
     <string name="button_search">بحث</string>
     <string name="title_insert_search_word">الرجاء ادخال كلمة البحث</string>
     <string name="hint_search_word">كلمة البحث</string>
+    <string name="title_sign_below">الرجاء التوقيع في المكان المخصص ادناه</string>
+    <string name="button_add_image">إضافة صورة</string>
+    <string name="text_full_delivery">توصيل كامل</string>
+    <string name="text_partial_delivery">توصيل جزئي</string>
+    <string name="payment_type_cash">نقداً</string>
+    <string name="payment_type_cheque">شيك</string>
+    <string name="payment_type_bank_transfer">حوالة بنكية</string>
+    <string name="payment_type_prepaid">دفع مسبق</string>
+    <string name="payment_type_digital_wallet">محفظة الكترونية</string>
+    <string name="payment_type_card_payment">بطاقة ائتمان</string>
+    <string name="title_payment_method">طريقة الدفع</string>
 </resources>

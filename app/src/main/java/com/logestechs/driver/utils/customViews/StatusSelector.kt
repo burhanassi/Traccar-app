@@ -37,6 +37,8 @@ class StatusSelector : FrameLayout {
     lateinit var textView: TextView
     lateinit var container: FrameLayout
 
+    var enumValue: Any? = null
+
     private fun init(attrs: AttributeSet?) {
         LayoutInflater.from(context).inflate(R.layout.view_status_selector, this, true)
 

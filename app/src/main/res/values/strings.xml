@@ -80,4 +80,15 @@
     <string name="button_search">Search</string>
     <string name="title_insert_search_word">Please insert search word</string>
     <string name="hint_search_word">Search Word</string>
+    <string name="title_sign_below">Please sign below</string>
+    <string name="button_add_image">Add Image</string>
+    <string name="text_full_delivery">Full Delivery</string>
+    <string name="text_partial_delivery">Partial Delivery</string>
+    <string name="payment_type_cash">Cash</string>
+    <string name="payment_type_cheque">Cheque</string>
+    <string name="payment_type_bank_transfer">Bank Transfer</string>
+    <string name="payment_type_prepaid">Prepaid</string>
+    <string name="payment_type_digital_wallet">Digital Wallet</string>
+    <string name="title_payment_method">Payment Method</string>
+    <string name="payment_type_card_payment">Card Payment</string>
 </resources>

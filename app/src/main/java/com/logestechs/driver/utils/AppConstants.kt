@@ -94,3 +94,12 @@ enum class InCarPackageStatus(val value: String) {
     COD("COD"),
     FAILED("FAILED")
 }
+
+enum class PaymentType(val englishLabel: String, val arabicLabel: String) {
+    CASH("Cash", "نقداً"),
+    CHEQUE("Cheque", "شيك"),
+    BANK_TRANSFER("Bank Transfer", "حوالة بنكية"),
+    PREPAID("Prepaid", "دفع مسبق"),
+    DIGITAL_WALLET("Digital Wallet", "محفظة الكترونية"),
+    CARD_PAYMENT("Card Payment", "بطاقة ائتمان")
+}
