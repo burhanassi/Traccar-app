@@ -1,5 +1,6 @@
 package com.logestechs.driver.ui.inCarPackages
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -29,6 +30,7 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import retrofit2.Response
 
+
 class InCarPackagesFragment : LogesTechsFragment(),
     View.OnClickListener,
     InCarViewModeDialogListener,
@@ -56,6 +58,18 @@ class InCarPackagesFragment : LogesTechsFragment(),
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK) {
+                getPackagesBySelectedMode()
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                // Write your code if there's no result
+            }
+        }
     }
 
     override fun onCreateView(
@@ -743,7 +757,7 @@ class InCarPackagesFragment : LogesTechsFragment(),
     override fun onDeliverPackage(pkg: Package?) {
         val mIntent = Intent(context, PackageDeliveryActivity::class.java)
         mIntent.putExtra(IntentExtrasKeys.PACKAGE_TO_DELIVER.name, pkg)
-        startActivity(mIntent)
+        startActivityForResult(mIntent, 1)
     }
 
     override fun onPackageSearch(keyword: String?) {

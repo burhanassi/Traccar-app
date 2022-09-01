@@ -1,5 +1,6 @@
 package com.logestechs.driver.ui.packageDelivery
 
+import android.content.Intent
 import android.gesture.GestureOverlayView
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -27,6 +28,7 @@ import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+
 
 class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener {
     private lateinit var binding: ActivityPackageDeliveryBinding
@@ -260,10 +262,9 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener {
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            Helper.showSuccessMessage(
-                                super.getContext(),
-                                getString(R.string.success_operation_completed)
-                            )
+                            val returnIntent = Intent()
+                            setResult(RESULT_OK, returnIntent)
+                            finish()
                         }
                     } else {
                         try {
