@@ -2,27 +2,37 @@ package com.logestechs.driver.ui.packageDelivery
 
 import android.gesture.GestureOverlayView
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.os.Environment
 import android.view.MotionEvent
 import android.view.View
 import com.logestechs.driver.R
+import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ActivityPackageDeliveryBinding
-import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.Helper.Companion.format
-import com.logestechs.driver.utils.IntentExtrasKeys
-import com.logestechs.driver.utils.LogesTechsActivity
-import com.logestechs.driver.utils.PaymentType
 import com.logestechs.driver.utils.customViews.StatusSelector
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
 
 class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener {
     private lateinit var binding: ActivityPackageDeliveryBinding
 
     private var path: String? = null
     private var file: File? = null
-    private val bitmap: Bitmap? = null
+    private var bitmap: Bitmap? = null
     var gestureTouch = false
     private var pkg: Package? = null
 
@@ -46,9 +56,6 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener {
         file = File(path)
         file?.delete()
 
-//        binding.gestureViewSignature.isDrawingCacheEnabled = true
-//
-//        binding.gestureViewSignature.isAlwaysDrawnWithCacheEnabled = true
         binding.gestureViewSignature.isHapticFeedbackEnabled = false
         binding.gestureViewSignature.cancelLongPress()
         binding.gestureViewSignature.cancelClearAnimation()
@@ -140,6 +147,97 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener {
         }
     }
 
+    //Apis
+    private fun uploadPackageSignature() {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    bitmap = Bitmap.createBitmap(
+                        binding.gestureViewSignature.width,
+                        binding.gestureViewSignature.height,
+                        Bitmap.Config.ARGB_8888
+                    )
+                    val canvas = Canvas(bitmap!!)
+                    binding.gestureViewSignature.draw(canvas)
+                    file?.createNewFile()
+                    val fos = FileOutputStream(file)
+                    bitmap?.compress(Bitmap.CompressFormat.PNG, 100, fos)
+                    fos.close()
+
+                    // resize and compress to reasonable size
+                    val bytes = ByteArrayOutputStream()
+                    bitmap?.compress(
+                        Bitmap.CompressFormat.JPEG,
+                        AppConstants.IMAGE_FULL_QUALITY,
+                        bytes
+                    )
+
+                    val reqFile: RequestBody =
+                        bytes.toByteArray().toRequestBody("image/jpeg".toMediaTypeOrNull())
+                    val body: MultipartBody.Part = MultipartBody.Part.createFormData(
+                        "file",
+                        pkg?.id.toString() +
+                                "__signature_image" +
+                                "_" + System.currentTimeMillis() +
+                                ".jpg", reqFile
+                    )
+
+                    val response = ApiAdapter.apiClient.uploadPackageSignature(
+                        pkg?.id ?: -1,
+                        body
+                    )
+
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            Helper.showSuccessMessage(
+                                super.getContext(),
+                                getString(R.string.success_operation_completed)
+                            )
+
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_clear_signature -> {
@@ -152,10 +250,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener {
 
             R.id.button_deliver_package -> {
                 if (isSignatureEntered()) {
-                    Helper.showSuccessMessage(
-                        this,
-                        (selectedPaymentType?.enumValue as PaymentType).arabicLabel
-                    )
+                    uploadPackageSignature()
                 } else {
                     Helper.showErrorMessage(this, "signature not enetered")
                 }

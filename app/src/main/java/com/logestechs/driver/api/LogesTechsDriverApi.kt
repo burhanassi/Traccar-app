@@ -4,6 +4,7 @@ import com.logestechs.driver.api.requests.*
 import com.logestechs.driver.api.responses.*
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.utils.AppConstants
+import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -109,4 +110,11 @@ interface LogesTechsDriverApi {
     suspend fun codChangeRequest(
         @Body body: CodChangeRequestBody?
     ): Response<ResponseBody>?
+
+    @Multipart
+    @POST("${AppConstants.PATH}api/driver/packages/{packageId}/signature/upload")
+    suspend fun uploadPackageSignature(
+        @Path("packageId") packageId: Long,
+        @Part upload_form: MultipartBody.Part?
+    ): Response<UploadPackageSignatureResponse?>?
 }

@@ -26,6 +26,8 @@ class AppConstants {
         const val PERMISSIONS_REQUEST_PHONE_CAMERA = 2
         const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 3
         const val PERMISSIONS_REQUEST_SEND_SMS = 4
+
+        const val IMAGE_FULL_QUALITY = 50
     }
 }
 
