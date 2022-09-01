@@ -105,3 +105,8 @@ enum class PaymentType(val englishLabel: String, val arabicLabel: String) {
     DIGITAL_WALLET("Digital Wallet", "محفظة الكترونية"),
     CARD_PAYMENT("Card Payment", "بطاقة ائتمان")
 }
+
+enum class DeliveryType {
+    FULL,
+    PARTIAL
+}

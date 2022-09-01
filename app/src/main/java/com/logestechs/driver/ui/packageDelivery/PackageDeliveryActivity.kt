@@ -9,6 +9,7 @@ import android.view.MotionEvent
 import android.view.View
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
+import com.logestechs.driver.api.requests.DeliverPackageRequestBody
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ActivityPackageDeliveryBinding
 import com.logestechs.driver.utils.*
@@ -187,7 +188,73 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener {
                         pkg?.id ?: -1,
                         body
                     )
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            callDeliverPackage(
+                                DeliverPackageRequestBody(
+                                    pkg?.id,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    response.body()?.fileUrl,
+                                    null,
+                                    null,
+                                    null,
+                                    (selectedPaymentType?.enumValue as PaymentType).name
+                                )
+                            )
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
 
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
+    private fun callDeliverPackage(deliverPackageRequestBody: DeliverPackageRequestBody?) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.deliverPackage(
+                        pkg?.barcode,
+                        null,
+                        null,
+                        body = deliverPackageRequestBody
+                    )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
@@ -197,7 +264,6 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener {
                                 super.getContext(),
                                 getString(R.string.success_operation_completed)
                             )
-
                         }
                     } else {
                         try {

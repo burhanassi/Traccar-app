@@ -117,4 +117,12 @@ interface LogesTechsDriverApi {
         @Path("packageId") packageId: Long,
         @Part upload_form: MultipartBody.Part?
     ): Response<UploadPackageSignatureResponse?>?
+
+    @PUT("${AppConstants.PATH}api/driver/packages/deliver")
+    suspend fun deliverPackage(
+        @Query("barcode") barcode: String?,
+        @Query("type") type: String?,
+        @Query("note") partialDeliveryNote: String?,
+        @Body body: DeliverPackageRequestBody?
+    ): Response<ResponseBody>?
 }
