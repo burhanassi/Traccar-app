@@ -91,4 +91,6 @@
     <string name="payment_type_digital_wallet">Digital Wallet</string>
     <string name="title_payment_method">Payment Method</string>
     <string name="payment_type_card_payment">Card Payment</string>
+    <string name="title_partial_delivery_note">Please enter Partial delivery reason and collected COD</string>
+    <string name="error_enter_partial_delivery_note">Please enter Partial delivery reason and collected COD</string>
 </resources>

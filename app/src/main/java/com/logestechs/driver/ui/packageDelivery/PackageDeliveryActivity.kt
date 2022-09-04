@@ -4,10 +4,13 @@ import android.content.Intent
 import android.gesture.GestureOverlayView
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Rect
 import android.os.Bundle
 import android.os.Environment
 import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.DeliverPackageRequestBody
@@ -42,6 +45,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener {
     var paymentTypeButtonsList: ArrayList<StatusSelector> = ArrayList()
     var selectedPaymentType: StatusSelector? = null
 
+    var selectedDeliveryType: DeliveryType? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPackageDeliveryBinding.inflate(layoutInflater)
@@ -73,6 +78,10 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener {
         binding.itemReceiverAddress.textItem.text = pkg?.destinationAddress?.toStringAddress()
         binding.itemPackageBarcode.textItem.text = pkg?.barcode
         binding.textCod.text = pkg?.cod?.format()
+
+        if (true) {
+            selectedDeliveryType = DeliveryType.FULL
+        }
     }
 
     private fun initListeners() {
@@ -105,6 +114,17 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener {
                 gestureTouch = motionEvent.action != MotionEvent.ACTION_MOVE
             }
         })
+
+        binding.radioGroupPartialDelivery.setOnCheckedChangeListener { _, checkedId ->
+            if (checkedId == R.id.radio_button_full_delivery) {
+                binding.containerPartialDeliveryNote.visibility = View.GONE
+                binding.etPartialDeliveryNote.setText("")
+                selectedDeliveryType = DeliveryType.FULL
+            } else if (checkedId == R.id.radio_button_partial_delivery) {
+                binding.containerPartialDeliveryNote.visibility = View.VISIBLE
+                selectedDeliveryType = DeliveryType.PARTIAL
+            }
+        }
 
         binding.buttonClearSignature.setOnClickListener(this)
         binding.buttonDeliverPackage.setOnClickListener(this)
@@ -148,6 +168,35 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener {
         for (item in paymentTypeButtonsList) {
             item.makeUnselected()
         }
+    }
+
+    private fun validateInput(): Boolean {
+        if (selectedDeliveryType == DeliveryType.PARTIAL) {
+            if (binding.etPartialDeliveryNote.text.toString().isEmpty()) {
+                Helper.showErrorMessage(
+                    super.getContext(),
+                    getString(R.string.error_enter_partial_delivery_note)
+                )
+                return false
+            }
+        }
+        return true
+    }
+
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        if (event.action == MotionEvent.ACTION_DOWN) {
+            val v = currentFocus
+            if (v is EditText) {
+                val outRect = Rect()
+                v.getGlobalVisibleRect(outRect)
+                if (!outRect.contains(event.rawX.toInt(), event.rawY.toInt())) {
+                    v.clearFocus()
+                    val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0)
+                }
+            }
+        }
+        return super.dispatchTouchEvent(event)
     }
 
     //Apis
@@ -251,10 +300,14 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener {
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
+                    var note: String? = null
+                    if (selectedDeliveryType == DeliveryType.PARTIAL) {
+                        note = binding.etPartialDeliveryNote.text.toString()
+                    }
                     val response = ApiAdapter.apiClient.deliverPackage(
                         pkg?.barcode,
-                        null,
-                        null,
+                        selectedDeliveryType?.name,
+                        note,
                         body = deliverPackageRequestBody
                     )
                     withContext(Dispatchers.Main) {
@@ -317,7 +370,9 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener {
 
             R.id.button_deliver_package -> {
                 if (isSignatureEntered()) {
-                    uploadPackageSignature()
+                    if (validateInput()) {
+                        uploadPackageSignature()
+                    }
                 } else {
                     Helper.showErrorMessage(this, "signature not enetered")
                 }

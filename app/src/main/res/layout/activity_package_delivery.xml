@@ -347,6 +347,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:animateLayoutChanges="true"
                     android:orientation="vertical">
 
                     <RadioGroup
@@ -373,112 +374,60 @@
                             android:layout_marginStart="10dp"
                             android:text="@string/text_partial_delivery" />
                     </RadioGroup>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/container_partial_delivery_note"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/background_dashboard_entry"
+                        android:elevation="0dp"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        app:cardCornerRadius="10dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:orientation="vertical"
+                            android:visibility="visible">
+
+                            <TextView
+                                style="@style/LogesTechsMedium"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginEnd="16dp"
+                                android:text="@string/title_partial_delivery_note"
+                                android:textColor="@color/fontTrackHint" />
+
+                            <EditText
+                                android:id="@+id/et_partial_delivery_note"
+                                style="@style/LogesTechsBold"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginEnd="16dp"
+                                android:layout_marginBottom="16dp"
+                                android:background="@drawable/background_card_orange"
+                                android:gravity="top"
+                                android:inputType="textMultiLine"
+                                android:minLines="4"
+                                android:padding="10dp"
+                                android:saveEnabled="false"
+                                android:textColor="@color/fontTitleBlack"
+                                android:textSize="14sp"
+                                tools:ignore="LabelFor" />
+
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
                 </LinearLayout>
-
-                <!--                <androidx.cardview.widget.CardView-->
-                <!--                    android:id="@+id/container_payment_type"-->
-                <!--                    android:layout_width="match_parent"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:layout_marginStart="16dp"-->
-                <!--                    android:layout_marginTop="12dp"-->
-                <!--                    android:layout_marginEnd="16dp"-->
-                <!--                    android:background="@drawable/background_dashboard_entry"-->
-                <!--                    android:elevation="0dp"-->
-                <!--                    android:orientation="vertical"-->
-                <!--                    app:cardCornerRadius="10dp">-->
-
-                <!--                    <LinearLayout-->
-                <!--                        android:layout_width="match_parent"-->
-                <!--                        android:layout_height="wrap_content"-->
-                <!--                        android:layout_marginTop="8dp"-->
-                <!--                        android:layout_marginBottom="16dp"-->
-                <!--                        android:orientation="vertical"-->
-                <!--                        android:visibility="visible">-->
-
-                <!--                        <TextView-->
-                <!--                            style="@style/LogesTechsMedium"-->
-                <!--                            android:layout_width="wrap_content"-->
-                <!--                            android:layout_height="wrap_content"-->
-                <!--                            android:layout_marginStart="16dp"-->
-                <!--                            android:text="@string/title_payment_method"-->
-                <!--                            android:textColor="@color/fontTrackHint" />-->
-
-                <!--                        <LinearLayout-->
-                <!--                            android:layout_width="match_parent"-->
-                <!--                            android:layout_height="wrap_content"-->
-                <!--                            android:layout_marginStart="12dp"-->
-                <!--                            android:layout_marginTop="12dp"-->
-                <!--                            android:layout_marginEnd="12dp"-->
-                <!--                            android:orientation="horizontal">-->
-
-                <!--                            <com.logestechs.driver.utils.customViews.StatusSelector-->
-                <!--                                android:id="@+id/selector_cash"-->
-                <!--                                android:layout_width="0dp"-->
-                <!--                                android:layout_height="wrap_content"-->
-                <!--                                android:layout_marginEnd="8dp"-->
-                <!--                                android:layout_weight="1"-->
-                <!--                                app:textStatus="@string/payment_type_cash" />-->
-
-                <!--                            <com.logestechs.driver.utils.customViews.StatusSelector-->
-                <!--                                android:id="@+id/selector_digital_wallet"-->
-                <!--                                android:layout_width="0dp"-->
-                <!--                                android:layout_height="wrap_content"-->
-                <!--                                android:layout_weight="1"-->
-                <!--                                app:textStatus="@string/payment_type_digital_wallet" />-->
-
-                <!--                        </LinearLayout>-->
-
-                <!--                        <LinearLayout-->
-                <!--                            android:layout_width="match_parent"-->
-                <!--                            android:layout_height="wrap_content"-->
-                <!--                            android:layout_marginStart="12dp"-->
-                <!--                            android:layout_marginTop="12dp"-->
-                <!--                            android:layout_marginEnd="12dp"-->
-                <!--                            android:orientation="horizontal">-->
-
-                <!--                            <com.logestechs.driver.utils.customViews.StatusSelector-->
-                <!--                                android:id="@+id/selector_cheque"-->
-                <!--                                android:layout_width="0dp"-->
-                <!--                                android:layout_height="wrap_content"-->
-                <!--                                android:layout_marginEnd="8dp"-->
-                <!--                                android:layout_weight="1"-->
-                <!--                                app:textStatus="@string/payment_type_cheque" />-->
-
-                <!--                            <com.logestechs.driver.utils.customViews.StatusSelector-->
-                <!--                                android:id="@+id/selector_prepaid"-->
-                <!--                                android:layout_width="0dp"-->
-                <!--                                android:layout_height="wrap_content"-->
-                <!--                                android:layout_weight="1"-->
-                <!--                                app:textStatus="@string/payment_type_prepaid" />-->
-
-                <!--                        </LinearLayout>-->
-
-                <!--                        <LinearLayout-->
-                <!--                            android:layout_width="match_parent"-->
-                <!--                            android:layout_height="wrap_content"-->
-                <!--                            android:layout_marginStart="12dp"-->
-                <!--                            android:layout_marginTop="12dp"-->
-                <!--                            android:layout_marginEnd="12dp"-->
-                <!--                            android:orientation="horizontal">-->
-
-                <!--                            <com.logestechs.driver.utils.customViews.StatusSelector-->
-                <!--                                android:id="@+id/selector_card_payment"-->
-                <!--                                android:layout_width="0dp"-->
-                <!--                                android:layout_height="wrap_content"-->
-                <!--                                android:layout_marginEnd="8dp"-->
-                <!--                                android:layout_weight="1"-->
-                <!--                                app:textStatus="@string/payment_type_card_payment" />-->
-
-                <!--                            <com.logestechs.driver.utils.customViews.StatusSelector-->
-                <!--                                android:id="@+id/selector_bank_transfer"-->
-                <!--                                android:layout_width="0dp"-->
-                <!--                                android:layout_height="wrap_content"-->
-                <!--                                android:layout_weight="1"-->
-                <!--                                app:textStatus="@string/payment_type_bank_transfer" />-->
-
-                <!--                        </LinearLayout>-->
-                <!--                    </LinearLayout>-->
-                <!--                </androidx.cardview.widget.CardView>-->
 
                 <Button
                     android:id="@+id/button_deliver_package"

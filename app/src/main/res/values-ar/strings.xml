@@ -92,4 +92,6 @@
     <string name="payment_type_digital_wallet">محفظة الكترونية</string>
     <string name="payment_type_card_payment">بطاقة ائتمان</string>
     <string name="title_payment_method">طريقة الدفع</string>
+    <string name="title_partial_delivery_note">الرجاء ادخال سبب التوصيل الجزئي والتحصيل المستلم</string>
+    <string name="error_enter_partial_delivery_note">الرجاء ادخال سبب التوصيل الجزئي والتحصيل المستلم</string>
 </resources>
