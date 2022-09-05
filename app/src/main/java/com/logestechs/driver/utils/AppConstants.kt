@@ -20,6 +20,10 @@ class AppConstants {
         const val DEFAULT_PAGE_SIZE = 50
         const val DEFAULT_PAGE = 1
 
+        //request codes
+        const val REQUEST_TAKE_PHOTO = 4001
+        const val REQUEST_LOAD_PHOTO = 4002
+        const val REQUEST_CAMERA_AND_STORAGE_PERMISSION = 5001
 
         //permission codes
         const val PERMISSIONS_REQUEST_PHONE_CALL = 1

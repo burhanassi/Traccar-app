@@ -116,7 +116,18 @@ interface LogesTechsDriverApi {
     suspend fun uploadPackageSignature(
         @Path("packageId") packageId: Long,
         @Part upload_form: MultipartBody.Part?
-    ): Response<UploadPackageSignatureResponse?>?
+    ): Response<UploadImageResponse?>?
+
+    @Multipart
+    @POST("${AppConstants.PATH}api/driver/packages/{packageId}/delivery-proof/upload-multipart")
+    suspend fun uploadPodImage(
+        @Path("packageId") packageId: Long,
+        @Query("isMultiAttachment") isMultiAttachment: Boolean? = true,
+        @Part upload_form: MultipartBody.Part?
+    ): Response<UploadImageResponse?>?
+
+    @HTTP(method = "DELETE", path = "${AppConstants.PATH}api/driver/image", hasBody = true)
+    suspend fun deletePodImage(@Body body: DeleteImageRequestBody?): Response<ResponseBody?>?
 
     @PUT("${AppConstants.PATH}api/driver/packages/deliver")
     suspend fun deliverPackage(

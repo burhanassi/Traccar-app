@@ -94,4 +94,9 @@
     <string name="title_payment_method">طريقة الدفع</string>
     <string name="title_partial_delivery_note">الرجاء ادخال سبب التوصيل الجزئي والتحصيل المستلم</string>
     <string name="error_enter_partial_delivery_note">الرجاء ادخال سبب التوصيل الجزئي والتحصيل المستلم</string>
+    <string name="error_image_capture_failed">فشل في التقاط الصورة</string>
+    <string name="error_image_loading">فشل في تحميل الصورة</string>
+    <string name="button_capture_image">التقاط صورة</string>
+    <string name="button_load_image">تحميل صورة</string>
+    <string name="error_enter_signature">يرجى التوقيع لاثبات تسليم الطرد</string>
 </resources>
