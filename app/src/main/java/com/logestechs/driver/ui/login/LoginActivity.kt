@@ -3,6 +3,7 @@ package com.logestechs.driver.ui.login
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.LoginRequestBody
@@ -26,9 +27,14 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        if (BuildConfig.DEBUG) {
+            binding.etCompanyName.editText.setText("Logestechs")
+            binding.etEmail.editText.setText("driver@gmail.com")
+            binding.etPassword.editText.setText("test123")
+        }
+
         binding.buttonLogin.setOnClickListener(this)
         binding.imageViewLanguage.setOnClickListener(this)
-
     }
 
     override fun onClick(v: View?) {

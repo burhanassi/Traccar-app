@@ -10,6 +10,7 @@ import com.logestechs.driver.api.responses.GetDashboardInfoResponse
 import com.logestechs.driver.databinding.ActivityDashboardBinding
 import com.logestechs.driver.ui.barcodeScanner.BarcodeScannerActivity
 import com.logestechs.driver.ui.driverPackagesByStatusViewPager.DriverPackagesByStatusViewPagerActivity
+import com.logestechs.driver.ui.profile.ProfileActivity
 import com.logestechs.driver.utils.*
 import com.yariksoffice.lingver.Lingver
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +22,7 @@ import org.json.JSONObject
 class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
 
     private lateinit var binding: ActivityDashboardBinding
+    private val loginResponse = SharedPreferenceWrapper.getLoginResponse()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,13 +34,16 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-        callGetDashboardInfo()
+        if (Lingver.getInstance().getLocale().toString() != super.currentLangCode) {
+            recreate()
+        } else {
+            callGetDashboardInfo()
+        }
     }
 
     private fun initData() {
-        if (SharedPreferenceWrapper.getFailureReasons() == null) {
-            getFailureReasons()
-        }
+        binding.textDriverName.text =
+            "${loginResponse?.user?.firstName} ${loginResponse?.user?.lastName}"
     }
 
     private fun initOnClickListeners() {
@@ -78,20 +83,8 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
             }
 
             R.id.image_view_driver_logo -> {
-                if (Lingver.getInstance().getLocale().toString() == AppLanguages.ARABIC.value) {
-                    Lingver.getInstance().setLocale(this, AppLanguages.ENGLISH.value)
-
-                } else {
-                    Lingver.getInstance().setLocale(this, AppLanguages.ARABIC.value)
-                }
-
-                val intent = Intent(
-                    this,
-                    DashboardActivity::class.java
-                )
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-                finish()
+                val mIntent = Intent(this, ProfileActivity::class.java)
+                startActivity(mIntent)
             }
 
             R.id.dash_entry_pending_packages -> {
@@ -173,24 +166,6 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
             Helper.showErrorMessage(
                 getContext(), getString(R.string.error_check_internet_connection)
             )
-        }
-    }
-
-    private fun getFailureReasons() {
-        if (Helper.isInternetAvailable(this)) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response = ApiAdapter.apiClient.getFailureReasons()
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        val data = response.body()
-                        withContext(Dispatchers.Main) {
-                            SharedPreferenceWrapper.saveFailureReasons(data)
-                        }
-                    }
-                } catch (e: Exception) {
-                    Helper.logException(e, Throwable().stackTraceToString())
-                }
-            }
         }
     }
 }

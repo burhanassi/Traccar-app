@@ -64,7 +64,7 @@ class FailDeliveryDialog(
         binding.rvReasons.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = RadioGroupListAdapter(
-                SharedPreferenceWrapper.getFailureReasons()?.fail,
+                SharedPreferenceWrapper.getDriverCompanySettings()?.failureReasons?.fail,
                 this@FailDeliveryDialog
             )
         }

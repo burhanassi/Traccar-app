@@ -1,7 +1,7 @@
 package com.logestechs.driver.utils
 
 import com.google.gson.Gson
-import com.logestechs.driver.api.responses.GetFailureReasonsResponse
+import com.logestechs.driver.api.responses.GetDriverCompanySettingsResponse
 import com.logestechs.driver.api.responses.LoginResponse
 import com.logestechs.driver.utils.LogesTechsApp.Companion.prefs
 
@@ -38,26 +38,33 @@ class SharedPreferenceWrapper {
             return prefs.pull(SharedPrefsKeys.UUID_KEY.value, "")
         }
 
-        //Failure Reasons
-        fun saveFailureReasons(getFailureReasonsResponse: GetFailureReasonsResponse?) {
-            if (getFailureReasonsResponse != null) {
-                val json = Gson().toJson(getFailureReasonsResponse)
-                prefs.push(SharedPrefsKeys.FAILURE_REASONS_KEY.value, json)
+        //Driver Company Settings
+        fun saveDriverCompanySettings(getDriverCompanySettingsResponse: GetDriverCompanySettingsResponse?) {
+            if (getDriverCompanySettingsResponse != null) {
+                val json = Gson().toJson(getDriverCompanySettingsResponse)
+                prefs.push(SharedPrefsKeys.DRIVER_COMPANY_SETTINGS_KEY.value, json)
             }
         }
 
-        fun getFailureReasons(): GetFailureReasonsResponse? {
-            val json = prefs.pull(SharedPrefsKeys.FAILURE_REASONS_KEY.value, "")
+        fun getDriverCompanySettings(): GetDriverCompanySettingsResponse? {
+            val json = prefs.pull(SharedPrefsKeys.DRIVER_COMPANY_SETTINGS_KEY.value, "")
 
             return if (json.isEmpty()) {
                 return null
             } else {
-                Gson().fromJson(json, GetFailureReasonsResponse::class.java)
+                Gson().fromJson(json, GetDriverCompanySettingsResponse::class.java)
             }
         }
 
-        fun deleteFailureReasons() {
-            prefs.push(SharedPrefsKeys.FAILURE_REASONS_KEY.value, "")
+        fun deleteDriverCompanySettings() {
+            prefs.push(SharedPrefsKeys.DRIVER_COMPANY_SETTINGS_KEY.value, "")
+        }
+
+        fun clearData() {
+            val keys = enumValues<SharedPrefsKeys>()
+            for (key in keys) {
+                prefs.remove(key.value)
+            }
         }
     }
 }
@@ -66,5 +73,5 @@ class SharedPreferenceWrapper {
 private enum class SharedPrefsKeys(val value: String) {
     LOGIN_RESPONSE("login_response"),
     UUID_KEY("uuid_key"),
-    FAILURE_REASONS_KEY("failure_reasons_key")
+    DRIVER_COMPANY_SETTINGS_KEY("driver_company_settings_key")
 }

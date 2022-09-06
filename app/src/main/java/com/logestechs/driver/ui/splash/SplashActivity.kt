@@ -1,5 +1,6 @@
 package com.logestechs.driver.ui.splash
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -16,6 +17,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@SuppressLint("CustomSplashScreen")
 class SplashActivity : LogesTechsActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,27 +28,27 @@ class SplashActivity : LogesTechsActivity() {
 
     private fun navigateIntoApp() {
         Handler().postDelayed({
-            var mIntent: Intent? = null
-            mIntent = if (SharedPreferenceWrapper.getLoginResponse() != null) {
-                getFailureReasons()
-                Intent(this, DashboardActivity::class.java)
+            if (SharedPreferenceWrapper.getLoginResponse() != null) {
+                callGetDriverCompanySettings()
             } else {
-                Intent(this, LoginActivity::class.java)
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
             }
-            startActivity(mIntent)
-            finish()
+
         }, AppConstants.SPLASH_TIME_OUT)
     }
 
-    private fun getFailureReasons() {
+    private fun callGetDriverCompanySettings() {
         if (Helper.isInternetAvailable(this)) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.getFailureReasons()
+                    val response = ApiAdapter.apiClient.getDriverCompanySettings()
                     if (response?.isSuccessful == true && response.body() != null) {
                         val data = response.body()
                         withContext(Dispatchers.Main) {
-                            SharedPreferenceWrapper.saveFailureReasons(data)
+                            SharedPreferenceWrapper.saveDriverCompanySettings(data)
+                            startActivity(Intent(super.getContext(), DashboardActivity::class.java))
+                            finish()
                         }
                     }
                 } catch (e: Exception) {
@@ -55,5 +57,4 @@ class SplashActivity : LogesTechsActivity() {
             }
         }
     }
-
 }

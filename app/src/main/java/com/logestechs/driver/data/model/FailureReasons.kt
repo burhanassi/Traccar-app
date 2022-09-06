@@ -1,11 +1,11 @@
-package com.logestechs.driver.api.responses
+package com.logestechs.driver.data.model
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class GetFailureReasonsResponse(
+data class FailureReasons(
     @SerializedName("POSTPONE")
     var postpone: LinkedHashMap<String, String>?,
     @SerializedName("RETURN")

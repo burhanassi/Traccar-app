@@ -73,9 +73,6 @@ interface LogesTechsDriverApi {
         @Query("search") search: String? = null
     ): Response<GetInCarPackagesUngroupedResponse?>?
 
-    @GET("${AppConstants.PATH}api/driver/all-failure-reasons")
-    suspend fun getFailureReasons(): Response<GetFailureReasonsResponse?>?
-
     @PUT("${AppConstants.PATH}api/driver/packages/{packageId}/return")
     suspend fun returnPackage(
         @Path("packageId") long: Long?,
@@ -136,4 +133,10 @@ interface LogesTechsDriverApi {
         @Query("note") partialDeliveryNote: String?,
         @Body body: DeliverPackageRequestBody?
     ): Response<ResponseBody>?
+
+    @GET("${AppConstants.PATH}api/driver/company-settings")
+    suspend fun getDriverCompanySettings(): Response<GetDriverCompanySettingsResponse?>?
+
+    @DELETE("${AppConstants.PATH}api/auth/user/logout")
+    suspend fun logout(): Response<ResponseBody?>?
 }

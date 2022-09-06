@@ -65,7 +65,7 @@ class ReturnPackageDialog(
         binding.rvReasons.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = RadioGroupListAdapter(
-                SharedPreferenceWrapper.getFailureReasons()?.returnShipment,
+                SharedPreferenceWrapper.getDriverCompanySettings()?.failureReasons?.returnShipment,
                 this@ReturnPackageDialog
             )
         }

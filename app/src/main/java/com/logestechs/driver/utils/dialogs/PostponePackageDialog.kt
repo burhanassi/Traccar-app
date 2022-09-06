@@ -114,7 +114,7 @@ class PostponePackageDialog(
         binding.rvReasons.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = RadioGroupListAdapter(
-                SharedPreferenceWrapper.getFailureReasons()?.postpone,
+                SharedPreferenceWrapper.getDriverCompanySettings()?.failureReasons?.postpone,
                 this@PostponePackageDialog
             )
         }

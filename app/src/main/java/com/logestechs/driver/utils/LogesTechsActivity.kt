@@ -21,6 +21,7 @@ import java.net.URLEncoder
 abstract class LogesTechsActivity : AppCompatActivity() {
     private var mWaitDialog: WaitDialog? = null
     private var tempMobileNumber: String? = null
+    var currentLangCode: String? = null
 
     fun showWaitDialog() {
         if (!this.isFinishing) {
@@ -38,8 +39,8 @@ abstract class LogesTechsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         LogesTechsApp.instance.currentActivity = WeakReference(this)
+        currentLangCode = Lingver.getInstance().getLocale().toString()
         handleForwardNavigationAnimation()
-
     }
 
     override fun onBackPressed() {
