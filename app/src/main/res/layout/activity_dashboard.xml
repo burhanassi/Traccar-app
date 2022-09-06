@@ -11,6 +11,7 @@
         android:background="@drawable/background_dashboard_gradient">
 
         <ScrollView
+            android:id="@+id/scroll_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:overScrollMode="never">
@@ -378,7 +379,7 @@
                 <HorizontalScrollView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="73dp"
+                    android:layout_marginBottom="8dp"
                     android:animateLayoutChanges="true"
                     android:overScrollMode="never">
 
@@ -420,23 +421,25 @@
                     </LinearLayout>
 
                 </HorizontalScrollView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="65dp"
+                    android:layout_gravity="bottom"
+                    android:background="@color/red_flamingo"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:src="@drawable/ic_logestechs_full_logo_white" />
+                </LinearLayout>
             </LinearLayout>
         </ScrollView>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="65dp"
-            android:layout_gravity="bottom"
-            android:background="@color/red_flamingo"
-            android:gravity="center"
-            android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:src="@drawable/ic_logestechs_full_logo_white" />
-        </LinearLayout>
     </FrameLayout>
 </layout>
