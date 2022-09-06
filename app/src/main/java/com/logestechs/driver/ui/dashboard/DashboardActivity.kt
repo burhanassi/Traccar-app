@@ -79,10 +79,7 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
                     binding.containerDashboardSubEntries.visibility = View.GONE
                 } else {
                     binding.containerDashboardSubEntries.visibility = View.VISIBLE
-//                    binding.scrollView.fullScroll(ScrollView.FOCUS_DOWN)
-//                    binding.scrollView.post {binding.scrollView.fullScroll(ScrollView.FOCUS_DOWN)}
-                    binding.scrollView.scrollTo(0, binding.scrollView.getBottom());
-
+                    binding.scrollView.scrollTo(0, binding.scrollView.bottom);
                 }
             }
 
