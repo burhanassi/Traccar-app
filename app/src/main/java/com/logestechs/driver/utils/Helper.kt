@@ -302,6 +302,20 @@ class Helper {
             )
         }
 
+        fun shouldShowCameraAndStoragePermissionDialog(mActivity: Activity?): Boolean {
+            return if (mActivity != null) {
+                ActivityCompat.shouldShowRequestPermissionRationale(
+                    mActivity,
+                    Manifest.permission.CAMERA
+                ) && ActivityCompat.shouldShowRequestPermissionRationale(
+                    mActivity,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+            } else {
+                false
+            }
+        }
+
         fun validateCompressedImage(
             imageUri: Uri,
             doesDelete: Boolean,

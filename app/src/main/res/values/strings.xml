@@ -99,4 +99,5 @@
     <string name="button_load_image">Load Image</string>
     <string name="error_enter_signature">Please insert a signature</string>
     <string name="button_logout">Logout</string>
+    <string name="error_camera_and_storage_permissions">The app needs camera and storage permissions</string>
 </resources>

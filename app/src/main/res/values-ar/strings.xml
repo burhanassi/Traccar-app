@@ -100,4 +100,5 @@
     <string name="button_load_image">تحميل صورة</string>
     <string name="error_enter_signature">يرجى التوقيع لاثبات تسليم الطرد</string>
     <string name="button_logout">تسجيل الخروج</string>
+    <string name="error_camera_and_storage_permissions">الرجاء تزويد التطبيق بصلاحية الوصول الى الكاميرا و التخزين</string>
 </resources>

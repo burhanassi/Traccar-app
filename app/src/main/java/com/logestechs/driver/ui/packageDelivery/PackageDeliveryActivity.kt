@@ -2,6 +2,7 @@ package com.logestechs.driver.ui.packageDelivery
 
 import android.content.ClipData
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.gesture.GestureOverlayView
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -66,6 +67,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     private var mCurrentPhotoPath: String? = null
 
     private var loadedImagesList: ArrayList<LoadedImage> = ArrayList()
+
+    private var isCameraAction = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -350,59 +353,40 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
     }
 
-//    override fun onRequestPermissionsResult(
-//        requestCode: Int,
-//        permissions: Array<out String>,
-//        grantResults: IntArray
-//    ) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//        if (requestCode == AppConstants.REQUEST_CAMERA_AND_STORAGE_PERMISSION) {
-//            if (grantResults.isNotEmpty()
-//                && grantResults[0] == PackageManager.PERMISSION_GRANTED
-//            ) {
-//                if (isCameraAction) {
-//                    if (isStorageAndCameraPermissionNeeded(this) && !AppSharedMethods.isStoragePermissionNeeded(
-//                            this
-//                        )
-//                    ) {
-//                        mCurrentPhotoPath = openCamera()
-//                        isCameraAction = false
-//                    } else {
-//                        AppSharedMethods.showAndRequestCameraAndStorageDialog(this)
-//                    }
-//                } else {
-//                    if (!AppSharedMethods.isStoragePermissionNeeded(this) && !AppSharedMethods.isCameraPermissionNeeded(
-//                            this
-//                        )
-//                    ) {
-//                        openGallery()
-//                    } else {
-//                        AppSharedMethods.showAndRequestCameraAndStorageDialog(this)
-//                    }
-//                }
-//            } else {
-////                Log.d(TAG, "onRequestPermissionsResult:storagePermissionNeeds");
-//                if (AppSharedMethods.shouldShowStoragePermissionDialog(this) || AppSharedMethods.shouldShowCameraPermissionDialog(
-//                        this
-//                    )
-//                ) {
-//                    Toast.makeText(
-//                        applicationContext,
-//                        getString(R.string.error_app_needs_storage_permission),
-//                        Toast.LENGTH_LONG
-//                    ).show()
-//                    AppSharedMethods.showAndRequestCameraAndStorageDialog(this)
-//                } else {
-////                    TODO 26-02-2020 : Comment : Change it with PopUp Dialog to Open App Permission Page
-//                    Toast.makeText(
-//                        applicationContext,
-//                        getString(R.string.error_app_needs_storage_permission),
-//                        Toast.LENGTH_LONG
-//                    ).show()
-//                }
-//            }
-//        }
-//    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == AppConstants.REQUEST_CAMERA_AND_STORAGE_PERMISSION) {
+            if (grantResults.isNotEmpty()
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED
+            ) {
+                if (Helper.isStorageAndCameraPermissionNeeded(this)
+                ) {
+                    Helper.showAndRequestCameraAndStorageDialog(this)
+                } else {
+                    if (isCameraAction) {
+                        mCurrentPhotoPath = openCamera()
+                        isCameraAction = false
+                    } else {
+                        openGallery()
+                    }
+                }
+            } else {
+                if (Helper.shouldShowCameraAndStoragePermissionDialog(this)) {
+                    Helper.showAndRequestCameraAndStorageDialog(this)
+                } else {
+                    Helper.showErrorMessage(
+                        super.getContext(),
+                        getString(R.string.error_camera_and_storage_permissions)
+                    )
+                }
+            }
+        }
+    }
+
 
     //Apis
     private fun uploadPackageSignature() {
@@ -731,6 +715,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             }
 
             R.id.button_capture_image -> {
+                isCameraAction = true
                 if (Helper.isStorageAndCameraPermissionNeeded(this)) {
                     Helper.showAndRequestCameraAndStorageDialog(this)
                 } else {
@@ -739,6 +724,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             }
 
             R.id.button_load_image -> {
+                isCameraAction = false
                 if (Helper.isStorageAndCameraPermissionNeeded(this)) {
                     Helper.showAndRequestCameraAndStorageDialog(this)
                 } else {
