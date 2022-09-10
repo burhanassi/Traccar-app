@@ -73,6 +73,11 @@ interface LogesTechsDriverApi {
         @Query("search") search: String? = null
     ): Response<GetInCarPackagesUngroupedResponse?>?
 
+    @GET("${AppConstants.PATH}api/driver/packages")
+    suspend fun getDeliveredPackages(
+        @Query("status") status: String = "delivered",
+    ): Response<GetDeliveredPackagesResponse?>?
+
     @PUT("${AppConstants.PATH}api/driver/packages/{packageId}/return")
     suspend fun returnPackage(
         @Path("packageId") long: Long?,
