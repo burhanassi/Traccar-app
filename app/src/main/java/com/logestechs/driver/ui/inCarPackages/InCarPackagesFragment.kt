@@ -139,6 +139,7 @@ class InCarPackagesFragment : LogesTechsFragment(),
         binding.buttonViewMode.setOnClickListener(this)
         binding.buttonStatusFilter.setOnClickListener(this)
         binding.buttonSearch.setOnClickListener(this)
+        binding.buttonSendMessageToAll.setOnClickListener(this)
     }
 
     private fun handleNoPackagesLabelVisibility(count: Int) {
@@ -714,6 +715,45 @@ class InCarPackagesFragment : LogesTechsFragment(),
 
             R.id.button_search -> {
                 SearchPackagesDialog(requireContext(), this).showDialog()
+            }
+
+            R.id.button_send_message_to_all -> {
+                val numbers: ArrayList<String?> = ArrayList()
+                if (binding.rvPackages.adapter is InCarPackageGroupedCellAdapter) {
+                    val groupedPackagesList =
+                        (binding.rvPackages.adapter as InCarPackageGroupedCellAdapter).packagesList
+                    for (item in groupedPackagesList) {
+                        if (item?.pkgs != null) {
+                            for (pkg in item.pkgs!!) {
+                                numbers.add(pkg?.receiverPhone)
+                            }
+                        }
+                    }
+                } else if (binding.rvPackages.adapter is InCarPackageCellAdapter) {
+                    val packagesList =
+                        (binding.rvPackages.adapter as InCarPackageCellAdapter).packagesList
+                    for (item in packagesList) {
+                        numbers.add(item?.receiverPhone)
+                    }
+                }
+
+                if (numbers.isNotEmpty()) {
+                    (super.getContext() as LogesTechsActivity).sendSmsToMultiple(
+                        Helper.removeDuplicates(
+                            numbers
+                        ),
+                        Helper.getInterpretedMessageFromTemplate(
+                            null,
+                            true,
+                            SharedPreferenceWrapper.getDriverCompanySettings()?.messageTemplates?.distribution
+                        )
+                    )
+                } else {
+                    Helper.showErrorMessage(
+                        super.getContext(),
+                        getString(R.string.error_no_packages_for_delivery)
+                    )
+                }
             }
         }
     }

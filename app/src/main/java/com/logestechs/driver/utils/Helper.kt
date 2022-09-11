@@ -479,9 +479,14 @@ class Helper {
             return template
         }
 
-        fun getGoogleNavigationUrl(userLat: Double, userLng: Double): String? {
-            return "http://maps.google.com/maps?daddr=" +
-                    userLat + ", " + userLng
+        fun removeDuplicates(list: ArrayList<String?>): ArrayList<String?> {
+            val newList = ArrayList<String?>()
+            for (element in list) {
+                if (!newList.contains(element)) {
+                    newList.add(element)
+                }
+            }
+            return newList
         }
 
         //Attachments handling 

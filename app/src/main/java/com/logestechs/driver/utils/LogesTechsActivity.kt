@@ -129,6 +129,19 @@ abstract class LogesTechsActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    fun sendSmsToMultiple(mobileNumbers: ArrayList<String?>, messageText: String?) {
+        val numbersString: StringBuilder = java.lang.StringBuilder()
+        numbersString.append("smsto:")
+        for (number in mobileNumbers) {
+            numbersString.append(number)
+            numbersString.append(";")
+        }
+        val uri = Uri.parse(numbersString.toString())
+        val intent = Intent(Intent.ACTION_SENDTO, uri)
+        intent.putExtra("sms_body", messageText)
+        startActivity(intent)
+    }
+
     fun sendWhatsAppMessage(mobileNumber: String?, messageText: String?) {
         val packageManager: PackageManager = this.packageManager
         val intent = Intent(Intent.ACTION_VIEW)

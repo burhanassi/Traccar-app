@@ -102,4 +102,5 @@
     <string name="button_logout">تسجيل الخروج</string>
     <string name="error_camera_and_storage_permissions">الرجاء تزويد التطبيق بصلاحية الوصول الى الكاميرا و التخزين</string>
     <string name="title_delivered_packages">الطرود المسلمة</string>
+    <string name="error_no_packages_for_delivery">لا يوجد طرود للتسليم</string>
 </resources>
