@@ -10,7 +10,7 @@ import kotlinx.android.parcel.Parcelize
 data class LoginResponse(
     val device: Device?,
     var user: User?,
-
+    val businessName: String?,
     val email: String?,
     val authToken: String?,
 

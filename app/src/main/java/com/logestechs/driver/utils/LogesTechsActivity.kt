@@ -154,7 +154,7 @@ abstract class LogesTechsActivity : AppCompatActivity() {
         val packageManager: PackageManager = this.packageManager
         val intent = Intent(Intent.ACTION_VIEW)
         try {
-            val locationDirection: String? = Helper.getGoogleNavigationUrl(
+            val locationDirection: String = Helper.getGoogleNavigationUrl(
                 address?.latitude,
                 address?.longitude
             )

@@ -80,7 +80,7 @@ class AcceptedPackageCustomerCellAdapter(
                 if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
                     (mAdapter.context as LogesTechsActivity).sendSms(
                         customer?.phone,
-                        "Your package will be delivered soon by driver ahmad"
+                        ""
                     )
                 }
             }
@@ -90,7 +90,7 @@ class AcceptedPackageCustomerCellAdapter(
                     (mAdapter.context as LogesTechsActivity).sendWhatsAppMessage(
                         Helper.formatNumberForWhatsApp(
                             customer?.phone
-                        ), "Your package will be delivered soon by driver ahmad"
+                        ), ""
                     )
                 }
             }
@@ -103,7 +103,7 @@ class AcceptedPackageCustomerCellAdapter(
                             Helper.formatNumberForWhatsApp(
                                 customer?.phone,
                                 true
-                            ), "Your package will be delivered soon by driver ahmad"
+                            ), ""
                         )
                     }
                 }

@@ -29,6 +29,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import com.logestechs.driver.R
 import com.logestechs.driver.data.model.LoadedImage
+import com.logestechs.driver.data.model.Package
+import com.logestechs.driver.data.model.User
 import id.zelory.compressor.Compressor
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -213,7 +215,7 @@ class Helper {
             return number
         }
 
-        fun getGoogleNavigationUrl(userLat: Double?, userLng: Double?): String? {
+        fun getGoogleNavigationUrl(userLat: Double?, userLng: Double?): String {
             return "http://maps.google.com/maps?daddr=" +
                     userLat + ", " + userLng
         }
@@ -268,6 +270,221 @@ class Helper {
             return map
         }
 
+        fun getInterpretedMessageFromTemplate(
+            data: Any?,
+            isToMultiple: Boolean,
+            messageTemplate: String?
+        ): String? {
+            val loginResponse = SharedPreferenceWrapper.getLoginResponse()
+            val loggedInUser: User? = loginResponse?.user
+            var recipientName: String? = ""
+            var barcode: String? = ""
+            var driverName: String? = ""
+            var driverPhone: String? = ""
+            val hubName: String = ""
+            var company: String? = ""
+            var businessSenderName: String? = ""
+            val companyDomain: String? =
+                SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations?.companyDomain
+            var cod: String? = ""
+            var expectedDeliveryDate = ""
+            var postponeDate: String? = ""
+
+            var template: String? = ""
+
+            if (messageTemplate != null) {
+                template = messageTemplate
+            }
+
+            if (data is Package) {
+                val pkg = data
+                recipientName = pkg.receiverFirstName
+                barcode = pkg.barcode
+                businessSenderName = pkg.businessSenderName
+                cod = pkg.cod?.format()
+                if (pkg.expectedDeliveryDate != null) {
+                    expectedDeliveryDate = pkg.expectedDeliveryDate.toString()
+                }
+                if (pkg.postponedDeliveryDate != null) {
+                    postponeDate = pkg.postponedDeliveryDate
+                }
+            }
+            driverName = loggedInUser?.firstName
+            driverPhone = loggedInUser?.phone
+            company = loginResponse?.businessName
+            if (!isToMultiple) {
+                if (recipientName != null && recipientName.isNotEmpty()) {
+                    template = template?.replace(
+                        SmsTemplateTag.NAME.tag.toRegex(),
+                        recipientName
+                    )
+                } else {
+                    template =
+                        template?.replace(" " + SmsTemplateTag.NAME.tag.toRegex(), "")
+                    template =
+                        template?.replace(SmsTemplateTag.NAME.tag.toRegex(), "")
+                }
+            } else {
+                template =
+                    template?.replace(" " + SmsTemplateTag.NAME.tag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.NAME.tag.toRegex(), "")
+            }
+            if (!isToMultiple) {
+                if (barcode != null && !barcode.isEmpty()) {
+                    template = template?.replace(
+                        SmsTemplateTag.barcode.tag.toRegex(),
+                        barcode
+                    )
+                } else {
+                    template = template?.replace(
+                        " " + SmsTemplateTag.barcode.tag.toRegex(),
+                        ""
+                    )
+                    template =
+                        template?.replace(SmsTemplateTag.barcode.tag.toRegex(), "")
+                }
+            } else {
+                template =
+                    template?.replace(" " + SmsTemplateTag.barcode.tag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.barcode.tag.toRegex(), "")
+            }
+            if (!isToMultiple) {
+                if (businessSenderName != null && !businessSenderName.isEmpty()) {
+                    template = template?.replace(
+                        SmsTemplateTag.storeName.tag.toRegex(),
+                        businessSenderName
+                    )
+                } else {
+                    template = template?.replace(
+                        " " + SmsTemplateTag.storeName.tag.toRegex(),
+                        ""
+                    )
+                    template =
+                        template?.replace(SmsTemplateTag.storeName.tag.toRegex(), "")
+                }
+            } else {
+                template = template?.replace(
+                    " " + SmsTemplateTag.storeName.tag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.storeName.tag.toRegex(), "")
+            }
+            if (!isToMultiple) {
+                if (companyDomain != null && companyDomain.isNotEmpty()) {
+                    val url = "https://$companyDomain?barcode=$barcode"
+                    template = template?.replace(
+                        SmsTemplateTag.shareLocationUrl.tag.toRegex(),
+                        url
+                    )
+                } else {
+                    template = template?.replace(
+                        " " + SmsTemplateTag.shareLocationUrl.tag.toRegex(),
+                        ""
+                    )
+                    template = template?.replace(
+                        SmsTemplateTag.shareLocationUrl.tag.toRegex(),
+                        ""
+                    )
+                }
+            } else {
+                template = template?.replace(
+                    " " + SmsTemplateTag.shareLocationUrl.tag.toRegex(),
+                    ""
+                )
+                template = template?.replace(
+                    SmsTemplateTag.shareLocationUrl.tag.toRegex(),
+                    ""
+                )
+            }
+            if (driverName != null && driverName.isNotEmpty()) {
+                template = template?.replace(
+                    SmsTemplateTag.driverName.tag.toRegex(),
+                    driverName
+                )
+            } else {
+                template = template?.replace(
+                    " " + SmsTemplateTag.driverName.tag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.driverName.tag.toRegex(), "")
+            }
+            if (driverPhone != null && !driverPhone.isEmpty()) {
+                template = template?.replace(
+                    SmsTemplateTag.driverPhone.tag.toRegex(),
+                    driverPhone
+                )
+            } else {
+                template = template?.replace(
+                    " " + SmsTemplateTag.driverPhone.tag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.driverPhone.tag.toRegex(), "")
+            }
+            if (company != null && !company.isEmpty()) {
+                template =
+                    template?.replace(SmsTemplateTag.company.tag.toRegex(), company)
+            } else {
+                template =
+                    template?.replace(" " + SmsTemplateTag.company.tag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.company.tag.toRegex(), "")
+            }
+            if (cod != null && cod.isNotEmpty()) {
+                template = template?.replace(SmsTemplateTag.cod.tag.toRegex(), cod)
+            } else {
+                template =
+                    template?.replace(" " + SmsTemplateTag.cod.tag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.cod.tag.toRegex(), "")
+            }
+            if (postponeDate != null && postponeDate.isNotEmpty()) {
+                template = template?.replace(
+                    SmsTemplateTag.postponeDate.tag.toRegex(),
+                    postponeDate
+                )
+            } else {
+                template = template?.replace(
+                    " " + SmsTemplateTag.postponeDate.tag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.postponeDate.tag.toRegex(), "")
+            }
+            if (!expectedDeliveryDate.isEmpty()) {
+                template = template?.replace(
+                    SmsTemplateTag.expectedDeliveryDate.tag.toRegex(),
+                    expectedDeliveryDate
+                )
+            } else {
+                template = template?.replace(
+                    " " + SmsTemplateTag.expectedDeliveryDate.tag.toRegex(),
+                    ""
+                )
+                template = template?.replace(
+                    SmsTemplateTag.expectedDeliveryDate.tag.toRegex(),
+                    ""
+                )
+            }
+            if (hubName.isNotEmpty()) {
+                template = template?.replace(
+                    SmsTemplateTag.postponeDate.tag.toRegex(),
+                    hubName
+                )
+            } else {
+                template =
+                    template?.replace(" " + SmsTemplateTag.hubName.tag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.hubName.tag.toRegex(), "")
+            }
+            return template
+        }
+
+        fun getGoogleNavigationUrl(userLat: Double, userLng: Double): String? {
+            return "http://maps.google.com/maps?daddr=" +
+                    userLat + ", " + userLng
+        }
+
+        //Attachments handling 
         @Throws(IOException::class)
         fun createImageFile(mActivity: Activity): File? {
             // Create an image file name

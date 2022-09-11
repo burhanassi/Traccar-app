@@ -114,3 +114,20 @@ enum class DeliveryType {
     FULL,
     PARTIAL
 }
+
+enum class SmsTemplateTag(val tag: String) {
+    NAME("<الاسم>"),
+    barcode("<باركود>"),
+    driverName("<اسم السائق>"),
+    driverPhone("<رقم السائق>"),
+    hubName(
+        "<اسم الفرع>"
+    ),
+    company("<اسم الشركة>"),
+    storeName("<اسم المتجر>"),
+    shareLocationUrl("<رابط مشاركة الموقع>"),
+    postponeDate(
+        "<تاريخ التأجيل>"
+    ),
+    expectedDeliveryDate("<تاريخ التوصيل المتوقع>"), cod("<التحصيل>");
+}

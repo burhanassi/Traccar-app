@@ -12,7 +12,11 @@ import com.logestechs.driver.R
 import com.logestechs.driver.api.requests.*
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemInCarPackageCellBinding
+import com.logestechs.driver.utils.AppCurrency
+import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.Helper.Companion.format
+import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.dialogs.*
 import com.logestechs.driver.utils.interfaces.*
 
@@ -31,6 +35,8 @@ class InCarPackageCellAdapter(
     ChangePackageTypeDialogListener,
     AddPackageNoteDialogListener,
     ChangeCodDialogListener {
+
+    val messageTemplates = SharedPreferenceWrapper.getDriverCompanySettings()?.messageTemplates
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
@@ -105,6 +111,139 @@ class InCarPackageCellAdapter(
                 binding.itemPackageQuantity.textItem.text = pkg.quantity.toString()
             } else {
                 binding.itemPackageQuantity.root.visibility = View.GONE
+            }
+
+            //Sender Contact Actions
+            binding.imageViewSenderCall.setOnClickListener {
+                if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                    (mAdapter.context as LogesTechsActivity).callMobileNumber(pkg?.senderPhone)
+                }
+            }
+
+            binding.imageViewSenderSms.setOnClickListener {
+                if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                    (mAdapter.context as LogesTechsActivity).sendSms(
+                        pkg?.senderPhone,
+                        ""
+                    )
+                }
+            }
+
+            binding.imageViewSenderWhatsApp.setOnClickListener {
+                if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                    (mAdapter.context as LogesTechsActivity).sendWhatsAppMessage(
+                        Helper.formatNumberForWhatsApp(
+                            pkg?.senderPhone
+                        ), ""
+                    )
+                }
+            }
+
+            if (Helper.getCompanyCurrency() == AppCurrency.NIS.value) {
+                binding.imageViewSenderWhatsAppSecondary.visibility = View.VISIBLE
+                binding.imageViewSenderWhatsAppSecondary.setOnClickListener {
+                    if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                        (mAdapter.context as LogesTechsActivity).sendWhatsAppMessage(
+                            Helper.formatNumberForWhatsApp(
+                                pkg?.senderPhone,
+                                true
+                            ), ""
+                        )
+                    }
+                }
+            } else {
+                binding.imageViewSenderWhatsAppSecondary.visibility = View.GONE
+            }
+
+            if (pkg?.senderPhone2?.isNotEmpty() == true) {
+                binding.imageViewSenderCallSecondary.visibility = View.VISIBLE
+                binding.imageViewSenderCallSecondary.setOnClickListener {
+                    if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                        (mAdapter.context as LogesTechsActivity).callMobileNumber(pkg.senderPhone2)
+                    }
+                }
+            } else {
+                binding.imageViewSenderCallSecondary.visibility = View.GONE
+            }
+
+            //Receiver Contact Actions
+            binding.imageViewReceiverCall.setOnClickListener {
+                if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                    (mAdapter.context as LogesTechsActivity).callMobileNumber(pkg?.receiverPhone)
+                }
+            }
+
+            binding.imageViewReceiverSms.setOnClickListener {
+                if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                    (mAdapter.context as LogesTechsActivity).sendSms(
+                        pkg?.receiverPhone,
+                        Helper.getInterpretedMessageFromTemplate(
+                            pkg,
+                            false,
+                            mAdapter.messageTemplates?.distribution
+                        )
+                    )
+                }
+            }
+
+            binding.imageViewReceiverWhatsApp.setOnClickListener {
+                if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                    (mAdapter.context as LogesTechsActivity).sendWhatsAppMessage(
+                        Helper.formatNumberForWhatsApp(
+                            pkg?.receiverPhone
+                        ), Helper.getInterpretedMessageFromTemplate(
+                            pkg,
+                            false,
+                            mAdapter.messageTemplates?.distribution
+                        )
+                    )
+                }
+            }
+
+            if (Helper.getCompanyCurrency() == AppCurrency.NIS.value) {
+                binding.imageViewReceiverWhatsAppSecondary.visibility = View.VISIBLE
+                binding.imageViewReceiverWhatsAppSecondary.setOnClickListener {
+                    if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                        (mAdapter.context as LogesTechsActivity).sendWhatsAppMessage(
+                            Helper.formatNumberForWhatsApp(
+                                pkg?.receiverPhone,
+                                true
+                            ), Helper.getInterpretedMessageFromTemplate(
+                                pkg,
+                                false,
+                                mAdapter.messageTemplates?.distribution
+                            )
+                        )
+                    }
+                }
+            } else {
+                binding.imageViewReceiverWhatsAppSecondary.visibility = View.GONE
+            }
+
+            if (pkg?.receiverPhone2?.isNotEmpty() == true) {
+                binding.imageViewReceiverCallSecondary.visibility = View.VISIBLE
+                binding.imageViewReceiverCallSecondary.setOnClickListener {
+                    if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                        (mAdapter.context as LogesTechsActivity).callMobileNumber(pkg.receiverPhone2)
+                    }
+                }
+            } else {
+                binding.imageViewReceiverCallSecondary.visibility = View.GONE
+            }
+
+            if (pkg?.destinationAddress != null) {
+                if (pkg.destinationAddress!!.latitude != 0.0 || pkg.destinationAddress!!.longitude != 0.0) {
+                    binding.imageViewReceiverLocation.visibility = View.VISIBLE
+                    binding.imageViewReceiverLocation.setOnClickListener {
+                        if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                            (mAdapter.context as LogesTechsActivity).showLocationInGoogleMaps(pkg.destinationAddress)
+                        }
+                    }
+                } else {
+                    binding.imageViewReceiverLocation.visibility = View.GONE
+                }
+            } else {
+                binding.imageViewReceiverLocation.visibility = View.GONE
             }
 
             binding.buttonContextMenu.setOnClickListener {

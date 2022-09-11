@@ -10,5 +10,5 @@ data class GetDriverCompanySettingsResponse(
     var driverCompanyConfigurations: DriverCompanyConfigurations? = null,
     var failureReasons: FailureReasons? = null,
     @SerializedName("templates")
-    var messageDigest: MessagingTemplates? = null
+    var messageTemplates: MessagingTemplates? = null
 )
