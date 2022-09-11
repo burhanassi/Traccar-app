@@ -11,6 +11,7 @@ import com.logestechs.driver.databinding.ActivityDashboardBinding
 import com.logestechs.driver.ui.barcodeScanner.BarcodeScannerActivity
 import com.logestechs.driver.ui.driverPackagesByStatusViewPager.DriverPackagesByStatusViewPagerActivity
 import com.logestechs.driver.ui.profile.ProfileActivity
+import com.logestechs.driver.ui.returnedPackages.ReturnedPackagesActivity
 import com.logestechs.driver.utils.*
 import com.yariksoffice.lingver.Lingver
 import kotlinx.coroutines.Dispatchers
@@ -53,6 +54,7 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
         binding.dashEntryAcceptedPackages.root.setOnClickListener(this)
         binding.dashEntryInCarPackages.root.setOnClickListener(this)
         binding.dashEntryScanPackages.root.setOnClickListener(this)
+        binding.dashSubEntryReturnedPackages.root.setOnClickListener(this)
     }
 
     @SuppressLint("SetTextI18n")
@@ -108,6 +110,11 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
 
             R.id.dash_entry_scan_packages -> {
                 val mIntent = Intent(this, BarcodeScannerActivity::class.java)
+                startActivity(mIntent)
+            }
+
+            R.id.dash_sub_entry_returned_packages -> {
+                val mIntent = Intent(this, ReturnedPackagesActivity::class.java)
                 startActivity(mIntent)
             }
         }
