@@ -400,23 +400,23 @@
                             app:iconSrc="@{@drawable/ic_mass_cod_reports_gray}"
                             app:titleText="@{@string/dashboard_mass_cod_reports}" />
 
-                        <include
-                            android:id="@+id/dash_sub_entry_postponed_packages"
-                            layout="@layout/item_dashboard_sub_entry"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="10dp"
-                            app:iconSrc="@{@drawable/ic_postponed_gray}"
-                            app:titleText="@{@string/dashboard_postponed}" />
+                        <!--                        <include-->
+                        <!--                            android:id="@+id/dash_sub_entry_postponed_packages"-->
+                        <!--                            layout="@layout/item_dashboard_sub_entry"-->
+                        <!--                            android:layout_width="wrap_content"-->
+                        <!--                            android:layout_height="wrap_content"-->
+                        <!--                            android:layout_marginEnd="10dp"-->
+                        <!--                            app:iconSrc="@{@drawable/ic_postponed_gray}"-->
+                        <!--                            app:titleText="@{@string/dashboard_postponed}" />-->
 
-                        <include
-                            android:id="@+id/dash_sub_entry_failed_packages"
-                            layout="@layout/item_dashboard_sub_entry"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="10dp"
-                            app:iconSrc="@{@drawable/ic_failed_gray}"
-                            app:titleText="@{@string/dashboard_failed}" />
+                        <!--                        <include-->
+                        <!--                            android:id="@+id/dash_sub_entry_failed_packages"-->
+                        <!--                            layout="@layout/item_dashboard_sub_entry"-->
+                        <!--                            android:layout_width="wrap_content"-->
+                        <!--                            android:layout_height="wrap_content"-->
+                        <!--                            android:layout_marginEnd="10dp"-->
+                        <!--                            app:iconSrc="@{@drawable/ic_failed_gray}"-->
+                        <!--                            app:titleText="@{@string/dashboard_failed}" />-->
 
                         <include
                             android:id="@+id/dash_sub_entry_returned_packages"

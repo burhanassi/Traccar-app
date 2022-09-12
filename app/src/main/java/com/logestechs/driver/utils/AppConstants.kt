@@ -17,7 +17,7 @@ class AppConstants {
         const val ERROR_KEY = "error"
 
         //Default Api Params
-        const val DEFAULT_PAGE_SIZE = 50
+        const val DEFAULT_PAGE_SIZE = 20
         const val DEFAULT_PAGE = 1
 
         //request codes

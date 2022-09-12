@@ -89,7 +89,6 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
     }
 
     //apis
-
     private fun callGetCustomersWithReturnedPackages() {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {

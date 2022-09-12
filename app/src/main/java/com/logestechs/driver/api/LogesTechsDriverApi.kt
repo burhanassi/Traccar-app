@@ -87,6 +87,17 @@ interface LogesTechsDriverApi {
         @Path("customerId") customerId: Long?,
     ): Response<GetCustomerReturnedPackagesResponse?>?
 
+    @GET("${AppConstants.PATH}api/driver/mass-packages/in-car")
+    suspend fun getMassCodReports(
+        @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
+        @Query("page") page: Int = AppConstants.DEFAULT_PAGE
+    ): Response<GetMassCodReportsResponse?>?
+
+    @PUT("${AppConstants.PATH}api/driver/mass-packages/{reportId}/deliver")
+    suspend fun deliverMassCodReport(
+        @Path("reportId") packageId: Long?
+    ): Response<ResponseBody>?
+
     @PUT("${AppConstants.PATH}api/driver/customers/{customerId}/returned-packages/deliver-to-sender")
     suspend fun deliverCustomerReturnedPackagesToSender(
         @Path("customerId") customerId: Long?
