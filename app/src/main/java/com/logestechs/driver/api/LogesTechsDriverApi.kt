@@ -78,6 +78,25 @@ interface LogesTechsDriverApi {
         @Query("status") status: String = "delivered",
     ): Response<GetDeliveredPackagesResponse?>?
 
+    @GET("${AppConstants.PATH}api/admin/customers/with-returned")
+    suspend fun getCustomersWithReturnedPackages(
+    ): Response<GetCustomersWithReturnedPackagesResponse?>?
+
+    @GET("${AppConstants.PATH}api/admin/customers/{customerId}/returned-packages")
+    suspend fun getCustomerReturnedPackages(
+        @Path("customerId") customerId: Long?,
+    ): Response<GetCustomerReturnedPackagesResponse?>?
+
+    @PUT("${AppConstants.PATH}api/driver/customers/{customerId}/returned-packages/deliver-to-sender")
+    suspend fun deliverCustomerReturnedPackagesToSender(
+        @Path("customerId") customerId: Long?
+    ): Response<ResponseBody>?
+
+    @PUT("${AppConstants.PATH}api/admin/packages/deliver-to-sender")
+    suspend fun deliverReturnedPackageToSender(
+        @Body body: DeliverReturnedPackageToSenderRequestBody?
+    ): Response<ResponseBody>?
+
     @PUT("${AppConstants.PATH}api/driver/packages/{packageId}/return")
     suspend fun returnPackage(
         @Path("packageId") long: Long?,

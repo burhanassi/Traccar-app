@@ -6,6 +6,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class Customer(
     val id: Long? = null,
+    val customerId: Long? = null,
     val firstName: String? = null,
     val lastName: String? = null,
     val middleName: String? = null,
@@ -19,7 +20,7 @@ data class Customer(
     val isDeleted: Boolean? = null,
     val isAutoApprovePackages: Boolean? = null,
     val isShowSenderAddressInPackageReport: Boolean? = null,
-    val packages: ArrayList<Package?>? = null,
+    var packages: ArrayList<Package?>? = null,
     val createdDate: String? = null,
     val companyID: Long? = null,
     val imageURL: String? = null,

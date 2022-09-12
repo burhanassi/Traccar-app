@@ -55,7 +55,7 @@
                 android:layout_height="match_parent">
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_villages"
+                    android:id="@+id/rv_customers"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToPadding="false"
@@ -63,7 +63,7 @@
                     android:paddingTop="4dp"
                     android:paddingBottom="80dp"
                     android:scrollbars="vertical"
-                    tools:listitem="@layout/item_accepted_package_village_cell" />
+                    tools:listitem="@layout/item_returned_package_customer_cell" />
             </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
         </FrameLayout>
 

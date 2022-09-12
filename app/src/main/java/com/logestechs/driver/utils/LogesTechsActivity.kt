@@ -32,7 +32,7 @@ abstract class LogesTechsActivity : AppCompatActivity() {
         }
     }
 
-    fun hideWaitDialog() {
+    open fun hideWaitDialog() {
         mWaitDialog?.dismissDialog()
     }
 
