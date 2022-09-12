@@ -63,7 +63,7 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
         initListeners()
         callGetAcceptedPackages()
         activityDelegate = activity as DriverPackagesByStatusViewPagerActivityDelegate
-        binding.textTitle.text = getString(R.string.packages_view_pager_pending_packages)
+        binding.textTitle.text = getString(R.string.packages_view_pager_accepted_packages)
     }
 
     override fun onResume() {
