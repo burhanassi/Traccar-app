@@ -1,60 +1,189 @@
 package com.logestechs.driver.ui.acceptedDraftPickups
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.logestechs.driver.R
+import com.logestechs.driver.api.ApiAdapter
+import com.logestechs.driver.data.model.Customer
+import com.logestechs.driver.data.model.Village
+import com.logestechs.driver.databinding.FragmentAcceptedDraftPickupsBinding
+import com.logestechs.driver.ui.barcodeScanner.BarcodeScannerActivity
+import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.IntentExtrasKeys
+import com.logestechs.driver.utils.LogesTechsFragment
+import com.logestechs.driver.utils.adapters.AcceptedPackageVillageCellAdapter
+import com.logestechs.driver.utils.interfaces.AcceptedPackagesCardListener
+import com.logestechs.driver.utils.interfaces.DriverDraftPickupsByStatusViewPagerActivityDelegate
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class AcceptedDraftPickupsFragment : LogesTechsFragment(), AcceptedPackagesCardListener {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [AcceptedDraftPickupsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class AcceptedDraftPickupsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var _binding: FragmentAcceptedDraftPickupsBinding? = null
+    private val binding get() = _binding!!
+    private var activityDelegate: DriverDraftPickupsByStatusViewPagerActivityDelegate? = null
+    private var doesUpdateData = true
+    private var enableUpdateData = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_accepted_draft_pickups, container, false)
+    ): View {
+        val v: FragmentAcceptedDraftPickupsBinding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.fragment_accepted_draft_pickups,
+            container,
+            false
+        )
+        _binding = v
+        return v.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment AcceptedDraftPickupsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AcceptedDraftPickupsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initRecycler()
+        initListeners()
+        callGetAcceptedPackages()
+        activityDelegate = activity as DriverDraftPickupsByStatusViewPagerActivityDelegate
+        binding.textTitle.text = getString(R.string.packages_view_pager_accepted_packages)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (doesUpdateData) {
+            callGetAcceptedPackages()
+        } else {
+            doesUpdateData = true
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (enableUpdateData) {
+            doesUpdateData = true
+            enableUpdateData = false
+        } else {
+            doesUpdateData = false
+        }
+    }
+
+    private fun initRecycler() {
+        val layoutManager = LinearLayoutManager(
+            super.getContext()
+        )
+        binding.rvVillages.adapter = AcceptedPackageVillageCellAdapter(
+            ArrayList(),
+            super.getContext(),
+            this
+        )
+        binding.rvVillages.layoutManager = layoutManager
+    }
+
+    private fun initListeners() {
+        binding.refreshLayoutCustomers.setOnRefreshListener {
+            callGetAcceptedPackages()
+        }
+    }
+
+    private fun handleNoPackagesLabelVisibility(count: Int) {
+        if (count > 0) {
+            binding.textNoPackagesFound.visibility = View.GONE
+            binding.rvVillages.visibility = View.VISIBLE
+        } else {
+            binding.textNoPackagesFound.visibility = View.VISIBLE
+            binding.rvVillages.visibility = View.GONE
+        }
+    }
+
+    override fun hideWaitDialog() {
+        super.hideWaitDialog()
+        try {
+            binding.refreshLayoutCustomers.isRefreshing = false
+        } catch (e: java.lang.Exception) {
+            Helper.logException(e, Throwable().stackTraceToString())
+        }
+    }
+
+    //APIs
+    private fun callGetAcceptedPackages() {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.getAcceptedPackages()
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        val body = response.body()
+                        withContext(Dispatchers.Main) {
+                            (binding.rvVillages.adapter as AcceptedPackageVillageCellAdapter).update(
+                                body?.villages as ArrayList<Village?>
+                            )
+                            activityDelegate?.updateCountValues()
+                            handleNoPackagesLabelVisibility(body.villages?.size ?: 0)
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
                 }
             }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
+    override fun scanForPickup(customer: Customer?) {
+        enableUpdateData = true
+        val mIntent = Intent(super.getContext(), BarcodeScannerActivity::class.java)
+        mIntent.putExtra(IntentExtrasKeys.CUSTOMER_WITH_PACKAGES_FOR_PICKUP.name, customer)
+        startActivity(mIntent)
     }
 }

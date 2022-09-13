@@ -12,13 +12,13 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
-import com.logestechs.driver.api.responses.GetDashboardInfoResponse
+import com.logestechs.driver.api.responses.GetDraftPickupsCountValuesResponse
 import com.logestechs.driver.databinding.ActivityDriverDraftPickupsByStatusViewPagerBinding
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
-import com.logestechs.driver.utils.interfaces.DriverPackagesByStatusViewPagerActivityDelegate
+import com.logestechs.driver.utils.interfaces.DriverDraftPickupsByStatusViewPagerActivityDelegate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -27,7 +27,7 @@ import org.json.JSONObject
 
 
 class DriverDraftPickupsByStatusViewPagerActivity : LogesTechsActivity(), View.OnClickListener,
-    DriverPackagesByStatusViewPagerActivityDelegate {
+    DriverDraftPickupsByStatusViewPagerActivityDelegate {
     private lateinit var binding: ActivityDriverDraftPickupsByStatusViewPagerBinding
     private lateinit var packagesByStatusViewPagerAdapter: DraftPickupsByStatusViewPagerAdapter
 
@@ -107,19 +107,6 @@ class DriverDraftPickupsByStatusViewPagerActivity : LogesTechsActivity(), View.O
                         makeTabUnselected(imageViewTabIcon, textViewCount, imageViewTriangleIcon)
                     }
                 }
-                3 -> {
-                    imageViewTabIcon.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            this,
-                            R.drawable.ic_delivered_packages_tab_item
-                        )
-                    )
-                    if (position == selectedTabIndex) {
-                        makeTabSelected(imageViewTabIcon, textViewCount, imageViewTriangleIcon)
-                    } else {
-                        makeTabUnselected(imageViewTabIcon, textViewCount, imageViewTriangleIcon)
-                    }
-                }
             }
             tab.customView = binding
             updateTitle(selectedTabIndex)
@@ -157,7 +144,6 @@ class DriverDraftPickupsByStatusViewPagerActivity : LogesTechsActivity(), View.O
                 selectedTabIndex = tab.position
                 updateTitle(selectedTabIndex)
             }
-
         })
     }
 
@@ -209,15 +195,13 @@ class DriverDraftPickupsByStatusViewPagerActivity : LogesTechsActivity(), View.O
 //        }
     }
 
-    private fun updateCountValues(data: GetDashboardInfoResponse?) {
+    private fun updateCountValues(data: GetDraftPickupsCountValuesResponse?) {
         binding.tabLayout.getTabAt(0)?.customView?.findViewById<TextView>(R.id.text_view_count)?.text =
-            data?.pendingPackagesCount.toString()
+            data?.pendingCount.toString()
         binding.tabLayout.getTabAt(1)?.customView?.findViewById<TextView>(R.id.text_view_count)?.text =
-            data?.acceptedPackagesCount.toString()
+            data?.acceptedCount.toString()
         binding.tabLayout.getTabAt(2)?.customView?.findViewById<TextView>(R.id.text_view_count)?.text =
-            data?.inCarPackagesCount.toString()
-        binding.tabLayout.getTabAt(3)?.customView?.findViewById<TextView>(R.id.text_view_count)?.text =
-            data?.deliveredPackagesCount.toString()
+            data?.inCarCount.toString()
     }
 
     override fun onClick(v: View?) {
@@ -232,7 +216,7 @@ class DriverDraftPickupsByStatusViewPagerActivity : LogesTechsActivity(), View.O
         if (Helper.isInternetAvailable(this)) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.getDashboardInfo()
+                    val response = ApiAdapter.apiClient.getDraftPickupsCountValues()
                     if (response?.isSuccessful == true && response.body() != null) {
                         val data = response.body()
                         withContext(Dispatchers.Main) {

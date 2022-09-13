@@ -4,9 +4,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.logestechs.driver.ui.acceptedPackages.AcceptedPackagesFragment
-import com.logestechs.driver.ui.inCarPackages.InCarPackagesFragment
-import com.logestechs.driver.ui.pendingPackages.PendingPackagesFragment
+import com.logestechs.driver.ui.acceptedDraftPickups.AcceptedDraftPickupsFragment
+import com.logestechs.driver.ui.inCarDraftPickups.InCarDraftPickupsFragment
+import com.logestechs.driver.ui.pendingDraftPickups.PendingDraftPickupsFragment
 
 class DraftPickupsByStatusViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
     FragmentStateAdapter(fragmentManager, lifecycle) {
@@ -17,16 +17,16 @@ class DraftPickupsByStatusViewPagerAdapter(fragmentManager: FragmentManager, lif
     override fun createFragment(position: Int): Fragment {
         return when (position) {
             0 -> {
-                PendingPackagesFragment()
+                PendingDraftPickupsFragment()
             }
             1 -> {
-                AcceptedPackagesFragment()
+                AcceptedDraftPickupsFragment()
             }
             2 -> {
-                InCarPackagesFragment()
+                InCarDraftPickupsFragment()
             }
             else -> {
-                PendingPackagesFragment()
+                PendingDraftPickupsFragment()
             }
         }
     }

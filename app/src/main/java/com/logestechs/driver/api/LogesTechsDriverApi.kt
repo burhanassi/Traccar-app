@@ -174,4 +174,8 @@ interface LogesTechsDriverApi {
 
     @DELETE("${AppConstants.PATH}api/auth/user/logout")
     suspend fun logout(): Response<ResponseBody?>?
+
+    @GET("${AppConstants.PATH}api/driver/pickup/info")
+    suspend fun getDraftPickupsCountValues(): Response<GetDraftPickupsCountValuesResponse?>?
+
 }
