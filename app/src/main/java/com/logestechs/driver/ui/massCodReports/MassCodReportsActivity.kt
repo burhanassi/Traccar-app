@@ -35,10 +35,6 @@ class MassCodReportsActivity : LogesTechsActivity(), MassCodReportCardListener {
         setContentView(binding.root)
         initRecycler()
         initListeners()
-    }
-
-    override fun onResume() {
-        super.onResume()
         callGetMassCodReports()
     }
 
