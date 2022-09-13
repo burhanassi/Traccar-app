@@ -108,4 +108,5 @@
     <string name="button_deliver">توصيل</string>
     <string name="title_cod_sum">مجموع التحصيلات</string>
     <string name="title_cod_packages_count">عدد التحصيلات</string>
+    <string name="title_draft_pickups">تحميل طلبات\nغير مكتملة</string>
 </resources>

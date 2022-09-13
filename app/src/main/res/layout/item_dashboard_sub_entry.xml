@@ -30,6 +30,11 @@
             tools:ignore="ContentDescription"
             tools:src="@drawable/ic_mass_cod_reports_gray" />
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
         <TextView
             style="@style/LogesTechsLight"
             android:layout_width="wrap_content"
@@ -39,10 +44,16 @@
             android:layout_marginTop="6dp"
             android:layout_marginEnd="12dp"
             android:layout_marginBottom="6dp"
+            android:gravity="center_horizontal"
             android:text="@{titleText}"
             android:textColor="@color/fontTitleLight"
             android:textSize="16sp"
             tools:text="@string/dashboard_mass_cod_reports" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
     </LinearLayout>
 
 </layout>

@@ -107,4 +107,5 @@
     <string name="button_deliver">Deliver</string>
     <string name="title_cod_sum">COD Sum</string>
     <string name="title_cod_packages_count">COD Packages</string>
+    <string name="title_draft_pickups">Draft Pickups</string>
 </resources>

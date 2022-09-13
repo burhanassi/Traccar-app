@@ -9,6 +9,7 @@ import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.responses.GetDashboardInfoResponse
 import com.logestechs.driver.databinding.ActivityDashboardBinding
 import com.logestechs.driver.ui.barcodeScanner.BarcodeScannerActivity
+import com.logestechs.driver.ui.driverDraftPickupsByStatusViewPager.DriverDraftPickupsByStatusViewPagerActivity
 import com.logestechs.driver.ui.driverPackagesByStatusViewPager.DriverPackagesByStatusViewPagerActivity
 import com.logestechs.driver.ui.massCodReports.MassCodReportsActivity
 import com.logestechs.driver.ui.profile.ProfileActivity
@@ -57,6 +58,7 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
         binding.dashEntryScanPackages.root.setOnClickListener(this)
         binding.dashSubEntryReturnedPackages.root.setOnClickListener(this)
         binding.dashSubEntryMassCodReports.root.setOnClickListener(this)
+        binding.dashSubEntryDraftPickups.root.setOnClickListener(this)
     }
 
     @SuppressLint("SetTextI18n")
@@ -122,6 +124,12 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
 
             R.id.dash_sub_entry_mass_cod_reports -> {
                 val mIntent = Intent(this, MassCodReportsActivity::class.java)
+                startActivity(mIntent)
+            }
+
+            R.id.dash_sub_entry_draft_pickups -> {
+                val mIntent = Intent(this, DriverDraftPickupsByStatusViewPagerActivity::class.java)
+                mIntent.putExtra(IntentExtrasKeys.SELECTED_PACKAGES_TAB.name, 0)
                 startActivity(mIntent)
             }
         }
