@@ -178,4 +178,21 @@ interface LogesTechsDriverApi {
     @GET("${AppConstants.PATH}api/driver/pickup/info")
     suspend fun getDraftPickupsCountValues(): Response<GetDraftPickupsCountValuesResponse?>?
 
+    @GET("${AppConstants.PATH}api/driver/pickups/with-count")
+    suspend fun getDriverDraftPickups(
+        @Query("status") status: String,
+        @Query("pageSize") pageSize: Int = AppConstants.DEFAULT_PAGE_SIZE,
+        @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
+    ): Response<GetDraftPickupsResponse?>?
+
+    @PUT("${AppConstants.PATH}api/driver/pickups/{pickupId}/accept")
+    suspend fun acceptDraftPickup(
+        @Path("pickupId") long: Long?
+    ): Response<ResponseBody>?
+
+    @PUT("${AppConstants.PATH}api/driver/pickups/{pickupId}/reject")
+    suspend fun rejectDraftPickup(
+        @Path("pickupId") long: Long?,
+        @Query("note") status: String,
+    ): Response<ResponseBody>?
 }

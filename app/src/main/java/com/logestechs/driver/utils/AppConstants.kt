@@ -67,6 +67,12 @@ enum class AppCurrency(val value: String) {
     OMR("OMR")
 }
 
+enum class DraftPickupStatus {
+    ASSIGNED_TO_DRIVER,
+    ACCEPTED_BY_DRIVER,
+    IN_CAR
+}
+
 enum class IntentExtrasKeys() {
     SELECTED_PACKAGES_TAB,
     CUSTOMER_WITH_PACKAGES_FOR_PICKUP,

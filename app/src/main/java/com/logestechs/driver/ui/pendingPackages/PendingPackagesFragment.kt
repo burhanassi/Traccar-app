@@ -339,7 +339,7 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
                 try {
                     val response = ApiAdapter.apiClient.rejectPackage(
                         packageId,
-                        RejectPackageRequestBody("inner package test note")
+                        RejectPackageRequestBody("")
                     )
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {

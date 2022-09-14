@@ -1,30 +1,44 @@
 package com.logestechs.driver.ui.pendingDraftPickups
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
-import com.logestechs.driver.api.requests.RejectPackageRequestBody
-import com.logestechs.driver.data.model.Customer
+import com.logestechs.driver.data.model.DraftPickup
 import com.logestechs.driver.databinding.FragmentPendingDraftPickupsBinding
 import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.DraftPickupStatus
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsFragment
-import com.logestechs.driver.utils.adapters.PendingPackageCellAdapter
-import com.logestechs.driver.utils.adapters.PendingPackageCustomerCellAdapter
+import com.logestechs.driver.utils.adapters.PendingDraftPickupCellAdapter
 import com.logestechs.driver.utils.interfaces.DriverDraftPickupsByStatusViewPagerActivityDelegate
-import com.logestechs.driver.utils.interfaces.PendingPackagesCardListener
-import kotlinx.coroutines.*
+import com.logestechs.driver.utils.interfaces.PendingDraftPickupCardListener
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
-class PendingDraftPickupsFragment : LogesTechsFragment(), PendingPackagesCardListener {
+class PendingDraftPickupsFragment : LogesTechsFragment(), PendingDraftPickupCardListener {
     private var _binding: FragmentPendingDraftPickupsBinding? = null
     private val binding get() = _binding!!
     private var activityDelegate: DriverDraftPickupsByStatusViewPagerActivityDelegate? = null
+
+    private var draftPickupsList: ArrayList<DraftPickup?> = ArrayList()
+
+    //pagination fields
+    private var isLoading = false
+    private var isLastPage = false
+    private var currentPageIndex = 1
+
+    private var doesUpdateData = true
+    private var enableUpdateData = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,32 +73,50 @@ class PendingDraftPickupsFragment : LogesTechsFragment(), PendingPackagesCardLis
 
     override fun onResume() {
         super.onResume()
-        callGetPendingPackages()
+        if (doesUpdateData) {
+            currentPageIndex = 1
+            (binding.rvDraftPickups.adapter as PendingDraftPickupCellAdapter).clearList()
+            callGetPendingDraftPickups()
+            activityDelegate?.updateCountValues()
+        } else {
+            doesUpdateData = true
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (enableUpdateData) {
+            doesUpdateData = true
+            enableUpdateData = false
+        } else {
+            doesUpdateData = false
+        }
     }
 
     private fun initRecycler() {
         val layoutManager = LinearLayoutManager(
             context
         )
-        binding.rvCustomers.adapter = PendingPackageCustomerCellAdapter(
-            ArrayList(), super.getContext(), listener = this
+        binding.rvDraftPickups.adapter = PendingDraftPickupCellAdapter(
+            draftPickupsList, super.getContext(), listener = this
         )
-        binding.rvCustomers.layoutManager = layoutManager
+        binding.rvDraftPickups.layoutManager = layoutManager
+        binding.rvDraftPickups.addOnScrollListener(recyclerViewOnScrollListener)
     }
 
     private fun initListeners() {
         binding.refreshLayoutCustomers.setOnRefreshListener {
-            callGetPendingPackages()
+            currentPageIndex = 1
+            (binding.rvDraftPickups.adapter as PendingDraftPickupCellAdapter).clearList()
+            callGetPendingDraftPickups()
         }
     }
 
-    private fun handleNoPackagesLabelVisibility(count: Int) {
-        if (count > 0) {
-            binding.textNoPackagesFound.visibility = View.GONE
-            binding.rvCustomers.visibility = View.VISIBLE
-        } else {
+    private fun handleNoPackagesLabelVisibility(isEmpty: Boolean) {
+        if (isEmpty) {
             binding.textNoPackagesFound.visibility = View.VISIBLE
-            binding.rvCustomers.visibility = View.GONE
+        } else {
+            binding.textNoPackagesFound.visibility = View.GONE
         }
     }
 
@@ -97,24 +129,58 @@ class PendingDraftPickupsFragment : LogesTechsFragment(), PendingPackagesCardLis
         }
     }
 
-    //APIs
-    private fun callGetPendingPackages() {
+    private val recyclerViewOnScrollListener: RecyclerView.OnScrollListener =
+        object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val visibleItemCount: Int = binding.rvDraftPickups.layoutManager!!.childCount
+                val totalItemCount: Int = binding.rvDraftPickups.layoutManager!!.itemCount
+                val firstVisibleItemPosition: Int =
+                    (binding.rvDraftPickups.layoutManager!! as LinearLayoutManager).findFirstVisibleItemPosition()
+
+                if (!isLoading && !isLastPage) {
+                    if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount >= AppConstants.DEFAULT_PAGE_SIZE) {
+                        callGetPendingDraftPickups()
+                    }
+                }
+            }
+        }
+
+    private fun handlePaging(totalRecordsNumber: Int) {
+        val totalRound: Int =
+            totalRecordsNumber / (AppConstants.DEFAULT_PAGE_SIZE * currentPageIndex)
+        if (totalRound == 0) {
+            currentPageIndex = 1
+            isLastPage = true
+        } else {
+            currentPageIndex++
+            isLastPage = false
+        }
+    }
+
+    //apis
+    @SuppressLint("NotifyDataSetChanged")
+    private fun callGetPendingDraftPickups() {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
+            isLoading = true
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.getPendingPackages()
+                    val response = ApiAdapter.apiClient.getDriverDraftPickups(
+                        DraftPickupStatus.ASSIGNED_TO_DRIVER.name,
+                        page = currentPageIndex
+                    )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
+
                     if (response?.isSuccessful == true && response.body() != null) {
                         val body = response.body()
+                        handlePaging(body?.totalRecordsNo ?: 0)
                         withContext(Dispatchers.Main) {
-                            (binding.rvCustomers.adapter as PendingPackageCustomerCellAdapter).update(
-                                body?.customers as ArrayList<Customer?>
-                            )
-                            activityDelegate?.updateCountValues()
-                            handleNoPackagesLabelVisibility(body.customers?.size ?: 0)
+                            draftPickupsList.addAll(body?.data ?: ArrayList())
+                            binding.rvDraftPickups.adapter?.notifyDataSetChanged()
+                            handleNoPackagesLabelVisibility(body?.data?.isEmpty() ?: true && draftPickupsList.isEmpty())
                         }
                     } else {
                         try {
@@ -135,7 +201,9 @@ class PendingDraftPickupsFragment : LogesTechsFragment(), PendingPackagesCardLis
                             }
                         }
                     }
+                    isLoading = false
                 } catch (e: Exception) {
+                    isLoading = false
                     hideWaitDialog()
                     Helper.logException(e, Throwable().stackTraceToString())
                     withContext(Dispatchers.Main) {
@@ -155,12 +223,14 @@ class PendingDraftPickupsFragment : LogesTechsFragment(), PendingPackagesCardLis
         }
     }
 
-    private fun callAcceptCustomerPackages(customerId: Long?, parentIndex: Int) {
+
+    private fun callAcceptDraftPickup(index: Int) {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.acceptCustomerPackages(customerId)
+                    val response =
+                        ApiAdapter.apiClient.acceptDraftPickup(draftPickupsList[index]?.id)
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
@@ -170,10 +240,11 @@ class PendingDraftPickupsFragment : LogesTechsFragment(), PendingPackagesCardLis
                                 super.getContext(),
                                 getString(R.string.success_operation_completed)
                             )
-                            removeCustomerCell(parentIndex)
+                            currentPageIndex = 1
+                            (binding.rvDraftPickups.adapter as PendingDraftPickupCellAdapter).clearList()
+                            callGetPendingDraftPickups()
                             activityDelegate?.updateCountValues()
                         }
-
                     } else {
                         try {
                             val jObjError = JSONObject(response?.errorBody()!!.string())
@@ -213,74 +284,16 @@ class PendingDraftPickupsFragment : LogesTechsFragment(), PendingPackagesCardLis
         }
     }
 
-    private fun callAcceptPackage(packageId: Long?, parentIndex: Int, childIndex: Int) {
+    private fun callRejectDraftPickup(index: Int) {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.acceptPackage(packageId)
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        withContext(Dispatchers.Main) {
-                            Helper.showSuccessMessage(
-                                super.getContext(),
-                                getString(R.string.success_operation_completed)
-                            )
-                            removePackageCell(parentIndex, childIndex)
-                            activityDelegate?.updateCountValues()
-                        }
-                        launch {
-                            delay(500)
-                            withContext(Dispatchers.Main) {
-                                hideWaitDialog()
-                            }
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            hideWaitDialog()
-            Helper.showErrorMessage(
-                super.getContext(), getString(R.string.error_check_internet_connection)
-            )
-        }
-    }
-
-    private fun callRejectCustomerPackages(customerId: Long?, parentIndex: Int) {
-        if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response = ApiAdapter.apiClient.rejectCustomerPackages(
-                        customerId,
-                        RejectPackageRequestBody("test note")
-                    )
+                    val response =
+                        ApiAdapter.apiClient.rejectDraftPickup(
+                            draftPickupsList[index]?.id,
+                            ""
+                        )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
@@ -290,7 +303,9 @@ class PendingDraftPickupsFragment : LogesTechsFragment(), PendingPackagesCardLis
                                 super.getContext(),
                                 getString(R.string.success_operation_completed)
                             )
-                            removeCustomerCell(parentIndex)
+                            currentPageIndex = 1
+                            (binding.rvDraftPickups.adapter as PendingDraftPickupCellAdapter).clearList()
+                            callGetPendingDraftPickups()
                             activityDelegate?.updateCountValues()
                         }
                     } else {
@@ -332,122 +347,11 @@ class PendingDraftPickupsFragment : LogesTechsFragment(), PendingPackagesCardLis
         }
     }
 
-    private fun callRejectPackage(packageId: Long?, parentIndex: Int, childIndex: Int) {
-        if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response = ApiAdapter.apiClient.rejectPackage(
-                        packageId,
-                        RejectPackageRequestBody("inner package test note")
-                    )
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        withContext(Dispatchers.Main) {
-                            Helper.showSuccessMessage(
-                                super.getContext(),
-                                getString(R.string.success_operation_completed)
-                            )
-                            removePackageCell(parentIndex, childIndex)
-                            activityDelegate?.updateCountValues()
-                        }
-                        launch {
-                            delay(500)
-                            withContext(Dispatchers.Main) {
-                                hideWaitDialog()
-                            }
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            hideWaitDialog()
-            Helper.showErrorMessage(
-                super.getContext(), getString(R.string.error_check_internet_connection)
-            )
-        }
+    override fun onAcceptDraftPickup(index: Int) {
+        callAcceptDraftPickup(index)
     }
 
-
-    //Recycler view manipulation
-    private fun removeCustomerCell(parentIndex: Int) {
-        (binding.rvCustomers.adapter as PendingPackageCustomerCellAdapter).deleteItem(
-            parentIndex
-        )
-    }
-
-    private fun removePackageCell(parentIndex: Int, childIndex: Int) {
-        val parentAdapter = binding.rvCustomers.adapter as PendingPackageCustomerCellAdapter
-        val customerViewHolder =
-            (binding.rvCustomers.findViewHolderForAdapterPosition(parentIndex) as PendingPackageCustomerCellAdapter.CustomerViewHolder)
-        val childRecyclerViewAdapter =
-            customerViewHolder.binding.rvPackages.adapter as PendingPackageCellAdapter
-
-        if (parentAdapter.customersList[parentIndex]?.packages?.size == 1) {
-            removeCustomerCell(parentIndex)
-        } else {
-            parentAdapter.customersList[parentIndex]?.packages?.removeAt(childIndex)
-            parentAdapter.customersList[parentIndex]?.packagesNo =
-                (parentAdapter.customersList[parentIndex]?.packagesNo ?: 1) - 1
-            parentAdapter.notifyItemChanged(parentIndex)
-            childRecyclerViewAdapter.removeItem(childIndex)
-        }
-    }
-
-    // card interface
-    override fun acceptPackage(parentIndex: Int, childIndex: Int) {
-        callAcceptPackage(
-            (binding.rvCustomers.adapter as PendingPackageCustomerCellAdapter).customersList[parentIndex]?.packages?.get(
-                childIndex
-            )?.id, parentIndex, childIndex
-        )
-    }
-
-    override fun acceptCustomerPackages(parentIndex: Int) {
-        callAcceptCustomerPackages(
-            (binding.rvCustomers.adapter as PendingPackageCustomerCellAdapter).customersList[parentIndex]?.id,
-            parentIndex
-        )
-    }
-
-    override fun rejectPackage(parentIndex: Int, childIndex: Int) {
-        callRejectPackage(
-            (binding.rvCustomers.adapter as PendingPackageCustomerCellAdapter).customersList[parentIndex]?.packages?.get(
-                childIndex
-            )?.id, parentIndex, childIndex
-        )
-    }
-
-    override fun rejectCustomerPackages(parentIndex: Int) {
-        callRejectCustomerPackages(
-            (binding.rvCustomers.adapter as PendingPackageCustomerCellAdapter).customersList[parentIndex]?.id,
-            parentIndex
-        )
+    override fun onRejectDraftPickup(index: Int) {
+        callRejectDraftPickup(index)
     }
 }
