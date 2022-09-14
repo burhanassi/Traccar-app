@@ -58,7 +58,7 @@
                     android:paddingTop="4dp"
                     android:paddingBottom="80dp"
                     android:scrollbars="vertical"
-                    tools:listitem="@layout/item_pending_package_customer_cell" />
+                    tools:listitem="@layout/item_pending_draft_pickup" />
             </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
         </FrameLayout>
     </LinearLayout>

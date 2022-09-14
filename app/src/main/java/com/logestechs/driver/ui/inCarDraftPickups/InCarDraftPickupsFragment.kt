@@ -1,54 +1,47 @@
 package com.logestechs.driver.ui.inCarDraftPickups
 
-import android.app.Activity
-import android.content.Intent
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
-import com.logestechs.driver.api.requests.*
-import com.logestechs.driver.api.responses.GetInCarPackagesGroupedResponse
-import com.logestechs.driver.data.model.GroupedPackages
-import com.logestechs.driver.data.model.Package
+import com.logestechs.driver.data.model.DraftPickup
 import com.logestechs.driver.databinding.FragmentInCarDraftPickupsBinding
-import com.logestechs.driver.ui.packageDelivery.PackageDeliveryActivity
-import com.logestechs.driver.utils.*
-import com.logestechs.driver.utils.adapters.InCarPackageCellAdapter
-import com.logestechs.driver.utils.adapters.InCarPackageGroupedCellAdapter
-import com.logestechs.driver.utils.dialogs.InCarStatusFilterDialog
-import com.logestechs.driver.utils.dialogs.InCarViewModeDialog
-import com.logestechs.driver.utils.dialogs.SearchPackagesDialog
-import com.logestechs.driver.utils.interfaces.*
+import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.DraftPickupStatus
+import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.LogesTechsFragment
+import com.logestechs.driver.utils.adapters.InCarDraftPickupCellAdapter
+import com.logestechs.driver.utils.adapters.PendingDraftPickupCellAdapter
+import com.logestechs.driver.utils.interfaces.DriverDraftPickupsByStatusViewPagerActivityDelegate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-import retrofit2.Response
 
 
-class InCarDraftPickupsFragment : LogesTechsFragment(),
-    View.OnClickListener,
-    InCarViewModeDialogListener,
-    InCarStatusFilterDialogListener,
-    InCarPackagesCardListener,
-    SearchPackagesDialogListener {
+class InCarDraftPickupsFragment : LogesTechsFragment() {
 
     private var _binding: FragmentInCarDraftPickupsBinding? = null
     private val binding get() = _binding!!
 
     private var activityDelegate: DriverDraftPickupsByStatusViewPagerActivityDelegate? = null
+
+    private var draftPickupsList: ArrayList<DraftPickup?> = ArrayList()
+
+    //pagination fields
+    private var isLoading = false
+    private var isLastPage = false
+    private var currentPageIndex = 1
+
     private var doesUpdateData = true
     private var enableUpdateData = false
-
-    private var searchWord: String? = null
-
-    var selectedViewMode: InCarPackagesViewMode = InCarPackagesViewMode.BY_VILLAGE
-    var selectedStatus: InCarPackageStatus = InCarPackageStatus.TO_DELIVER
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,18 +51,6 @@ class InCarDraftPickupsFragment : LogesTechsFragment(),
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1) {
-            if (resultCode == Activity.RESULT_OK) {
-                getPackagesBySelectedMode()
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                // Write your code if there's no result
-            }
-        }
     }
 
     override fun onCreateView(
@@ -86,10 +67,21 @@ class InCarDraftPickupsFragment : LogesTechsFragment(),
         return v.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.textTitle.text = getString(R.string.packages_view_pager_in_car_packages)
+        initRecycler()
+        initListeners()
+        activityDelegate = activity as DriverDraftPickupsByStatusViewPagerActivityDelegate
+    }
+
     override fun onResume() {
         super.onResume()
         if (doesUpdateData) {
-            getPackagesBySelectedMode()
+            currentPageIndex = 1
+            (binding.rvDraftPickups.adapter as InCarDraftPickupCellAdapter).clearList()
+            callGetInCarDraftPickups()
+            activityDelegate?.updateCountValues()
         } else {
             doesUpdateData = true
         }
@@ -105,50 +97,30 @@ class InCarDraftPickupsFragment : LogesTechsFragment(),
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initRecycler()
-        initListeners()
-        activityDelegate = activity as DriverDraftPickupsByStatusViewPagerActivityDelegate
-        binding.textTitle.text = getString(R.string.packages_view_pager_in_car_packages)
-        binding.textSelectedStatus.text =
-            "(${Helper.getLocalizedInCarStatus(super.getContext(), selectedStatus)})"
-    }
-
     private fun initRecycler() {
         val layoutManager = LinearLayoutManager(
-            super.getContext()
+            context
         )
-        binding.rvPackages.adapter = InCarPackageGroupedCellAdapter(
-            ArrayList(),
-            super.getContext(),
-            this
+        binding.rvDraftPickups.adapter = InCarDraftPickupCellAdapter(
+            draftPickupsList, super.getContext()
         )
-        binding.rvPackages.layoutManager = layoutManager
+        binding.rvDraftPickups.layoutManager = layoutManager
+        binding.rvDraftPickups.addOnScrollListener(recyclerViewOnScrollListener)
     }
 
     private fun initListeners() {
         binding.refreshLayoutPackages.setOnRefreshListener {
-            searchWord = null
-            selectedStatus = InCarPackageStatus.TO_DELIVER
-            binding.textSelectedStatus.text =
-                "(${Helper.getLocalizedInCarStatus(super.getContext(), selectedStatus)})"
-            getPackagesBySelectedMode()
+            currentPageIndex = 1
+            (binding.rvDraftPickups.adapter as PendingDraftPickupCellAdapter).clearList()
+            callGetInCarDraftPickups()
         }
-
-        binding.buttonViewMode.setOnClickListener(this)
-        binding.buttonStatusFilter.setOnClickListener(this)
-        binding.buttonSearch.setOnClickListener(this)
-        binding.buttonSendMessageToAll.setOnClickListener(this)
     }
 
-    private fun handleNoPackagesLabelVisibility(count: Int) {
-        if (count > 0) {
-            binding.textNoPackagesFound.visibility = View.GONE
-            binding.rvPackages.visibility = View.VISIBLE
-        } else {
+    private fun handleNoPackagesLabelVisibility(isEmpty: Boolean) {
+        if (isEmpty) {
             binding.textNoPackagesFound.visibility = View.VISIBLE
-            binding.rvPackages.visibility = View.GONE
+        } else {
+            binding.textNoPackagesFound.visibility = View.GONE
         }
     }
 
@@ -161,87 +133,58 @@ class InCarDraftPickupsFragment : LogesTechsFragment(),
         }
     }
 
+    private val recyclerViewOnScrollListener: RecyclerView.OnScrollListener =
+        object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val visibleItemCount: Int = binding.rvDraftPickups.layoutManager!!.childCount
+                val totalItemCount: Int = binding.rvDraftPickups.layoutManager!!.itemCount
+                val firstVisibleItemPosition: Int =
+                    (binding.rvDraftPickups.layoutManager!! as LinearLayoutManager).findFirstVisibleItemPosition()
 
-    private fun getPackagesBySelectedMode() {
-        if (selectedViewMode == InCarPackagesViewMode.BY_VILLAGE
-            || selectedViewMode == InCarPackagesViewMode.BY_CUSTOMER
-            || selectedViewMode == InCarPackagesViewMode.BY_RECEIVER
-        ) {
-            if (binding.rvPackages.adapter !is InCarPackageGroupedCellAdapter) {
-                val layoutManager = LinearLayoutManager(
-                    super.getContext()
-                )
-                binding.rvPackages.adapter = InCarPackageGroupedCellAdapter(
-                    ArrayList(),
-                    super.getContext(),
-                    this
-                )
-                binding.rvPackages.layoutManager = layoutManager
+                if (!isLoading && !isLastPage) {
+                    if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount >= AppConstants.DEFAULT_PAGE_SIZE) {
+                        callGetInCarDraftPickups()
+                    }
+                }
             }
-            callGetInCarPackagesGrouped()
+        }
+
+    private fun handlePaging(totalRecordsNumber: Int) {
+        val totalRound: Int =
+            totalRecordsNumber / (AppConstants.DEFAULT_PAGE_SIZE * currentPageIndex)
+        if (totalRound == 0) {
+            currentPageIndex = 1
+            isLastPage = true
         } else {
-            if (binding.rvPackages.adapter !is InCarPackageCellAdapter) {
-                val layoutManager = LinearLayoutManager(
-                    super.getContext()
-                )
-                binding.rvPackages.adapter = InCarPackageCellAdapter(
-                    ArrayList(),
-                    super.getContext(),
-                    this,
-                    null,
-                    isGrouped = false
-                )
-                binding.rvPackages.layoutManager = layoutManager
-            }
-            callGetInCarPackagesUngrouped()
+            currentPageIndex++
+            isLastPage = false
         }
     }
 
-    //APIs
-    private fun callGetInCarPackagesGrouped() {
+    //apis
+    @SuppressLint("NotifyDataSetChanged")
+    private fun callGetInCarDraftPickups() {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
+            isLoading = true
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    var response: Response<GetInCarPackagesGroupedResponse?>? = null
-                    response = when (selectedViewMode) {
-                        InCarPackagesViewMode.BY_VILLAGE -> {
-                            ApiAdapter.apiClient.getInCarPackagesByVillage(
-                                status = selectedStatus.value,
-                                searchWord
-                            )
-                        }
-                        InCarPackagesViewMode.BY_CUSTOMER -> {
-                            ApiAdapter.apiClient.getInCarPackagesByCustomer(
-                                status = selectedStatus.value,
-                                searchWord
-                            )
-                        }
-                        InCarPackagesViewMode.BY_RECEIVER -> {
-                            ApiAdapter.apiClient.getInCarPackagesByReceiver(
-                                status = selectedStatus.value,
-                                searchWord
-                            )
-                        }
-                        else -> {
-                            ApiAdapter.apiClient.getInCarPackagesByVillage(
-                                status = selectedStatus.value,
-                                searchWord
-                            )
-                        }
-                    }
-
+                    val response = ApiAdapter.apiClient.getDriverDraftPickups(
+                        DraftPickupStatus.IN_CAR.name,
+                        page = currentPageIndex
+                    )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
+
                     if (response?.isSuccessful == true && response.body() != null) {
                         val body = response.body()
+                        handlePaging(body?.totalRecordsNo ?: 0)
                         withContext(Dispatchers.Main) {
-                            (binding.rvPackages.adapter as InCarPackageGroupedCellAdapter).update(
-                                body?.inCarPackages as ArrayList<GroupedPackages?>, selectedViewMode
-                            )
-                            activityDelegate?.updateCountValues()
-                            handleNoPackagesLabelVisibility(body.numberOfPackages ?: 0)
+                            draftPickupsList.addAll(body?.data ?: ArrayList())
+                            binding.rvDraftPickups.adapter?.notifyDataSetChanged()
+                            handleNoPackagesLabelVisibility(body?.data?.isEmpty() ?: true && draftPickupsList.isEmpty())
                         }
                     } else {
                         try {
@@ -262,7 +205,9 @@ class InCarDraftPickupsFragment : LogesTechsFragment(),
                             }
                         }
                     }
+                    isLoading = false
                 } catch (e: Exception) {
+                    isLoading = false
                     hideWaitDialog()
                     Helper.logException(e, Throwable().stackTraceToString())
                     withContext(Dispatchers.Main) {
@@ -280,529 +225,5 @@ class InCarDraftPickupsFragment : LogesTechsFragment(),
                 super.getContext(), getString(R.string.error_check_internet_connection)
             )
         }
-    }
-
-    private fun callGetInCarPackagesUngrouped() {
-        showWaitDialog()
-        if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response =
-                        ApiAdapter.apiClient.getInCarPackagesUngrouped(
-                            status = selectedStatus.value,
-                            searchWord
-                        )
-
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        val body = response.body()
-                        withContext(Dispatchers.Main) {
-                            (binding.rvPackages.adapter as InCarPackageCellAdapter).update(
-                                body?.pkgs ?: ArrayList()
-                            )
-                            activityDelegate?.updateCountValues()
-                            handleNoPackagesLabelVisibility(body?.numberOfPackages ?: 0)
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            hideWaitDialog()
-            Helper.showErrorMessage(
-                super.getContext(), getString(R.string.error_check_internet_connection)
-            )
-        }
-    }
-
-    private fun callReturnPackage(packageId: Long?, body: ReturnPackageRequestBody?) {
-        showWaitDialog()
-        if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response = ApiAdapter.apiClient.returnPackage(
-                        packageId,
-                        body
-                    )
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        withContext(Dispatchers.Main) {
-                            Helper.showSuccessMessage(
-                                super.getContext(),
-                                getString(R.string.success_operation_completed)
-                            )
-                            activityDelegate?.updateCountValues()
-                            getPackagesBySelectedMode()
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            hideWaitDialog()
-            Helper.showErrorMessage(
-                super.getContext(), getString(R.string.error_check_internet_connection)
-            )
-        }
-    }
-
-    private fun callFailDelivery(packageId: Long?, body: FailDeliveryRequestBody?) {
-        showWaitDialog()
-        if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response = ApiAdapter.apiClient.failDelivery(
-                        packageId,
-                        body
-                    )
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        withContext(Dispatchers.Main) {
-                            Helper.showSuccessMessage(
-                                super.getContext(),
-                                getString(R.string.success_operation_completed)
-                            )
-                            activityDelegate?.updateCountValues()
-                            getPackagesBySelectedMode()
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            hideWaitDialog()
-            Helper.showErrorMessage(
-                super.getContext(), getString(R.string.error_check_internet_connection)
-            )
-        }
-    }
-
-    private fun callPostponePackage(packageId: Long?, body: PostponePackageRequestBody?) {
-        showWaitDialog()
-        if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response = ApiAdapter.apiClient.postponePackage(
-                        packageId,
-                        body
-                    )
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        withContext(Dispatchers.Main) {
-                            Helper.showSuccessMessage(
-                                super.getContext(),
-                                getString(R.string.success_operation_completed)
-                            )
-                            activityDelegate?.updateCountValues()
-                            getPackagesBySelectedMode()
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            hideWaitDialog()
-            Helper.showErrorMessage(
-                super.getContext(), getString(R.string.error_check_internet_connection)
-            )
-        }
-    }
-
-    private fun callChangePackageType(packageId: Long?, body: ChangePackageTypeRequestBody?) {
-        showWaitDialog()
-        if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response = ApiAdapter.apiClient.changePackageType(
-                        packageId,
-                        body
-                    )
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        withContext(Dispatchers.Main) {
-                            Helper.showSuccessMessage(
-                                super.getContext(),
-                                getString(R.string.success_operation_completed)
-                            )
-                            activityDelegate?.updateCountValues()
-                            getPackagesBySelectedMode()
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            hideWaitDialog()
-            Helper.showErrorMessage(
-                super.getContext(), getString(R.string.error_check_internet_connection)
-            )
-        }
-    }
-
-    private fun callAddPackageNote(packageId: Long?, body: AddNoteRequestBody?) {
-        showWaitDialog()
-        if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response = ApiAdapter.apiClient.addPackageNote(
-                        packageId,
-                        body
-                    )
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        withContext(Dispatchers.Main) {
-                            Helper.showSuccessMessage(
-                                super.getContext(),
-                                getString(R.string.success_operation_completed)
-                            )
-                            activityDelegate?.updateCountValues()
-                            getPackagesBySelectedMode()
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            hideWaitDialog()
-            Helper.showErrorMessage(
-                super.getContext(), getString(R.string.error_check_internet_connection)
-            )
-        }
-    }
-
-    private fun callCodChangeRequestApi(body: CodChangeRequestBody?) {
-        showWaitDialog()
-        if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response = ApiAdapter.apiClient.codChangeRequest(
-                        body
-                    )
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        withContext(Dispatchers.Main) {
-                            Helper.showSuccessMessage(
-                                super.getContext(),
-                                getString(R.string.success_operation_completed)
-                            )
-                            activityDelegate?.updateCountValues()
-                            getPackagesBySelectedMode()
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            hideWaitDialog()
-            Helper.showErrorMessage(
-                super.getContext(), getString(R.string.error_check_internet_connection)
-            )
-        }
-    }
-
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.button_status_filter -> {
-                InCarStatusFilterDialog(requireContext(), this, selectedStatus).showDialog()
-            }
-
-            R.id.button_view_mode -> {
-                InCarViewModeDialog(requireContext(), this, selectedViewMode).showDialog()
-            }
-
-            R.id.button_search -> {
-                SearchPackagesDialog(requireContext(), this).showDialog()
-            }
-
-            R.id.button_send_message_to_all -> {
-                val numbers: ArrayList<String?> = ArrayList()
-                if (binding.rvPackages.adapter is InCarPackageGroupedCellAdapter) {
-                    val groupedPackagesList =
-                        (binding.rvPackages.adapter as InCarPackageGroupedCellAdapter).packagesList
-                    for (item in groupedPackagesList) {
-                        if (item?.pkgs != null) {
-                            for (pkg in item.pkgs!!) {
-                                numbers.add(pkg?.receiverPhone)
-                            }
-                        }
-                    }
-                } else if (binding.rvPackages.adapter is InCarPackageCellAdapter) {
-                    val packagesList =
-                        (binding.rvPackages.adapter as InCarPackageCellAdapter).packagesList
-                    for (item in packagesList) {
-                        numbers.add(item?.receiverPhone)
-                    }
-                }
-
-                if (numbers.isNotEmpty()) {
-                    (super.getContext() as LogesTechsActivity).sendSmsToMultiple(
-                        Helper.removeDuplicates(
-                            numbers
-                        ),
-                        Helper.getInterpretedMessageFromTemplate(
-                            null,
-                            true,
-                            SharedPreferenceWrapper.getDriverCompanySettings()?.messageTemplates?.distribution
-                        )
-                    )
-                } else {
-                    Helper.showErrorMessage(
-                        super.getContext(),
-                        getString(R.string.error_no_packages_for_delivery)
-                    )
-                }
-            }
-        }
-    }
-
-    override fun onViewModeChanged(selectedViewMode: InCarPackagesViewMode) {
-        this.selectedViewMode = selectedViewMode
-        getPackagesBySelectedMode()
-    }
-
-    override fun onStatusChanged(selectedStatus: InCarPackageStatus) {
-        this.selectedStatus = selectedStatus
-        binding.textSelectedStatus.text =
-            "(${Helper.getLocalizedInCarStatus(super.getContext(), selectedStatus)})"
-        getPackagesBySelectedMode()
-    }
-
-    override fun onPackageReturned(body: ReturnPackageRequestBody?) {
-        callReturnPackage(body?.packageId, body)
-    }
-
-    override fun onFailDelivery(body: FailDeliveryRequestBody?) {
-        callFailDelivery(body?.packageId, body)
-    }
-
-    override fun onPackagePostponed(body: PostponePackageRequestBody?) {
-        callPostponePackage(body?.packageId, body)
-    }
-
-    override fun onPackageTypeChanged(body: ChangePackageTypeRequestBody?) {
-        callChangePackageType(body?.packageId, body)
-    }
-
-    override fun onPackageNoteAdded(body: AddNoteRequestBody?) {
-        callAddPackageNote(body?.packageId, body)
-    }
-
-    override fun onCodChanged(body: CodChangeRequestBody?) {
-        callCodChangeRequestApi(body)
-    }
-
-    override fun onDeliverPackage(pkg: Package?) {
-        val mIntent = Intent(context, PackageDeliveryActivity::class.java)
-        mIntent.putExtra(IntentExtrasKeys.PACKAGE_TO_DELIVER.name, pkg)
-        startActivityForResult(mIntent, 1)
-    }
-
-    override fun onPackageSearch(keyword: String?) {
-        searchWord = keyword
-        getPackagesBySelectedMode()
     }
 }
-

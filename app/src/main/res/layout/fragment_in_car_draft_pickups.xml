@@ -25,52 +25,7 @@
                 android:textColor="@color/fontTrackHint"
                 android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/text_selected_status"
-                style="@style/LogesTechsBold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="16dp"
-                android:textColor="@color/fontTrackHint"
-                android:textSize="14sp" />
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <ImageView
-                android:id="@+id/button_view_mode"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_view_mode"
-                tools:ignore="ContentDescription" />
-
-            <ImageView
-                android:id="@+id/button_search"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_search_gray"
-                tools:ignore="ContentDescription" />
-
-            <ImageView
-                android:id="@+id/button_send_message_to_all"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_button_sms"
-                tools:ignore="ContentDescription" />
-
-            <ImageView
-                android:id="@+id/button_status_filter"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="16dp"
-                android:src="@drawable/ic_status_filter"
-                tools:ignore="ContentDescription" />
         </LinearLayout>
 
         <FrameLayout
@@ -96,17 +51,15 @@
                 android:layout_height="match_parent">
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_packages"
+                    android:id="@+id/rv_draft_pickups"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToPadding="false"
                     android:overScrollMode="never"
-                    android:paddingStart="5dp"
                     android:paddingTop="4dp"
-                    android:paddingEnd="5dp"
                     android:paddingBottom="80dp"
                     android:scrollbars="vertical"
-                    tools:listitem="@layout/item_accepted_package_village_cell" />
+                    tools:listitem="@layout/item_pending_draft_pickup" />
             </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
         </FrameLayout>
     </LinearLayout>
