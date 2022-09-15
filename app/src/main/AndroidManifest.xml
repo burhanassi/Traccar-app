@@ -28,6 +28,7 @@
 
             <data android:scheme="http" />
         </intent>
+        <package android:name="com.whatsapp" />
     </queries>
 
     <application
