@@ -29,6 +29,7 @@
             <data android:scheme="http" />
         </intent>
         <package android:name="com.whatsapp" />
+        <package android:name="com.google.android.apps.maps" />
     </queries>
 
     <application
