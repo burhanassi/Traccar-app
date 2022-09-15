@@ -9,6 +9,7 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -269,7 +270,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 )
                 val mCurrentPhotoPath = "file:" + photoFile.absolutePath
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
+                if (SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
                     takePictureIntent.clipData = ClipData.newRawUri("", photoURI)
                     takePictureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
@@ -349,6 +350,19 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     ).show()
                 }
             }
+
+            AppConstants.REQUEST_STORAGE_PERMISSION -> {
+                if (SDK_INT >= Build.VERSION_CODES.R) {
+                    if (Environment.isExternalStorageManager()) {
+                        uploadPackageSignature()
+                    } else {
+                        Helper.showErrorMessage(
+                            super.getContext(),
+                            getString(R.string.error_storage_permission)
+                        )
+                    }
+                }
+            }
             else -> {}
         }
     }
@@ -384,9 +398,28 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     )
                 }
             }
+        } else if (requestCode == AppConstants.REQUEST_STORAGE_PERMISSION) {
+            if (grantResults.isNotEmpty()
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED
+            ) {
+                if (Helper.isStoragePermissionNeeded(this)
+                ) {
+                    Helper.showAndRequestStorageDialog(this)
+                } else {
+                    uploadPackageSignature()
+                }
+            } else {
+                if (Helper.shouldShowStoragePermissionDialog(this)) {
+                    Helper.showAndRequestStorageDialog(this)
+                } else {
+                    Helper.showErrorMessage(
+                        super.getContext(),
+                        getString(R.string.error_storage_permission)
+                    )
+                }
+            }
         }
     }
-
 
     //Apis
     private fun uploadPackageSignature() {
@@ -707,7 +740,11 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             R.id.button_deliver_package -> {
                 if (isSignatureEntered()) {
                     if (validateInput()) {
-                        uploadPackageSignature()
+                        if (Helper.isStoragePermissionNeeded(this)) {
+                            Helper.showAndRequestStorageDialog(this)
+                        } else {
+                            uploadPackageSignature()
+                        }
                     }
                 } else {
                     Helper.showErrorMessage(this, getString(R.string.error_enter_signature))

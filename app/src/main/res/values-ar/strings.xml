@@ -109,4 +109,5 @@
     <string name="title_cod_sum">مجموع التحصيلات</string>
     <string name="title_cod_packages_count">عدد التحصيلات</string>
     <string name="title_draft_pickups">تحميل طلبات\nغير مكتملة</string>
+    <string name="error_storage_permission">الرجاء تزويد التطبيق بصلاحية الوصول الى التخزين</string>
 </resources>
