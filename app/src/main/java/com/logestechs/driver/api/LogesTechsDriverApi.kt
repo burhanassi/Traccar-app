@@ -195,4 +195,7 @@ interface LogesTechsDriverApi {
         @Path("pickupId") long: Long?,
         @Query("note") status: String,
     ): Response<ResponseBody>?
+
+    @GET("${AppConstants.PATH}api/guests/driver/ios/min-version")
+    suspend fun getMinVersion(): Response<GetLatestVersionCodeResponse>?
 }

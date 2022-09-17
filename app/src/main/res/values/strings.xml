@@ -109,4 +109,8 @@
     <string name="title_cod_packages_count">COD Packages</string>
     <string name="title_draft_pickups">Draft Pickups</string>
     <string name="error_storage_permission">The app needs storage permission</string>
+    <string name="message_update_app">Dear user, you are using an old version of the app, Please update</string>
+    <string name="button_update">Update</string>
+    <string name="message_update_error">To update the app, please contact delivery company</string>
+
 </resources>

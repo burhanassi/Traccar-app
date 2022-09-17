@@ -492,7 +492,38 @@ class Helper {
             return newList
         }
 
-        //Attachments handling 
+        fun isMinVersionHigher(minVersion: String, context: Context): Boolean {
+            val minVersionArray = minVersion.split(".")
+            val currentVersionArray = getAppVersion(context).split(".")
+
+            val splitMinVersion = java.lang.StringBuilder()
+            val splitCurrentVersion = java.lang.StringBuilder()
+
+            return if (minVersionArray.size == 3 && currentVersionArray.size == 3) {
+                for (index in 0..2) {
+                    splitMinVersion.append(minVersionArray[index])
+                    splitCurrentVersion.append(currentVersionArray[index])
+                }
+                splitCurrentVersion.toString().toInt() < splitMinVersion.toString().toInt()
+            } else {
+                true
+            }
+        }
+
+        private fun getAppVersion(context: Context): String {
+            return try {
+                val pInfo = context.packageManager.getPackageInfo(
+                    context.packageName, 0
+                )
+                pInfo.versionName
+
+            } catch (e: PackageManager.NameNotFoundException) {
+                e.printStackTrace()
+                "0.0.0"
+            }
+        }
+
+        //Attachments handling
         @Throws(IOException::class)
         fun createImageFile(mActivity: Activity): File? {
             // Create an image file name
