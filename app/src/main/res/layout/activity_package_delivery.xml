@@ -407,6 +407,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:orientation="horizontal"
+                        android:visibility="gone"
                         tools:ignore="UselessParent">
 
                         <RadioButton

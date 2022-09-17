@@ -10,6 +10,7 @@ import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.api.requests.*
+import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemInCarPackageCellBinding
 import com.logestechs.driver.utils.AppCurrency
@@ -37,6 +38,8 @@ class InCarPackageCellAdapter(
     ChangeCodDialogListener {
 
     val messageTemplates = SharedPreferenceWrapper.getDriverCompanySettings()?.messageTemplates
+    val companyConfigurations: DriverCompanyConfigurations? =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
@@ -284,12 +287,18 @@ class InCarPackageCellAdapter(
                                 ChangeCodDialog(mAdapter.context!!, mAdapter, pkg).showDialog()
                             }
                         }
-                    } else {
-
                     }
                     true
                 }
-
+                if (mAdapter.companyConfigurations?.isDriverCanRequestCodChange != true) {
+                    popup.menu.findItem(R.id.action_edit_package_cod).isVisible = false
+                }
+                if (mAdapter.companyConfigurations?.isDriverCanReturnPackage != true) {
+                    popup.menu.findItem(R.id.action_return_package).isVisible = false
+                }
+                if (mAdapter.companyConfigurations?.isDriverCanFailPackageDisabled == true) {
+                    popup.menu.findItem(R.id.action_return_package).isVisible = false
+                }
                 popup.show()
             }
 

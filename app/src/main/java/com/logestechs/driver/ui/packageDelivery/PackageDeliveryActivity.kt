@@ -24,6 +24,7 @@ import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.DeleteImageRequestBody
 import com.logestechs.driver.api.requests.DeliverPackageRequestBody
+import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ActivityPackageDeliveryBinding
@@ -71,6 +72,9 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
     private var isCameraAction = false
 
+    private var companyConfigurations: DriverCompanyConfigurations? =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPackageDeliveryBinding.inflate(layoutInflater)
@@ -97,6 +101,10 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 LinearLayoutManager(super.getContext(), LinearLayoutManager.HORIZONTAL, false)
             adapter = ThumbnailsAdapter(loadedImagesList, this@PackageDeliveryActivity)
         }
+
+        if (companyConfigurations?.isPartialDeliveryEnabled == true) {
+            binding.containerPartialDeliveryControls.visibility = View.VISIBLE
+        }
     }
 
     private fun isSignatureEntered(): Boolean {
@@ -109,7 +117,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         binding.itemPackageBarcode.textItem.text = pkg?.barcode
         binding.textCod.text = pkg?.cod?.format()
 
-        if (true) {
+        if (companyConfigurations?.isPartialDeliveryEnabled == true) {
             selectedDeliveryType = DeliveryType.FULL
         }
     }
