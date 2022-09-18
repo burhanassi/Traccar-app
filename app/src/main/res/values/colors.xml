@@ -16,8 +16,10 @@
     <color name="transparent">#00000000</color>
     <color name="toastSuccessBackground">#CC2ED47A</color>
     <color name="toastErrorBackground">#CCF24462</color>
-
+    <color name="c44">#FFDFB3</color>
+    <color name="c13">#F7685B</color>
     <color name="c3">#F24645</color>
+    <color name="notificationTableBreakGray">#F1F1F1</color>
     <color name="orange_sea_buckthorn">#FCA429</color>
     <color name="orange_sea_buckthorn_line_break">#4DFCA429</color>
     <color name="detailsTextBlack">#606060</color>

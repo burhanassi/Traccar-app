@@ -198,4 +198,10 @@ interface LogesTechsDriverApi {
 
     @GET("${AppConstants.PATH}api/guests/driver/ios/min-version")
     suspend fun getMinVersion(): Response<GetLatestVersionCodeResponse>?
+
+    @GET("${AppConstants.PATH}api/users/notifications-with-count")
+    suspend fun getNotifications(
+        @Query("pageSize") pageSize: Int = AppConstants.DEFAULT_PAGE_SIZE,
+        @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
+    ): Response<GetNotificationsResponse>?
 }

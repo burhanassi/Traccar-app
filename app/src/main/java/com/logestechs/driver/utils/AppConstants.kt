@@ -36,6 +36,10 @@ class AppConstants {
     }
 }
 
+enum class BundleKeys {
+    NOTIFICATIONS_KEY, UNREAD_NOTIFICATIONS_COUNT
+}
+
 enum class AppLanguages(val value: String) {
     ARABIC("ar"),
     ENGLISH("en")

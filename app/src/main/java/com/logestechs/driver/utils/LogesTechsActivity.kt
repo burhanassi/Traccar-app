@@ -11,9 +11,16 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.logestechs.driver.R
+import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.Address
+import com.logestechs.driver.utils.bottomSheets.NotificationsBottomSheet
 import com.logestechs.driver.utils.customViews.WaitDialog
 import com.yariksoffice.lingver.Lingver
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import java.lang.ref.WeakReference
 import java.net.URLEncoder
 
@@ -179,4 +186,72 @@ abstract class LogesTechsActivity : AppCompatActivity() {
             e.printStackTrace()
         }
     }
+
+    fun getNotifications() {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(this)) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.getNotifications()
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response!!.isSuccessful && response.body() != null) {
+                        val data = response.body()!!
+
+                        val bottomSheet = NotificationsBottomSheet()
+                        val bundle = Bundle()
+                        bundle.putParcelableArrayList(
+                            BundleKeys.NOTIFICATIONS_KEY.toString(),
+                            data.notificationsList
+                        )
+
+                        bundle.putInt(
+                            BundleKeys.UNREAD_NOTIFICATIONS_COUNT.toString(),
+                            data.totalRecordsNo
+                        )
+                        bottomSheet.arguments = bundle
+                        bottomSheet.show(supportFragmentManager, "exampleBottomSheet")
+
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    this@LogesTechsActivity,
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    this@LogesTechsActivity,
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(this@LogesTechsActivity, e.message)
+                        } else {
+                            Helper.showErrorMessage(this@LogesTechsActivity, e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                this, getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
 }

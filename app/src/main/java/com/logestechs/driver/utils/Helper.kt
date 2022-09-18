@@ -34,6 +34,7 @@ import com.logestechs.driver.R
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.data.model.User
+import com.yariksoffice.lingver.Lingver
 import id.zelory.compressor.Compressor
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -521,6 +522,22 @@ class Helper {
                 e.printStackTrace()
                 "0.0.0"
             }
+        }
+
+        fun formatServerDateLocalized(source: String?, format: DateFormats): String {
+            if (source != null) {
+                val parser = SimpleDateFormat(DateFormats.SERVER_FORMAT.value, Locale.US)
+
+                val formatter: SimpleDateFormat =
+                    if (Lingver.getInstance().getLocale().toString() == AppLanguages.ARABIC.value) {
+                        SimpleDateFormat(format.value, Locale("ar"))
+                    } else {
+                        SimpleDateFormat(format.value, Locale.US)
+                    }
+
+                return formatter.format(parser.parse(source)!!)
+            }
+            return ""
         }
 
         //Attachments handling

@@ -163,6 +163,7 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
 
     private fun initListeners() {
         binding.toolbarMain.buttonBack.setOnClickListener(this)
+        binding.toolbarMain.buttonNotifications.setOnClickListener(this)
     }
 
     private fun makeTabSelected(
@@ -224,6 +225,10 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
         when (v?.id) {
             R.id.button_back -> {
                 onBackPressed()
+            }
+
+            R.id.button_notifications -> {
+                super.getNotifications()
             }
         }
     }
