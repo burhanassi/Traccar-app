@@ -30,10 +30,8 @@ data class User(
 
     @SerializedName("imageUrl")
     val imageURL: String? = null,
-
-    @SerializedName("vehicleId")
-    val vehicleID: Long? = null,
-
+    var vehicleId: Long?,
+    var vehicle: Vehicle?,
     val codSum: Double? = null,
     val codPackagesCount: Long? = null,
     val receivedMoney: Double? = null,
@@ -86,6 +84,6 @@ data class User(
     val hasRouteOptimization: Boolean? = null,
 
     @SerializedName("companyId")
-    val companyID: Long? = null,
+    val companyID: Long?,
     val andoidAdminAppMinVersion: String? = null
 ) : Parcelable

@@ -1,5 +1,7 @@
 package com.logestechs.driver.ui.profile
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -8,6 +10,8 @@ import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.databinding.ActivityProfileBinding
 import com.logestechs.driver.ui.login.LoginActivity
 import com.logestechs.driver.utils.*
+import com.logestechs.driver.utils.location.AlarmReceiver
+import com.logestechs.driver.utils.location.MyLocationService
 import com.squareup.picasso.Picasso
 import com.yariksoffice.lingver.Lingver
 import kotlinx.coroutines.Dispatchers
@@ -121,6 +125,7 @@ class ProfileActivity : LogesTechsActivity(), View.OnClickListener {
                                 super.getContext(),
                                 LoginActivity::class.java
                             )
+                            cancelLocationSync()
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                             startActivity(intent)
                             finish()
@@ -181,5 +186,15 @@ class ProfileActivity : LogesTechsActivity(), View.OnClickListener {
                 callLogout()
             }
         }
+    }
+
+    private fun cancelLocationSync() {
+        val alarmManager = this.getSystemService(ALARM_SERVICE) as AlarmManager
+        val myIntent = Intent(this, AlarmReceiver::class.java)
+        val pendingIntent =
+            PendingIntent.getBroadcast(this, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        alarmManager.cancel(pendingIntent)
+        val myService = Intent(this, MyLocationService::class.java)
+        stopService(myService)
     }
 }

@@ -204,4 +204,7 @@ interface LogesTechsDriverApi {
         @Query("pageSize") pageSize: Int = AppConstants.DEFAULT_PAGE_SIZE,
         @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
     ): Response<GetNotificationsResponse>?
+
+    @POST("${AppConstants.PATH}api/geo-services/tracking")
+    suspend fun updateDriverLocation(@Body body: UpdateLocationRequestBody?): Response<ResponseBody?>?
 }
