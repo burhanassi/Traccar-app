@@ -196,7 +196,7 @@ interface LogesTechsDriverApi {
         @Query("note") status: String,
     ): Response<ResponseBody>?
 
-    @GET("${AppConstants.PATH}api/guests/driver/ios/min-version")
+    @GET("${AppConstants.PATH}api/guests/driver/android/min-version")
     suspend fun getMinVersion(): Response<GetLatestVersionCodeResponse>?
 
     @GET("${AppConstants.PATH}api/users/notifications-with-count")
