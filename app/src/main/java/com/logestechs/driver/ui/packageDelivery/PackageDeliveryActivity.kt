@@ -117,6 +117,13 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         binding.itemPackageBarcode.textItem.text = pkg?.barcode
         binding.textCod.text = pkg?.cod?.format()
 
+        if (pkg?.notes?.trim().isNullOrEmpty()) {
+            binding.itemNotes.root.visibility = View.GONE
+        } else {
+            binding.itemNotes.root.visibility = View.VISIBLE
+            binding.itemNotes.textItem.text = pkg?.notes
+        }
+
         if (companyConfigurations?.isPartialDeliveryEnabled == true) {
             selectedDeliveryType = DeliveryType.FULL
         }
