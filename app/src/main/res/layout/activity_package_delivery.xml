@@ -408,6 +408,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:animateLayoutChanges="true"
+                    android:visibility="gone"
                     android:orientation="vertical">
 
                     <RadioGroup
@@ -416,7 +417,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:orientation="horizontal"
-                        android:visibility="gone"
                         tools:ignore="UselessParent">
 
                         <RadioButton

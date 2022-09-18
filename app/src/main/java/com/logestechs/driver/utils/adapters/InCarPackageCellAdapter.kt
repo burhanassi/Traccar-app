@@ -297,7 +297,7 @@ class InCarPackageCellAdapter(
                     popup.menu.findItem(R.id.action_return_package).isVisible = false
                 }
                 if (mAdapter.companyConfigurations?.isDriverCanFailPackageDisabled == true) {
-                    popup.menu.findItem(R.id.action_return_package).isVisible = false
+                    popup.menu.findItem(R.id.action_fail_delivery).isVisible = false
                 }
                 popup.show()
             }
