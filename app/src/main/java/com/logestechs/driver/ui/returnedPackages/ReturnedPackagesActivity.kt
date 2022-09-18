@@ -19,7 +19,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
-class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListener {
+class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListener,
+    View.OnClickListener {
     private lateinit var binding: ActivityReturnedPackagesBinding
 
     private var doesUpdateData = true
@@ -67,6 +68,9 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         binding.refreshLayoutCustomers.setOnRefreshListener {
             callGetCustomersWithReturnedPackages()
         }
+
+        binding.toolbarMain.buttonBack.setOnClickListener(this)
+        binding.toolbarMain.buttonNotifications.setOnClickListener(this)
     }
 
     private fun handleNoPackagesLabelVisibility(count: Int) {
@@ -340,5 +344,17 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         val customerId =
             (binding.rvCustomers.adapter as ReturnedPackageCustomerCellAdapter).customersList[parentIndex]?.customerId
         callGetCustomerReturnedPackages(customerId, parentIndex)
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.button_back -> {
+                onBackPressed()
+            }
+
+            R.id.button_notifications -> {
+                super.getNotifications()
+            }
+        }
     }
 }

@@ -20,7 +20,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
-class MassCodReportsActivity : LogesTechsActivity(), MassCodReportCardListener {
+class MassCodReportsActivity : LogesTechsActivity(), MassCodReportCardListener,
+    View.OnClickListener {
     private lateinit var binding: ActivityMassCodReportsBinding
     private var massReportsList: ArrayList<MassCodReport?> = ArrayList()
 
@@ -55,6 +56,9 @@ class MassCodReportsActivity : LogesTechsActivity(), MassCodReportCardListener {
             (binding.rvMassCodReports.adapter as MassCodReportCellAdapter).clearList()
             callGetMassCodReports()
         }
+
+        binding.toolbarMain.buttonNotifications.setOnClickListener(this)
+        binding.toolbarMain.buttonBack.setOnClickListener(this)
     }
 
     private fun handleNoPackagesLabelVisibility(isEmpty: Boolean) {
@@ -225,6 +229,18 @@ class MassCodReportsActivity : LogesTechsActivity(), MassCodReportCardListener {
 
     override fun onDeliverMassReport(index: Int) {
         callDeliverMassCodReport(massReportsList[index]?.id)
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.button_back -> {
+                onBackPressed()
+            }
+
+            R.id.button_notifications -> {
+                super.getNotifications()
+            }
+        }
     }
 }
 
