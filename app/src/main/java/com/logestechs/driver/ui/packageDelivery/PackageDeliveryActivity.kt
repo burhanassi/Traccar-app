@@ -171,6 +171,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             }
         }
 
+        binding.toolbarMain.buttonBack.setOnClickListener(this)
+        binding.toolbarMain.buttonNotifications.setOnClickListener(this)
         binding.buttonClearSignature.setOnClickListener(this)
         binding.buttonDeliverPackage.setOnClickListener(this)
         binding.selectorCash.setOnClickListener(this)
@@ -813,6 +815,14 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 unselectAllPaymentMethods()
                 binding.selectorBankTransfer.makeSelected()
                 selectedPaymentType = binding.selectorBankTransfer
+            }
+
+            R.id.button_back -> {
+                onBackPressed()
+            }
+
+            R.id.button_notifications -> {
+                super.getNotifications()
             }
         }
     }
