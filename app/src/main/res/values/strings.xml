@@ -115,5 +115,6 @@
     <string name="message_update_error">To update the app, please contact delivery company</string>
     <string name="read_all_notifications">Read All Notifications</string>
     <string name="notifications">Notifications</string>
+    <string name="error_barcode_already_scanned">Barcode is already scanned</string>
 
 </resources>

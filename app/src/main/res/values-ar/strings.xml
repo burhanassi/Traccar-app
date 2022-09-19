@@ -116,5 +116,6 @@
     <string name="message_update_error">يرجى التواصل مع شركة التوصيل لتحديث نسخة التطبيق</string>
     <string name="read_all_notifications">قرأت جميع الاشعارات</string>
     <string name="notifications">الاشعارات</string>
+    <string name="error_barcode_already_scanned">تم تحميل هذا الطرد مسبقا</string>
 
 </resources>

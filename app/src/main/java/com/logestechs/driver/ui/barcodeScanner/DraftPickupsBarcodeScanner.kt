@@ -204,6 +204,13 @@ class DraftPickupsBarcodeScanner : LogesTechsActivity(), View.OnClickListener,
             callScanBarcodeForDraftPickup(barcode)
             toneGen1?.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
             vibrate()
+        } else {
+            this.runOnUiThread {
+                Helper.showErrorMessage(
+                    super.getContext(),
+                    getString(R.string.error_barcode_already_scanned)
+                )
+            }
         }
     }
 
@@ -338,6 +345,13 @@ class DraftPickupsBarcodeScanner : LogesTechsActivity(), View.OnClickListener,
         if (!scannedItemsHashMap.containsKey(barcode)) {
             scannedItemsHashMap[barcode] = barcode
             callScanBarcodeForDraftPickup(barcode)
+        } else {
+            this.runOnUiThread {
+                Helper.showErrorMessage(
+                    super.getContext(),
+                    getString(R.string.error_barcode_already_scanned)
+                )
+            }
         }
     }
 }
