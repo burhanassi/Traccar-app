@@ -197,6 +197,9 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
     }
 
     private fun callPickupPackage(barcode: String) {
+        this.runOnUiThread {
+            showWaitDialog()
+        }
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
