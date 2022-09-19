@@ -307,10 +307,16 @@ class Helper {
                 businessSenderName = pkg.businessSenderName
                 cod = pkg.cod?.format()
                 if (pkg.expectedDeliveryDate != null) {
-                    expectedDeliveryDate = pkg.expectedDeliveryDate.toString()
+                    expectedDeliveryDate = formatServerDate(
+                        pkg.expectedDeliveryDate.toString(),
+                        DateFormats.MESSAGE_TEMPLATE_WITH_TIME
+                    )
                 }
                 if (pkg.postponedDeliveryDate != null) {
-                    postponeDate = pkg.postponedDeliveryDate
+                    postponeDate = formatServerDate(
+                        pkg.postponedDeliveryDate.toString(),
+                        DateFormats.DEFAULT_FORMAT
+                    )
                 }
             }
             driverName = loggedInUser?.firstName

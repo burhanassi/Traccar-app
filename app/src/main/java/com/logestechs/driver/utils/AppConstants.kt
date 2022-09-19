@@ -53,11 +53,12 @@ enum class IntentAnimation(val value: String) {
 
 enum class DateFormats(val value: String) {
     DEFAULT_FORMAT("yyyy-MM-dd"),
-    SERVER_FORMAT("yyyy-MM-dd'T'HH:mm:ss"),
+    SERVER_FORMAT("yyyy-MM-dd'T'HH:mm:ss.SSSZZZZ"),
     TRACK_NODE_DATE_FORMAT("yy-MM-dd"),
     TRACK_NODE_TIME_FORMAT("hh:mm aa"),
     NOTIFICATION_LIST_ITEM_FORMAT("dd-MM-yyyy, hh:mm aa"),
     NOTIFICATION_DAY_FORMAT("EEEE"),
+    MESSAGE_TEMPLATE_WITH_TIME("dd-MM-yyyy HH:mm"),
     DATE_FILTER_FORMAT("yyyy/MM/dd")
 
 }
