@@ -1,6 +1,6 @@
 package com.logestechs.driver.ui.barcodeScanner
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.media.AudioManager
@@ -8,7 +8,6 @@ import android.media.ToneGenerator
 import android.os.*
 import android.view.SurfaceHolder
 import android.view.View
-import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
@@ -110,8 +109,37 @@ class DraftPickupsBarcodeScanner : LogesTechsActivity(), View.OnClickListener,
         }
     }
 
-    private fun initialiseDetectorsAndSources() {
+    @SuppressLint("MissingPermission")
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == AppConstants.REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.isNotEmpty()
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED
+            ) {
+                if (Helper.isCameraPermissionNeeded(this)
+                ) {
+                    Helper.showAndRequestCameraDialog(this)
+                } else {
+                    cameraSource?.start(binding.surfaceView.holder)
+                }
+            } else {
+                if (Helper.shouldShowCameraPermissionDialog(this)) {
+                    Helper.showAndRequestCameraDialog(this)
+                } else {
+                    Helper.showErrorMessage(
+                        super.getContext(),
+                        getString(R.string.error_camera_permission)
+                    )
+                }
+            }
+        }
+    }
 
+    private fun initialiseDetectorsAndSources() {
         barcodeDetector = BarcodeDetector.Builder(this)
             .setBarcodeFormats(Barcode.ALL_FORMATS)
             .build()
@@ -121,20 +149,13 @@ class DraftPickupsBarcodeScanner : LogesTechsActivity(), View.OnClickListener,
             .build()
 
         binding.surfaceView.holder?.addCallback(object : SurfaceHolder.Callback {
+            @SuppressLint("MissingPermission")
             override fun surfaceCreated(holder: SurfaceHolder) {
                 try {
-                    if (ActivityCompat.checkSelfPermission(
-                            this@DraftPickupsBarcodeScanner,
-                            Manifest.permission.CAMERA
-                        ) == PackageManager.PERMISSION_GRANTED
-                    ) {
-                        cameraSource?.start(binding.surfaceView.holder)
+                    if (Helper.isCameraPermissionNeeded(this@DraftPickupsBarcodeScanner)) {
+                        Helper.showAndRequestCameraDialog(this@DraftPickupsBarcodeScanner)
                     } else {
-                        ActivityCompat.requestPermissions(
-                            this@DraftPickupsBarcodeScanner,
-                            arrayOf(Manifest.permission.CAMERA),
-                            REQUEST_CAMERA_PERMISSION
-                        )
+                        cameraSource?.start(binding.surfaceView.holder)
                     }
                 } catch (e: IOException) {
                     e.printStackTrace()

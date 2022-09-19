@@ -110,6 +110,7 @@
     <string name="title_cod_packages_count">عدد التحصيلات</string>
     <string name="title_draft_pickups">تحميل طلبات\nغير مكتملة</string>
     <string name="error_storage_permission">الرجاء تزويد التطبيق بصلاحية الوصول الى التخزين</string>
+    <string name="error_camera_permission">الرجاء تزويد التطبيق بصلاحية الوصول الى الكاميرا</string>
     <string name="message_update_app">عزيزي المستخدم\n\nانت الان تستخدم نسخة قديمة، يرجى تحديث التطبيق.</string>
     <string name="button_update">تحديث</string>
     <string name="message_update_error">يرجى التواصل مع شركة التوصيل لتحديث نسخة التطبيق</string>

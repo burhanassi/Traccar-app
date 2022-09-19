@@ -658,6 +658,33 @@ class Helper {
             }
         }
 
+        fun isCameraPermissionNeeded(mActivity: Activity): Boolean {
+            return ContextCompat.checkSelfPermission(
+                mActivity.applicationContext,
+                Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED
+        }
+
+
+        fun showAndRequestCameraDialog(mActivity: Activity?) {
+            ActivityCompat.requestPermissions(
+                mActivity!!,
+                arrayOf(Manifest.permission.CAMERA),
+                AppConstants.REQUEST_CAMERA_PERMISSION
+            )
+        }
+
+        fun shouldShowCameraPermissionDialog(mActivity: Activity?): Boolean {
+            return if (mActivity != null) {
+                ActivityCompat.shouldShowRequestPermissionRationale(
+                    mActivity,
+                    Manifest.permission.CAMERA
+                )
+            } else {
+                false
+            }
+        }
+
         fun validateCompressedImage(
             imageUri: Uri,
             doesDelete: Boolean,

@@ -25,7 +25,8 @@ class AppConstants {
         const val REQUEST_LOAD_PHOTO = 4002
         const val REQUEST_CAMERA_AND_STORAGE_PERMISSION = 5001
         const val REQUEST_STORAGE_PERMISSION = 5002
-        const val REQUEST_LOCATION_PERMISSION = 5003
+        const val REQUEST_CAMERA_PERMISSION = 5003
+        const val REQUEST_LOCATION_PERMISSION = 5004
 
         //permission codes
         const val PERMISSIONS_REQUEST_PHONE_CALL = 1
