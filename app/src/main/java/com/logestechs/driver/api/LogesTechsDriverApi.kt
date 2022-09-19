@@ -207,4 +207,16 @@ interface LogesTechsDriverApi {
 
     @POST("${AppConstants.PATH}api/geo-services/tracking")
     suspend fun updateDriverLocation(@Body body: UpdateLocationRequestBody?): Response<ResponseBody?>?
+
+    @PUT("${AppConstants.PATH}api/driver/pickups/{pickupId}/scan")
+    suspend fun scanDraftPickupBarcodes(
+        @Path("pickupId") long: Long?,
+        @Body body: ScanDraftPickupBarcodesRequestBody
+    ): Response<ResponseBody>?
+
+    @DELETE("${AppConstants.PATH}api/driver/pickups/{pickupId}")
+    suspend fun deleteDraftPickup(
+        @Path("pickupId") long: Long?
+    ): Response<ResponseBody>?
+
 }

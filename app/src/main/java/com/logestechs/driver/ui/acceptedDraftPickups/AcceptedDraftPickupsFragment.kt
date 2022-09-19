@@ -1,6 +1,7 @@
 package com.logestechs.driver.ui.acceptedDraftPickups
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +12,8 @@ import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.DraftPickup
 import com.logestechs.driver.databinding.FragmentAcceptedDraftPickupsBinding
-import com.logestechs.driver.utils.AppConstants
-import com.logestechs.driver.utils.DraftPickupStatus
-import com.logestechs.driver.utils.Helper
-import com.logestechs.driver.utils.LogesTechsFragment
+import com.logestechs.driver.ui.barcodeScanner.DraftPickupsBarcodeScanner
+import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.AcceptedDraftPickupCellAdapter
 import com.logestechs.driver.utils.interfaces.AcceptedDraftPickupCardListener
 import com.logestechs.driver.utils.interfaces.DriverDraftPickupsByStatusViewPagerActivityDelegate
@@ -209,9 +208,8 @@ class AcceptedDraftPickupsFragment : LogesTechsFragment(), AcceptedDraftPickupCa
 
     override fun onScanPackagesForDraftPickup(index: Int) {
         enableUpdateData = true
-        Helper.showSuccessMessage(super.getContext(), "$index")
-//        val mIntent = Intent(super.getContext(), BarcodeScannerActivity::class.java)
-//        mIntent.putExtra(IntentExtrasKeys.CUSTOMER_WITH_PACKAGES_FOR_PICKUP.name, customer)
-//        startActivity(mIntent)
+        val mIntent = Intent(super.getContext(), DraftPickupsBarcodeScanner::class.java)
+        mIntent.putExtra(IntentExtrasKeys.DRAFT_PICKUP.name, draftPickupsList[index])
+        startActivity(mIntent)
     }
 }

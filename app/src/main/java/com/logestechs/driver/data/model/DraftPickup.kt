@@ -1,5 +1,9 @@
 package com.logestechs.driver.data.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class DraftPickup(
     var barcode: String?,
     var barcodeImage: String?,
@@ -16,4 +20,4 @@ data class DraftPickup(
     var createdDate: String?,
     var id: Long?,
     var companyId: Long?
-)
+) : Parcelable
