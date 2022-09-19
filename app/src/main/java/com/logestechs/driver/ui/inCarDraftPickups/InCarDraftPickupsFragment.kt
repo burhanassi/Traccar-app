@@ -17,7 +17,6 @@ import com.logestechs.driver.utils.DraftPickupStatus
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsFragment
 import com.logestechs.driver.utils.adapters.InCarDraftPickupCellAdapter
-import com.logestechs.driver.utils.adapters.PendingDraftPickupCellAdapter
 import com.logestechs.driver.utils.interfaces.DriverDraftPickupsByStatusViewPagerActivityDelegate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -111,7 +110,7 @@ class InCarDraftPickupsFragment : LogesTechsFragment() {
     private fun initListeners() {
         binding.refreshLayoutPackages.setOnRefreshListener {
             currentPageIndex = 1
-            (binding.rvDraftPickups.adapter as PendingDraftPickupCellAdapter).clearList()
+            (binding.rvDraftPickups.adapter as InCarDraftPickupCellAdapter).clearList()
             callGetInCarDraftPickups()
         }
     }
