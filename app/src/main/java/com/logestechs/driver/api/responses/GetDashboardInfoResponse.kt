@@ -18,5 +18,10 @@ data class GetDashboardInfoResponse(
     @SerializedName("inCarPackagesCount")
     var inCarPackagesCount: Int? = null,
     @SerializedName("pendingPackagesCount")
-    var pendingPackagesCount: Int? = null
+    var pendingPackagesCount: Int? = null,
+    @SerializedName("postponedPackagesCount")
+    var postponedPackagesCount: Int? = null,
+    @SerializedName("failedPackagesCount")
+    var failedPackagesCount: Int? = null
+
 ) : Parcelable

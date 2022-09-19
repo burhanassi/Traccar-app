@@ -91,6 +91,8 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
         binding.dashEntryAcceptedPackages.textCount.text = data?.acceptedPackagesCount.toString()
         binding.dashEntryInCarPackages.textCount.text = data?.inCarPackagesCount.toString()
         binding.dashEntryPendingPackages.textCount.text = data?.pendingPackagesCount.toString()
+        binding.dashEntryPostponedPackages.textCount.text = data?.postponedPackagesCount.toString()
+        binding.dashEntryFailedPackages.textCount.text = data?.failedPackagesCount.toString()
         binding.dashEntryScanPackages.textCount.visibility = View.GONE
 
         binding.textInCarPackagesCount.text = data?.inCarPackagesCount.toString()
