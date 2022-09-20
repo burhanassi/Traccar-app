@@ -39,7 +39,7 @@ class AppConstants {
 }
 
 enum class BundleKeys {
-    NOTIFICATIONS_KEY, UNREAD_NOTIFICATIONS_COUNT
+    NOTIFICATIONS_KEY, UNREAD_NOTIFICATIONS_COUNT, IS_LOGIN
 }
 
 enum class AppLanguages(val value: String) {

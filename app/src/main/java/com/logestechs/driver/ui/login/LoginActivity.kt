@@ -72,6 +72,7 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
 
     private fun navigateFromLoginToDashboard() {
         val mIntent = Intent(this, DashboardActivity::class.java)
+        mIntent.putExtra(BundleKeys.IS_LOGIN.name, true);
         startActivity(mIntent)
         finish()
     }

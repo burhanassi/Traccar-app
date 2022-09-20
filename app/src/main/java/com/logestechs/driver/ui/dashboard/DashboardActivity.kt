@@ -17,10 +17,15 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
+import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
+import com.logestechs.driver.api.requests.LogExceptionRequestBody
 import com.logestechs.driver.api.requests.UpdateLocationRequestBody
 import com.logestechs.driver.api.responses.GetDashboardInfoResponse
+import com.logestechs.driver.data.model.Device
 import com.logestechs.driver.databinding.ActivityDashboardBinding
 import com.logestechs.driver.ui.barcodeScanner.BarcodeScannerActivity
 import com.logestechs.driver.ui.driverDraftPickupsByStatusViewPager.DriverDraftPickupsByStatusViewPagerActivity
@@ -54,6 +59,7 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
         setContentView(binding.root)
         initData()
         initOnClickListeners()
+        handleNotificationToken()
     }
 
     override fun onResume() {
@@ -103,6 +109,26 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
         binding.textCodSum.text = "${Helper.getCompanyCurrency()} ${data?.carriedCodSum.toString()}"
     }
 
+    private fun handleNotificationToken() {
+        val extras = intent.extras
+        if (extras != null) {
+            if (extras.getBoolean(BundleKeys.IS_LOGIN.name, false)) {
+                if (loginResponse != null) {
+                    FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                        if (!task.isSuccessful) {
+                            return@OnCompleteListener
+                        }
+
+                        val device = loginResponse.device
+                        if (device != null) {
+                            device.notificationToken = task.result
+                            callResetNotificationToken(device)
+                        }
+                    })
+                }
+            }
+        }
+    }
 
     //:- Action Handlers
     override fun onClick(v: View?) {
@@ -328,6 +354,27 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
                 } catch (e: Exception) {
                     Helper.logException(e, Throwable().stackTraceToString())
                 }
+            }
+        }
+    }
+
+    private fun callResetNotificationToken(device: Device) {
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                val response = ApiAdapter.apiClient.resetNotificationToken(device)
+                if (response!!.code() != 200 && !BuildConfig.DEBUG) {
+                    ApiAdapter.apiClient.logException(
+                        LogExceptionRequestBody(
+                            "Notification Token",
+                            device.notificationToken!!,
+                            "",
+                            "Android",
+                            Helper.getDeviceInfo()
+                        )
+                    )
+                }
+            } catch (e: Exception) {
+                Helper.logException(e, Throwable().stackTraceToString())
             }
         }
     }

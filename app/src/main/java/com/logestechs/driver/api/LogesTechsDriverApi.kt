@@ -2,6 +2,7 @@ package com.logestechs.driver.api
 
 import com.logestechs.driver.api.requests.*
 import com.logestechs.driver.api.responses.*
+import com.logestechs.driver.data.model.Device
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.utils.AppConstants
 import okhttp3.MultipartBody
@@ -218,5 +219,11 @@ interface LogesTechsDriverApi {
     suspend fun deleteDraftPickup(
         @Path("pickupId") long: Long?
     ): Response<ResponseBody>?
+
+    @PUT("${AppConstants.PATH}api/users/devices/reset-notification-token")
+    suspend fun resetNotificationToken(@Body device: Device): Response<ResponseBody?>?
+
+    @POST("${AppConstants.PATH}api/customers/api-exception")
+    suspend fun logException(@Body body: LogExceptionRequestBody): Response<ResponseBody>
 
 }

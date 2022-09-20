@@ -8,8 +8,11 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
 import androidx.databinding.DataBindingUtil
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
+import com.logestechs.driver.data.model.Device
 import com.logestechs.driver.databinding.DialogForceUpdateBinding
 import com.logestechs.driver.ui.dashboard.DashboardActivity
 import com.logestechs.driver.ui.login.LoginActivity
@@ -24,16 +27,18 @@ import kotlinx.coroutines.withContext
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : LogesTechsActivity() {
+    private val loginResponse = SharedPreferenceWrapper.getLoginResponse()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
         hideStatusBar()
+        handleNotificationToken()
         getMinVersion("")
     }
 
     private fun navigateIntoApp() {
         Handler().postDelayed({
-            if (SharedPreferenceWrapper.getLoginResponse() != null) {
+            if (loginResponse != null) {
                 callGetDriverCompanySettings()
             } else {
                 startActivity(Intent(this, LoginActivity::class.java))
@@ -41,6 +46,20 @@ class SplashActivity : LogesTechsActivity() {
             }
 
         }, AppConstants.SPLASH_TIME_OUT)
+    }
+
+    private fun handleNotificationToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                return@OnCompleteListener
+            }
+            if (loginResponse != null) {
+                if (loginResponse.device != null) {
+                    loginResponse.device.notificationToken = task.result
+                    callResetNotificationToken(loginResponse.device)
+                }
+            }
+        })
     }
 
     private fun showForceUpdateDialog(
@@ -115,6 +134,16 @@ class SplashActivity : LogesTechsActivity() {
                     }
 
                 }
+            } catch (e: java.lang.Exception) {
+                Helper.logException(e, Throwable().stackTraceToString())
+            }
+        }
+    }
+
+    private fun callResetNotificationToken(device: Device) {
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                ApiAdapter.apiClient.resetNotificationToken(device)
             } catch (e: java.lang.Exception) {
                 Helper.logException(e, Throwable().stackTraceToString())
             }

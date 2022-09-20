@@ -27,6 +27,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.logestechs.driver.R
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
@@ -120,9 +121,27 @@ class Helper {
         }
 
         fun logException(exception: Exception, stackTrace: String) {
-//            FirebaseCrashlytics.getInstance().log(stackTrace)
-//            FirebaseCrashlytics.getInstance()
-//                .recordException(exception)
+            FirebaseCrashlytics.getInstance().log(stackTrace)
+            FirebaseCrashlytics.getInstance()
+                .recordException(exception)
+        }
+
+        fun getDeviceInfo(): String {
+            val info = StringBuilder()
+
+            info.append("MODEL ${Build.MODEL}")
+            info.append("\n")
+
+            info.append("MANUFACTURER ${Build.MANUFACTURER}")
+            info.append("\n")
+
+            info.append("Version Code ${Build.VERSION.RELEASE}")
+            info.append("\n")
+
+            info.append("SDK Level ${Build.VERSION.SDK_INT}")
+            info.append("\n")
+
+            return info.toString()
         }
 
         fun changeStatusBarColor(activity: Activity, colorID: Int) {
