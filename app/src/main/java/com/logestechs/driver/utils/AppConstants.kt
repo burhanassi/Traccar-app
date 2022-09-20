@@ -12,6 +12,7 @@ class AppConstants {
 
         const val BASE_URL = BuildConfig.base_url
         const val PATH = BuildConfig.path
+        const val BROADCAST_CREDENTIAL = "Broadcast_Credential"
 
 
         const val ERROR_KEY = "error"
@@ -86,7 +87,8 @@ enum class IntentExtrasKeys() {
     CUSTOMER_WITH_PACKAGES_FOR_PICKUP,
     SINGLE_SCAN_BARCODE_SCANNER_LISTENER,
     PACKAGE_TO_DELIVER,
-    DRAFT_PICKUP
+    DRAFT_PICKUP,
+    EXTRA_RECEIVED_NOTIFICATION
 }
 
 enum class BarcodeScanType {
