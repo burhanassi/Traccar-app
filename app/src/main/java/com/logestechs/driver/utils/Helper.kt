@@ -14,11 +14,9 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
-import android.os.Build.VERSION.SDK_INT
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
-import android.provider.Settings
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -29,7 +27,6 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
-import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.logestechs.driver.R
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
@@ -596,63 +593,26 @@ class Helper {
         }
 
         fun isStoragePermissionNeeded(mActivity: Activity): Boolean {
-            return if (SDK_INT >= Build.VERSION_CODES.R) {
-                !Environment.isExternalStorageManager()
-            } else {
-                ContextCompat.checkSelfPermission(
-                    mActivity.applicationContext,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) != PackageManager.PERMISSION_GRANTED
-            }
+            return ContextCompat.checkSelfPermission(
+                mActivity.applicationContext,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
         }
 
         fun showAndRequestStorageDialog(mActivity: Activity?) {
-            return if (SDK_INT >= Build.VERSION_CODES.R) {
-                try {
-                    val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                    intent.addCategory("android.intent.category.DEFAULT")
-                    intent.data =
-                        Uri.parse(
-                            String.format(
-                                "package:%s",
-                                getApplicationContext<Context>()
-                                    .packageName
-                            )
-                        )
-                    mActivity!!.startActivityForResult(
-                        intent,
-                        AppConstants.REQUEST_STORAGE_PERMISSION
-                    )
-                } catch (e: java.lang.Exception) {
-                    val intent = Intent()
-                    intent.action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
-                    mActivity!!.startActivityForResult(
-                        intent,
-                        AppConstants.REQUEST_STORAGE_PERMISSION
-                    )
-                }
-            } else {
-                ActivityCompat.requestPermissions(
-                    mActivity!!,
-                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    AppConstants.REQUEST_STORAGE_PERMISSION
-                )
-            }
+            return ActivityCompat.requestPermissions(
+                mActivity!!,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                AppConstants.REQUEST_STORAGE_PERMISSION
+            )
         }
 
         fun shouldShowStoragePermissionDialog(mActivity: Activity?): Boolean {
             return if (mActivity != null) {
-                if (SDK_INT >= Build.VERSION_CODES.R) {
-                    ActivityCompat.shouldShowRequestPermissionRationale(
-                        mActivity,
-                        Manifest.permission.MANAGE_EXTERNAL_STORAGE
-                    )
-                } else {
-                    ActivityCompat.shouldShowRequestPermissionRationale(
-                        mActivity,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    )
-                }
+                ActivityCompat.shouldShowRequestPermissionRationale(
+                    mActivity,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
             } else {
                 false
             }
