@@ -7,7 +7,14 @@ plugins {
 
 android {
     compileSdk 32
-
+    signingConfigs {
+        LogesTechs {
+            storeFile file('/Users/abdulsalammansour/projects/keys/android customer/logestechs-customer-key.jks')
+            storePassword 'logestechs@password1!'
+            keyPassword 'logestechs@password1!'
+            keyAlias 'logestechs-customer-key'
+        }
+    }
     defaultConfig {
         applicationId "com.logestechs.driver"
         minSdk 21
