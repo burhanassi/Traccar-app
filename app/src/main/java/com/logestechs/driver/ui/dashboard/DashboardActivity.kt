@@ -87,6 +87,8 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
         binding.dashEntryAcceptedPackages.root.setOnClickListener(this)
         binding.dashEntryInCarPackages.root.setOnClickListener(this)
         binding.dashEntryScanPackages.root.setOnClickListener(this)
+        binding.dashEntryFailedPackages.root.setOnClickListener(this)
+        binding.dashEntryPostponedPackages.root.setOnClickListener(this)
         binding.dashSubEntryReturnedPackages.root.setOnClickListener(this)
         binding.dashSubEntryMassCodReports.root.setOnClickListener(this)
         binding.dashSubEntryDraftPickups.root.setOnClickListener(this)
@@ -167,6 +169,26 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
 
             R.id.dash_entry_scan_packages -> {
                 val mIntent = Intent(this, BarcodeScannerActivity::class.java)
+                startActivity(mIntent)
+            }
+
+            R.id.dash_entry_postponed_packages -> {
+                val mIntent = Intent(this, DriverPackagesByStatusViewPagerActivity::class.java)
+                mIntent.putExtra(IntentExtrasKeys.SELECTED_PACKAGES_TAB.name, 2)
+                mIntent.putExtra(
+                    IntentExtrasKeys.IN_CAR_PACKAGE_STATUS.name,
+                    InCarPackageStatus.POSTPONED.name
+                )
+                startActivity(mIntent)
+            }
+
+            R.id.dash_entry_failed_packages -> {
+                val mIntent = Intent(this, DriverPackagesByStatusViewPagerActivity::class.java)
+                mIntent.putExtra(IntentExtrasKeys.SELECTED_PACKAGES_TAB.name, 2)
+                mIntent.putExtra(
+                    IntentExtrasKeys.IN_CAR_PACKAGE_STATUS.name,
+                    InCarPackageStatus.FAILED.name
+                )
                 startActivity(mIntent)
             }
 

@@ -9,8 +9,11 @@ import com.logestechs.driver.ui.deliveredPackages.DeliveredPackagesFragment
 import com.logestechs.driver.ui.inCarPackages.InCarPackagesFragment
 import com.logestechs.driver.ui.pendingPackages.PendingPackagesFragment
 
-class PackagesByStatusViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
-    FragmentStateAdapter(fragmentManager, lifecycle) {
+class PackagesByStatusViewPagerAdapter(
+    fragmentManager: FragmentManager,
+    lifecycle: Lifecycle,
+    private val inCarPackageStatus: String
+) : FragmentStateAdapter(fragmentManager, lifecycle) {
     override fun getItemCount(): Int {
         return 4
     }
@@ -24,7 +27,7 @@ class PackagesByStatusViewPagerAdapter(fragmentManager: FragmentManager, lifecyc
                 AcceptedPackagesFragment()
             }
             2 -> {
-                InCarPackagesFragment()
+                InCarPackagesFragment(selectedStatus = enumValueOf(inCarPackageStatus))
             }
             3 -> {
                 DeliveredPackagesFragment()

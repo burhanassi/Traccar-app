@@ -31,7 +31,9 @@ import org.json.JSONObject
 import retrofit2.Response
 
 
-class InCarPackagesFragment : LogesTechsFragment(),
+class InCarPackagesFragment(
+    var selectedStatus: InCarPackageStatus = InCarPackageStatus.TO_DELIVER
+) : LogesTechsFragment(),
     View.OnClickListener,
     InCarViewModeDialogListener,
     InCarStatusFilterDialogListener,
@@ -48,7 +50,6 @@ class InCarPackagesFragment : LogesTechsFragment(),
     private var searchWord: String? = null
 
     var selectedViewMode: InCarPackagesViewMode = InCarPackagesViewMode.BY_VILLAGE
-    var selectedStatus: InCarPackageStatus = InCarPackageStatus.TO_DELIVER
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

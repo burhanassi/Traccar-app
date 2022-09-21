@@ -14,10 +14,7 @@ import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.responses.GetDashboardInfoResponse
 import com.logestechs.driver.databinding.ActivityDriverPackagesByStatusViewPagerBinding
-import com.logestechs.driver.utils.AppConstants
-import com.logestechs.driver.utils.Helper
-import com.logestechs.driver.utils.IntentExtrasKeys
-import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.interfaces.DriverPackagesByStatusViewPagerActivityDelegate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -32,6 +29,7 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
     private lateinit var packagesByStatusViewPagerAdapter: PackagesByStatusViewPagerAdapter
 
     private var selectedTabIndex = 0
+    private var selectedInCarStatus: String? = InCarPackageStatus.TO_DELIVER.name
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,13 +49,18 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
         val extras = intent.extras
         if (extras != null) {
             selectedTabIndex = extras.getInt(IntentExtrasKeys.SELECTED_PACKAGES_TAB.name)
+            selectedInCarStatus = extras.getString(IntentExtrasKeys.IN_CAR_PACKAGE_STATUS.name)
         }
     }
 
     private fun initViewPager() {
         binding.viewPager.isUserInputEnabled = false
         packagesByStatusViewPagerAdapter =
-            PackagesByStatusViewPagerAdapter(supportFragmentManager, lifecycle)
+            PackagesByStatusViewPagerAdapter(
+                supportFragmentManager,
+                lifecycle,
+                selectedInCarStatus ?: InCarPackageStatus.TO_DELIVER.name
+            )
         binding.viewPager.adapter = packagesByStatusViewPagerAdapter
         binding.viewPager.setCurrentItem(selectedTabIndex, false)
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
