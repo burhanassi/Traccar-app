@@ -105,6 +105,10 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         if (companyConfigurations?.isPartialDeliveryEnabled == true) {
             binding.containerPartialDeliveryControls.visibility = View.VISIBLE
         }
+
+        if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true) {
+            binding.containerSignature.visibility = View.GONE
+        }
     }
 
     private fun isSignatureEntered(): Boolean {
@@ -673,16 +677,35 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             }
 
             R.id.button_deliver_package -> {
-                if (isSignatureEntered()) {
+                if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true) {
                     if (validateInput()) {
-                        if (Helper.isStoragePermissionNeeded(this)) {
-                            Helper.showAndRequestStorageDialog(this)
-                        } else {
-                            uploadPackageSignature()
-                        }
+                        callDeliverPackage(
+                            DeliverPackageRequestBody(
+                                pkg?.id,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                null,
+                                getPodImagesUrls(),
+                                null,
+                                null,
+                                (selectedPaymentType?.enumValue as PaymentType).name
+                            )
+                        )
                     }
                 } else {
-                    Helper.showErrorMessage(this, getString(R.string.error_enter_signature))
+                    if (isSignatureEntered()) {
+                        if (validateInput()) {
+                            if (Helper.isStoragePermissionNeeded(this)) {
+                                Helper.showAndRequestStorageDialog(this)
+                            } else {
+                                uploadPackageSignature()
+                            }
+                        }
+                    } else {
+                        Helper.showErrorMessage(this, getString(R.string.error_enter_signature))
+                    }
                 }
             }
 
