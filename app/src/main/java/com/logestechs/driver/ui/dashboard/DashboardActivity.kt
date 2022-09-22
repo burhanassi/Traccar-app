@@ -26,6 +26,7 @@ import com.logestechs.driver.api.requests.LogExceptionRequestBody
 import com.logestechs.driver.api.requests.UpdateLocationRequestBody
 import com.logestechs.driver.api.responses.GetDashboardInfoResponse
 import com.logestechs.driver.data.model.Device
+import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.databinding.ActivityDashboardBinding
 import com.logestechs.driver.ui.barcodeScanner.BarcodeScannerActivity
 import com.logestechs.driver.ui.driverDraftPickupsByStatusViewPager.DriverDraftPickupsByStatusViewPagerActivity
@@ -49,6 +50,8 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
 
     private lateinit var binding: ActivityDashboardBinding
     private val loginResponse = SharedPreferenceWrapper.getLoginResponse()
+    private var companyConfigurations: DriverCompanyConfigurations? =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
     private var mFusedLocationClient: FusedLocationProviderClient? = null
     private var mLocationManager: LocationManager? = null
@@ -77,6 +80,10 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         mLocationManager = this.getSystemService(LOCATION_SERVICE) as LocationManager
+
+        if (companyConfigurations?.isDriverPickupPackagesByScanDisabled == true) {
+            binding.dashEntryScanPackages.root.visibility = View.GONE
+        }
         createLocationRequest()
     }
 

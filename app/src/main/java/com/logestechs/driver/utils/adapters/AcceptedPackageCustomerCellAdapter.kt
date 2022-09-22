@@ -2,17 +2,16 @@ package com.logestechs.driver.utils.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
-import com.logestechs.driver.R
 import com.logestechs.driver.data.model.Customer
+import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.databinding.ItemAcceptedPackageCustomerCellBinding
 import com.logestechs.driver.utils.AppCurrency
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.interfaces.AcceptedPackagesCardListener
 
 
@@ -23,6 +22,9 @@ class AcceptedPackageCustomerCellAdapter(
     var parentIndex: Int
 ) :
     RecyclerView.Adapter<AcceptedPackageCustomerCellAdapter.AcceptedPackageCustomerCellViewHolder>() {
+
+    private var companyConfigurations: DriverCompanyConfigurations? =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
@@ -133,26 +135,16 @@ class AcceptedPackageCustomerCellAdapter(
                 binding.imageViewLocation.visibility = View.GONE
             }
 
+            if (mAdapter.companyConfigurations?.isDriverPickupPackagesByScanDisabled == true) {
+                binding.buttonScanPackagesBarcodes.visibility = View.GONE
+            }
+
             binding.buttonScanPackagesBarcodes.setOnClickListener {
                 mAdapter.listener?.scanForPickup(customer)
             }
 
             binding.buttonContextMenu.visibility = View.GONE
-            binding.buttonContextMenu.setOnClickListener {
-                val popup = PopupMenu(mAdapter.context, binding.buttonContextMenu)
-                popup.inflate(R.menu.pending_package_context_menu)
-                popup.setOnMenuItemClickListener { item: MenuItem? ->
 
-                    when (item?.itemId) {
-                        R.id.action_reject_package -> {
-                            mAdapter.listener?.scanForPickup(customer)
-                        }
-                    }
-                    true
-                }
-
-                popup.show()
-            }
         }
     }
 }
