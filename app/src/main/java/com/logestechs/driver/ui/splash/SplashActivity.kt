@@ -33,7 +33,7 @@ class SplashActivity : LogesTechsActivity() {
         setContentView(R.layout.activity_splash)
         hideStatusBar()
         handleNotificationToken()
-        getMinVersion("")
+        getMinVersion("https://play.google.com/store/apps/details?id=com.logestechs.driver")
     }
 
     private fun navigateIntoApp() {
