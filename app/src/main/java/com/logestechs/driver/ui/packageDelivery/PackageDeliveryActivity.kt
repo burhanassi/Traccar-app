@@ -175,6 +175,10 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             }
         }
 
+        binding.itemPackageBarcode.buttonCopy.setOnClickListener {
+            Helper.copyTextToClipboard(this, pkg?.barcode)
+        }
+
         binding.toolbarMain.buttonBack.setOnClickListener(this)
         binding.toolbarMain.buttonNotifications.setOnClickListener(this)
         binding.buttonClearSignature.setOnClickListener(this)

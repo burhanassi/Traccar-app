@@ -117,5 +117,6 @@
     <string name="notifications">Notifications</string>
     <string name="error_barcode_already_scanned">Barcode is already scanned</string>
     <string name="NOTIFICATION_CHANNEL_ID" translatable="false">NOTIFICATION_CHANNEL_ID</string>
+    <string name="success_text_copy">Copied</string>
 
 </resources>

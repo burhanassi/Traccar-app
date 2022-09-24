@@ -117,5 +117,6 @@
     <string name="read_all_notifications">قرأت جميع الاشعارات</string>
     <string name="notifications">الاشعارات</string>
     <string name="error_barcode_already_scanned">تم تحميل هذا الطرد مسبقا</string>
+    <string name="success_text_copy">تم نسخ النص بنجاح</string>
 
 </resources>

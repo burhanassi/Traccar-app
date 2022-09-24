@@ -3,9 +3,7 @@ package com.logestechs.driver.utils
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ContentUris
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Bitmap
@@ -275,6 +273,15 @@ class Helper {
                     return ""
                 }
             }
+        }
+
+        fun copyTextToClipboard(context: Context?, text: String?) {
+            val clipboardManager =
+                context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clipData = ClipData.newPlainText(text, text)
+            clipboardManager.setPrimaryClip(clipData)
+
+            showSuccessMessage(context, context.getString(R.string.success_text_copy))
         }
 
         fun getPackageTypes(): LinkedHashMap<String, String> {

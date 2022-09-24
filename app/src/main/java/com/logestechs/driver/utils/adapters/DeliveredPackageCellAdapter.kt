@@ -222,6 +222,9 @@ class DeliveredPackageCellAdapter(
                 binding.imageViewReceiverLocation.visibility = View.GONE
             }
 
+            binding.itemPackageBarcode.buttonCopy.setOnClickListener {
+                Helper.copyTextToClipboard(mAdapter.context, pkg?.barcode)
+            }
         }
     }
 }

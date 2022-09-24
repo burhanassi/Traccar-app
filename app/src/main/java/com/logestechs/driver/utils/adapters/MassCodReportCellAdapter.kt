@@ -126,6 +126,10 @@ class MassCodReportCellAdapter(
             binding.buttonDeliver.setOnClickListener {
                 mAdapter.listener?.onDeliverMassReport(adapterPosition)
             }
+
+            binding.itemPackageBarcode.buttonCopy.setOnClickListener {
+                Helper.copyTextToClipboard(mAdapter.context, massCodReport?.barcode)
+            }
         }
     }
 }

@@ -305,6 +305,10 @@ class InCarPackageCellAdapter(
             binding.buttonDeliverPackage.setOnClickListener {
                 mAdapter.listener?.onDeliverPackage(pkg)
             }
+
+            binding.itemPackageBarcode.buttonCopy.setOnClickListener {
+                Helper.copyTextToClipboard(mAdapter.context, pkg?.barcode)
+            }
         }
     }
 

@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemReturnedPackageCellBinding
+import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.interfaces.ReturnedPackagesCardListener
 import com.logestechs.driver.utils.setThrottleClickListener
 
@@ -66,6 +67,10 @@ class ReturnedPackageCellAdapter(
             binding.buttonDeliverToSender.setThrottleClickListener({
                 mAdapter.listener?.deliverPackage(mAdapter.parentIndex, adapterPosition)
             })
+
+            binding.itemPackageBarcode.buttonCopy.setOnClickListener {
+                Helper.copyTextToClipboard(mAdapter.context, pkg?.barcode)
+            }
 
         }
     }
