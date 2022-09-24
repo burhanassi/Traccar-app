@@ -11,6 +11,7 @@ import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.databinding.FragmentDeliveredPackagesBinding
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.LogesTechsApp
 import com.logestechs.driver.utils.LogesTechsFragment
 import com.logestechs.driver.utils.adapters.DeliveredPackageCellAdapter
 import com.logestechs.driver.utils.interfaces.DriverPackagesByStatusViewPagerActivityDelegate
@@ -26,9 +27,6 @@ class DeliveredPackagesFragment : LogesTechsFragment() {
     private val binding get() = _binding!!
 
     private var activityDelegate: DriverPackagesByStatusViewPagerActivityDelegate? = null
-
-    private var doesUpdateData = true
-    private var enableUpdateData = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,20 +61,8 @@ class DeliveredPackagesFragment : LogesTechsFragment() {
 
     override fun onResume() {
         super.onResume()
-        if (doesUpdateData) {
+        if (!LogesTechsApp.isInBackground) {
             callGetDeliveredPackages()
-        } else {
-            doesUpdateData = true
-        }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        if (enableUpdateData) {
-            doesUpdateData = true
-            enableUpdateData = false
-        } else {
-            doesUpdateData = false
         }
     }
 

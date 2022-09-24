@@ -13,6 +13,7 @@ import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.databinding.FragmentPendingPackagesBinding
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.LogesTechsApp
 import com.logestechs.driver.utils.LogesTechsFragment
 import com.logestechs.driver.utils.adapters.PendingPackageCellAdapter
 import com.logestechs.driver.utils.adapters.PendingPackageCustomerCellAdapter
@@ -60,7 +61,9 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
 
     override fun onResume() {
         super.onResume()
-        callGetPendingPackages()
+        if (!LogesTechsApp.isInBackground) {
+            callGetPendingPackages()
+        }
     }
 
     private fun initRecycler() {

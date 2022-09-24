@@ -36,9 +36,6 @@ class AcceptedDraftPickupsFragment : LogesTechsFragment(), AcceptedDraftPickupCa
     private var isLastPage = false
     private var currentPageIndex = 1
 
-    private var doesUpdateData = true
-    private var enableUpdateData = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -72,22 +69,10 @@ class AcceptedDraftPickupsFragment : LogesTechsFragment(), AcceptedDraftPickupCa
 
     override fun onResume() {
         super.onResume()
-        if (doesUpdateData) {
+        if (!LogesTechsApp.isInBackground) {
             currentPageIndex = 1
             (binding.rvAcceptedDraftPickups.adapter as AcceptedDraftPickupCellAdapter).clearList()
             callGetAcceptedDraftPickups()
-        } else {
-            doesUpdateData = true
-        }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        if (enableUpdateData) {
-            doesUpdateData = true
-            enableUpdateData = false
-        } else {
-            doesUpdateData = false
         }
     }
 
@@ -207,7 +192,6 @@ class AcceptedDraftPickupsFragment : LogesTechsFragment(), AcceptedDraftPickupCa
     }
 
     override fun onScanPackagesForDraftPickup(index: Int) {
-        enableUpdateData = true
         val mIntent = Intent(super.getContext(), DraftPickupsBarcodeScanner::class.java)
         mIntent.putExtra(IntentExtrasKeys.DRAFT_PICKUP.name, draftPickupsList[index])
         startActivity(mIntent)

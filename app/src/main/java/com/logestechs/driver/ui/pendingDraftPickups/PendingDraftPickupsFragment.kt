@@ -12,10 +12,7 @@ import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.DraftPickup
 import com.logestechs.driver.databinding.FragmentPendingDraftPickupsBinding
-import com.logestechs.driver.utils.AppConstants
-import com.logestechs.driver.utils.DraftPickupStatus
-import com.logestechs.driver.utils.Helper
-import com.logestechs.driver.utils.LogesTechsFragment
+import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.PendingDraftPickupCellAdapter
 import com.logestechs.driver.utils.interfaces.DriverDraftPickupsByStatusViewPagerActivityDelegate
 import com.logestechs.driver.utils.interfaces.PendingDraftPickupCardListener
@@ -36,9 +33,6 @@ class PendingDraftPickupsFragment : LogesTechsFragment(), PendingDraftPickupCard
     private var isLoading = false
     private var isLastPage = false
     private var currentPageIndex = 1
-
-    private var doesUpdateData = true
-    private var enableUpdateData = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,23 +67,11 @@ class PendingDraftPickupsFragment : LogesTechsFragment(), PendingDraftPickupCard
 
     override fun onResume() {
         super.onResume()
-        if (doesUpdateData) {
+        if (!LogesTechsApp.isInBackground) {
             currentPageIndex = 1
             (binding.rvDraftPickups.adapter as PendingDraftPickupCellAdapter).clearList()
             callGetPendingDraftPickups()
             activityDelegate?.updateCountValues()
-        } else {
-            doesUpdateData = true
-        }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        if (enableUpdateData) {
-            doesUpdateData = true
-            enableUpdateData = false
-        } else {
-            doesUpdateData = false
         }
     }
 

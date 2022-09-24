@@ -1,6 +1,5 @@
 package com.logestechs.driver.ui.inCarPackages
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -44,9 +43,6 @@ class InCarPackagesFragment(
     private val binding get() = _binding!!
 
     private var activityDelegate: DriverPackagesByStatusViewPagerActivityDelegate? = null
-    private var doesUpdateData = true
-    private var enableUpdateData = false
-
     private var searchWord: String? = null
 
     var selectedViewMode: InCarPackagesViewMode = InCarPackagesViewMode.BY_VILLAGE
@@ -59,18 +55,6 @@ class InCarPackagesFragment(
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1) {
-            if (resultCode == Activity.RESULT_OK) {
-                getPackagesBySelectedMode()
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                // Write your code if there's no result
-            }
-        }
     }
 
     override fun onCreateView(
@@ -89,20 +73,8 @@ class InCarPackagesFragment(
 
     override fun onResume() {
         super.onResume()
-        if (doesUpdateData) {
+        if (!LogesTechsApp.isInBackground) {
             getPackagesBySelectedMode()
-        } else {
-            doesUpdateData = true
-        }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        if (enableUpdateData) {
-            doesUpdateData = true
-            enableUpdateData = false
-        } else {
-            doesUpdateData = false
         }
     }
 
@@ -798,7 +770,7 @@ class InCarPackagesFragment(
     override fun onDeliverPackage(pkg: Package?) {
         val mIntent = Intent(context, PackageDeliveryActivity::class.java)
         mIntent.putExtra(IntentExtrasKeys.PACKAGE_TO_DELIVER.name, pkg)
-        startActivityForResult(mIntent, 1)
+        startActivity(mIntent)
     }
 
     override fun onPackageSearch(keyword: String?) {

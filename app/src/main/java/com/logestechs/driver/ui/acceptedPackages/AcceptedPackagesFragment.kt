@@ -13,10 +13,7 @@ import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.data.model.Village
 import com.logestechs.driver.databinding.FragmentAcceptedPackagesBinding
 import com.logestechs.driver.ui.barcodeScanner.BarcodeScannerActivity
-import com.logestechs.driver.utils.AppConstants
-import com.logestechs.driver.utils.Helper
-import com.logestechs.driver.utils.IntentExtrasKeys
-import com.logestechs.driver.utils.LogesTechsFragment
+import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.AcceptedPackageVillageCellAdapter
 import com.logestechs.driver.utils.interfaces.AcceptedPackagesCardListener
 import com.logestechs.driver.utils.interfaces.DriverPackagesByStatusViewPagerActivityDelegate
@@ -31,8 +28,6 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
     private var _binding: FragmentAcceptedPackagesBinding? = null
     private val binding get() = _binding!!
     private var activityDelegate: DriverPackagesByStatusViewPagerActivityDelegate? = null
-    private var doesUpdateData = true
-    private var enableUpdateData = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,20 +63,8 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
 
     override fun onResume() {
         super.onResume()
-        if (doesUpdateData) {
+        if (!LogesTechsApp.isInBackground) {
             callGetAcceptedPackages()
-        } else {
-            doesUpdateData = true
-        }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        if (enableUpdateData) {
-            doesUpdateData = true
-            enableUpdateData = false
-        } else {
-            doesUpdateData = false
         }
     }
 
@@ -181,7 +164,6 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
     }
 
     override fun scanForPickup(customer: Customer?) {
-        enableUpdateData = true
         val mIntent = Intent(super.getContext(), BarcodeScannerActivity::class.java)
         mIntent.putExtra(IntentExtrasKeys.CUSTOMER_WITH_PACKAGES_FOR_PICKUP.name, customer)
         startActivity(mIntent)
