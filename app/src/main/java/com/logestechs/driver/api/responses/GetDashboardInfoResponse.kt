@@ -10,9 +10,9 @@ data class GetDashboardInfoResponse(
     @SerializedName("acceptedPackagesCount")
     var acceptedPackagesCount: Int? = null,
     @SerializedName("carriedCodSum")
-    var carriedCodSum: Int? = null,
+    var carriedCodSum: Double? = null,
     @SerializedName("carriedMassReportsSum")
-    var carriedMassReportsSum: Int? = null,
+    var carriedMassReportsSum: Double? = null,
     @SerializedName("deliveredPackagesCount")
     var deliveredPackagesCount: Int? = null,
     @SerializedName("inCarPackagesCount")
