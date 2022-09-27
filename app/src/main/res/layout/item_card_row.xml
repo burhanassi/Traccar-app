@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="itemSrc"
+            type="android.graphics.drawable.Drawable" />
+
+        <variable
+            name="isCopyVisible"
+            type="java.lang.Boolean" />
+
+        <variable
+            name="isIconCircleVisible"
+            type="java.lang.Boolean" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/background_card_row_icon_circle"
+                android:visibility="@{isIconCircleVisible ? View.VISIBLE : View.GONE, default=gone}"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/icon_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@{itemSrc}"
+                tools:ignore="ContentDescription"
+                tools:src="@drawable/ic_sender_gray" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/text_item"
+            style="@style/LogesTechsMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="8dp"
+            android:textColor="@color/detailsTextBlack"
+            android:textSize="14sp"
+            tools:text="#100919003663" />
+
+        <ImageView
+            android:id="@+id/button_copy"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
+            android:padding="2dp"
+            android:src="@drawable/ic_copy_gray"
+            android:visibility="@{isCopyVisible ? View.VISIBLE : View.GONE, default=gone}"
+            tools:ignore="ContentDescription" />
+    </LinearLayout>
+</layout>

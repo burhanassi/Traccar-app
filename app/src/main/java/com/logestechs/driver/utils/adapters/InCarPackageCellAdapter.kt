@@ -1,0 +1,338 @@
+package com.logestechs.driver.utils.adapters
+
+import android.annotation.SuppressLint
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.PopupMenu
+import androidx.recyclerview.widget.RecyclerView
+import com.logestechs.driver.R
+import com.logestechs.driver.api.requests.*
+import com.logestechs.driver.data.model.DriverCompanyConfigurations
+import com.logestechs.driver.data.model.Package
+import com.logestechs.driver.databinding.ItemInCarPackageCellBinding
+import com.logestechs.driver.utils.AppCurrency
+import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.Helper.Companion.format
+import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.SharedPreferenceWrapper
+import com.logestechs.driver.utils.dialogs.*
+import com.logestechs.driver.utils.interfaces.*
+
+
+class InCarPackageCellAdapter(
+    var packagesList: ArrayList<Package?>,
+    var context: Context?,
+    var listener: InCarPackagesCardListener?,
+    var parentIndex: Int?,
+    var isGrouped: Boolean = true
+) :
+    RecyclerView.Adapter<InCarPackageCellAdapter.InCarPackageCellViewHolder>(),
+    ReturnPackageDialogListener,
+    FailDeliveryDialogListener,
+    PostponePackageDialogListener,
+    ChangePackageTypeDialogListener,
+    AddPackageNoteDialogListener,
+    ChangeCodDialogListener {
+
+    val messageTemplates = SharedPreferenceWrapper.getDriverCompanySettings()?.messageTemplates
+    val companyConfigurations: DriverCompanyConfigurations? =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
+
+    override fun onCreateViewHolder(
+        viewGroup: ViewGroup,
+        i: Int
+    ): InCarPackageCellViewHolder {
+        val inflater =
+            ItemInCarPackageCellBinding.inflate(
+                LayoutInflater.from(viewGroup.context),
+                viewGroup,
+                false
+            )
+
+        if (isGrouped) {
+            inflater.root.layoutParams = ViewGroup.LayoutParams(
+                (viewGroup.width * 0.7).toInt(),
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
+        return InCarPackageCellViewHolder(inflater, viewGroup, this)
+    }
+
+    override fun onBindViewHolder(
+        InCarPackageViewHolder: InCarPackageCellViewHolder,
+        position: Int
+    ) {
+        val pkg: Package? = packagesList[position]
+        InCarPackageViewHolder.setIsRecyclable(false);
+        InCarPackageViewHolder.bind(pkg)
+    }
+
+    override fun getItemCount(): Int {
+        return packagesList.size
+    }
+
+    fun removeItem(position: Int) {
+        notifyItemRemoved(position)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun update(list: ArrayList<Package?>) {
+        this.packagesList.clear()
+        this.packagesList.addAll(list)
+        this.notifyDataSetChanged()
+    }
+
+    class InCarPackageCellViewHolder(
+        private var binding: ItemInCarPackageCellBinding,
+        private var parent: ViewGroup,
+        private var mAdapter: InCarPackageCellAdapter
+    ) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(pkg: Package?) {
+            binding.itemSenderName.textItem.text = pkg?.getFullSenderName()
+            binding.itemSenderAddress.textItem.text = pkg?.originAddress?.toStringAddress()
+
+            binding.itemReceiverName.textItem.text = pkg?.getFullReceiverName()
+            binding.itemReceiverAddress.textItem.text = pkg?.destinationAddress?.toStringAddress()
+
+            binding.textCod.text = pkg?.cod?.format()
+
+            binding.itemPackageBarcode.textItem.text = pkg?.barcode
+
+            if (pkg?.notes?.trim().isNullOrEmpty()) {
+                binding.itemNotes.root.visibility = View.GONE
+            } else {
+                binding.itemNotes.root.visibility = View.VISIBLE
+                binding.itemNotes.textItem.text = pkg?.notes
+            }
+
+            if (pkg?.quantity != null && pkg.quantity != 0) {
+                binding.itemPackageQuantity.root.visibility = View.VISIBLE
+                binding.itemPackageQuantity.textItem.text = pkg.quantity.toString()
+            } else {
+                binding.itemPackageQuantity.root.visibility = View.GONE
+            }
+
+            //Sender Contact Actions
+            binding.imageViewSenderCall.setOnClickListener {
+                if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                    (mAdapter.context as LogesTechsActivity).callMobileNumber(pkg?.senderPhone)
+                }
+            }
+
+            binding.imageViewSenderSms.setOnClickListener {
+                if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                    (mAdapter.context as LogesTechsActivity).sendSms(
+                        pkg?.senderPhone,
+                        ""
+                    )
+                }
+            }
+
+            binding.imageViewSenderWhatsApp.setOnClickListener {
+                if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                    (mAdapter.context as LogesTechsActivity).sendWhatsAppMessage(
+                        Helper.formatNumberForWhatsApp(
+                            pkg?.senderPhone
+                        ), ""
+                    )
+                }
+            }
+
+            if (Helper.getCompanyCurrency() == AppCurrency.NIS.value) {
+                binding.imageViewSenderWhatsAppSecondary.visibility = View.VISIBLE
+                binding.imageViewSenderWhatsAppSecondary.setOnClickListener {
+                    if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                        (mAdapter.context as LogesTechsActivity).sendWhatsAppMessage(
+                            Helper.formatNumberForWhatsApp(
+                                pkg?.senderPhone,
+                                true
+                            ), ""
+                        )
+                    }
+                }
+            } else {
+                binding.imageViewSenderWhatsAppSecondary.visibility = View.GONE
+            }
+
+            if (pkg?.senderPhone2?.isNotEmpty() == true) {
+                binding.imageViewSenderCallSecondary.visibility = View.VISIBLE
+                binding.imageViewSenderCallSecondary.setOnClickListener {
+                    if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                        (mAdapter.context as LogesTechsActivity).callMobileNumber(pkg.senderPhone2)
+                    }
+                }
+            } else {
+                binding.imageViewSenderCallSecondary.visibility = View.GONE
+            }
+
+            //Receiver Contact Actions
+            binding.imageViewReceiverCall.setOnClickListener {
+                if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                    (mAdapter.context as LogesTechsActivity).callMobileNumber(pkg?.receiverPhone)
+                }
+            }
+
+            binding.imageViewReceiverSms.setOnClickListener {
+                if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                    (mAdapter.context as LogesTechsActivity).sendSms(
+                        pkg?.receiverPhone,
+                        Helper.getInterpretedMessageFromTemplate(
+                            pkg,
+                            false,
+                            mAdapter.messageTemplates?.distribution
+                        )
+                    )
+                }
+            }
+
+            binding.imageViewReceiverWhatsApp.setOnClickListener {
+                if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                    (mAdapter.context as LogesTechsActivity).sendWhatsAppMessage(
+                        Helper.formatNumberForWhatsApp(
+                            pkg?.receiverPhone
+                        ), Helper.getInterpretedMessageFromTemplate(
+                            pkg,
+                            false,
+                            mAdapter.messageTemplates?.distribution
+                        )
+                    )
+                }
+            }
+
+            if (Helper.getCompanyCurrency() == AppCurrency.NIS.value) {
+                binding.imageViewReceiverWhatsAppSecondary.visibility = View.VISIBLE
+                binding.imageViewReceiverWhatsAppSecondary.setOnClickListener {
+                    if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                        (mAdapter.context as LogesTechsActivity).sendWhatsAppMessage(
+                            Helper.formatNumberForWhatsApp(
+                                pkg?.receiverPhone,
+                                true
+                            ), Helper.getInterpretedMessageFromTemplate(
+                                pkg,
+                                false,
+                                mAdapter.messageTemplates?.distribution
+                            )
+                        )
+                    }
+                }
+            } else {
+                binding.imageViewReceiverWhatsAppSecondary.visibility = View.GONE
+            }
+
+            if (pkg?.receiverPhone2?.isNotEmpty() == true) {
+                binding.imageViewReceiverCallSecondary.visibility = View.VISIBLE
+                binding.imageViewReceiverCallSecondary.setOnClickListener {
+                    if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                        (mAdapter.context as LogesTechsActivity).callMobileNumber(pkg.receiverPhone2)
+                    }
+                }
+            } else {
+                binding.imageViewReceiverCallSecondary.visibility = View.GONE
+            }
+
+            if (pkg?.destinationAddress != null) {
+                if (pkg.destinationAddress!!.latitude != 0.0 || pkg.destinationAddress!!.longitude != 0.0) {
+                    binding.imageViewReceiverLocation.visibility = View.VISIBLE
+                    binding.imageViewReceiverLocation.setOnClickListener {
+                        if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                            (mAdapter.context as LogesTechsActivity).showLocationInGoogleMaps(pkg.destinationAddress)
+                        }
+                    }
+                } else {
+                    binding.imageViewReceiverLocation.visibility = View.GONE
+                }
+            } else {
+                binding.imageViewReceiverLocation.visibility = View.GONE
+            }
+
+            binding.buttonContextMenu.setOnClickListener {
+                val popup = PopupMenu(mAdapter.context, binding.buttonContextMenu)
+                popup.inflate(R.menu.in_car_package_context_menu)
+                popup.setOnMenuItemClickListener { item: MenuItem? ->
+
+                    if (mAdapter.context != null) {
+                        when (item?.itemId) {
+                            R.id.action_return_package -> {
+                                ReturnPackageDialog(mAdapter.context!!, mAdapter, pkg).showDialog()
+                            }
+
+                            R.id.action_postpone_package -> {
+                                PostponePackageDialog(
+                                    mAdapter.context!!,
+                                    mAdapter,
+                                    pkg
+                                ).showDialog()
+                            }
+
+                            R.id.action_edit_package_type -> {
+                                ChangePackageTypeDialog(
+                                    mAdapter.context!!,
+                                    mAdapter,
+                                    pkg
+                                ).showDialog()
+                            }
+                            R.id.action_fail_delivery -> {
+                                FailDeliveryDialog(mAdapter.context!!, mAdapter, pkg).showDialog()
+                            }
+
+                            R.id.action_add_note -> {
+                                AddPackageNoteDialog(mAdapter.context!!, mAdapter, pkg).showDialog()
+                            }
+
+                            R.id.action_edit_package_cod -> {
+                                ChangeCodDialog(mAdapter.context!!, mAdapter, pkg).showDialog()
+                            }
+                        }
+                    }
+                    true
+                }
+                if (mAdapter.companyConfigurations?.isDriverCanRequestCodChange != true) {
+                    popup.menu.findItem(R.id.action_edit_package_cod).isVisible = false
+                }
+                if (mAdapter.companyConfigurations?.isDriverCanReturnPackage != true) {
+                    popup.menu.findItem(R.id.action_return_package).isVisible = false
+                }
+                if (mAdapter.companyConfigurations?.isDriverCanFailPackageDisabled == true) {
+                    popup.menu.findItem(R.id.action_fail_delivery).isVisible = false
+                }
+                popup.show()
+            }
+
+            binding.buttonDeliverPackage.setOnClickListener {
+                mAdapter.listener?.onDeliverPackage(pkg)
+            }
+
+            binding.itemPackageBarcode.buttonCopy.setOnClickListener {
+                Helper.copyTextToClipboard(mAdapter.context, pkg?.barcode)
+            }
+        }
+    }
+
+    override fun onPackageReturned(returnPackageRequestBody: ReturnPackageRequestBody?) {
+        listener?.onPackageReturned(returnPackageRequestBody)
+    }
+
+    override fun onFailDelivery(body: FailDeliveryRequestBody?) {
+        listener?.onFailDelivery(body)
+    }
+
+    override fun onPackagePostponed(postponePackageRequestBody: PostponePackageRequestBody) {
+        listener?.onPackagePostponed(postponePackageRequestBody)
+    }
+
+    override fun onPackageTypeChanged(changePackageTypeRequestBody: ChangePackageTypeRequestBody) {
+        listener?.onPackageTypeChanged(changePackageTypeRequestBody)
+    }
+
+    override fun onPackageNoteAdded(addNoteRequestBody: AddNoteRequestBody?) {
+        listener?.onPackageNoteAdded(addNoteRequestBody)
+    }
+
+    override fun onCodChanged(codChangeRequestBody: CodChangeRequestBody?) {
+        listener?.onCodChanged(codChangeRequestBody)
+    }
+}

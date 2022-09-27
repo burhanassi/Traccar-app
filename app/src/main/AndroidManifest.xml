@@ -3,18 +3,101 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.logestechs.driver">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <queries>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.PICK" />
+
+            <data android:mimeType="image/jpeg" />
+        </intent>
+        <!-- Browser -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+
+            <data android:scheme="http" />
+        </intent>
+
+        <package android:name="com.whatsapp" />
+        <package android:name="com.google.android.apps.maps" />
+    </queries>
+
     <application
+        android:name=".utils.LogesTechsApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.LogesTechsDriver"
+        android:theme="@style/Theme.Design.Light.NoActionBar"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.barcodeScanner.DraftPickupsBarcodeScanner"
+            android:exported="false"
+            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".ui.driverDraftPickupsByStatusViewPager.DriverDraftPickupsByStatusViewPagerActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.massCodReports.MassCodReportsActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.returnedPackages.ReturnedPackagesActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.profile.ProfileActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+
+        <meta-data
+            android:name="com.google.android.gms.vision.DEPENDENCIES"
+            android:value="barcode" />
+
+        <activity
+            android:name=".ui.packageDelivery.PackageDeliveryActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.singleScanBarcodeScanner.SingleScanBarcodeScanner"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.barcodeScanner.BarcodeScannerActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.driverPackagesByStatusViewPager.DriverPackagesByStatusViewPagerActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.dashboard.DashboardActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.login.LoginActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.splash.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,6 +105,44 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.logestechs.driver.android.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <service
+            android:name=".utils.location.MyLocationService"
+            android:enabled="true"
+            android:exported="true"
+            android:foregroundServiceType="location" />
+
+        <receiver
+            android:name=".utils.location.AlarmReceiver"
+            android:process=":remote" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_logestechs_logo" />
+        <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="${crashlyticsCollectionEnabled}" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <service
+            android:name=".fcm.LogesTechsFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

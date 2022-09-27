@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.dashboard.DashboardActivity">
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_dashboard_gradient">
+
+        <ScrollView
+            android:id="@+id/scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="never">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:clipChildren="false"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/dashboard_header" />
+                </FrameLayout>
+
+                <ImageView
+                    android:id="@+id/image_view_driver_logo"
+                    android:layout_width="93dp"
+                    android:layout_height="82dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="-50dp"
+                    android:background="@color/transparent"
+                    android:src="@drawable/ic_circular_driver"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/text_driver_name"
+                    style="@style/LogesTechsBold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/pink_carnation"
+                    tools:text="Majdi Driver" />
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="8dp"
+                    android:animateLayoutChanges="true">
+
+                    <LinearLayout
+                        android:id="@+id/container_service_type_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:animateLayoutChanges="true"
+                        android:background="@drawable/background_out_of_service_oval"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="33dp"
+                            android:animateLayoutChanges="true"
+                            android:orientation="vertical">
+
+                            <FrameLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/text_in_service"
+                                    style="@style/LogesTechsLight"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginTop="2dp"
+                                    android:layout_marginEnd="16dp"
+                                    android:layout_marginBottom="2dp"
+                                    android:text="@string/title_in_service"
+                                    android:textColor="@color/mine_shaft_black"
+                                    android:visibility="gone" />
+
+                                <TextView
+                                    android:id="@+id/text_out_of_service"
+                                    style="@style/LogesTechsLight"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginTop="8dp"
+                                    android:layout_marginEnd="16dp"
+                                    android:layout_marginBottom="8dp"
+                                    android:text="@string/title_out_of_service"
+                                    android:textColor="@color/mine_shaft_black" />
+
+                            </FrameLayout>
+
+                            <LinearLayout
+                                android:id="@+id/container_duration"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginBottom="2dp"
+                                android:animateLayoutChanges="true"
+                                android:visibility="gone">
+
+                                <TextView
+                                    android:id="@+id/text_minutes"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/roboto_bold"
+                                    android:text="0"
+                                    android:textColor="@color/fontTrackHint"
+                                    android:textSize="18sp" />
+
+                                <TextView
+                                    style="@style/LogesTechsLight"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="2dp"
+                                    android:text="@string/minutes"
+                                    android:textColor="@color/fontTrackHint"
+                                    android:textSize="14sp" />
+
+                                <TextView
+                                    android:id="@+id/text_hours"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:fontFamily="@font/roboto_bold"
+                                    android:text="0"
+                                    android:textColor="@color/fontTrackHint"
+                                    android:textSize="18sp" />
+
+                                <TextView
+                                    style="@style/LogesTechsLight"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="2dp"
+                                    android:layout_marginEnd="16dp"
+                                    android:text="@string/hours"
+                                    android:textColor="@color/fontTrackHint"
+                                    android:textSize="14sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/image_service_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|start"
+                        android:src="@drawable/ic_out_of_service_clock"
+                        tools:ignore="ContentDescription" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/background_dashboard_entry"
+                    android:clipChildren="true"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/text_in_car_packages_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:fontFamily="@font/roboto_bold"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textColor="@color/pink_carnation"
+                            android:textSize="30sp"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
+                            style="@style/LogesTechsMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:text="@string/dashboard_packages_number"
+                            android:textColor="@color/fontTitleLight"
+                            android:textSize="14sp" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="/" />
+
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/text_delivered_packages_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:fontFamily="@font/roboto_bold"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textColor="@color/pink_carnation"
+                            android:textSize="30sp"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
+                            style="@style/LogesTechsMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:text="@string/dashboard_delivered"
+                            android:textColor="@color/fontTitleLight"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="24dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="12dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/background_dashboard_entry"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/text_cod_sum"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:fontFamily="@font/roboto_bold"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textColor="@color/fontTitleLight"
+                            android:textDirection="ltr"
+                            android:textSize="30sp"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
+                            style="@style/LogesTechsMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:gravity="center"
+                            android:text="@string/dashboard_cod_sum"
+                            android:textColor="@color/fontTitleLight"
+                            android:textSize="16sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/background_dashboard_entry"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/text_mass_cod_reports_sum"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:fontFamily="@font/roboto_bold"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textColor="@color/fontTitleLight"
+                            android:textDirection="ltr"
+                            android:textSize="30sp"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
+                            style="@style/LogesTechsMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:gravity="center"
+                            android:text="@string/dashboard_mass_cod_reports_sum"
+                            android:textColor="@color/fontTitleLight"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@color/orange_sea_buckthorn" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="24dp"
+                    android:clipChildren="false">
+
+                    <include
+                        android:id="@+id/dash_entry_scan_packages"
+                        layout="@layout/item_dashboard_entry"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="14dp"
+                        android:layout_weight="1"
+                        app:iconSrc="@{@drawable/ic_scan_barcode_pink}"
+                        app:titleText="@{@string/dashboard_scan_new_package_barcode}" />
+
+                    <include
+                        android:id="@+id/dash_entry_accepted_packages"
+                        layout="@layout/item_dashboard_entry"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:iconSrc="@{@drawable/ic_accepted_packages_pink}"
+                        app:titleText="@{@string/dashboard_accepted_packages}" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="24dp"
+                    android:baselineAligned="false"
+                    android:clipChildren="false">
+
+                    <include
+                        android:id="@+id/dash_entry_pending_packages"
+                        layout="@layout/item_dashboard_entry"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="14dp"
+                        android:layout_weight="1"
+                        app:iconSrc="@{@drawable/ic_pending_packages_pink}"
+                        app:titleText="@{@string/dashboard_pending_packages}" />
+
+                    <include
+                        android:id="@+id/dash_entry_in_car_packages"
+                        layout="@layout/item_dashboard_entry"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:iconSrc="@{@drawable/ic_in_car_packages_pink}"
+                        app:titleText="@{@string/dashboard_in_car_packages}" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="24dp"
+                    android:baselineAligned="false"
+                    android:clipChildren="false">
+
+                    <include
+                        android:id="@+id/dash_entry_failed_packages"
+                        layout="@layout/item_dashboard_entry"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="14dp"
+                        android:layout_weight="1"
+                        app:iconSrc="@{@drawable/ic_failed_packages_pink}"
+                        app:titleText="@{@string/dashboard_failed}" />
+
+                    <include
+                        android:id="@+id/dash_entry_postponed_packages"
+                        layout="@layout/item_dashboard_entry"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:iconSrc="@{@drawable/ic_postponed_packages_pink}"
+                        app:titleText="@{@string/dashboard_postponed}" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/button_show_dashboard_sub_entries"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="20dp"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:background="@color/pink_cinderella" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginEnd="6dp"
+                        android:background="@drawable/background_dashboard_expand_button">
+
+                        <TextView
+                            style="@style/LogesTechsLight"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="32dp"
+                            android:layout_marginBottom="1dp"
+                            android:text="@string/dashboard_other_options"
+                            android:textColor="@color/fontTitleOrange"
+                            android:textSize="14sp" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginEnd="8dp"
+                            android:src="@drawable/ic_arrow_down_pink"
+                            tools:ignore="ContentDescription" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:background="@color/pink_cinderella" />
+                </LinearLayout>
+
+                <HorizontalScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:animateLayoutChanges="true"
+                    android:overScrollMode="never">
+
+                    <LinearLayout
+                        android:id="@+id/container_dashboard_sub_entries"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <include
+                            android:id="@+id/dash_sub_entry_mass_cod_reports"
+                            layout="@layout/item_dashboard_sub_entry"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="24dp"
+                            android:layout_marginEnd="10dp"
+                            app:iconSrc="@{@drawable/ic_mass_cod_reports_gray}"
+                            app:titleText="@{@string/dashboard_mass_cod_reports}" />
+
+                        <include
+                            android:id="@+id/dash_sub_entry_draft_pickups"
+                            layout="@layout/item_dashboard_sub_entry"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="10dp"
+                            app:iconSrc="@{@drawable/ic_draft_pickups}"
+                            app:titleText="@{@string/title_draft_pickups}" />
+
+                        <include
+                            android:id="@+id/dash_sub_entry_returned_packages"
+                            layout="@layout/item_dashboard_sub_entry"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="10dp"
+                            app:iconSrc="@{@drawable/ic_returned_package_gray}"
+                            app:titleText="@{@string/title_returned_packages}" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="65dp"
+                    android:layout_gravity="bottom"
+                    android:background="@color/red_flamingo"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:src="@drawable/ic_logestechs_full_logo_white" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </FrameLayout>
+</layout>
