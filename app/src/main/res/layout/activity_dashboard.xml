@@ -54,14 +54,118 @@
                     android:textColor="@color/pink_carnation"
                     tools:text="Majdi Driver" />
 
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="30dp"
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/ic_check_in_view"
-                    android:visibility="gone"
-                    tools:ignore="ContentDescription" />
+                    android:layout_marginTop="8dp"
+                    android:animateLayoutChanges="true">
+
+                    <LinearLayout
+                        android:id="@+id/container_service_type_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:animateLayoutChanges="true"
+                        android:background="@drawable/background_out_of_service_oval"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="33dp"
+                            android:animateLayoutChanges="true"
+                            android:orientation="vertical">
+
+                            <FrameLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/text_in_service"
+                                    style="@style/LogesTechsLight"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginTop="2dp"
+                                    android:layout_marginEnd="16dp"
+                                    android:layout_marginBottom="2dp"
+                                    android:text="@string/title_in_service"
+                                    android:textColor="@color/mine_shaft_black"
+                                    android:visibility="gone" />
+
+                                <TextView
+                                    android:id="@+id/text_out_of_service"
+                                    style="@style/LogesTechsLight"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginTop="8dp"
+                                    android:layout_marginEnd="16dp"
+                                    android:layout_marginBottom="8dp"
+                                    android:text="@string/title_out_of_service"
+                                    android:textColor="@color/mine_shaft_black" />
+
+                            </FrameLayout>
+
+                            <LinearLayout
+                                android:id="@+id/container_duration"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginBottom="2dp"
+                                android:animateLayoutChanges="true"
+                                android:visibility="gone">
+
+                                <TextView
+                                    android:id="@+id/text_minutes"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/roboto_bold"
+                                    android:text="0"
+                                    android:textColor="@color/fontTrackHint"
+                                    android:textSize="18sp" />
+
+                                <TextView
+                                    style="@style/LogesTechsLight"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="2dp"
+                                    android:text="@string/minutes"
+                                    android:textColor="@color/fontTrackHint"
+                                    android:textSize="14sp" />
+
+                                <TextView
+                                    android:id="@+id/text_hours"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:fontFamily="@font/roboto_bold"
+                                    android:text="0"
+                                    android:textColor="@color/fontTrackHint"
+                                    android:textSize="18sp" />
+
+                                <TextView
+                                    style="@style/LogesTechsLight"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="2dp"
+                                    android:layout_marginEnd="16dp"
+                                    android:text="@string/hours"
+                                    android:textColor="@color/fontTrackHint"
+                                    android:textSize="14sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/image_service_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|start"
+                        android:src="@drawable/ic_out_of_service_clock"
+                        tools:ignore="ContentDescription" />
+                </FrameLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"

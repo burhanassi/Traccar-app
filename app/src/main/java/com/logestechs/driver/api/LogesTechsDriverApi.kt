@@ -22,7 +22,9 @@ interface LogesTechsDriverApi {
     ): Response<GetPendingPackagesResponse?>?
 
     @GET("${AppConstants.PATH}api/driver/dashboard")
-    suspend fun getDashboardInfo(): Response<GetDashboardInfoResponse?>?
+    suspend fun getDashboardInfo(
+        @Query("deviceId") deviceId: Long?
+    ): Response<GetDashboardInfoResponse?>?
 
     @PUT("${AppConstants.PATH}api/driver/customers/{customerId}/accept")
     suspend fun acceptCustomerPackages(@Path("customerId") customerId: Long?): Response<ResponseBody?>?
@@ -226,4 +228,6 @@ interface LogesTechsDriverApi {
     @POST("${AppConstants.PATH}api/customers/api-exception")
     suspend fun logException(@Body body: LogExceptionRequestBody): Response<ResponseBody>
 
+    @PUT("${AppConstants.PATH}api/driver/online")
+    suspend fun changeWorkLogStatus(@Body body: ChangeWorkLogStatusRequestBody?): Response<ChangeWorkLogStatusResponse?>?
 }

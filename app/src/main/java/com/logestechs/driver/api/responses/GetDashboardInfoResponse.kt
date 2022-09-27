@@ -22,6 +22,7 @@ data class GetDashboardInfoResponse(
     @SerializedName("postponedPackagesCount")
     var postponedPackagesCount: Int? = null,
     @SerializedName("failedPackagesCount")
-    var failedPackagesCount: Int? = null
-
+    var failedPackagesCount: Int? = null,
+    var onlineStartTime: String? = null,
+    var isDriverOnline: Boolean? = null
 ) : Parcelable

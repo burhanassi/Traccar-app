@@ -22,6 +22,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
+import com.logestechs.driver.api.requests.ChangeWorkLogStatusRequestBody
 import com.logestechs.driver.api.requests.LogExceptionRequestBody
 import com.logestechs.driver.api.requests.UpdateLocationRequestBody
 import com.logestechs.driver.api.responses.GetDashboardInfoResponse
@@ -35,6 +36,7 @@ import com.logestechs.driver.ui.massCodReports.MassCodReportsActivity
 import com.logestechs.driver.ui.profile.ProfileActivity
 import com.logestechs.driver.ui.returnedPackages.ReturnedPackagesActivity
 import com.logestechs.driver.utils.*
+import com.logestechs.driver.utils.Helper.Companion.format
 import com.logestechs.driver.utils.location.AlarmReceiver
 import com.logestechs.driver.utils.location.LocationListener
 import com.logestechs.driver.utils.location.MyLocationService
@@ -45,6 +47,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.sql.Timestamp
+import java.util.*
+
 
 class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
 
@@ -56,6 +60,9 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
     private var mFusedLocationClient: FusedLocationProviderClient? = null
     private var mLocationManager: LocationManager? = null
 
+    private var isInService: Boolean = false
+    private var serviceStatusReferenceDate: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDashboardBinding.inflate(layoutInflater)
@@ -63,6 +70,8 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
         initData()
         initOnClickListeners()
         handleNotificationToken()
+        makeOutOfService()
+        startServiceStatusTime()
     }
 
     override fun onResume() {
@@ -99,6 +108,7 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
         binding.dashSubEntryReturnedPackages.root.setOnClickListener(this)
         binding.dashSubEntryMassCodReports.root.setOnClickListener(this)
         binding.dashSubEntryDraftPickups.root.setOnClickListener(this)
+        binding.containerServiceTypeView.setOnClickListener(this)
     }
 
     @SuppressLint("SetTextI18n")
@@ -114,8 +124,36 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
         binding.textDeliveredPackagesCount.text = data?.deliveredPackagesCount.toString()
 
         binding.textMassCodReportsSum.text =
-            "${Helper.getCompanyCurrency()} ${data?.carriedMassReportsSum.toString()}"
-        binding.textCodSum.text = "${Helper.getCompanyCurrency()} ${data?.carriedCodSum.toString()}"
+            "${Helper.getCompanyCurrency()} ${data?.carriedMassReportsSum?.format()}"
+        binding.textCodSum.text = "${Helper.getCompanyCurrency()} ${data?.carriedCodSum?.format()}"
+
+
+        if (data?.isDriverOnline == true) {
+            serviceStatusReferenceDate = if (data.onlineStartTime != null) {
+                data.onlineStartTime!!
+            } else {
+                "now"
+            }
+
+            makeInService()
+        } else {
+            serviceStatusReferenceDate = null
+            makeOutOfService()
+        }
+//        if response?.isDriverOnline ?? false{
+//            self.stopServiceStatusTimer()
+//            if let loggedTime = response?.onlineStartTime?.getDateFromServerFormat() {
+//                self.serviceStatusReferenceDate = loggedTime
+//            } else {
+//                self.serviceStatusReferenceDate = Date()
+//            }
+//            self.fireServiceStatusTimer()
+//            UIView.animate(withDuration: 0.3) {
+//            self.serviceStatusView.makeInService()
+//            self.startServiceStatusTimer()
+//            self.view.superview?.layoutIfNeeded()
+//        }
+//        }
     }
 
     private fun handleNotificationToken() {
@@ -137,6 +175,40 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
                 }
             }
         }
+    }
+
+    private fun makeInService() {
+        isInService = true
+        binding.textInService.visibility = View.VISIBLE
+        binding.textOutOfService.visibility = View.GONE
+        binding.containerDuration.visibility = View.VISIBLE
+        binding.imageServiceStatus.setImageResource(R.drawable.ic_in_service_clock)
+        binding.containerServiceTypeView.setBackgroundResource(R.drawable.background_in_service_oval)
+    }
+
+    private fun makeOutOfService() {
+        isInService = false
+        binding.textInService.visibility = View.GONE
+        binding.textOutOfService.visibility = View.VISIBLE
+        binding.containerDuration.visibility = View.GONE
+        binding.imageServiceStatus.setImageResource(R.drawable.ic_out_of_service_clock)
+        binding.containerServiceTypeView.setBackgroundResource(R.drawable.background_out_of_service_oval)
+    }
+
+    fun updateServiceStatusTime() {
+//        let diffComponents = Calendar.current.dateComponents([.hour, .minute], from: referenceTime ?? Date(), to: Date())
+//        hoursLabel.text = String(diffComponents.hour ?? 0)
+//        minutesLabel.text = String(diffComponents.minute ?? 0)
+    }
+
+    private fun startServiceStatusTime() {
+        Timer().schedule(object : TimerTask() {
+            override fun run() {
+                this@DashboardActivity.runOnUiThread {
+                    Helper.showErrorMessage(this@DashboardActivity, "one go")
+                }
+            }
+        }, 3000)
     }
 
     //:- Action Handlers
@@ -213,6 +285,10 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
                 val mIntent = Intent(this, DriverDraftPickupsByStatusViewPagerActivity::class.java)
                 mIntent.putExtra(IntentExtrasKeys.SELECTED_PACKAGES_TAB.name, 0)
                 startActivity(mIntent)
+            }
+
+            R.id.container_service_type_view -> {
+                callChangeWorkLogStatus()
             }
         }
     }
@@ -310,7 +386,7 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
         if (Helper.isInternetAvailable(this)) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.getDashboardInfo()
+                    val response = ApiAdapter.apiClient.getDashboardInfo(loginResponse?.device?.id)
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
@@ -357,6 +433,70 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
             hideWaitDialog()
             Helper.showErrorMessage(
                 getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
+    private fun callChangeWorkLogStatus() {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.changeWorkLogStatus(
+                        ChangeWorkLogStatusRequestBody(
+                            !isInService,
+                            if (isInService) SharedPreferenceWrapper.getWorkLogId()?.id else null,
+                            loginResponse?.device?.id
+                        )
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            if (isInService) {
+                                makeOutOfService()
+                            } else {
+                                makeInService()
+                            }
+                            SharedPreferenceWrapper.saveWorkLogId(response.body())
+
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
             )
         }
     }

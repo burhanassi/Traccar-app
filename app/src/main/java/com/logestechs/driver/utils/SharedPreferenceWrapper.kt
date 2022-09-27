@@ -1,6 +1,7 @@
 package com.logestechs.driver.utils
 
 import com.google.gson.Gson
+import com.logestechs.driver.api.responses.ChangeWorkLogStatusResponse
 import com.logestechs.driver.api.responses.GetDriverCompanySettingsResponse
 import com.logestechs.driver.api.responses.LoginResponse
 import com.logestechs.driver.data.model.LatLng
@@ -61,6 +62,24 @@ class SharedPreferenceWrapper {
             prefs.push(SharedPrefsKeys.DRIVER_COMPANY_SETTINGS_KEY.value, "")
         }
 
+        //work log id
+        fun saveWorkLogId(getDriverCompanySettingsResponse: ChangeWorkLogStatusResponse?) {
+            if (getDriverCompanySettingsResponse != null) {
+                val json = Gson().toJson(getDriverCompanySettingsResponse)
+                prefs.push(SharedPrefsKeys.WORK_LOG_ID_KEY.value, json)
+            }
+        }
+
+        fun getWorkLogId(): ChangeWorkLogStatusResponse? {
+            val json = prefs.pull(SharedPrefsKeys.WORK_LOG_ID_KEY.value, "")
+
+            return if (json.isEmpty()) {
+                return null
+            } else {
+                Gson().fromJson(json, ChangeWorkLogStatusResponse::class.java)
+            }
+        }
+
         //Last sync location
         fun saveLastSyncLocation(location: LatLng?) {
             if (location != null) {
@@ -92,6 +111,8 @@ private enum class SharedPrefsKeys(val value: String) {
     LOGIN_RESPONSE("login_response"),
     UUID_KEY("uuid_key"),
     DRIVER_COMPANY_SETTINGS_KEY("driver_company_settings_key"),
-    LAST_SYNC_LOCATION_KEY("last_sync_location_key")
+    LAST_SYNC_LOCATION_KEY("last_sync_location_key"),
+    WORK_LOG_ID_KEY("work_log_key_id")
+
 
 }

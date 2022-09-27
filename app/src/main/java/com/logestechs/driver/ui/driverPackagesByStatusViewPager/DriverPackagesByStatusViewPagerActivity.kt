@@ -30,6 +30,7 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
 
     private var selectedTabIndex = 0
     private var selectedInCarStatus: String? = InCarPackageStatus.TO_DELIVER.name
+    private var loginResponse = SharedPreferenceWrapper.getLoginResponse()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -240,7 +241,7 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
         if (Helper.isInternetAvailable(this)) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.getDashboardInfo()
+                    val response = ApiAdapter.apiClient.getDashboardInfo(loginResponse?.device?.id)
                     if (response?.isSuccessful == true && response.body() != null) {
                         val data = response.body()
                         withContext(Dispatchers.Main) {

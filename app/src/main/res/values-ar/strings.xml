@@ -118,5 +118,9 @@
     <string name="notifications">الاشعارات</string>
     <string name="error_barcode_already_scanned">تم تحميل هذا الطرد مسبقا</string>
     <string name="success_text_copy">تم نسخ النص بنجاح</string>
+    <string name="title_in_service">داخل الخدمة</string>
+    <string name="title_out_of_service">خارج الخدمة</string>
+    <string name="minutes">د</string>
+    <string name="hours">س</string>
 
 </resources>
