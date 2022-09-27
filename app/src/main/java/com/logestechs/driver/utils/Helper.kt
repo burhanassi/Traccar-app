@@ -86,6 +86,15 @@ class Helper {
             return ""
         }
 
+        fun getDateFromServer(serverDate: String?): Date? {
+            val df = SimpleDateFormat(DateFormats.SERVER_FORMAT.value, Locale.US)
+            return try {
+                df.parse(serverDate)
+            } catch (e: Exception) {
+                null
+            }
+        }
+
         @SuppressLint("InflateParams")
         fun showErrorMessage(context: Context?, message: String?) {
             if (context != null) {

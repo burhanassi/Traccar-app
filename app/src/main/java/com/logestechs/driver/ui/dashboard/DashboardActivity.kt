@@ -61,7 +61,11 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
     private var mLocationManager: LocationManager? = null
 
     private var isInService: Boolean = false
-    private var serviceStatusReferenceDate: String? = null
+    private var serviceStatusReferenceDate: Date? = null
+
+    private val periodicTask: PeriodicTask = PeriodicTask({
+        updateServiceStatusTime()
+    }, 50000)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +75,6 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
         initOnClickListeners()
         handleNotificationToken()
         makeOutOfService()
-        startServiceStatusTime()
     }
 
     override fun onResume() {
@@ -129,31 +132,19 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
 
 
         if (data?.isDriverOnline == true) {
+            stopServiceStatusTimer()
             serviceStatusReferenceDate = if (data.onlineStartTime != null) {
-                data.onlineStartTime!!
+                Helper.getDateFromServer(data.onlineStartTime)
             } else {
-                "now"
+                Date()
             }
-
+            updateServiceStatusTime()
+            startServiceStatusTimer()
             makeInService()
         } else {
             serviceStatusReferenceDate = null
             makeOutOfService()
         }
-//        if response?.isDriverOnline ?? false{
-//            self.stopServiceStatusTimer()
-//            if let loggedTime = response?.onlineStartTime?.getDateFromServerFormat() {
-//                self.serviceStatusReferenceDate = loggedTime
-//            } else {
-//                self.serviceStatusReferenceDate = Date()
-//            }
-//            self.fireServiceStatusTimer()
-//            UIView.animate(withDuration: 0.3) {
-//            self.serviceStatusView.makeInService()
-//            self.startServiceStatusTimer()
-//            self.view.superview?.layoutIfNeeded()
-//        }
-//        }
     }
 
     private fun handleNotificationToken() {
@@ -187,6 +178,7 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
     }
 
     private fun makeOutOfService() {
+        stopServiceStatusTimer()
         isInService = false
         binding.textInService.visibility = View.GONE
         binding.textOutOfService.visibility = View.VISIBLE
@@ -195,20 +187,21 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
         binding.containerServiceTypeView.setBackgroundResource(R.drawable.background_out_of_service_oval)
     }
 
-    fun updateServiceStatusTime() {
-//        let diffComponents = Calendar.current.dateComponents([.hour, .minute], from: referenceTime ?? Date(), to: Date())
-//        hoursLabel.text = String(diffComponents.hour ?? 0)
-//        minutesLabel.text = String(diffComponents.minute ?? 0)
+    private fun updateServiceStatusTime() {
+        val diff = Date().time - (serviceStatusReferenceDate ?: Date()).time
+        val seconds = diff / 1000
+        val minutes = seconds / 60
+        val hours = minutes / 60
+        binding.textMinutes.text = minutes.toString()
+        binding.textHours.text = hours.toString()
     }
 
-    private fun startServiceStatusTime() {
-        Timer().schedule(object : TimerTask() {
-            override fun run() {
-                this@DashboardActivity.runOnUiThread {
-                    Helper.showErrorMessage(this@DashboardActivity, "one go")
-                }
-            }
-        }, 3000)
+    private fun startServiceStatusTimer() {
+        periodicTask.startUpdates()
+    }
+
+    private fun stopServiceStatusTimer() {
+        periodicTask.stopUpdates()
     }
 
     //:- Action Handlers
@@ -458,9 +451,10 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
                                 makeOutOfService()
                             } else {
                                 makeInService()
+                                serviceStatusReferenceDate = Date()
+                                startServiceStatusTimer()
+                                SharedPreferenceWrapper.saveWorkLogId(response.body())
                             }
-                            SharedPreferenceWrapper.saveWorkLogId(response.body())
-
                         }
                     } else {
                         try {
