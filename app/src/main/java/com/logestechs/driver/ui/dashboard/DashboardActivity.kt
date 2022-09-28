@@ -346,10 +346,20 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
         val alarmManager = this.getSystemService(ALARM_SERVICE) as AlarmManager
         val myIntent = Intent(this, AlarmReceiver::class.java)
         val pendingIntent =
-            PendingIntent.getBroadcast(this, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PendingIntent.getBroadcast(
+                    this,
+                    0,
+                    myIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+            } else {
+                PendingIntent.getBroadcast(this, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            }
         alarmManager.cancel(pendingIntent)
         val myService = Intent(this, MyLocationService::class.java)
         stopService(myService)
+
     }
 
     private fun startAlarm() {
