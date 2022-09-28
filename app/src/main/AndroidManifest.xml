@@ -128,7 +128,7 @@
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_logestechs_logo" />
+            android:resource="@drawable/ic_customer_logo" />
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
             android:value="${crashlyticsCollectionEnabled}" />

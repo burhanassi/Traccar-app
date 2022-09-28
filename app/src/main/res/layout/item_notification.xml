@@ -17,7 +17,7 @@
             android:layout_marginStart="13dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:src="@drawable/ic_logestechs_logo"
+            android:src="@drawable/ic_customer_logo"
             tools:ignore="ContentDescription" />
 
         <LinearLayout

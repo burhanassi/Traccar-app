@@ -77,7 +77,7 @@ class LogesTechsFirebaseMessagingService : FirebaseMessagingService() {
 
         val notificationBuilder: NotificationCompat.Builder =
             NotificationCompat.Builder(this, getString(R.string.NOTIFICATION_CHANNEL_ID))
-                .setSmallIcon(R.drawable.ic_logestechs_logo)
+                .setSmallIcon(R.drawable.ic_customer_logo)
                 .setContentTitle(messageTitle)
                 .setContentText(messageBody)
                 .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
@@ -90,9 +90,9 @@ class LogesTechsFirebaseMessagingService : FirebaseMessagingService() {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            notificationBuilder.setSmallIcon(R.drawable.ic_logestechs_logo);
+            notificationBuilder.setSmallIcon(R.drawable.ic_customer_logo);
         } else {
-            notificationBuilder.setSmallIcon(R.drawable.ic_logestechs_logo);
+            notificationBuilder.setSmallIcon(R.drawable.ic_customer_logo);
         }
         notificationManager.notify(
             System.currentTimeMillis().toInt() /* ID of notification */,

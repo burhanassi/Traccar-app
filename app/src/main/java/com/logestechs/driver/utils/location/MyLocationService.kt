@@ -110,7 +110,7 @@ class MyLocationService : Service() {
         }
         val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
         val notification: Notification = notificationBuilder.setOngoing(true)
-            .setSmallIcon(R.drawable.ic_logestechs_logo)
+            .setSmallIcon(R.drawable.ic_customer_logo)
             .setPriority(NotificationManager.IMPORTANCE_MIN)
             .setContentTitle("Get Location is running in background")
             .build()
