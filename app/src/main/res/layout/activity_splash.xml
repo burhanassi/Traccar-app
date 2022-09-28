@@ -11,7 +11,7 @@
         android:layout_height="200dp"
         android:layout_gravity="center"
         android:layout_margin="40dp"
-        android:src="@drawable/ic_logestechs_logo"
+        android:src="@drawable/ic_customer_logo"
         tools:ignore="ContentDescription" />
 
 </FrameLayout>

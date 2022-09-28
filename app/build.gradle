@@ -69,6 +69,38 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    flavorDimensions 'driver'
+    productFlavors {
+        logesTechs {
+            dimension 'driver'
+            resValue 'string', 'app_name', 'LogesTechs'
+            buildConfigField 'int', 'company_id', '1'
+            buildConfigField 'String', 'company_name', '\"LogesTechs\"'
+        }
+
+        sare3 {
+            dimension 'driver'
+            resValue 'string', 'app_name', 'Sare3 Driver'
+            buildConfigField 'int', 'company_id', '209'
+            buildConfigField 'String', 'company_name', '\"Sare3\"'
+            applicationId 'com.logestechs.driver_sare3'
+        }
+    }
+
+    sourceSets {
+        logesTechs {
+            res {
+                srcDirs 'src\\logesTechs\\res'
+            }
+        }
+        sare3 {
+            res {
+                srcDirs 'src\\sare3\\res'
+            }
+        }
+    }
+
 }
 
 dependencies {

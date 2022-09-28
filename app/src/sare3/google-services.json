@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "973003529137",
+    "project_id": "sare3-4d9da",
+    "storage_bucket": "sare3-4d9da.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:973003529137:android:3aeeb9e9da0f793a9d3b90",
+        "android_client_info": {
+          "package_name": "com.logestechs.customer_sare3"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "973003529137-1vo44ennie9jah3c6ib3lb021mv1du41.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgvYVjsLWcfqgnUqN8P4_RloGhL2NwCOI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "973003529137-1vo44ennie9jah3c6ib3lb021mv1du41.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "973003529137-tn307ecc7v9arlhkrrlvan6879vf99g1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.logestechs.customer.sare3"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:973003529137:android:0913f6fdbdd8ae779d3b90",
+        "android_client_info": {
+          "package_name": "com.logestechs.driver_sare3"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "973003529137-1vo44ennie9jah3c6ib3lb021mv1du41.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgvYVjsLWcfqgnUqN8P4_RloGhL2NwCOI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "973003529137-1vo44ennie9jah3c6ib3lb021mv1du41.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "973003529137-tn307ecc7v9arlhkrrlvan6879vf99g1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.logestechs.customer.sare3"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
