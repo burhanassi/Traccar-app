@@ -11,6 +11,7 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.ScrollView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -97,6 +98,12 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
             binding.dashEntryScanPackages.root.visibility = View.GONE
         }
         createLocationRequest()
+
+        if (Helper.isLogesTechsDriver()) {
+            binding.containerLogestechsLogoBottom.visibility = View.VISIBLE
+        } else {
+            binding.containerLogestechsLogoBottom.visibility = View.GONE
+        }
     }
 
     private fun initOnClickListeners() {
@@ -212,7 +219,11 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
                     binding.containerDashboardSubEntries.visibility = View.GONE
                 } else {
                     binding.containerDashboardSubEntries.visibility = View.VISIBLE
-                    binding.scrollView.scrollTo(0, binding.scrollView.bottom);
+                    binding.scrollView.postDelayed(Runnable {
+                        binding.scrollView.fullScroll(
+                            ScrollView.FOCUS_DOWN
+                        )
+                    }, 250)
                 }
             }
 

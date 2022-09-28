@@ -26,6 +26,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
@@ -188,6 +189,10 @@ class Helper {
             } else {
                 currency ?: ""
             }
+        }
+
+        fun isLogesTechsDriver(): Boolean {
+            return BuildConfig.company_id.toLong() == 0L
         }
 
         fun replaceArabicNumbers(original: String): String? {

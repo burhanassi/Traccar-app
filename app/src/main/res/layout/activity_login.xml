@@ -82,38 +82,44 @@
                     android:textColor="@color/fontTitleBlack"
                     android:textSize="16sp" />
 
-                <com.logestechs.driver.utils.customViews.OutlinedEditText
-                    android:id="@+id/et_company_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_marginStart="55dp"
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="35dp"
-                    android:layout_marginEnd="55dp"
-                    app:hintText="@string/hint_company_name"
-                    app:imageStart="@drawable/ic_company"
-                    app:isPassword="false" />
+                    android:orientation="vertical">
 
-                <com.logestechs.driver.utils.customViews.OutlinedEditText
-                    android:id="@+id/et_email"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_marginStart="55dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="55dp"
-                    app:hintText="@string/hint_email"
-                    app:imageStart="@drawable/ic_email"
-                    app:isPassword="false" />
+                    <com.logestechs.driver.utils.customViews.OutlinedEditText
+                        android:id="@+id/et_company_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_marginStart="55dp"
+                        android:layout_marginEnd="55dp"
+                        app:hintText="@string/hint_company_name"
+                        app:imageStart="@drawable/ic_company"
+                        app:isPassword="false" />
 
-                <com.logestechs.driver.utils.customViews.OutlinedEditText
-                    android:id="@+id/et_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_marginStart="55dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="55dp"
-                    app:hintText="@string/hint_password"
-                    app:imageStart="@drawable/ic_password"
-                    app:isPassword="true" />
+                    <com.logestechs.driver.utils.customViews.OutlinedEditText
+                        android:id="@+id/et_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_marginStart="55dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="55dp"
+                        app:hintText="@string/hint_email"
+                        app:imageStart="@drawable/ic_email"
+                        app:isPassword="false" />
+
+                    <com.logestechs.driver.utils.customViews.OutlinedEditText
+                        android:id="@+id/et_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_marginStart="55dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="55dp"
+                        app:hintText="@string/hint_password"
+                        app:imageStart="@drawable/ic_password"
+                        app:isPassword="true" />
+                </LinearLayout>
 
                 <Button
                     android:id="@+id/button_login"
@@ -121,6 +127,7 @@
                     android:layout_width="289dp"
                     android:layout_height="45dp"
                     android:layout_gravity="center"
+                    android:layout_marginBottom="45dp"
                     android:layout_marginTop="52dp"
                     android:background="@drawable/background_logestechs_button"
                     android:text="@string/button_login"
@@ -132,7 +139,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginTop="45dp"
                     android:layout_marginBottom="40dp"
                     android:orientation="vertical">
 

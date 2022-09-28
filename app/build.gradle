@@ -74,8 +74,8 @@ android {
     productFlavors {
         logesTechs {
             dimension 'driver'
-            resValue 'string', 'app_name', 'LogesTechs'
-            buildConfigField 'int', 'company_id', '1'
+            resValue 'string', 'app_name', 'LogesTechs Driver'
+            buildConfigField 'int', 'company_id', '0'
             buildConfigField 'String', 'company_name', '\"LogesTechs\"'
         }
 

@@ -27,14 +27,25 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        initUi()
+        binding.buttonLogin.setOnClickListener(this)
+        binding.imageViewLanguage.setOnClickListener(this)
+    }
+
+    private fun initUi() {
         if (BuildConfig.DEBUG) {
             binding.etCompanyName.editText.setText("Logestechs")
             binding.etEmail.editText.setText("driver@gmail.com")
             binding.etPassword.editText.setText("test123")
         }
 
-        binding.buttonLogin.setOnClickListener(this)
-        binding.imageViewLanguage.setOnClickListener(this)
+        if (Helper.isLogesTechsDriver()) {
+            binding.logestechsLogoContainer.visibility = View.VISIBLE
+            binding.etCompanyName.visibility = View.VISIBLE
+        } else {
+            binding.logestechsLogoContainer.visibility = View.GONE
+            binding.etCompanyName.visibility = View.GONE
+        }
     }
 
     override fun onClick(v: View?) {
@@ -103,11 +114,13 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
     private fun validateInput(): Boolean {
         var isValid = true
 
-        if (binding.etCompanyName.isEmpty()) {
-            binding.etCompanyName.makeInvalid()
-            isValid = false
-        } else {
-            binding.etCompanyName.makeValid()
+        if (Helper.isLogesTechsDriver()) {
+            if (binding.etCompanyName.isEmpty()) {
+                binding.etCompanyName.makeInvalid()
+                isValid = false
+            } else {
+                binding.etCompanyName.makeValid()
+            }
         }
 
         if (binding.etEmail.isEmpty()) {
@@ -134,12 +147,19 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
             uuid = UUID.randomUUID().toString()
             SharedPreferenceWrapper.saveUUID(uuid)
         }
+
         val loginRequestBody = LoginRequestBody(
-            binding.etEmail.getText(),
-            binding.etPassword.getText(),
-            binding.etCompanyName.getText(),
-            Device(uuid, "ANDROID"),
+            email = binding.etEmail.getText(),
+            password = binding.etPassword.getText(),
+            device = Device(uuid, "ANDROID")
         )
+
+        if (Helper.isLogesTechsDriver()) {
+            loginRequestBody.businessName = binding.etCompanyName.getText()
+        } else {
+            loginRequestBody.companyId = BuildConfig.company_id.toLong()
+        }
+
         showWaitDialog()
         if (Helper.isInternetAvailable(this)) {
             GlobalScope.launch(Dispatchers.IO) {
