@@ -113,7 +113,8 @@ class ProfileActivity : LogesTechsActivity(), View.OnClickListener {
         if (Helper.isInternetAvailable(this)) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.logout()
+                    val response =
+                        ApiAdapter.apiClient.logout(SharedPreferenceWrapper.getWorkLogId()?.id)
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }

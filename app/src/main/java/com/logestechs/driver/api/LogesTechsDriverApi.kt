@@ -176,7 +176,9 @@ interface LogesTechsDriverApi {
     suspend fun getDriverCompanySettings(): Response<GetDriverCompanySettingsResponse?>?
 
     @DELETE("${AppConstants.PATH}api/auth/user/logout")
-    suspend fun logout(): Response<ResponseBody?>?
+    suspend fun logout(
+        @Query("workTimeTrackingId") workTimeTrackingId: Long?,
+    ): Response<ResponseBody?>?
 
     @GET("${AppConstants.PATH}api/driver/pickup/info")
     suspend fun getDraftPickupsCountValues(): Response<GetDraftPickupsCountValuesResponse?>?
