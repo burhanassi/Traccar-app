@@ -26,8 +26,18 @@ class AlarmReceiver : BroadcastReceiver() {
     fun setAlarm(context: Context) {
         val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val i = Intent(context, AlarmReceiver::class.java)
-        val pi = PendingIntent.getBroadcast(context, 0, i, 0)
-        assert(am != null)
+        var pi: PendingIntent? = null
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            pi = PendingIntent.getBroadcast(
+                context,
+                0,
+                i,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+        } else {
+            pi = PendingIntent.getBroadcast(context, 0, i, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
+
         val timeInMinToMultiply = listForMin[Random().nextInt(listForMin.size)]
         val timeInSecToMultiply = listForSec[Random().nextInt(listForSec.size)]
         am.setAlarmClock(
