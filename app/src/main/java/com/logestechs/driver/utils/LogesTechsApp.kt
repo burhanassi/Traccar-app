@@ -28,9 +28,9 @@ class LogesTechsApp : Application() {
         FirebaseCrashlytics.getInstance()
             .setCustomKey("user_id", SharedPreferenceWrapper.getLoginResponse()?.user?.id ?: 0)
         if (BuildConfig.DEBUG) {
-            FirebaseCrashlytics.getInstance().setCustomKey("is_production", "true")
-        } else {
             FirebaseCrashlytics.getInstance().setCustomKey("is_production", "false")
+        } else {
+            FirebaseCrashlytics.getInstance().setCustomKey("is_production", "true")
         }
     }
 
