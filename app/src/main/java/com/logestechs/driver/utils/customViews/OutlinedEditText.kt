@@ -61,17 +61,11 @@ class OutlinedEditText : LinearLayout {
 
             if (Lingver.getInstance().getLocale().toString() == AppLanguages.ARABIC.value) {
                 edit_text.setCompoundDrawablesWithIntrinsicBounds(
-                    ContextCompat.getDrawable(
-                        context,
-                        R.drawable.ic_view_password
-                    ), null, typedArray.getDrawable(imageStart), null
+                    null, null, typedArray.getDrawable(imageStart), null
                 )
             } else {
                 edit_text.setCompoundDrawablesWithIntrinsicBounds(
-                    typedArray.getDrawable(imageStart), null, ContextCompat.getDrawable(
-                        context,
-                        R.drawable.ic_view_password
-                    ), null
+                    typedArray.getDrawable(imageStart), null, null, null
                 )
             }
             editText.inputType =
