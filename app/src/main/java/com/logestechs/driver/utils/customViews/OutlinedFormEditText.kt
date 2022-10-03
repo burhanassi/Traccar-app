@@ -48,6 +48,9 @@ class OutlinedFormEditText : RelativeLayout {
     @StyleableRes
     val isNumeric = 3
 
+    @StyleableRes
+    val isPhone = 4
+
     lateinit var editText: EditText
     lateinit var textView: TextView
     lateinit var formButton: LinearLayout
@@ -60,7 +63,13 @@ class OutlinedFormEditText : RelativeLayout {
         LayoutInflater.from(context).inflate(R.layout.view_outlined_form_edit_text, this, true)
 
         val sets =
-            intArrayOf(R.attr.hintText, R.attr.imageStart, R.attr.isDropdown, R.attr.isNumeric)
+            intArrayOf(
+                R.attr.hintText,
+                R.attr.imageStart,
+                R.attr.isDropdown,
+                R.attr.isNumeric,
+                R.attr.isPhone
+            )
         val typedArray = context.obtainStyledAttributes(attrs, sets)
 
         editText = edit_text
@@ -88,6 +97,11 @@ class OutlinedFormEditText : RelativeLayout {
             editText.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
         }
 
+
+        if (typedArray.getBoolean(isPhone, false)) {
+            editText.inputType = InputType.TYPE_CLASS_PHONE
+        }
+
         typedArray.recycle()
 
     }
@@ -105,10 +119,6 @@ class OutlinedFormEditText : RelativeLayout {
             ContextCompat.getDrawable(context, R.drawable.border_outlined_edittext)
 
         text_view.setTextColor(ContextCompat.getColor(context, R.color.fontTitleBlack))
-    }
-
-    fun isEmpty(): Boolean {
-        return editText.text.isNullOrEmpty()
     }
 
     fun getText(): String {
@@ -146,6 +156,9 @@ class OutlinedFormEditText : RelativeLayout {
         editText.isEnabled = true
     }
 
+    fun isEmpty(): Boolean {
+        return editText.text.toString().trim().isEmpty()
+    }
 
     fun setBorderFillerColor(color: Int) {
         viewLine.setBackgroundColor(ContextCompat.getColor(LogesTechsApp.instance, color))

@@ -6,10 +6,9 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Village(
-    var name: String? = null,
-    var id: Long? = null,
-
-    var cityName: String? = null,
+    val name: String,
+    val id: Long,
+    val cityName: String,
     @SerializedName("cityId")
     var cityID: Long? = null,
 
@@ -20,4 +19,9 @@ data class Village(
     var customers: List<Customer?>? = null,
     var numberOfPackages: Int? = null,
     var isExpanded: Boolean = false
-) : Parcelable
+
+) : Parcelable, DropdownItem() {
+    override fun toString(): String {
+        return "${name} - ${cityName} - ${regionName}"
+    }
+}

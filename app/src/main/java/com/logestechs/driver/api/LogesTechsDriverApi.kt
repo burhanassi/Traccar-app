@@ -2,6 +2,7 @@ package com.logestechs.driver.api
 
 import com.logestechs.driver.api.requests.*
 import com.logestechs.driver.api.responses.*
+import com.logestechs.driver.data.model.CompanyInfo
 import com.logestechs.driver.data.model.Device
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.utils.AppConstants
@@ -232,4 +233,19 @@ interface LogesTechsDriverApi {
 
     @PUT("${AppConstants.PATH}api/driver/online")
     suspend fun changeWorkLogStatus(@Body body: ChangeWorkLogStatusRequestBody?): Response<ChangeWorkLogStatusResponse?>?
+
+    @GET("${AppConstants.PATH}api/addresses/villages")
+    suspend fun getVillages(
+        @Query("pageSize") pageSize: Int = AppConstants.DEFAULT_PAGE_SIZE,
+        @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
+        @Query("search") search: String
+    ): Response<GetVillagesResponse>
+
+    @GET("${AppConstants.PATH}api/guests/companies/info-by-domain")
+    suspend fun getCompanyInfoByName(@Query("name") name: String): Response<CompanyInfo?>?
+
+    @POST("${AppConstants.PATH}api/companies/driver/signup")
+    suspend fun signUp(
+        @Body body: SignUpRequestBody?
+    ): Response<ResponseBody?>?
 }

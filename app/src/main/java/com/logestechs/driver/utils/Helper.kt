@@ -29,6 +29,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
 import com.logestechs.driver.data.model.LoadedImage
+import com.logestechs.driver.data.model.MobileNumberValidationResult
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.data.model.User
 import com.yariksoffice.lingver.Lingver
@@ -246,6 +247,173 @@ class Helper {
             }
             return number
         }
+
+        fun validateMobileNumber(
+            type: PhoneType,
+            number: String?,
+            paramCurrency: String? = null
+        ): MobileNumberValidationResult {
+            val currency = paramCurrency ?: getCompanyCurrency()
+            if (number != null) {
+                when (currency) {
+                    AppCurrency.NIS.value -> {
+                        when (type) {
+                            PhoneType.MOBILE -> {
+                                return if (number.count() == 9 || number.count() == 10) {
+                                    MobileNumberValidationResult("", true)
+                                } else {
+                                    MobileNumberValidationResult("9 - 10", false)
+                                }
+                            }
+                            PhoneType.TELEPHONE -> {
+                                return if (number.count() == 9 || number.count() == 10) {
+                                    MobileNumberValidationResult("", true)
+                                } else {
+                                    MobileNumberValidationResult("10", false)
+                                }
+                            }
+                        }
+                    }
+
+                    AppCurrency.JOD.value -> {
+                        when (type) {
+                            PhoneType.MOBILE -> {
+                                return if (number.count() == 9 || number.count() == 10) {
+                                    MobileNumberValidationResult("", true)
+                                } else {
+                                    MobileNumberValidationResult("9 - 10", false)
+                                }
+                            }
+                            PhoneType.TELEPHONE -> {
+                                return if (number.count() == 9 || number.count() == 10) {
+                                    MobileNumberValidationResult("", true)
+                                } else {
+                                    MobileNumberValidationResult("9 - 10", false)
+                                }
+                            }
+                        }
+                    }
+
+                    AppCurrency.BHD.value -> {
+                        when (type) {
+                            PhoneType.MOBILE -> {
+                                return if (number.count() > 6 || number.count() < 16) {
+                                    MobileNumberValidationResult("", true)
+                                } else {
+                                    MobileNumberValidationResult("6 - 16", false)
+                                }
+                            }
+                            PhoneType.TELEPHONE -> {
+                                return if (number.count() > 6 || number.count() < 16) {
+                                    MobileNumberValidationResult("", true)
+                                } else {
+                                    MobileNumberValidationResult("6 - 16", false)
+                                }
+                            }
+                        }
+                    }
+
+                    AppCurrency.KWD.value -> {
+                        when (type) {
+                            PhoneType.MOBILE -> {
+                                return if (number.count() > 6 || number.count() < 16) {
+                                    MobileNumberValidationResult("", true)
+                                } else {
+                                    MobileNumberValidationResult("6 - 16", false)
+                                }
+                            }
+                            PhoneType.TELEPHONE -> {
+                                return if (number.count() > 6 || number.count() < 16) {
+                                    MobileNumberValidationResult("", true)
+                                } else {
+                                    MobileNumberValidationResult("6 - 16", false)
+                                }
+                            }
+                        }
+                    }
+
+                    AppCurrency.IQD.value -> {
+                        when (type) {
+                            PhoneType.MOBILE -> {
+                                return if (number.count() == 11) {
+                                    MobileNumberValidationResult("", true)
+                                } else {
+                                    MobileNumberValidationResult("11", false)
+                                }
+                            }
+                            PhoneType.TELEPHONE -> {
+                                return if (number.count() == 11) {
+                                    MobileNumberValidationResult("", true)
+                                } else {
+                                    MobileNumberValidationResult("11", false)
+                                }
+                            }
+                        }
+                    }
+
+                    AppCurrency.SAR.value -> {
+                        when (type) {
+                            PhoneType.MOBILE -> {
+                                return if (number.count() == 10) {
+                                    MobileNumberValidationResult("", true)
+                                } else {
+                                    MobileNumberValidationResult("10", false)
+                                }
+                            }
+                            PhoneType.TELEPHONE -> {
+                                return if (number.count() == 10) {
+                                    MobileNumberValidationResult("", true)
+                                } else {
+                                    MobileNumberValidationResult("10", false)
+                                }
+                            }
+                        }
+                    }
+
+                    AppCurrency.OMR.value -> {
+                        when (type) {
+                            PhoneType.MOBILE -> {
+                                return if (number.count() == 8) {
+                                    MobileNumberValidationResult("", true)
+                                } else {
+                                    MobileNumberValidationResult("8", false)
+                                }
+                            }
+                            PhoneType.TELEPHONE -> {
+                                return if (number.count() == 8) {
+                                    MobileNumberValidationResult("", true)
+                                } else {
+                                    MobileNumberValidationResult("8", false)
+                                }
+                            }
+                        }
+                    }
+
+                    AppCurrency.LYD.value -> {
+                        when (type) {
+                            PhoneType.MOBILE -> {
+                                return if (number.count() == 9 || number.count() == 10) {
+                                    MobileNumberValidationResult("", true)
+                                } else {
+                                    MobileNumberValidationResult("9 - 10", false)
+                                }
+                            }
+                            PhoneType.TELEPHONE -> {
+                                return if (number.count() == 9 || number.count() == 10) {
+                                    MobileNumberValidationResult("", true)
+                                } else {
+                                    MobileNumberValidationResult("10", false)
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                return MobileNumberValidationResult("9 - 10", false)
+            }
+            return MobileNumberValidationResult("9 - 10", false)
+        }
+
 
         fun getGoogleNavigationUrl(userLat: Double?, userLng: Double?): String {
             return "http://maps.google.com/maps?daddr=" +

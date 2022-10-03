@@ -81,8 +81,16 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
                 }
             }
             R.id.text_create_new_account -> {
-                val mIntent = Intent(this, SignUpActivity::class.java)
-                startActivity(mIntent)
+                if (!binding.etCompanyName.isEmpty()) {
+                    callGetCompanyInfoByName()
+                    binding.etCompanyName.makeValid()
+                } else {
+                    Helper.showErrorMessage(
+                        this,
+                        getString(R.string.error_fill_all_mandatory_fields)
+                    )
+                    binding.etCompanyName.makeInvalid()
+                }
             }
         }
     }
@@ -232,6 +240,69 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
                         withContext(Dispatchers.Main) {
                             SharedPreferenceWrapper.saveDriverCompanySettings(data)
                             navigateFromLoginToDashboard()
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()?.string() ?: "")
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    this@LoginActivity,
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    this@LoginActivity,
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(this@LoginActivity, e.message)
+                        } else {
+                            Helper.showErrorMessage(this@LoginActivity, e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                this, getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
+    private fun callGetCompanyInfoByName() {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(this)) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response =
+                        ApiAdapter.apiClient.getCompanyInfoByName(binding.etCompanyName.getText())
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        val data = response.body()
+                        withContext(Dispatchers.Main) {
+                            if (data?.isDriverSignupEnabled == true) {
+                                val mIntent = Intent(this@LoginActivity, SignUpActivity::class.java)
+                                mIntent.putExtra(BundleKeys.COMPANY_INFO.name, data)
+                                startActivity(mIntent)
+                            } else {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_contact_company_to_sign_up)
+                                )
+                            }
                         }
                     } else {
                         try {

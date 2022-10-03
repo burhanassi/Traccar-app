@@ -130,5 +130,6 @@
     <string name="button_exit">خروج</string>
     <string name="hint_driver_name">إسم السائق</string>
     <string name="title_fill_driver_info">الرجاء تعبئة معلومات السائق</string>
-
+    <string name="error_contact_company_to_sign_up">الرجاء التواصل مع الشركة لإتمام التسجيل</string>
+    <string name="success_sign_up">تمت عملية التسجيل بنجاح!</string>
 </resources>

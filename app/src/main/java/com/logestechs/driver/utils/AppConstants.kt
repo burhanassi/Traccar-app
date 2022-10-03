@@ -40,7 +40,7 @@ class AppConstants {
 }
 
 enum class BundleKeys {
-    NOTIFICATIONS_KEY, UNREAD_NOTIFICATIONS_COUNT, IS_LOGIN
+    NOTIFICATIONS_KEY, UNREAD_NOTIFICATIONS_COUNT, IS_LOGIN, COMPANY_INFO
 }
 
 enum class AppLanguages(val value: String) {
@@ -52,6 +52,9 @@ enum class DropdownTag {
     SIGN_UP_VILLAGES
 }
 
+enum class PhoneType {
+    MOBILE, TELEPHONE
+}
 
 enum class IntentAnimation(val value: String) {
     RTL("right-to-left"),

@@ -6,6 +6,7 @@
         <attr name="isPassword" format="boolean" />
         <attr name="isDropdown" format="boolean" />
         <attr name="isNumeric" format="boolean" />
+        <attr name="isPhone" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="StatusSelector">
