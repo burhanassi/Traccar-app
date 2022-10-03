@@ -132,4 +132,6 @@
     <string name="title_fill_driver_info">الرجاء تعبئة معلومات السائق</string>
     <string name="error_contact_company_to_sign_up">الرجاء التواصل مع الشركة لإتمام التسجيل</string>
     <string name="success_sign_up">تمت عملية التسجيل بنجاح!</string>
+    <string name="hint_jawwal_number">رقم الجوال</string>
+    <string name="hint_email_without_username">الايميل</string>
 </resources>

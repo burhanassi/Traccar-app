@@ -131,5 +131,6 @@
     <string name="title_fill_driver_info">Please fill driver information</string>
     <string name="error_contact_company_to_sign_up">Please contact the company to complete registration</string>
     <string name="success_sign_up">Registered successfully</string>
-
+    <string name="hint_jawwal_number">Mobile Number</string>
+    <string name="hint_email_without_username">Email</string>
 </resources>

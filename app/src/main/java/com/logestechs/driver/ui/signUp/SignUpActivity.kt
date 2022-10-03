@@ -47,11 +47,10 @@ class SignUpActivity : LogesTechsActivity(), View.OnClickListener, OnDropDownIte
 
     private fun initData() {
         companyInfo = intent.getParcelableExtra(BundleKeys.COMPANY_INFO.name)
-//        if (Helper.getAppCurrency() == AppCurrency.SAR.name) {
-//            binding.etMobileNumber.textView.text = getString(R.string.hint_jawwal_number)
-//            binding.etRegistrationNumber.textView.text =
-//                getString(R.string.hint_commercial_register)
-//        }
+        if (companyInfo?.currency == AppCurrency.SAR.name) {
+            binding.etMobileNumber.textView.text = getString(R.string.hint_jawwal_number)
+            binding.etEmail.textView.text = getString(R.string.hint_email_without_username)
+        }
     }
 
     private fun initDropdowns() {
