@@ -10,6 +10,7 @@ import com.logestechs.driver.api.requests.LoginRequestBody
 import com.logestechs.driver.data.model.Device
 import com.logestechs.driver.databinding.ActivityLoginBinding
 import com.logestechs.driver.ui.dashboard.DashboardActivity
+import com.logestechs.driver.ui.signUp.SignUpActivity
 import com.logestechs.driver.utils.*
 import com.yariksoffice.lingver.Lingver
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +31,7 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
         initUi()
         binding.buttonLogin.setOnClickListener(this)
         binding.imageViewLanguage.setOnClickListener(this)
+        binding.textCreateNewAccount.setOnClickListener(this)
     }
 
     private fun initUi() {
@@ -77,6 +79,10 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
                         getString(R.string.error_fill_all_mandatory_fields)
                     )
                 }
+            }
+            R.id.text_create_new_account -> {
+                val mIntent = Intent(this, SignUpActivity::class.java)
+                startActivity(mIntent)
             }
         }
     }

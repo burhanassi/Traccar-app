@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.signUp.SignUpActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:elevation="2dp"
+                android:padding="8dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_circular_driver" />
+
+
+            <TextView
+                style="@style/LogesTechsMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:text="@string/login_hello"
+                android:textAlignment="center"
+                android:textColor="@color/pink_carnation"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/textView_login_title"
+                style="@style/LogesTechsMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:text="@string/title_fill_driver_info"
+                android:textAlignment="center"
+                android:textColor="@color/fontTitleBlack"
+                android:textSize="16sp" />
+
+            <com.logestechs.driver.utils.customViews.OutlinedFormEditText
+                android:id="@+id/et_driver_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="55dp"
+                android:layout_marginTop="13dp"
+                android:layout_marginEnd="55dp"
+                bind:hintText="@string/hint_driver_name" />
+
+            <com.logestechs.driver.utils.customViews.OutlinedFormEditText
+                android:id="@+id/et_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="55dp"
+                android:layout_marginTop="13dp"
+                android:layout_marginEnd="55dp"
+                bind:hintText="@string/hint_address" />
+
+            <include
+                android:id="@+id/dropdown_villages"
+                layout="@layout/dropdown_list_component"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="55dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="55dp" />
+
+            <com.logestechs.driver.utils.customViews.OutlinedFormEditText
+                android:id="@+id/et_address_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="55dp"
+                android:layout_marginTop="13dp"
+                android:layout_marginEnd="55dp"
+                bind:hintText="@string/hint_address_description" />
+
+
+            <com.logestechs.driver.utils.customViews.OutlinedFormEditText
+                android:id="@+id/et_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="55dp"
+                android:layout_marginTop="13dp"
+                android:layout_marginEnd="55dp"
+                bind:hintText="@string/hint_email" />
+
+            <com.logestechs.driver.utils.customViews.OutlinedFormEditText
+                android:id="@+id/et_mobile_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="55dp"
+                android:layout_marginTop="13dp"
+                android:layout_marginEnd="55dp"
+                bind:hintText="@string/hint_phone_number" />
+
+            <com.logestechs.driver.utils.customViews.OutlinedFormEditText
+                android:id="@+id/et_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="55dp"
+                android:layout_marginTop="13dp"
+                android:layout_marginEnd="55dp"
+                bind:hintText="@string/hint_password" />
+
+            <Button
+                android:id="@+id/button_done"
+                style="@style/LogesTechsMedium"
+                android:layout_width="289dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="31dp"
+                android:background="@drawable/background_logestechs_button"
+                android:text="@string/done"
+                android:textColor="#fff" />
+
+            <Button
+                android:id="@+id/button_exit"
+                style="@style/LogesTechsMedium"
+                android:layout_width="78dp"
+                android:layout_height="29dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="28dp"
+                android:background="@drawable/background_signup_exit_button"
+                android:text="@string/button_exit"
+                android:textColor="@color/fontTitleOrange" />
+        </LinearLayout>
+    </ScrollView>
+</layout>
+

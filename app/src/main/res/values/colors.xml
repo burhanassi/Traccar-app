@@ -44,5 +44,6 @@
     <color name="pink_cinderella">#4DF96756</color>
     <color name="red_flamingo">#F24645</color>
     <color name="peach_cream">#FFF0DB</color>
+    <color name="dropdownSeparatorGray">#DEDEDE</color>
     <color name="add_pod_container_background">#12DC8000</color>
 </resources>

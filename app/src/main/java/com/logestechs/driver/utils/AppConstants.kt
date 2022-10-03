@@ -48,6 +48,11 @@ enum class AppLanguages(val value: String) {
     ENGLISH("en")
 }
 
+enum class DropdownTag {
+    SIGN_UP_VILLAGES
+}
+
+
 enum class IntentAnimation(val value: String) {
     RTL("right-to-left"),
     LTR("left-to-right")

@@ -127,11 +127,23 @@
                     android:layout_width="289dp"
                     android:layout_height="45dp"
                     android:layout_gravity="center"
-                    android:layout_marginBottom="45dp"
                     android:layout_marginTop="52dp"
                     android:background="@drawable/background_logestechs_button"
                     android:text="@string/button_login"
                     android:textColor="#fff" />
+
+                <TextView
+                    android:id="@+id/text_create_new_account"
+                    style="@style/LogesTechsMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="14dp"
+                    android:padding="10dp"
+                    android:text="@string/title_create_new_account"
+                    android:textAlignment="center"
+                    android:textColor="@color/fontTitleOrange"
+                    android:textSize="16sp" />
 
 
                 <LinearLayout
@@ -139,6 +151,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
                     android:layout_marginBottom="40dp"
                     android:orientation="vertical">
 

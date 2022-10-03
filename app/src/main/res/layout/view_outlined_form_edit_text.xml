@@ -106,7 +106,7 @@
                 android:paddingStart="3dp"
                 android:paddingEnd="3dp"
                 android:textColor="@color/fontTitleBlack"
-                android:textSize="11sp"
+                android:textSize="13sp"
                 tools:ignore="SmallSp"
                 tools:text="Hint" />
         </RelativeLayout>

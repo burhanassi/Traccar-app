@@ -122,5 +122,13 @@
     <string name="title_out_of_service">خارج الخدمة</string>
     <string name="minutes">د</string>
     <string name="hours">س</string>
+    <string name="title_create_new_account">انشىء حساب جديد</string>
+    <string name="hint_phone_number">رقم الهاتف</string>
+    <string name="hint_address">العنوان</string>
+    <string name="hint_address_description">وصف العنوان</string>
+    <string name="done">تم</string>
+    <string name="button_exit">خروج</string>
+    <string name="hint_driver_name">إسم السائق</string>
+    <string name="title_fill_driver_info">الرجاء تعبئة معلومات السائق</string>
 
 </resources>
