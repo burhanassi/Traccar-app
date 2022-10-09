@@ -243,6 +243,52 @@ class Helper {
                             number
                         }
                     }
+                    AppCurrency.JOD.value -> {
+                        return if (number.length == 9) {
+                            number = "+962$number"
+                            number
+                        } else if (number.length == 10) {
+                            number.drop(1)
+                            number = "+962$number"
+                            number
+                        } else if (number.length == 12) {
+                            number = "+$number"
+                            number
+                        } else if (number.length == 13) {
+                            number.drop(1)
+                            number = "+$number"
+                            number
+                        } else if (number.length == 14) {
+                            number.drop(2)
+                            number = "+$number"
+                            number
+                        } else {
+                            number
+                        }
+                    }
+                    AppCurrency.SAR.value -> {
+                        return if (number.length == 9) {
+                            number = "+966$number"
+                            number
+                        } else if (number.length == 10) {
+                            number.drop(1)
+                            number = "+966$number"
+                            number
+                        } else if (number.length == 12) {
+                            number = "+$number"
+                            number
+                        } else if (number.length == 13) {
+                            number.drop(1)
+                            number = "+$number"
+                            number
+                        } else if (number.length == 14) {
+                            number.drop(2)
+                            number = "+$number"
+                            number
+                        } else {
+                            number
+                        }
+                    }
                 }
             }
             return number
