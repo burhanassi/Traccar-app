@@ -19,6 +19,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.DeleteImageRequestBody
@@ -290,7 +291,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             if (photoFile != null) {
                 val photoURI = FileProvider.getUriForFile(
                     this.applicationContext,
-                    "com.logestechs.driver.android.fileprovider",
+                    "${BuildConfig.APPLICATION_ID}.fileprovider",
                     photoFile
                 )
                 val mCurrentPhotoPath = "file:" + photoFile.absolutePath
