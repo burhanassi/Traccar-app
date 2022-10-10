@@ -3,6 +3,7 @@ package com.logestechs.driver.ui.profile
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import com.logestechs.driver.R
@@ -192,8 +193,18 @@ class ProfileActivity : LogesTechsActivity(), View.OnClickListener {
     private fun cancelLocationSync() {
         val alarmManager = this.getSystemService(ALARM_SERVICE) as AlarmManager
         val myIntent = Intent(this, AlarmReceiver::class.java)
-        val pendingIntent =
-            PendingIntent.getBroadcast(this, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        var pendingIntent: PendingIntent? = null
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            pendingIntent = PendingIntent.getBroadcast(
+                this,
+                0,
+                myIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+        } else {
+            pendingIntent =
+                PendingIntent.getBroadcast(this, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
         alarmManager.cancel(pendingIntent)
         val myService = Intent(this, MyLocationService::class.java)
         stopService(myService)
