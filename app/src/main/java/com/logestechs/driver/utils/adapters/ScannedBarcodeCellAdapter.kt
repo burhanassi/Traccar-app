@@ -2,6 +2,7 @@ package com.logestechs.driver.utils.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.data.model.Package
@@ -60,6 +61,13 @@ class ScannedBarcodeViewHolder(
 
             binding.itemReceiverName.textItem.text = pkg.getFullReceiverName()
             binding.itemBarcode.textItem.text = pkg.barcode
+            binding.itemReceiverCity.textItem.text = pkg.destinationCity
+            if (pkg.invoiceNumber != null) {
+                binding.itemInvoiceNumber.textItem.text = pkg.invoiceNumber
+                binding.itemInvoiceNumber.root.visibility = View.VISIBLE
+            } else {
+                binding.itemInvoiceNumber.root.visibility = View.GONE
+            }
         }
     }
 }

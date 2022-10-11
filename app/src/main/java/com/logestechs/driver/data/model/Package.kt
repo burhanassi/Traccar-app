@@ -33,6 +33,7 @@ data class Package(
     var codBarcodeImage: String? = null,
     @SerializedName("parcelTypeId")
     var parcelTypeID: Long? = null,
+    var destinationCity: String? = null,
 
     //products
     var quantity: Int? = null,
