@@ -295,6 +295,15 @@
                             bind:itemSrc="@{@drawable/ic_package_gray}" />
 
                         <include
+                            android:id="@+id/item_invoice_number"
+                            layout="@layout/item_card_row"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="13dp"
+                            bind:isCopyVisible="@{true}"
+                            bind:itemSrc="@{@drawable/ic_invoice_gray}" />
+
+                        <include
                             android:id="@+id/item_package_quantity"
                             layout="@layout/item_card_row"
                             android:layout_width="wrap_content"

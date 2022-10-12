@@ -109,6 +109,13 @@ class InCarPackageCellAdapter(
                 binding.itemNotes.textItem.text = pkg?.notes
             }
 
+            if (pkg?.invoiceNumber?.trim().isNullOrEmpty()) {
+                binding.itemInvoiceNumber.root.visibility = View.GONE
+            } else {
+                binding.itemInvoiceNumber.root.visibility = View.VISIBLE
+                binding.itemInvoiceNumber.textItem.text = pkg?.invoiceNumber
+            }
+
             if (pkg?.quantity != null && pkg.quantity != 0) {
                 binding.itemPackageQuantity.root.visibility = View.VISIBLE
                 binding.itemPackageQuantity.textItem.text = pkg.quantity.toString()
@@ -308,6 +315,10 @@ class InCarPackageCellAdapter(
 
             binding.itemPackageBarcode.buttonCopy.setOnClickListener {
                 Helper.copyTextToClipboard(mAdapter.context, pkg?.barcode)
+            }
+
+            binding.itemInvoiceNumber.buttonCopy.setOnClickListener {
+                Helper.copyTextToClipboard(mAdapter.context, pkg?.invoiceNumber)
             }
         }
     }
