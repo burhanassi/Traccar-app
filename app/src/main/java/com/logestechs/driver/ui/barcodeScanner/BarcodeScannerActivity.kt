@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.os.*
+import android.view.KeyEvent
 import android.view.SurfaceHolder
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -47,6 +48,8 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
     private var confirmCounter = 0
 
     private var toneGen1: ToneGenerator? = null
+
+    private var scannedBarcode = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,6 +99,36 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
             vibrator.vibrate(200)
         }
     }
+
+    override fun dispatchKeyEvent(e: KeyEvent): Boolean {
+        if (e.keyCode == KeyEvent.KEYCODE_BACK) {
+            onBackPressed()
+            return true
+        }
+        val action = e.action
+        val keyCode = e.keyCode
+        val character = e.unicodeChar.toChar()
+
+        if (action == KeyEvent.ACTION_DOWN &&
+            keyCode != KeyEvent.KEYCODE_ENTER &&
+            character != '\t' &&
+            character != '\n'
+        ) {
+            val pressedKey = character
+            scannedBarcode += pressedKey
+        }
+        if (action == KeyEvent.ACTION_DOWN &&
+            (keyCode == KeyEvent.KEYCODE_ENTER || character == '\t' || character == '\n')
+        ) {
+            if (!scannedItemsHashMap.containsKey(scannedBarcode)) {
+                scannedItemsHashMap[scannedBarcode] = scannedBarcode
+                callPickupPackage(scannedBarcode)
+            }
+            scannedBarcode = ""
+        }
+        return false
+    }
+
 
     @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(
