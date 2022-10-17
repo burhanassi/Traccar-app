@@ -112,13 +112,14 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
         if (action == KeyEvent.ACTION_DOWN &&
             keyCode != KeyEvent.KEYCODE_ENTER &&
             character != '\t' &&
-            character != '\n'
+            character != '\n' &&
+            character != '\u0000'
         ) {
             val pressedKey = character
             scannedBarcode += pressedKey
         }
         if (action == KeyEvent.ACTION_DOWN &&
-            (keyCode == KeyEvent.KEYCODE_ENTER || character == '\t' || character == '\n')
+            (keyCode == KeyEvent.KEYCODE_ENTER || character == '\t' || character == '\n' || character == '\u0000')
         ) {
             if (!scannedItemsHashMap.containsKey(scannedBarcode)) {
                 scannedItemsHashMap[scannedBarcode] = scannedBarcode
