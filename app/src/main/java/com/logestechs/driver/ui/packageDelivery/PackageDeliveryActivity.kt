@@ -17,6 +17,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.logestechs.driver.BuildConfig
@@ -309,6 +310,75 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             return ""
         }
         return ""
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            AppConstants.REQUEST_TAKE_PHOTO -> if (resultCode == RESULT_OK) {
+                selectedPodImageUri = Uri.parse(mCurrentPhotoPath)
+                if (selectedPodImageUri != null) {
+                    val compressedImage =
+                        Helper.validateCompressedImage(
+                            selectedPodImageUri!!,
+                            true,
+                            super.getContext()
+                        )
+                    if (compressedImage != null) {
+                        loadedImagesList.add(compressedImage)
+                        if (loadedImagesList.size > 0 && loadedImagesList[loadedImagesList.size - 1]
+                                .imageUrl == null
+                        ) {
+                            callUploadPodImage(loadedImagesList[loadedImagesList.size - 1])
+                        }
+                    } else {
+                        Toast.makeText(
+                            applicationContext,
+                            getString(R.string.error_image_capture_failed),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                } else {
+                    Toast.makeText(
+                        applicationContext,
+                        getString(R.string.error_image_capture_failed),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+
+            AppConstants.REQUEST_LOAD_PHOTO -> if (resultCode == RESULT_OK && data != null) {
+                selectedPodImageUri = data.data
+                if (selectedPodImageUri != null) {
+                    val compressedImage =
+                        Helper.validateCompressedImage(
+                            selectedPodImageUri!!,
+                            false,
+                            super.getContext()
+                        )
+                    if (compressedImage != null) {
+                        loadedImagesList.add(compressedImage)
+                        if (loadedImagesList.size > 0 && loadedImagesList[loadedImagesList.size - 1].imageUrl == null
+                        ) {
+                            callUploadPodImage(loadedImagesList[loadedImagesList.size - 1])
+                        }
+                    } else {
+                        Toast.makeText(
+                            applicationContext,
+                            getString(R.string.error_image_loading),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                } else {
+                    Toast.makeText(
+                        applicationContext,
+                        getString(R.string.error_image_loading),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+            else -> {}
+        }
     }
 
     override fun onRequestPermissionsResult(
