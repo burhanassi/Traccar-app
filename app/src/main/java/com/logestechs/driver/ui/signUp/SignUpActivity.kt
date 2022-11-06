@@ -109,11 +109,17 @@ class SignUpActivity : LogesTechsActivity(), View.OnClickListener, OnDropDownIte
             binding.etEmail.makeValid()
         }
 
+        val currency = if (companyInfo?.currency == "NIS") {
+            AppCurrency.NIS.value
+        } else {
+            companyInfo?.currency
+        }
+
         val phoneValidationResult =
             Helper.validateMobileNumber(
                 PhoneType.MOBILE,
                 binding.etMobileNumber.getText(),
-                companyInfo?.currency
+                currency
             )
         if (phoneValidationResult.isValid != true) {
             isValid = false
