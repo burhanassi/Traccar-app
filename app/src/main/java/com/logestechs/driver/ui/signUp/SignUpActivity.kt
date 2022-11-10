@@ -12,10 +12,7 @@ import com.jakewharton.rxbinding4.widget.textChanges
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.SignUpRequestBody
-import com.logestechs.driver.data.model.Address
-import com.logestechs.driver.data.model.CompanyInfo
-import com.logestechs.driver.data.model.DropdownItem
-import com.logestechs.driver.data.model.Village
+import com.logestechs.driver.data.model.*
 import com.logestechs.driver.databinding.ActivitySignUpBinding
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.DropdownListAdapter
@@ -25,6 +22,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 
@@ -282,6 +280,12 @@ class SignUpActivity : LogesTechsActivity(), View.OnClickListener, OnDropDownIte
         when (v!!.id) {
             R.id.button_done -> {
                 if (validateInput()) {
+                    var uuid = SharedPreferenceWrapper.getUUID()
+
+                    if (uuid.isEmpty()) {
+                        uuid = UUID.randomUUID().toString()
+                        SharedPreferenceWrapper.saveUUID(uuid)
+                    }
                     callSignUp(
                         SignUpRequestBody(
                             binding.etDriverName.getText(),
@@ -292,7 +296,8 @@ class SignUpActivity : LogesTechsActivity(), View.OnClickListener, OnDropDownIte
                             Address.getAddressFromVillage(
                                 binding.dropdownVillages.rvDropdownList.selectedItem as Village,
                                 binding.etAddressDescription.getText()
-                            )
+                            ),
+                            Device(uuid, "ANDROID")
                         )
                     )
                 } else {
