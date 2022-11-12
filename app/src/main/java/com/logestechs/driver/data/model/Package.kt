@@ -34,6 +34,7 @@ data class Package(
     @SerializedName("parcelTypeId")
     var parcelTypeID: Long? = null,
     var destinationCity: String? = null,
+    var partnerId: Long? = null,
 
     //products
     var quantity: Int? = null,

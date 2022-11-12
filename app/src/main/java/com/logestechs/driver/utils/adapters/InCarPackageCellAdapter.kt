@@ -184,47 +184,17 @@ class InCarPackageCellAdapter(
             }
 
             binding.imageViewReceiverSms.setOnClickListener {
-                if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
-                    (mAdapter.context as LogesTechsActivity).sendSms(
-                        pkg?.receiverPhone,
-                        Helper.getInterpretedMessageFromTemplate(
-                            pkg,
-                            false,
-                            mAdapter.messageTemplates?.distribution
-                        )
-                    )
-                }
+                mAdapter.listener?.onSendSmsMessage(pkg)
             }
 
             binding.imageViewReceiverWhatsApp.setOnClickListener {
-                if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
-                    (mAdapter.context as LogesTechsActivity).sendWhatsAppMessage(
-                        Helper.formatNumberForWhatsApp(
-                            pkg?.receiverPhone
-                        ), Helper.getInterpretedMessageFromTemplate(
-                            pkg,
-                            false,
-                            mAdapter.messageTemplates?.distribution
-                        )
-                    )
-                }
+                mAdapter.listener?.onSendWhatsAppMessage(pkg)
             }
 
             if (Helper.getCompanyCurrency() == AppCurrency.NIS.value) {
                 binding.imageViewReceiverWhatsAppSecondary.visibility = View.VISIBLE
                 binding.imageViewReceiverWhatsAppSecondary.setOnClickListener {
-                    if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
-                        (mAdapter.context as LogesTechsActivity).sendWhatsAppMessage(
-                            Helper.formatNumberForWhatsApp(
-                                pkg?.receiverPhone,
-                                true
-                            ), Helper.getInterpretedMessageFromTemplate(
-                                pkg,
-                                false,
-                                mAdapter.messageTemplates?.distribution
-                            )
-                        )
-                    }
+                    mAdapter.listener?.onSendWhatsAppMessage(pkg, true)
                 }
             } else {
                 binding.imageViewReceiverWhatsAppSecondary.visibility = View.GONE

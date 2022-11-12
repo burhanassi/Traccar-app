@@ -528,7 +528,8 @@ class Helper {
         fun getInterpretedMessageFromTemplate(
             data: Any?,
             isToMultiple: Boolean,
-            messageTemplate: String?
+            messageTemplate: String?,
+            partnerName: String? = null
         ): String? {
             val loginResponse = SharedPreferenceWrapper.getLoginResponse()
             val loggedInUser: User? = loginResponse?.user
@@ -572,7 +573,11 @@ class Helper {
             }
             driverName = loggedInUser?.firstName
             driverPhone = loggedInUser?.phone
-            company = loginResponse?.businessName
+            if (partnerName != null) {
+                company = partnerName
+            } else {
+                company = loginResponse?.businessName
+            }
             if (!isToMultiple) {
                 if (recipientName != null && recipientName.isNotEmpty()) {
                     template = template?.replace(

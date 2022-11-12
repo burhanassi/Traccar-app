@@ -45,6 +45,8 @@ class InCarPackagesFragment(
     private var activityDelegate: DriverPackagesByStatusViewPagerActivityDelegate? = null
     private var searchWord: String? = null
 
+    private val messageTemplates =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.messageTemplates
     var selectedViewMode: InCarPackagesViewMode = InCarPackagesViewMode.BY_VILLAGE
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -676,6 +678,88 @@ class InCarPackagesFragment(
         }
     }
 
+    private fun callGetPartnerNameById(
+        packageId: Long?,
+        pkg: Package?,
+        isSms: Boolean,
+        isSecondary: Boolean
+    ) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.getPartnerNameByPackageId(
+                        packageId ?: -1
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        val body = response.body()
+                        withContext(Dispatchers.Main) {
+                            if (isSms) {
+                                (context as LogesTechsActivity).sendSms(
+                                    pkg?.receiverPhone,
+                                    Helper.getInterpretedMessageFromTemplate(
+                                        pkg,
+                                        false,
+                                        messageTemplates?.distribution,
+                                        body?.name
+                                    )
+                                )
+                            } else {
+                                (context as LogesTechsActivity).sendWhatsAppMessage(
+                                    Helper.formatNumberForWhatsApp(
+                                        pkg?.receiverPhone,
+                                        isSecondary
+                                    ), Helper.getInterpretedMessageFromTemplate(
+                                        pkg,
+                                        false,
+                                        messageTemplates?.distribution,
+                                        body?.name
+                                    )
+                                )
+                            }
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_status_filter -> {
@@ -771,6 +855,38 @@ class InCarPackagesFragment(
         val mIntent = Intent(context, PackageDeliveryActivity::class.java)
         mIntent.putExtra(IntentExtrasKeys.PACKAGE_TO_DELIVER.name, pkg)
         startActivity(mIntent)
+    }
+
+    override fun onSendWhatsAppMessage(pkg: Package?, isSecondary: Boolean) {
+        if (pkg?.partnerId != null && pkg.partnerId != 0L) {
+            callGetPartnerNameById(pkg.id, pkg, false, isSecondary)
+        } else {
+            (context as LogesTechsActivity).sendWhatsAppMessage(
+                Helper.formatNumberForWhatsApp(
+                    pkg?.receiverPhone,
+                    isSecondary
+                ), Helper.getInterpretedMessageFromTemplate(
+                    pkg,
+                    false,
+                    messageTemplates?.distribution
+                )
+            )
+        }
+    }
+
+    override fun onSendSmsMessage(pkg: Package?) {
+        if (pkg?.partnerId != null && pkg.partnerId != 0L) {
+            callGetPartnerNameById(pkg.id, pkg, isSms = true, isSecondary = false)
+        } else {
+            (context as LogesTechsActivity).sendSms(
+                pkg?.receiverPhone,
+                Helper.getInterpretedMessageFromTemplate(
+                    pkg,
+                    false,
+                    messageTemplates?.distribution,
+                )
+            )
+        }
     }
 
     override fun onPackageSearch(keyword: String?) {

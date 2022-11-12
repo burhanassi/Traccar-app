@@ -248,4 +248,7 @@ interface LogesTechsDriverApi {
     suspend fun signUp(
         @Body body: SignUpRequestBody?
     ): Response<ResponseBody?>?
+
+    @GET("${AppConstants.PATH}api/driver/packages/{packageId}/partner-name")
+    suspend fun getPartnerNameByPackageId(@Path("packageId") packageId: Long): Response<GetPartnerNameResponse?>?
 }
