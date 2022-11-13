@@ -3,12 +3,14 @@ package com.logestechs.driver.utils.adapters
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemPendingPackageCellBinding
+import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.interfaces.PendingPackagesCardListener
 import com.logestechs.driver.utils.setThrottleClickListener
 
@@ -19,6 +21,8 @@ class PendingPackageCellAdapter(
     var parentIndex: Int
 ) :
     RecyclerView.Adapter<PendingPackageCellAdapter.PendingPackageViewHolder>() {
+    val companyConfigurations =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
@@ -83,6 +87,12 @@ class PendingPackageCellAdapter(
                 }
 
                 popup.show()
+            }
+
+            if (mAdapter.companyConfigurations?.isAllowDriverRejectingOrders == false) {
+                binding.buttonContextMenu.visibility = View.GONE
+            } else {
+                binding.buttonContextMenu.visibility = View.VISIBLE
             }
         }
     }

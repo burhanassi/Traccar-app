@@ -14,6 +14,7 @@ import com.logestechs.driver.R
 import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemPendingPackageCustomerCellBinding
+import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.customViews.PeekingLinearLayoutManager
 import com.logestechs.driver.utils.interfaces.PendingPackagesCardListener
 import com.logestechs.driver.utils.setThrottleClickListener
@@ -25,6 +26,8 @@ class PendingPackageCustomerCellAdapter(
 ) :
     RecyclerView.Adapter<PendingPackageCustomerCellAdapter.CustomerViewHolder>() {
 
+    val companyConfigurations =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
         i: Int
@@ -118,6 +121,12 @@ class PendingPackageCustomerCellAdapter(
             )
             binding.rvPackages.layoutManager = layoutManager
             binding.rvPackages.adapter = childItemAdapter
+
+            if (mAdapter.companyConfigurations?.isAllowDriverRejectingOrders == false) {
+                binding.buttonContextMenu.visibility = View.GONE
+            } else {
+                binding.buttonContextMenu.visibility = View.VISIBLE
+            }
         }
 
         private fun onCardClick(position: Int) {
