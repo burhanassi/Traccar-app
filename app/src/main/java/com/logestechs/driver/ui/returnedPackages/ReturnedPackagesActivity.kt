@@ -1,5 +1,6 @@
 package com.logestechs.driver.ui.returnedPackages
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -8,8 +9,10 @@ import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.DeliverReturnedPackageToSenderRequestBody
 import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.databinding.ActivityReturnedPackagesBinding
+import com.logestechs.driver.ui.returnedPackageDelivery.ReturnedPackageDeliveryActivity
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.adapters.ReturnedPackageCustomerCellAdapter
 import com.logestechs.driver.utils.interfaces.ReturnedPackagesCardListener
@@ -327,13 +330,13 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
     }
 
     override fun deliverPackage(parentIndex: Int, childIndex: Int) {
-        val packageId =
+        val pkg =
             (binding.rvCustomers.adapter as ReturnedPackageCustomerCellAdapter).customersList[parentIndex]?.packages?.get(
                 childIndex
-            )?.id
-        val list = ArrayList<Long?>()
-        list.add(packageId)
-        callDeliverReturnedPackageToSender(DeliverReturnedPackageToSenderRequestBody(list))
+            )
+        val mIntent = Intent(this, ReturnedPackageDeliveryActivity::class.java)
+        mIntent.putExtra(IntentExtrasKeys.PACKAGE_TO_DELIVER.name, pkg)
+        startActivity(mIntent)
     }
 
     override fun deliverCustomerPackages(parentIndex: Int) {
