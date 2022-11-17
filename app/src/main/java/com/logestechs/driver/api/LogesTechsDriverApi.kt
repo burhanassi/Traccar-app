@@ -99,7 +99,8 @@ interface LogesTechsDriverApi {
 
     @PUT("${AppConstants.PATH}api/driver/mass-packages/{reportId}/deliver")
     suspend fun deliverMassCodReport(
-        @Path("reportId") packageId: Long?
+        @Path("reportId") packageId: Long?,
+        @Body body: DeliverMassCodReportRequestBody?
     ): Response<ResponseBody>?
 
     @PUT("${AppConstants.PATH}api/driver/customers/{customerId}/returned-packages/deliver-to-sender")

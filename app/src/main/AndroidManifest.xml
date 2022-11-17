@@ -51,6 +51,15 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".ui.packageDeliveryScreens.massCodReportDelivery.MassCodReportDeliveryActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme">
+
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".ui.packageDeliveryScreens.returnedPackageDelivery.ReturnedPackageDeliveryActivity"
             android:exported="false"
             android:theme="@style/AppTheme">

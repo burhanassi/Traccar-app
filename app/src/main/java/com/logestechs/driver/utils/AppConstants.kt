@@ -97,7 +97,8 @@ enum class IntentExtrasKeys() {
     PACKAGE_TO_DELIVER,
     DRAFT_PICKUP,
     EXTRA_RECEIVED_NOTIFICATION,
-    IN_CAR_PACKAGE_STATUS
+    IN_CAR_PACKAGE_STATUS,
+    MASS_COD_REPORT_TO_DELIVER
 }
 
 enum class BarcodeScanType {

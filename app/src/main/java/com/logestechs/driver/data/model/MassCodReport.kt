@@ -1,5 +1,9 @@
 package com.logestechs.driver.data.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class MassCodReport(
     var createdDate: String? = null,
     var id: Long? = null,
@@ -12,7 +16,7 @@ data class MassCodReport(
     var status: String? = null,
     var customerName: String? = null,
     var customerCity: String? = null,
-    var customerVillage: Any? = null,
+    var customerVillage: String? = null,
     var totalCod: Double? = null,
     var totalCost: Double? = null,
     var totalCodWithoutCost: Double? = null,
@@ -25,4 +29,4 @@ data class MassCodReport(
     var isPrintedByAccountant: Boolean? = null,
     var statusStringForExport: String? = null,
     var isCustomerBilled: Boolean? = null
-)
+) : Parcelable
