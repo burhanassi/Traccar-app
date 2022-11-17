@@ -23,7 +23,7 @@ import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.DeleteImageRequestBody
-import com.logestechs.driver.api.requests.DeliverPackageRequestBody
+import com.logestechs.driver.api.requests.DeliverReturnedPackageToSenderRequestBody
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
@@ -424,18 +424,11 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
                     )
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            callDeliverPackage(
-                                DeliverPackageRequestBody(
-                                    pkg?.id,
-                                    0.0,
-                                    0.0,
-                                    0.0,
-                                    0.0,
+                            callDeliverReturnedPackageToSender(
+                                DeliverReturnedPackageToSenderRequestBody(
+                                    arrayListOf(pkg?.id),
                                     response.body()?.fileUrl,
-                                    getPodImagesUrls(),
-                                    null,
-                                    null,
-                                    (selectedPaymentType?.enumValue as PaymentType).name
+                                    getPodImagesUrls()
                                 )
                             )
                         }
@@ -625,17 +618,13 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
         }
     }
 
-    private fun callDeliverPackage(deliverPackageRequestBody: DeliverPackageRequestBody?) {
+    private fun callDeliverReturnedPackageToSender(body: DeliverReturnedPackageToSenderRequestBody?) {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    var note: String? = null
-                    val response = ApiAdapter.apiClient.deliverPackage(
-                        pkg?.barcode,
-                        selectedDeliveryType?.name,
-                        note,
-                        body = deliverPackageRequestBody
+                    val response = ApiAdapter.apiClient.deliverReturnedPackageToSender(
+                        body
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
@@ -698,18 +687,11 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
             R.id.button_deliver_package -> {
                 if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true) {
                     if (validateInput()) {
-                        callDeliverPackage(
-                            DeliverPackageRequestBody(
-                                pkg?.id,
-                                0.0,
-                                0.0,
-                                0.0,
-                                0.0,
+                        callDeliverReturnedPackageToSender(
+                            DeliverReturnedPackageToSenderRequestBody(
+                                arrayListOf(pkg?.id),
                                 null,
-                                getPodImagesUrls(),
-                                null,
-                                null,
-                                (selectedPaymentType?.enumValue as PaymentType).name
+                                getPodImagesUrls()
                             )
                         )
                     }

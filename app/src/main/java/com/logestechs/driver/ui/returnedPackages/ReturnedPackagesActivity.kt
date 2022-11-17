@@ -6,7 +6,6 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
-import com.logestechs.driver.api.requests.DeliverReturnedPackageToSenderRequestBody
 import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.databinding.ActivityReturnedPackagesBinding
 import com.logestechs.driver.ui.returnedPackageDelivery.ReturnedPackageDeliveryActivity
@@ -53,6 +52,17 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
             enableUpdateData = false
         } else {
             doesUpdateData = false
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1) {
+            Helper.showSuccessMessage(
+                super.getContext(),
+                getString(R.string.success_operation_completed)
+            )
+            callGetCustomersWithReturnedPackages()
         }
     }
 
@@ -271,64 +281,6 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         }
     }
 
-    private fun callDeliverReturnedPackageToSender(body: DeliverReturnedPackageToSenderRequestBody?) {
-        showWaitDialog()
-        if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response = ApiAdapter.apiClient.deliverReturnedPackageToSender(
-                        body
-                    )
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        withContext(Dispatchers.Main) {
-                            Helper.showSuccessMessage(
-                                super.getContext(),
-                                getString(R.string.success_operation_completed)
-                            )
-                            callGetCustomersWithReturnedPackages()
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            hideWaitDialog()
-            Helper.showErrorMessage(
-                super.getContext(), getString(R.string.error_check_internet_connection)
-            )
-        }
-    }
-
     override fun deliverPackage(parentIndex: Int, childIndex: Int) {
         val pkg =
             (binding.rvCustomers.adapter as ReturnedPackageCustomerCellAdapter).customersList[parentIndex]?.packages?.get(
@@ -336,7 +288,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
             )
         val mIntent = Intent(this, ReturnedPackageDeliveryActivity::class.java)
         mIntent.putExtra(IntentExtrasKeys.PACKAGE_TO_DELIVER.name, pkg)
-        startActivity(mIntent)
+        startActivityForResult(mIntent, 1)
     }
 
     override fun deliverCustomerPackages(parentIndex: Int) {
