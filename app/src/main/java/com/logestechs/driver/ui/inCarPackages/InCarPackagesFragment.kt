@@ -14,7 +14,7 @@ import com.logestechs.driver.api.responses.GetInCarPackagesGroupedResponse
 import com.logestechs.driver.data.model.GroupedPackages
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.FragmentInCarPackagesBinding
-import com.logestechs.driver.ui.packageDelivery.PackageDeliveryActivity
+import com.logestechs.driver.ui.packageDeliveryScreens.packageDelivery.PackageDeliveryActivity
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.InCarPackageCellAdapter
 import com.logestechs.driver.utils.adapters.InCarPackageGroupedCellAdapter

@@ -51,7 +51,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".ui.returnedPackageDelivery.ReturnedPackageDeliveryActivity"
+            android:name=".ui.packageDeliveryScreens.returnedPackageDelivery.ReturnedPackageDeliveryActivity"
             android:exported="false"
             android:theme="@style/AppTheme">
             <meta-data
@@ -92,7 +92,7 @@
             android:value="barcode" />
 
         <activity
-            android:name=".ui.packageDelivery.PackageDeliveryActivity"
+            android:name=".ui.packageDeliveryScreens.packageDelivery.PackageDeliveryActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />
         <activity

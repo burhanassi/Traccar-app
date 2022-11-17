@@ -1,4 +1,4 @@
-package com.logestechs.driver.ui.packageDelivery
+package com.logestechs.driver.ui.packageDeliveryScreens.packageDelivery
 
 import android.content.ClipData
 import android.content.Intent

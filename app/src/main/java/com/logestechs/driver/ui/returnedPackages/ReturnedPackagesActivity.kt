@@ -8,7 +8,7 @@ import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.databinding.ActivityReturnedPackagesBinding
-import com.logestechs.driver.ui.returnedPackageDelivery.ReturnedPackageDeliveryActivity
+import com.logestechs.driver.ui.packageDeliveryScreens.returnedPackageDelivery.ReturnedPackageDeliveryActivity
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.IntentExtrasKeys
