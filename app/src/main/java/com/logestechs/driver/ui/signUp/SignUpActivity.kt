@@ -8,6 +8,8 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.jakewharton.rxbinding4.widget.textChanges
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
@@ -205,8 +207,25 @@ class SignUpActivity : LogesTechsActivity(), View.OnClickListener, OnDropDownIte
         }
     }
 
-    private fun callSignUp(body: SignUpRequestBody) {
-        showWaitDialog()
+    private fun callSignUp(fcmToken: String?) {
+        var uuid = SharedPreferenceWrapper.getUUID()
+
+        if (uuid.isEmpty()) {
+            uuid = UUID.randomUUID().toString()
+            SharedPreferenceWrapper.saveUUID(uuid)
+        }
+        val body = SignUpRequestBody(
+            binding.etDriverName.getText(),
+            companyInfo?.name,
+            binding.etEmail.getText(),
+            binding.etMobileNumber.getText(),
+            binding.etPassword.getText(),
+            Address.getAddressFromVillage(
+                binding.dropdownVillages.rvDropdownList.selectedItem as Village,
+                binding.etAddressDescription.getText()
+            ),
+            Device(uuid, "ANDROID", fcmToken)
+        )
         if (Helper.isInternetAvailable(this)) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
@@ -280,26 +299,14 @@ class SignUpActivity : LogesTechsActivity(), View.OnClickListener, OnDropDownIte
         when (v!!.id) {
             R.id.button_done -> {
                 if (validateInput()) {
-                    var uuid = SharedPreferenceWrapper.getUUID()
-
-                    if (uuid.isEmpty()) {
-                        uuid = UUID.randomUUID().toString()
-                        SharedPreferenceWrapper.saveUUID(uuid)
-                    }
-                    callSignUp(
-                        SignUpRequestBody(
-                            binding.etDriverName.getText(),
-                            companyInfo?.name,
-                            binding.etEmail.getText(),
-                            binding.etMobileNumber.getText(),
-                            binding.etPassword.getText(),
-                            Address.getAddressFromVillage(
-                                binding.dropdownVillages.rvDropdownList.selectedItem as Village,
-                                binding.etAddressDescription.getText()
-                            ),
-                            Device(uuid, "ANDROID")
-                        )
-                    )
+                    showWaitDialog()
+                    FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                        if (!task.isSuccessful) {
+                            callSignUp(null)
+                            return@OnCompleteListener
+                        }
+                        callSignUp(task.result)
+                    })
                 } else {
                     Helper.showErrorMessage(
                         this@SignUpActivity,

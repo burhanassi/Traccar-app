@@ -3,6 +3,8 @@ package com.logestechs.driver.ui.login
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
@@ -58,7 +60,17 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
                 if (validateInput()) {
                     if (binding.etEmail.getText().length >= 6) {
                         if (Helper.validatePassword(binding.etPassword.getText())) {
-                            callLoginApi()
+                            showWaitDialog()
+                            FirebaseMessaging.getInstance().token.addOnCompleteListener(
+                                OnCompleteListener { task ->
+                                    if (!task.isSuccessful) {
+                                        showWaitDialog()
+                                        callLoginApi(null)
+                                        return@OnCompleteListener
+                                    }
+                                    callLoginApi(task.result)
+                                })
+
                         } else {
                             binding.etPassword.makeInvalid()
                             Helper.showErrorMessage(
@@ -154,7 +166,7 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
     }
 
     //APIs
-    private fun callLoginApi() {
+    private fun callLoginApi(fcmToken: String?) {
         var uuid = SharedPreferenceWrapper.getUUID()
 
         if (uuid.isEmpty()) {
@@ -165,7 +177,7 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
         val loginRequestBody = LoginRequestBody(
             email = binding.etEmail.getText(),
             password = binding.etPassword.getText(),
-            device = Device(uuid, "ANDROID")
+            device = Device(uuid, "ANDROID", fcmToken)
         )
 
         if (Helper.isLogesTechsDriver()) {
@@ -174,7 +186,6 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
             loginRequestBody.companyId = BuildConfig.company_id.toLong()
         }
 
-        showWaitDialog()
         if (Helper.isInternetAvailable(this)) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
