@@ -57,7 +57,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1) {
+        if (requestCode == 1 && resultCode == RESULT_OK) {
             Helper.showSuccessMessage(
                 super.getContext(),
                 getString(R.string.success_operation_completed)

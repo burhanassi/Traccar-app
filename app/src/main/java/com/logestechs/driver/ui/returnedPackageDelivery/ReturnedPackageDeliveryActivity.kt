@@ -110,6 +110,13 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
         return binding.gestureViewSignature.gesture != null && binding.gestureViewSignature.gesture.length > 0
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val returnIntent = Intent()
+        setResult(RESULT_CANCELED, returnIntent)
+        finish()
+    }
+
     private fun initData() {
         binding.itemReceiverName.textItem.text = pkg?.getFullReceiverName()
         binding.itemReceiverAddress.textItem.text = pkg?.destinationAddress?.toStringAddress()
@@ -162,6 +169,7 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
         binding.itemPackageBarcode.buttonCopy.setOnClickListener {
             Helper.copyTextToClipboard(this, pkg?.barcode)
         }
+
 
         binding.toolbarMain.buttonBack.setOnClickListener(this)
         binding.toolbarMain.buttonNotifications.setOnClickListener(this)
