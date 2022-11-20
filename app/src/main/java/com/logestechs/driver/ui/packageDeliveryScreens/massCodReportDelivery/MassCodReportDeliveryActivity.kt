@@ -405,7 +405,7 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                                 ".jpg", reqFile
                     )
 
-                    val response = ApiAdapter.apiClient.uploadPackageSignature(
+                    val response = ApiAdapter.apiClient.uploadMassReportSignature(
                         massCodReport?.id ?: -1,
                         body
                     )
@@ -419,6 +419,7 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                             )
                         }
                     } else {
+                        hideWaitDialog()
                         try {
                             val jObjError = JSONObject(response?.errorBody()!!.string())
                             withContext(Dispatchers.Main) {
@@ -489,7 +490,7 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                         "$imageFileName.jpeg", reqFile
                     )
 
-                    val response = ApiAdapter.apiClient.uploadPodImage(
+                    val response = ApiAdapter.apiClient.uploadPodImageForMassReport(
                         massCodReport?.id ?: -1,
                         true,
                         body
@@ -505,6 +506,7 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                             binding.containerThumbnails.visibility = View.VISIBLE
                         }
                     } else {
+                        hideWaitDialog()
                         try {
                             val jObjError = JSONObject(response?.errorBody()!!.string())
                             withContext(Dispatchers.Main) {

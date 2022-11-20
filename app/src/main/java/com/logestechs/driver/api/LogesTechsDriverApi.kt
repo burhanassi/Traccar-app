@@ -156,9 +156,24 @@ interface LogesTechsDriverApi {
     ): Response<UploadImageResponse?>?
 
     @Multipart
+    @POST("${AppConstants.PATH}api/driver/mass-packages/{massPackageId}/signature/upload")
+    suspend fun uploadMassReportSignature(
+        @Path("massPackageId") massPackageId: Long,
+        @Part upload_form: MultipartBody.Part?
+    ): Response<UploadImageResponse?>?
+
+    @Multipart
     @POST("${AppConstants.PATH}api/driver/packages/{packageId}/delivery-proof/upload-multipart")
     suspend fun uploadPodImage(
         @Path("packageId") packageId: Long,
+        @Query("isMultiAttachment") isMultiAttachment: Boolean? = true,
+        @Part upload_form: MultipartBody.Part?
+    ): Response<UploadImageResponse?>?
+
+    @Multipart
+    @POST("${AppConstants.PATH}api/driver/mass-packages/{massPackageId}/delivery-proof/upload-multipart")
+    suspend fun uploadPodImageForMassReport(
+        @Path("massPackageId") massPackageId: Long,
         @Query("isMultiAttachment") isMultiAttachment: Boolean? = true,
         @Part upload_form: MultipartBody.Part?
     ): Response<UploadImageResponse?>?
