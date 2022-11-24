@@ -36,11 +36,20 @@
                     android:orientation="vertical">
 
                     <include
-                        android:id="@+id/item_sender_name"
+                        android:id="@+id/item_package_barcode"
                         layout="@layout/item_card_row"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="13dp"
+                        bind:isCopyVisible="@{true}"
+                        bind:itemSrc="@{@drawable/ic_package_gray}" />
+
+                    <include
+                        android:id="@+id/item_sender_name"
+                        layout="@layout/item_card_row"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
                         bind:itemSrc="@{@drawable/ic_sender_gray}" />
 
                     <include

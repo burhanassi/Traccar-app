@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemPendingPackageCellBinding
+import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.interfaces.PendingPackagesCardListener
 import com.logestechs.driver.utils.setThrottleClickListener
@@ -66,8 +67,13 @@ class PendingPackageCellAdapter(
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(pkg: Package?) {
+            binding.itemPackageBarcode.textItem.text = pkg?.barcode
             binding.itemSenderName.textItem.text = pkg?.getFullSenderName()
             binding.itemSenderAddress.textItem.text = pkg?.originAddress?.toStringAddress()
+
+            binding.itemPackageBarcode.buttonCopy.setOnClickListener {
+                Helper.copyTextToClipboard(mAdapter.context, pkg?.barcode)
+            }
 
             binding.buttonAccept.setThrottleClickListener({
                 mAdapter.listener?.acceptPackage(mAdapter.parentIndex, adapterPosition)
