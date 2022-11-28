@@ -7,20 +7,25 @@ import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.inputmethod.InputMethodManager
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.logestechs.driver.R
 import com.logestechs.driver.api.requests.AddNoteRequestBody
+import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.DialogAddPackageNoteBinding
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsApp
+import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
 import com.logestechs.driver.utils.interfaces.AddPackageNoteDialogListener
 import com.logestechs.driver.utils.interfaces.RadioGroupListListener
+import com.logestechs.driver.utils.interfaces.ThumbnailsListListener
 
 class AddPackageNoteDialog(
     var context: Context,
     var listener: AddPackageNoteDialogListener?,
-    var pkg: Package?
-) : RadioGroupListListener {
+    var pkg: Package?,
+    var loadedImagesList: ArrayList<LoadedImage>
+) : RadioGroupListListener, ThumbnailsListListener {
 
     lateinit var binding: DialogAddPackageNoteBinding
     lateinit var alertDialog: AlertDialog
@@ -35,6 +40,13 @@ class AddPackageNoteDialog(
         dialogBuilder.setView(binding.root)
         val alertDialog = dialogBuilder.create()
         this.binding = binding
+
+        binding.rvThumbnails.apply {
+            layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = ThumbnailsAdapter(loadedImagesList, this@AddPackageNoteDialog)
+        }
+
         binding.buttonCancel.setOnClickListener {
             alertDialog.dismiss()
         }
@@ -45,6 +57,7 @@ class AddPackageNoteDialog(
                 listener?.onPackageNoteAdded(
                     AddNoteRequestBody(
                         binding.etReason.text.toString(),
+                        getPodImagesUrls(),
                         pkg?.id
                     )
                 )
@@ -57,6 +70,14 @@ class AddPackageNoteDialog(
 
         }
 
+        binding.buttonCaptureImage.setOnClickListener {
+            listener?.onCaptureImage()
+        }
+
+        binding.buttonLoadImage.setOnClickListener {
+            listener?.onLoadImage()
+        }
+
         binding.root.setOnClickListener {
             clearFocus()
         }
@@ -64,6 +85,18 @@ class AddPackageNoteDialog(
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.setCanceledOnTouchOutside(false)
         alertDialog.show()
+    }
+
+    private fun getPodImagesUrls(): List<String?>? {
+        return if (loadedImagesList.isNotEmpty()) {
+            val list: ArrayList<String?> = ArrayList()
+            for (item in loadedImagesList) {
+                list.add(item.imageUrl)
+            }
+            list
+        } else {
+            null
+        }
     }
 
     private fun getStringForFragment(resId: Int): String {
@@ -80,5 +113,9 @@ class AddPackageNoteDialog(
     override fun onItemSelected(title: String?) {
         binding.etReason.setText(title)
         clearFocus()
+    }
+
+    override fun onDeleteImage(position: Int) {
+        listener?.onDeleteImage(position)
     }
 }

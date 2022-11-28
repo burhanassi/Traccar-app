@@ -9,6 +9,7 @@ interface InCarPackagesCardListener {
     fun onPackagePostponed(body: PostponePackageRequestBody?)
     fun onPackageTypeChanged(body: ChangePackageTypeRequestBody?)
     fun onPackageNoteAdded(body: AddNoteRequestBody?)
+    fun onShowPackageNoteDialog(pkg: Package?)
     fun onCodChanged(body: CodChangeRequestBody?)
     fun onDeliverPackage(pkg: Package?)
     fun onSendWhatsAppMessage(pkg: Package?, isSecondary: Boolean = false)

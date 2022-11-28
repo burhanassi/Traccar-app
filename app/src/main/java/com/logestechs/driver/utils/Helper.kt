@@ -25,6 +25,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.fragment.app.Fragment
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
@@ -832,6 +833,13 @@ class Helper {
         fun showAndRequestCameraAndStorageDialog(mActivity: Activity?) {
             ActivityCompat.requestPermissions(
                 mActivity!!,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA),
+                AppConstants.REQUEST_CAMERA_AND_STORAGE_PERMISSION
+            )
+        }
+
+        fun showAndRequestCameraAndStorageDialog(mFragment: Fragment) {
+            mFragment.requestPermissions(
                 arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA),
                 AppConstants.REQUEST_CAMERA_AND_STORAGE_PERMISSION
             )

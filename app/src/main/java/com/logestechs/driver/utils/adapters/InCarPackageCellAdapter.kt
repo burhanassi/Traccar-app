@@ -34,10 +34,8 @@ class InCarPackageCellAdapter(
     FailDeliveryDialogListener,
     PostponePackageDialogListener,
     ChangePackageTypeDialogListener,
-    AddPackageNoteDialogListener,
     ChangeCodDialogListener {
 
-    val messageTemplates = SharedPreferenceWrapper.getDriverCompanySettings()?.messageTemplates
     val companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
@@ -257,7 +255,7 @@ class InCarPackageCellAdapter(
                             }
 
                             R.id.action_add_note -> {
-                                AddPackageNoteDialog(mAdapter.context!!, mAdapter, pkg).showDialog()
+                                mAdapter.listener?.onShowPackageNoteDialog(pkg)
                             }
 
                             R.id.action_edit_package_cod -> {
@@ -307,10 +305,6 @@ class InCarPackageCellAdapter(
 
     override fun onPackageTypeChanged(changePackageTypeRequestBody: ChangePackageTypeRequestBody) {
         listener?.onPackageTypeChanged(changePackageTypeRequestBody)
-    }
-
-    override fun onPackageNoteAdded(addNoteRequestBody: AddNoteRequestBody?) {
-        listener?.onPackageNoteAdded(addNoteRequestBody)
     }
 
     override fun onCodChanged(codChangeRequestBody: CodChangeRequestBody?) {
