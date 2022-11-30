@@ -2,6 +2,7 @@ package com.logestechs.driver.ui.singleScanBarcodeScanner
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.ToneGenerator
@@ -13,10 +14,7 @@ import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.logestechs.driver.R
 import com.logestechs.driver.databinding.ActivitySingleScanBarcodeScannerBinding
-import com.logestechs.driver.utils.AppConstants
-import com.logestechs.driver.utils.BarcodeScanType
-import com.logestechs.driver.utils.Helper
-import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.*
 import java.io.IOException
 
 
@@ -69,6 +67,13 @@ class SingleScanBarcodeScanner : LogesTechsActivity() {
             val vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
             vibrator.vibrate(200)
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val returnIntent = Intent()
+        setResult(RESULT_CANCELED, returnIntent)
+        finish()
     }
 
     @SuppressLint("MissingPermission")
@@ -166,7 +171,9 @@ class SingleScanBarcodeScanner : LogesTechsActivity() {
             scannedItemsHashMap[barcode] = barcode
             toneGen1?.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
             vibrate()
-//            singleScanBarcodeScannerListener?.onBarcodeScanned(barcode)
+            val returnIntent = Intent()
+            returnIntent.putExtra(IntentExtrasKeys.SCANNED_BARCODE.name, barcode)
+            setResult(RESULT_OK, returnIntent)
             finish()
         }
     }

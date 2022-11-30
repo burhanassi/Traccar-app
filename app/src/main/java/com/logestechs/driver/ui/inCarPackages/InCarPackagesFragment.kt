@@ -26,6 +26,7 @@ import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.FragmentInCarPackagesBinding
 import com.logestechs.driver.ui.packageDeliveryScreens.packageDelivery.PackageDeliveryActivity
+import com.logestechs.driver.ui.singleScanBarcodeScanner.SingleScanBarcodeScanner
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.InCarPackageCellAdapter
 import com.logestechs.driver.utils.adapters.InCarPackageGroupedCellAdapter
@@ -800,7 +801,7 @@ class InCarPackagesFragment(
             }
 
             R.id.button_search -> {
-                SearchPackagesDialog(requireContext(), this).showDialog()
+                SearchPackagesDialog(requireContext(), this, searchWord).showDialog()
             }
 
             R.id.button_send_message_to_all -> {
@@ -950,6 +951,14 @@ class InCarPackagesFragment(
                         getString(R.string.error_image_loading),
                         Toast.LENGTH_LONG
                     ).show()
+                }
+            }
+
+            AppConstants.REQUEST_SCAN_BARCODE -> {
+                if (resultCode == AppCompatActivity.RESULT_OK && data != null) {
+                    searchWord = data.getStringExtra(IntentExtrasKeys.SCANNED_BARCODE.name)
+                } else if (resultCode == AppCompatActivity.RESULT_CANCELED) {
+                    SearchPackagesDialog(requireContext(), this, searchWord).showDialog()
                 }
             }
             else -> {}
@@ -1246,5 +1255,13 @@ class InCarPackagesFragment(
     override fun onPackageSearch(keyword: String?) {
         searchWord = keyword
         getPackagesBySelectedMode()
+    }
+
+    override fun onStartBarcodeScan() {
+        val scanBarcode = Intent(context, SingleScanBarcodeScanner::class.java)
+        this.startActivityForResult(
+            scanBarcode,
+            AppConstants.REQUEST_SCAN_BARCODE
+        )
     }
 }

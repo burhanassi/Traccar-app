@@ -1,22 +1,21 @@
 package com.logestechs.driver.utils.dialogs
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
+import android.view.inputmethod.InputMethodManager
 import androidx.databinding.DataBindingUtil
 import com.logestechs.driver.R
 import com.logestechs.driver.databinding.DialogSearchPackagesBinding
-import com.logestechs.driver.ui.singleScanBarcodeScanner.SingleScanBarcodeScanner
 import com.logestechs.driver.utils.LogesTechsApp
 import com.logestechs.driver.utils.interfaces.SearchPackagesDialogListener
 
 class SearchPackagesDialog(
     var context: Context,
-    var listener: SearchPackagesDialogListener
+    var listener: SearchPackagesDialogListener,
+    var searchWord: String?
 ) {
 
     lateinit var binding: DialogSearchPackagesBinding
@@ -36,6 +35,7 @@ class SearchPackagesDialog(
             alertDialog.dismiss()
         }
 
+        binding.etSearchWord.setText(searchWord)
         binding.buttonPickup.setOnClickListener {
             if (binding.etSearchWord.getText().isNotEmpty()) {
                 alertDialog.dismiss()
@@ -46,13 +46,24 @@ class SearchPackagesDialog(
         }
 
         binding.buttonScan.setOnClickListener {
-            val mIntent = Intent(context, SingleScanBarcodeScanner::class.java)
-            (context as Activity).startActivity(mIntent)
+            alertDialog.dismiss()
+            listener.onStartBarcodeScan()
+        }
+
+        binding.root.setOnClickListener {
+            clearFocus()
         }
 
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.setCanceledOnTouchOutside(false)
         alertDialog.show()
+    }
+
+    private fun clearFocus() {
+        val imm =
+            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+        binding.etSearchWord.clearFocus()
     }
 
     private fun getStringForFragment(resId: Int): String {
