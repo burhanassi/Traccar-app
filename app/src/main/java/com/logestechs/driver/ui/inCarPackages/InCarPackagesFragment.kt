@@ -31,10 +31,7 @@ import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.InCarPackageCellAdapter
 import com.logestechs.driver.utils.adapters.InCarPackageGroupedCellAdapter
 import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
-import com.logestechs.driver.utils.dialogs.AddPackageNoteDialog
-import com.logestechs.driver.utils.dialogs.InCarStatusFilterDialog
-import com.logestechs.driver.utils.dialogs.InCarViewModeDialog
-import com.logestechs.driver.utils.dialogs.SearchPackagesDialog
+import com.logestechs.driver.utils.dialogs.*
 import com.logestechs.driver.utils.interfaces.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -61,7 +58,9 @@ class InCarPackagesFragment(
     InCarStatusFilterDialogListener,
     InCarPackagesCardListener,
     SearchPackagesDialogListener,
-    AddPackageNoteDialogListener {
+    AddPackageNoteDialogListener,
+    ReturnPackageDialogListener,
+    ConfirmationDialogActionListener {
 
     private var _binding: FragmentInCarPackagesBinding? = null
     private val binding get() = _binding!!
@@ -1163,7 +1162,20 @@ class InCarPackagesFragment(
     }
 
     override fun onPackageReturned(body: ReturnPackageRequestBody?) {
-        callReturnPackage(body?.packageId, body)
+        callReturnPackage(body?.pkg?.id, body)
+    }
+
+    override fun onShowReturnPackageDialog(pkg: Package?) {
+        if (pkg?.isReceiverPayCost == true) {
+            (requireActivity() as LogesTechsActivity).showConfirmationDialog(
+                getString(R.string.warning_receiver_pays_cost),
+                pkg,
+                ConfirmationDialogAction.RETURN_PACKAGE,
+                this
+            )
+        } else {
+            ReturnPackageDialog(context, this, pkg).showDialog()
+        }
     }
 
     override fun onFailDelivery(body: FailDeliveryRequestBody?) {
@@ -1263,5 +1275,11 @@ class InCarPackagesFragment(
             scanBarcode,
             AppConstants.REQUEST_SCAN_BARCODE
         )
+    }
+
+    override fun confirmAction(data: Any?, action: ConfirmationDialogAction) {
+        if (action == ConfirmationDialogAction.RETURN_PACKAGE) {
+            ReturnPackageDialog(context, this, data as Package?).showDialog()
+        }
     }
 }

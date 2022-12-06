@@ -134,4 +134,6 @@
     <string name="success_sign_up">تمت عملية التسجيل بنجاح!</string>
     <string name="hint_jawwal_number">رقم الجوال</string>
     <string name="hint_email_without_username">الايميل</string>
+    <string name="button_confirm">تأكيد</string>
+    <string name="warning_receiver_pays_cost">يرجى الانتباه، يجب على المستلم دفع اجرة التوصيل، هل تود الاستمرار؟</string>
 </resources>

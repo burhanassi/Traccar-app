@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@android:color/white"
+        app:cardCornerRadius="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/text_message"
+                style="@style/LogesTechsMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:gravity="center"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:textColor="@color/fontTitleBlack"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="16dp">
+
+                <Button
+                    android:id="@+id/button_confirm"
+                    style="@style/LogesTechsMedium"
+                    android:layout_width="146dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/background_dialog_button"
+                    android:text="@string/button_confirm"
+                    android:textColor="#fff" />
+
+                <Button
+                    android:id="@+id/button_cancel"
+                    style="@style/LogesTechsLight"
+                    android:layout_width="146dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    android:text="@string/button_cancel"
+                    android:textColor="@color/fontTitleBlack" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

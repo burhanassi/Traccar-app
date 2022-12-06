@@ -30,7 +30,6 @@ class InCarPackageCellAdapter(
     var isGrouped: Boolean = true
 ) :
     RecyclerView.Adapter<InCarPackageCellAdapter.InCarPackageCellViewHolder>(),
-    ReturnPackageDialogListener,
     FailDeliveryDialogListener,
     PostponePackageDialogListener,
     ChangePackageTypeDialogListener,
@@ -232,7 +231,7 @@ class InCarPackageCellAdapter(
                     if (mAdapter.context != null) {
                         when (item?.itemId) {
                             R.id.action_return_package -> {
-                                ReturnPackageDialog(mAdapter.context!!, mAdapter, pkg).showDialog()
+                                mAdapter.listener?.onShowReturnPackageDialog(pkg)
                             }
 
                             R.id.action_postpone_package -> {
@@ -289,10 +288,6 @@ class InCarPackageCellAdapter(
                 Helper.copyTextToClipboard(mAdapter.context, pkg?.invoiceNumber)
             }
         }
-    }
-
-    override fun onPackageReturned(returnPackageRequestBody: ReturnPackageRequestBody?) {
-        listener?.onPackageReturned(returnPackageRequestBody)
     }
 
     override fun onFailDelivery(body: FailDeliveryRequestBody?) {

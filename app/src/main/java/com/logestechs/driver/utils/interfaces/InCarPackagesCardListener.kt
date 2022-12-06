@@ -5,6 +5,7 @@ import com.logestechs.driver.data.model.Package
 
 interface InCarPackagesCardListener {
     fun onPackageReturned(body: ReturnPackageRequestBody?)
+    fun onShowReturnPackageDialog(pkg: Package?)
     fun onFailDelivery(body: FailDeliveryRequestBody?)
     fun onPackagePostponed(body: PostponePackageRequestBody?)
     fun onPackageTypeChanged(body: ChangePackageTypeRequestBody?)

@@ -1,6 +1,7 @@
 package com.logestechs.driver.utils
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -8,17 +9,21 @@ import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.databinding.DataBindingUtil
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.Address
+import com.logestechs.driver.databinding.DialogConfirmActionBinding
 import com.logestechs.driver.utils.bottomSheets.NotificationsBottomSheet
 import com.logestechs.driver.utils.customViews.WaitDialog
+import com.logestechs.driver.utils.interfaces.ConfirmationDialogActionListener
 import com.yariksoffice.lingver.Lingver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -88,6 +93,36 @@ abstract class LogesTechsActivity : AppCompatActivity() {
             }
         }
         return super.dispatchTouchEvent(event)
+    }
+
+    fun showConfirmationDialog(
+        message: String,
+        input: Any?,
+        action: ConfirmationDialogAction,
+        listener: ConfirmationDialogActionListener
+    ) {
+        val dialogBuilder = AlertDialog.Builder(this, 0)
+        val binding: DialogConfirmActionBinding = DataBindingUtil.inflate(
+            LayoutInflater.from(
+                this
+            ), R.layout.dialog_confirm_action, null, false
+        )
+        dialogBuilder.setView(binding.root)
+        val alertDialog = dialogBuilder.create()
+
+        binding.textMessage.text = message
+
+        binding.buttonConfirm.setOnClickListener {
+            listener.confirmAction(input, action)
+            alertDialog.dismiss()
+        }
+
+        binding.buttonCancel.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        alertDialog.setCanceledOnTouchOutside(true)
+        alertDialog.show()
     }
 
     private fun handleBackwardNavigationAnimation() {

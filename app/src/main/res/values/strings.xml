@@ -133,4 +133,6 @@
     <string name="success_sign_up">Registered successfully</string>
     <string name="hint_jawwal_number">Mobile Number</string>
     <string name="hint_email_without_username">Email</string>
+    <string name="button_confirm">Confirm</string>
+    <string name="warning_receiver_pays_cost">Caution! the receiver must pay delivery fee, do you want to continue?</string>
 </resources>

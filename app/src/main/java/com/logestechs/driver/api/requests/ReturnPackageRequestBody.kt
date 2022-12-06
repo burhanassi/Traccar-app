@@ -9,6 +9,6 @@ data class ReturnPackageRequestBody(
     val noteKey: String?,
     val isCostPaid: Boolean?,
     @Transient
-    val packageId: Long?
+    val pkg: com.logestechs.driver.data.model.Package?
 ) : Parcelable
 

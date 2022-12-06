@@ -20,7 +20,7 @@ import com.logestechs.driver.utils.interfaces.RadioGroupListListener
 import com.logestechs.driver.utils.interfaces.ReturnPackageDialogListener
 
 class ReturnPackageDialog(
-    var context: Context,
+    var context: Context?,
     var listener: ReturnPackageDialogListener?,
     var pkg: Package?
 ) : RadioGroupListListener {
@@ -50,7 +50,7 @@ class ReturnPackageDialog(
                         binding.etReason.text.toString(),
                         (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
                         binding.switchReceiverPaidCosts.isChecked,
-                        pkg?.id
+                        pkg
                     )
                 )
             } else {
@@ -85,7 +85,7 @@ class ReturnPackageDialog(
 
     private fun clearFocus() {
         val imm =
-            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
         binding.etReason.clearFocus()
     }
