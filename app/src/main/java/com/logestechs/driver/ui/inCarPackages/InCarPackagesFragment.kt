@@ -9,8 +9,10 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
@@ -60,7 +62,8 @@ class InCarPackagesFragment(
     SearchPackagesDialogListener,
     AddPackageNoteDialogListener,
     ReturnPackageDialogListener,
-    ConfirmationDialogActionListener {
+    ConfirmationDialogActionListener,
+    PackageTypeFilterDialogListener {
 
     private var _binding: FragmentInCarPackagesBinding? = null
     private val binding get() = _binding!!
@@ -78,6 +81,8 @@ class InCarPackagesFragment(
 
     var loadedImagesList: java.util.ArrayList<LoadedImage> = java.util.ArrayList()
     private var isCameraAction = false
+
+    private var selectedPackageType: PackageType = PackageType.ALL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -135,6 +140,7 @@ class InCarPackagesFragment(
         binding.refreshLayoutPackages.setOnRefreshListener {
             searchWord = null
             selectedStatus = InCarPackageStatus.TO_DELIVER
+            selectedPackageType = PackageType.ALL
             binding.textSelectedStatus.text =
                 "(${Helper.getLocalizedInCarStatus(super.getContext(), selectedStatus)})"
             getPackagesBySelectedMode()
@@ -143,7 +149,7 @@ class InCarPackagesFragment(
         binding.buttonViewMode.setOnClickListener(this)
         binding.buttonStatusFilter.setOnClickListener(this)
         binding.buttonSearch.setOnClickListener(this)
-        binding.buttonSendMessageToAll.setOnClickListener(this)
+        binding.buttonOptions.setOnClickListener(this)
     }
 
     private fun handleNoPackagesLabelVisibility(count: Int) {
@@ -165,6 +171,63 @@ class InCarPackagesFragment(
         }
     }
 
+    private fun showContextMenu() {
+        val popup = PopupMenu(context, binding.buttonOptions)
+
+        popup.inflate(R.menu.in_car_packages_fragment_context_menu)
+
+        popup.setOnMenuItemClickListener { item: MenuItem? ->
+            when (item!!.itemId) {
+                R.id.action_payment_method -> {
+                    PackageTypeFilterDialog(
+                        requireContext(),
+                        this,
+                        selectedPackageType
+                    ).showDialog()
+                }
+                R.id.action_send_sms_to_all -> {
+                    val numbers: ArrayList<String?> = ArrayList()
+                    if (binding.rvPackages.adapter is InCarPackageGroupedCellAdapter) {
+                        val groupedPackagesList =
+                            (binding.rvPackages.adapter as InCarPackageGroupedCellAdapter).packagesList
+                        for (item in groupedPackagesList) {
+                            if (item?.pkgs != null) {
+                                for (pkg in item.pkgs!!) {
+                                    numbers.add(pkg?.receiverPhone)
+                                }
+                            }
+                        }
+                    } else if (binding.rvPackages.adapter is InCarPackageCellAdapter) {
+                        val packagesList =
+                            (binding.rvPackages.adapter as InCarPackageCellAdapter).packagesList
+                        for (item in packagesList) {
+                            numbers.add(item?.receiverPhone)
+                        }
+                    }
+
+                    if (numbers.isNotEmpty()) {
+                        (super.getContext() as LogesTechsActivity).sendSmsToMultiple(
+                            Helper.removeDuplicates(
+                                numbers
+                            ),
+                            Helper.getInterpretedMessageFromTemplate(
+                                null,
+                                true,
+                                SharedPreferenceWrapper.getDriverCompanySettings()?.messageTemplates?.distribution
+                            )
+                        )
+                    } else {
+                        Helper.showErrorMessage(
+                            super.getContext(),
+                            getString(R.string.error_no_packages_for_delivery)
+                        )
+                    }
+                }
+            }
+            true
+        }
+        popup.show()
+    }
 
     private fun getPackagesBySelectedMode() {
         if (selectedViewMode == InCarPackagesViewMode.BY_VILLAGE
@@ -212,24 +275,28 @@ class InCarPackagesFragment(
                         InCarPackagesViewMode.BY_VILLAGE -> {
                             ApiAdapter.apiClient.getInCarPackagesByVillage(
                                 status = selectedStatus.value,
+                                packageType = selectedPackageType.name,
                                 searchWord
                             )
                         }
                         InCarPackagesViewMode.BY_CUSTOMER -> {
                             ApiAdapter.apiClient.getInCarPackagesByCustomer(
                                 status = selectedStatus.value,
+                                packageType = selectedPackageType.name,
                                 searchWord
                             )
                         }
                         InCarPackagesViewMode.BY_RECEIVER -> {
                             ApiAdapter.apiClient.getInCarPackagesByReceiver(
                                 status = selectedStatus.value,
+                                packageType = selectedPackageType.name,
                                 searchWord
                             )
                         }
                         else -> {
                             ApiAdapter.apiClient.getInCarPackagesByVillage(
                                 status = selectedStatus.value,
+                                packageType = selectedPackageType.name,
                                 searchWord
                             )
                         }
@@ -294,6 +361,7 @@ class InCarPackagesFragment(
                     val response =
                         ApiAdapter.apiClient.getInCarPackagesUngrouped(
                             status = selectedStatus.value,
+                            packageType = selectedPackageType.name,
                             searchWord
                         )
 
@@ -803,43 +871,8 @@ class InCarPackagesFragment(
                 SearchPackagesDialog(requireContext(), this, searchWord).showDialog()
             }
 
-            R.id.button_send_message_to_all -> {
-                val numbers: ArrayList<String?> = ArrayList()
-                if (binding.rvPackages.adapter is InCarPackageGroupedCellAdapter) {
-                    val groupedPackagesList =
-                        (binding.rvPackages.adapter as InCarPackageGroupedCellAdapter).packagesList
-                    for (item in groupedPackagesList) {
-                        if (item?.pkgs != null) {
-                            for (pkg in item.pkgs!!) {
-                                numbers.add(pkg?.receiverPhone)
-                            }
-                        }
-                    }
-                } else if (binding.rvPackages.adapter is InCarPackageCellAdapter) {
-                    val packagesList =
-                        (binding.rvPackages.adapter as InCarPackageCellAdapter).packagesList
-                    for (item in packagesList) {
-                        numbers.add(item?.receiverPhone)
-                    }
-                }
-
-                if (numbers.isNotEmpty()) {
-                    (super.getContext() as LogesTechsActivity).sendSmsToMultiple(
-                        Helper.removeDuplicates(
-                            numbers
-                        ),
-                        Helper.getInterpretedMessageFromTemplate(
-                            null,
-                            true,
-                            SharedPreferenceWrapper.getDriverCompanySettings()?.messageTemplates?.distribution
-                        )
-                    )
-                } else {
-                    Helper.showErrorMessage(
-                        super.getContext(),
-                        getString(R.string.error_no_packages_for_delivery)
-                    )
-                }
+            R.id.button_options -> {
+                showContextMenu()
             }
         }
     }
@@ -1281,5 +1314,10 @@ class InCarPackagesFragment(
         if (action == ConfirmationDialogAction.RETURN_PACKAGE) {
             ReturnPackageDialog(context, this, data as Package?).showDialog()
         }
+    }
+
+    override fun onPackageTypeSelected(selectedPackageType: PackageType) {
+        this.selectedPackageType = selectedPackageType
+        getPackagesBySelectedMode()
     }
 }

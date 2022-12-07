@@ -108,6 +108,7 @@ enum class BarcodeScanType {
 }
 
 enum class PackageType {
+    ALL,
     COD,
     REGULAR,
     SWAP,

@@ -56,24 +56,28 @@ interface LogesTechsDriverApi {
     @GET("${AppConstants.PATH}api/driver/packages/in-car/by-villages")
     suspend fun getInCarPackagesByVillage(
         @Query("in-car-status") status: String?,
+        @Query("shipment-type") packageType: String?,
         @Query("search") search: String? = null
     ): Response<GetInCarPackagesGroupedResponse?>?
 
     @GET("${AppConstants.PATH}api/driver/packages/in-car/by-customers")
     suspend fun getInCarPackagesByCustomer(
         @Query("in-car-status") status: String?,
+        @Query("shipment-type") packageType: String?,
         @Query("search") search: String? = null
     ): Response<GetInCarPackagesGroupedResponse?>?
 
     @GET("${AppConstants.PATH}api/driver/packages/in-car/by-receivers")
     suspend fun getInCarPackagesByReceiver(
         @Query("in-car-status") status: String?,
+        @Query("shipment-type") packageType: String?,
         @Query("search") search: String? = null
     ): Response<GetInCarPackagesGroupedResponse?>?
 
     @GET("${AppConstants.PATH}api/driver/packages/in-car/un-grouped")
     suspend fun getInCarPackagesUngrouped(
         @Query("in-car-status") status: String?,
+        @Query("shipment-type") packageType: String?,
         @Query("search") search: String? = null
     ): Response<GetInCarPackagesUngroupedResponse?>?
 

@@ -57,19 +57,19 @@
                 tools:ignore="ContentDescription" />
 
             <ImageView
-                android:id="@+id/button_send_message_to_all"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_button_sms"
-                tools:ignore="ContentDescription" />
-
-            <ImageView
                 android:id="@+id/button_status_filter"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="8dp"
                 android:src="@drawable/ic_status_filter"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/button_options"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_context_menu_gray"
                 tools:ignore="ContentDescription" />
         </LinearLayout>
 
