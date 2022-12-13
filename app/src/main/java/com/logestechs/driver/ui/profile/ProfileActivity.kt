@@ -39,12 +39,16 @@ class ProfileActivity : LogesTechsActivity(), View.OnClickListener {
             "${loginResponse?.user?.firstName} ${loginResponse?.user?.lastName}"
         binding.textUserEmail.text = loginResponse?.user?.email
         binding.textMobileNumber.text = loginResponse?.user?.phone
+        binding.switchIsWhatsappBusiness.isChecked = SharedPreferenceWrapper.getIsWhatsappBusiness()
         Picasso.get().load(loginResponse?.user?.barcodeImage).into(binding.imageDriverBarcode)
     }
 
     private fun initListeners() {
         binding.buttonChangeLanguage.setOnClickListener(this)
         binding.buttonLogout.setOnClickListener(this)
+        binding.switchIsWhatsappBusiness.setOnCheckedChangeListener { _, isChecked ->
+            SharedPreferenceWrapper.saveIsWhatsappBusiness(isChecked)
+        }
     }
 
     //apis

@@ -217,6 +217,11 @@ abstract class LogesTechsActivity : AppCompatActivity() {
                     "UTF-8"
                 )
             intent.data = Uri.parse(url)
+            if (SharedPreferenceWrapper.getIsWhatsappBusiness()) {
+                intent.setPackage("com.whatsapp.w4b")
+            } else {
+                intent.setPackage("com.whatsapp")
+            }
             if (intent.resolveActivity(packageManager) != null) {
                 this.startActivity(intent)
             }

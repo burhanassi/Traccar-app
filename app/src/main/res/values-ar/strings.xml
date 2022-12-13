@@ -137,4 +137,5 @@
     <string name="button_confirm">تأكيد</string>
     <string name="warning_receiver_pays_cost">يرجى الانتباه، يجب على المستلم دفع اجرة التوصيل، هل تود الاستمرار؟</string>
     <string name="send_sms_to_all">إرسال رسالة نصية للكل</string>
+    <string name="is_whatsapp_business">استخدام Whatsapp Business</string>
 </resources>

@@ -100,8 +100,18 @@ class SharedPreferenceWrapper {
         fun clearData() {
             val keys = enumValues<SharedPrefsKeys>()
             for (key in keys) {
-                prefs.remove(key.value)
+                if (key != SharedPrefsKeys.IS_WHATSAPP_BUSINESS) {
+                    prefs.remove(key.value)
+                }
             }
+        }
+
+        fun saveIsWhatsappBusiness(isWhatsappBusiness: Boolean?) {
+            prefs.push(SharedPrefsKeys.IS_WHATSAPP_BUSINESS.value, isWhatsappBusiness ?: false)
+        }
+
+        fun getIsWhatsappBusiness(): Boolean {
+            return prefs.pull(SharedPrefsKeys.IS_WHATSAPP_BUSINESS.value, false)
         }
     }
 }
@@ -112,7 +122,8 @@ private enum class SharedPrefsKeys(val value: String) {
     UUID_KEY("uuid_key"),
     DRIVER_COMPANY_SETTINGS_KEY("driver_company_settings_key"),
     LAST_SYNC_LOCATION_KEY("last_sync_location_key"),
-    WORK_LOG_ID_KEY("work_log_key_id")
+    WORK_LOG_ID_KEY("work_log_key_id"),
+    IS_WHATSAPP_BUSINESS("is_whatsapp_business")
 
 
 }
