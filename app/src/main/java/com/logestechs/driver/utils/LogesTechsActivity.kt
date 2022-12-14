@@ -224,9 +224,12 @@ abstract class LogesTechsActivity : AppCompatActivity() {
             }
             if (intent.resolveActivity(packageManager) != null) {
                 this.startActivity(intent)
+            } else {
+                Helper.showErrorMessage(this, getString(R.string.error_install_whatsapp))
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            Helper.showErrorMessage(this, getString(R.string.error_install_whatsapp))
         }
     }
 

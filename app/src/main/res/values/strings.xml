@@ -137,4 +137,5 @@
     <string name="warning_receiver_pays_cost">Caution! the receiver must pay delivery fee, do you want to continue?</string>
     <string name="send_sms_to_all">Send SMS to All</string>
     <string name="is_whatsapp_business">Use Whatsapp Business</string>
+    <string name="error_install_whatsapp">Please make sure that Whatsapp is installed</string>
 </resources>
