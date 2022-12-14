@@ -166,3 +166,40 @@ enum class SmsTemplateTag(val tag: String) {
     ),
     expectedDeliveryDate("<تاريخ التوصيل المتوقع>"), cod("<التحصيل>");
 }
+
+enum class AdminPackageStatus(
+    val english: String,
+    val arabic: String
+) {
+    DRAFT("Draft", "مسودة"),
+    PENDING_CUSTOMER_CARE_APPROVAL("Submitted", "طلب جديد"),
+    APPROVED_BY_CUSTOMER_CARE_AND_WAITING_FOR_DISPATCHER(
+        "Ready for dispatching",
+        "بانتظار تعيين السائق"
+    ),
+    CANCELLED("Cancelled", "ملغاة"),
+    ASSIGNED_TO_DRIVER_AND_PENDING_APPROVAL("Assigned to Drivers", "بإنتظار موافقة السائق"),
+    REJECTED_BY_DRIVER_AND_PENDING_MANGEMENT("Rejected By Drivers", "رفضها السائق"),
+    ACCEPTED_BY_DRIVER_AND_PENDING_PICKUP("Pending Pickup", "بإنتظار التحميل"),
+    SCANNED_BY_DRIVER_AND_IN_CAR("Picked", "في المركبة"),
+    SCANNED_BY_HANDLER_AND_UNLOADED("Pending Sorting", "بإنتظار التصنيف"),
+    MOVED_TO_SHELF_AND_OUT_OF_HANDLER_CUSTODY("Sorted on Shelves", "على الرفوف"),
+    OPENED_ISSUE_AND_WAITING_FOR_MANAGEMENT(
+        "Reported to Management",
+        "بإنتظار مراجعة الادارة"
+    ),
+    DELIVERED_TO_RECIPIENT("Delivered", "تم توصيلها"),
+    POSTPONED_DELIVERY("Postponed Delivery", "مؤجلة لوقت آخر"),
+    RETURNED_BY_RECIPIENT("Returned by Recipient", "تم إرجاعها"),
+    DELAYED("Delayed", "متأخرة"),
+    COD_RECEIVED_BY_ACCOUNTANT("Received by Accountant", "مستلمة من المحاسب"),
+    COD_SORTED_BY_ACCOUNTANT("Sorted by Accountant", "مفرزة من المحاسب"),
+    COD_OUT_OF_ACCOUNTANT_CUSTODY("Out of Accountant Custody", "خارج وصاية المحاسب"),
+    COMPLETED("Completed", "مغلقة"),
+    FAILED("Failed", "عالق"),
+    TRANSFERRED_OUT("Transferred out", "مصدرة إلى شريك"),
+    PARTIALLY_DELIVERED("Partially delivered", "تم تسليمها بشكل جزئي"),
+    SWAPPED("Swapped", "تم تبديلها"),
+    BROUGHT("Brought", "تم إحضارها")
+}
+

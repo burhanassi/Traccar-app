@@ -139,4 +139,6 @@
     <string name="send_sms_to_all">إرسال رسالة نصية للكل</string>
     <string name="is_whatsapp_business">استخدام Whatsapp Business</string>
     <string name="error_install_whatsapp">الرجاء التأكد من وجود تطبيق Whatsapp</string>
+    <string name="error_package_is_returned">يرجى الانتباه، هذا الطرد راجع!</string>
+    <string name="error_package_is_failed">يرجى الانتباه، هذا الطرد عالق!</string>
 </resources>

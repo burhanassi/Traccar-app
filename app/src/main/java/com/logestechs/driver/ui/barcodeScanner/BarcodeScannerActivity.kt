@@ -243,6 +243,21 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
+                            if (response.body()?.status == AdminPackageStatus.RETURNED_BY_RECIPIENT.name) {
+                                Helper.run {
+                                    showErrorMessage(
+                                        super.getContext(),
+                                        getString(R.string.error_package_is_returned)
+                                    )
+                                }
+                            } else if (response.body()?.status == AdminPackageStatus.FAILED.name) {
+                                Helper.run {
+                                    showErrorMessage(
+                                        super.getContext(),
+                                        getString(R.string.error_package_is_failed)
+                                    )
+                                }
+                            }
                             (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).insertItem(
                                 response.body()?.getPickupScannedItem()
                             )
