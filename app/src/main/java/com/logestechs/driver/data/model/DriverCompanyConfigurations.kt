@@ -24,5 +24,6 @@ data class DriverCompanyConfigurations(
     var isPromptNoteForDriverInPackageDelivery: Boolean? = null,
     var isFulfilmentEnabled: Boolean? = null,
     var isShowDriverLocationInPackageTracking: Boolean? = null,
-    var isAllowDriverRejectingOrders: Boolean? = null
+    var isAllowDriverRejectingOrders: Boolean? = null,
+    var isHidePaymentTypesWhenDriverDeliver: Boolean? = null
 )

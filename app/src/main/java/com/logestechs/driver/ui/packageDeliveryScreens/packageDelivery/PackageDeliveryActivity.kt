@@ -111,6 +111,10 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true) {
             binding.containerSignature.visibility = View.GONE
         }
+
+        if (companyConfigurations?.isHidePaymentTypesWhenDriverDeliver == true) {
+            binding.containerPaymentType.visibility = View.GONE
+        }
     }
 
     private fun isSignatureEntered(): Boolean {
