@@ -2,24 +2,29 @@ package com.logestechs.driver.utils.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
+import com.logestechs.driver.R
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.data.model.ScannedItem
 import com.logestechs.driver.databinding.ItemScannedBarcodeBinding
 import com.logestechs.driver.utils.BarcodeScanType
+import com.logestechs.driver.utils.interfaces.ScannedBarcodeCardListener
 
 
 class ScannedBarcodeCellAdapter(
     var list: ArrayList<ScannedItem?>,
+    var listener: ScannedBarcodeCardListener? = null
 ) :
     RecyclerView.Adapter<ScannedBarcodeViewHolder>() {
 
-    lateinit var mContext: Context
+    var context: Context? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScannedBarcodeViewHolder {
-        mContext = parent.context
+        context = parent.context
 
         val inflater =
             ItemScannedBarcodeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -33,6 +38,11 @@ class ScannedBarcodeCellAdapter(
     }
 
     override fun getItemCount(): Int = list.size
+
+    fun deleteItem(position: Int) {
+        list.removeAt(position)
+        notifyItemRemoved(position)
+    }
 
     fun clearList() {
         val size: Int = list.size
@@ -67,6 +77,26 @@ class ScannedBarcodeViewHolder(
                 binding.itemInvoiceNumber.root.visibility = View.VISIBLE
             } else {
                 binding.itemInvoiceNumber.root.visibility = View.GONE
+            }
+
+            binding.buttonContextMenu.setOnClickListener {
+                val popup = PopupMenu(mAdapter.context, binding.buttonContextMenu)
+                popup.inflate(R.menu.scanned_barcode_context_menu)
+                popup.setOnMenuItemClickListener { item: MenuItem? ->
+
+                    if (mAdapter.context != null) {
+                        when (item?.itemId) {
+                            R.id.action_cancel_pickup -> {
+                                mAdapter.listener?.onCancelPickup(
+                                    adapterPosition,
+                                    scannedItem.data as Package
+                                )
+                            }
+                        }
+                    }
+                    true
+                }
+                popup.show()
             }
         }
     }

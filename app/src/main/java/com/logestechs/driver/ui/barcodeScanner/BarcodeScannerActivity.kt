@@ -17,12 +17,15 @@ import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
+import com.logestechs.driver.api.requests.AddNoteRequestBody
 import com.logestechs.driver.data.model.Customer
+import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ActivityBarcodeScannerBinding
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.ScannedBarcodeCellAdapter
 import com.logestechs.driver.utils.dialogs.InsertBarcodeDialog
 import com.logestechs.driver.utils.interfaces.InsertBarcodeDialogListener
+import com.logestechs.driver.utils.interfaces.ScannedBarcodeCardListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -32,7 +35,7 @@ import java.io.IOException
 
 
 class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
-    InsertBarcodeDialogListener {
+    InsertBarcodeDialogListener, ScannedBarcodeCardListener {
     private lateinit var binding: ActivityBarcodeScannerBinding
 
     private var barcodeDetector: BarcodeDetector? = null
@@ -77,7 +80,7 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
     private fun initRecycler() {
         binding.rvScannedBarcodes.apply {
             layoutManager = LinearLayoutManager(this@BarcodeScannerActivity)
-            adapter = ScannedBarcodeCellAdapter(ArrayList())
+            adapter = ScannedBarcodeCellAdapter(ArrayList(), this@BarcodeScannerActivity)
         }
     }
 
@@ -230,6 +233,7 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
         }
     }
 
+    //APIs
     private fun callPickupPackage(barcode: String) {
         this.runOnUiThread {
             showWaitDialog()
@@ -304,6 +308,68 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
         }
     }
 
+    private fun callCancelPickup(position: Int, pkg: Package?) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.addPackageNote(
+                        pkg?.id,
+                        AddNoteRequestBody("cancel Pickup", null, pkg?.id)
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            Helper.showSuccessMessage(
+                                super.getContext(),
+                                getString(R.string.success_operation_completed)
+                            )
+                            (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).deleteItem(
+                                position
+                            )
+                            scannedItemsHashMap.remove(pkg?.barcode)
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_done -> {
@@ -322,5 +388,9 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
             scannedItemsHashMap[barcode] = barcode
             callPickupPackage(barcode)
         }
+    }
+
+    override fun onCancelPickup(position: Int, pkg: Package) {
+        callCancelPickup(position, pkg)
     }
 }

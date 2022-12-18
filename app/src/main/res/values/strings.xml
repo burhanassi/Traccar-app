@@ -140,4 +140,5 @@
     <string name="error_install_whatsapp">Please make sure that Whatsapp is installed</string>
     <string name="error_package_is_returned">Caution, this package is returned!</string>
     <string name="error_package_is_failed">Caution, this package is failed!</string>
+    <string name="cancel_pickup">Cancel Pickup</string>
 </resources>

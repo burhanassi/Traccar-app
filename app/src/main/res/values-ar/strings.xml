@@ -141,4 +141,5 @@
     <string name="error_install_whatsapp">الرجاء التأكد من وجود تطبيق Whatsapp</string>
     <string name="error_package_is_returned">يرجى الانتباه، هذا الطرد راجع!</string>
     <string name="error_package_is_failed">يرجى الانتباه، هذا الطرد عالق!</string>
+    <string name="cancel_pickup">إلغاء التحميل</string>
 </resources>
