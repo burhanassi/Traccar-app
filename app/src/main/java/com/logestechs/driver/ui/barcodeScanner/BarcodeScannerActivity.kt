@@ -17,7 +17,6 @@ import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
-import com.logestechs.driver.api.requests.AddNoteRequestBody
 import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ActivityBarcodeScannerBinding
@@ -313,9 +312,8 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.addPackageNote(
-                        pkg?.id,
-                        AddNoteRequestBody("cancel Pickup", null, pkg?.id)
+                    val response = ApiAdapter.apiClient.cancelPickup(
+                        pkg?.id
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()

@@ -271,4 +271,9 @@ interface LogesTechsDriverApi {
 
     @GET("${AppConstants.PATH}api/driver/packages/{packageId}/partner-name")
     suspend fun getPartnerNameByPackageId(@Path("packageId") packageId: Long): Response<GetPartnerNameResponse?>?
+
+    @PUT("${AppConstants.PATH}api/driver/packages/{packageId}/pickup/cancel")
+    suspend fun cancelPickup(
+        @Path("packageId") long: Long?,
+    ): Response<ResponseBody>?
 }
