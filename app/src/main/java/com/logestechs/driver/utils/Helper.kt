@@ -215,7 +215,7 @@ class Helper {
             var number = mobileNumber ?: ""
             if (isSecondary) {
                 return if (number.length == 10) {
-                    number.drop(1)
+                    number = number.drop(1)
                     number = "+972$number"
                     number
                 } else if (number.length == 9 && number[0] == '5') {
@@ -231,7 +231,7 @@ class Helper {
                 when (getCompanyCurrency()) {
                     AppCurrency.NIS.value -> {
                         return if (number.length == 10) {
-                            number.drop(1)
+                            number = number.drop(1)
                             number = "+970$number"
                             number
                         } else if (number.length == 9 && number[0] == '5') {
@@ -249,18 +249,18 @@ class Helper {
                             number = "+962$number"
                             number
                         } else if (number.length == 10) {
-                            number.drop(1)
+                            number = number.drop(1)
                             number = "+962$number"
                             number
                         } else if (number.length == 12) {
                             number = "+$number"
                             number
                         } else if (number.length == 13) {
-                            number.drop(1)
+                            number = number.drop(1)
                             number = "+$number"
                             number
                         } else if (number.length == 14) {
-                            number.drop(2)
+                            number = number.drop(2)
                             number = "+$number"
                             number
                         } else {
@@ -272,18 +272,18 @@ class Helper {
                             number = "+966$number"
                             number
                         } else if (number.length == 10) {
-                            number.drop(1)
+                            number = number.drop(1)
                             number = "+966$number"
                             number
                         } else if (number.length == 12) {
                             number = "+$number"
                             number
                         } else if (number.length == 13) {
-                            number.drop(1)
+                            number = number.drop(1)
                             number = "+$number"
                             number
                         } else if (number.length == 14) {
-                            number.drop(2)
+                            number = number.drop(2)
                             number = "+$number"
                             number
                         } else {
