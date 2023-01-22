@@ -52,10 +52,33 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".ui.barcodeScanner.FulfilmentSorterBarcodeScannerActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".ui.dashboard.FulfilmentSorterDashboardActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".ui.dashboard.HandlerDashboardActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".ui.packageDeliveryScreens.massCodReportDelivery.MassCodReportDeliveryActivity"
             android:exported="false"
             android:theme="@style/AppTheme">
-
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -118,7 +141,7 @@
             android:exported="false"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".ui.dashboard.DashboardActivity"
+            android:name=".ui.dashboard.DriverDashboardActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />
         <activity

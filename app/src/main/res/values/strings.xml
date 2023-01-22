@@ -23,6 +23,8 @@
     <string name="dashboard_postponed">Postponed</string>
     <string name="dashboard_other_options">Other Options</string>
     <string name="dashboard_mass_cod_reports">Mass Reports</string>
+    <string name="dashboard_sort_bins_into_locations">Sort Bins Into Locations</string>
+    <string name="dashboard_sort_items_into_bins">Sort Items Into Bins</string>
     <string name="error_insert_valid_password">Password should contain at lease 6 characters or numbers</string>
     <string name="error_insert_valid_email">Please insert a valid email</string>
     <string name="error_fill_all_mandatory_fields">Please fill all required fields</string>
@@ -141,4 +143,8 @@
     <string name="error_package_is_returned">Caution, this package is returned!</string>
     <string name="error_package_is_failed">Caution, this package is failed!</string>
     <string name="cancel_pickup">Cancel Pickup</string>
+    <string name="please_scan_location_barcode">Please Scan Location Barcode</string>
+    <string name="please_scan_bin_barcode">Please Scan Bin Barcode</string>
+    <string name="bin_location_assigned_successfully">Bin Location was Assigned Successfully</string>
+    <string name="please_scan_shipping_plan_barcode">Please Scan Shipping Plan Barcode</string>
 </resources>

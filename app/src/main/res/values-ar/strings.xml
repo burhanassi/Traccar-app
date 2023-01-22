@@ -24,6 +24,8 @@
     <string name="dashboard_postponed">مؤجل</string>
     <string name="dashboard_other_options">خيارات اخرى</string>
     <string name="dashboard_mass_cod_reports">تحصيل الزبائن</string>
+    <string name="dashboard_sort_bins_into_locations">ترتيب السلات\nفي المواقع</string>
+    <string name="dashboard_sort_items_into_bins">ترتيب العناصر\nفي السلات</string>
     <string name="error_insert_valid_password">يجب أن تتألف كلمة المرور من 6 احرف وارقام على الاقل</string>
     <string name="error_insert_valid_email">يرجى ادخال عنوان بريد الكتروني او اسم مستخدم من ٦ احرف او اكثر</string>
     <string name="error_fill_all_mandatory_fields">الرجاء تعبئة جميع الحقول المطلوبة</string>
@@ -141,4 +143,8 @@
     <string name="error_package_is_returned">يرجى الانتباه، هذا الطرد راجع!</string>
     <string name="error_package_is_failed">يرجى الانتباه، هذا الطرد عالق!</string>
     <string name="cancel_pickup">إلغاء التحميل</string>
+    <string name="please_scan_location_barcode">الرجاء مسح باركود الموقع</string>
+    <string name="please_scan_bin_barcode">الرجاء مسح باركود السلة</string>
+    <string name="bin_location_assigned_successfully">تم تعيين موقع السلة بنجاح</string>
+    <string name="please_scan_shipping_plan_barcode">الرجاء مسح باركود طلب التصنيف</string>
 </resources>

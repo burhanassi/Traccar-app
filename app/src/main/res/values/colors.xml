@@ -47,4 +47,5 @@
     <color name="peach_cream">#FFF0DB</color>
     <color name="dropdownSeparatorGray">#DEDEDE</color>
     <color name="add_pod_container_background">#12DC8000</color>
+    <color name="floating_message_background">#B3808080</color>
 </resources>

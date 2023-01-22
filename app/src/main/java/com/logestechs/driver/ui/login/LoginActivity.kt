@@ -9,9 +9,11 @@ import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.LoginRequestBody
+import com.logestechs.driver.api.responses.LoginResponse
 import com.logestechs.driver.data.model.Device
 import com.logestechs.driver.databinding.ActivityLoginBinding
-import com.logestechs.driver.ui.dashboard.DashboardActivity
+import com.logestechs.driver.ui.dashboard.DriverDashboardActivity
+import com.logestechs.driver.ui.dashboard.FulfilmentSorterDashboardActivity
 import com.logestechs.driver.ui.signUp.SignUpActivity
 import com.logestechs.driver.utils.*
 import com.yariksoffice.lingver.Lingver
@@ -107,11 +109,18 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
         }
     }
 
-    private fun navigateFromLoginToDashboard() {
-        val mIntent = Intent(this, DashboardActivity::class.java)
-        mIntent.putExtra(BundleKeys.IS_LOGIN.name, true);
-        startActivity(mIntent)
-        finish()
+    private fun navigateFromLoginToDashboard(loginResponse: LoginResponse?) {
+        if (loginResponse?.user?.role == UserRole.HANDLER.name) {
+            val mIntent = Intent(this, FulfilmentSorterDashboardActivity::class.java)
+            mIntent.putExtra(BundleKeys.IS_LOGIN.name, true);
+            startActivity(mIntent)
+            finish()
+        } else {
+            val mIntent = Intent(this, DriverDashboardActivity::class.java)
+            mIntent.putExtra(BundleKeys.IS_LOGIN.name, true);
+            startActivity(mIntent)
+            finish()
+        }
     }
 
     private fun handleLanguage() {
@@ -194,7 +203,7 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
                         val body = response.body()
                         SharedPreferenceWrapper.saveLoginResponse(body)
                         withContext(Dispatchers.Main) {
-                            callGetDriverCompanySettings()
+                            callGetDriverCompanySettings(loginResponse = body)
                         }
                     } else {
                         withContext(Dispatchers.Main) {
@@ -238,7 +247,7 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
         }
     }
 
-    private fun callGetDriverCompanySettings() {
+    private fun callGetDriverCompanySettings(loginResponse: LoginResponse?) {
         if (Helper.isInternetAvailable(this)) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
@@ -250,7 +259,7 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
                         val data = response.body()
                         withContext(Dispatchers.Main) {
                             SharedPreferenceWrapper.saveDriverCompanySettings(data)
-                            navigateFromLoginToDashboard()
+                            navigateFromLoginToDashboard(loginResponse)
                         }
                     } else {
                         try {

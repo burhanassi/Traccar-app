@@ -14,12 +14,10 @@ import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.Device
 import com.logestechs.driver.databinding.DialogForceUpdateBinding
-import com.logestechs.driver.ui.dashboard.DashboardActivity
+import com.logestechs.driver.ui.dashboard.DriverDashboardActivity
+import com.logestechs.driver.ui.dashboard.FulfilmentSorterDashboardActivity
 import com.logestechs.driver.ui.login.LoginActivity
-import com.logestechs.driver.utils.AppConstants
-import com.logestechs.driver.utils.Helper
-import com.logestechs.driver.utils.LogesTechsActivity
-import com.logestechs.driver.utils.SharedPreferenceWrapper
+import com.logestechs.driver.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -62,6 +60,26 @@ class SplashActivity : LogesTechsActivity() {
         })
     }
 
+    private fun navigateFromSplashToDashboard() {
+        if (loginResponse?.user?.role == UserRole.HANDLER.name) {
+            startActivity(
+                Intent(
+                    super.getContext(),
+                    FulfilmentSorterDashboardActivity::class.java
+                )
+            )
+            finish()
+        } else {
+            startActivity(
+                Intent(
+                    super.getContext(),
+                    DriverDashboardActivity::class.java
+                )
+            )
+            finish()
+        }
+    }
+
     private fun showForceUpdateDialog(
         message: String = "",
         updateUrl: String
@@ -102,8 +120,7 @@ class SplashActivity : LogesTechsActivity() {
                         val data = response.body()
                         withContext(Dispatchers.Main) {
                             SharedPreferenceWrapper.saveDriverCompanySettings(data)
-                            startActivity(Intent(super.getContext(), DashboardActivity::class.java))
-                            finish()
+                            navigateFromSplashToDashboard()
                         }
                     }
                 } catch (e: Exception) {

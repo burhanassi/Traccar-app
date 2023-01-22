@@ -29,7 +29,7 @@ import com.logestechs.driver.api.requests.UpdateLocationRequestBody
 import com.logestechs.driver.api.responses.GetDashboardInfoResponse
 import com.logestechs.driver.data.model.Device
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
-import com.logestechs.driver.databinding.ActivityDashboardBinding
+import com.logestechs.driver.databinding.ActivityDriverDashboardBinding
 import com.logestechs.driver.ui.barcodeScanner.BarcodeScannerActivity
 import com.logestechs.driver.ui.driverDraftPickupsByStatusViewPager.DriverDraftPickupsByStatusViewPagerActivity
 import com.logestechs.driver.ui.driverPackagesByStatusViewPager.DriverPackagesByStatusViewPagerActivity
@@ -51,9 +51,9 @@ import java.sql.Timestamp
 import java.util.*
 
 
-class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
+class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
 
-    private lateinit var binding: ActivityDashboardBinding
+    private lateinit var binding: ActivityDriverDashboardBinding
     private val loginResponse = SharedPreferenceWrapper.getLoginResponse()
     private var companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
@@ -70,7 +70,7 @@ class DashboardActivity : LogesTechsActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityDashboardBinding.inflate(layoutInflater)
+        binding = ActivityDriverDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initData()
         initOnClickListeners()

@@ -2,9 +2,7 @@ package com.logestechs.driver.api
 
 import com.logestechs.driver.api.requests.*
 import com.logestechs.driver.api.responses.*
-import com.logestechs.driver.data.model.CompanyInfo
-import com.logestechs.driver.data.model.Device
-import com.logestechs.driver.data.model.Package
+import com.logestechs.driver.data.model.*
 import com.logestechs.driver.utils.AppConstants
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
@@ -276,4 +274,16 @@ interface LogesTechsDriverApi {
     suspend fun cancelPickup(
         @Path("packageId") long: Long?,
     ): Response<ResponseBody>?
+
+    @GET("${AppConstants.PATH}api/handler/hub/location")
+    suspend fun getWarehouseLocation(@Query("barcode") barcode: String?): Response<WarehouseLocation?>?
+
+    @PUT("${AppConstants.PATH}api/handler/hub/locations/{locationId}/bins/sort")
+    suspend fun sortBinIntoLocation(
+        @Path("locationId") locationId: Long?,
+        @Query("barcode") barcode: String?
+    ): Response<ResponseBody?>?
+
+    @GET("${AppConstants.PATH}api/handler/shipping-plan")
+    suspend fun getShippingPlan(@Query("barcode") barcode: String?): Response<ShippingPlan?>?
 }

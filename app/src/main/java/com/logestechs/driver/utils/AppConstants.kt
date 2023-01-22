@@ -100,7 +100,8 @@ enum class IntentExtrasKeys() {
     EXTRA_RECEIVED_NOTIFICATION,
     IN_CAR_PACKAGE_STATUS,
     MASS_COD_REPORT_TO_DELIVER,
-    SCANNED_BARCODE
+    SCANNED_BARCODE,
+    FULFILMENT_SORTER_SCAN_MODE
 }
 
 enum class BarcodeScanType {
@@ -201,5 +202,10 @@ enum class AdminPackageStatus(
     PARTIALLY_DELIVERED("Partially delivered", "تم تسليمها بشكل جزئي"),
     SWAPPED("Swapped", "تم تبديلها"),
     BROUGHT("Brought", "تم إحضارها")
+}
+
+
+enum class UserRole {
+    DISPATCHER, DRIVER, CLERK, CUSTOMER_CARE, HANDLER
 }
 
