@@ -3,12 +3,14 @@ package com.logestechs.driver.ui.barcodeScanner
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.hardware.Camera
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.os.*
 import android.view.KeyEvent
 import android.view.SurfaceHolder
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
@@ -53,6 +55,8 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
 
     private var scannedBarcode = ""
 
+    private var flashmode: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBarcodeScannerBinding.inflate(layoutInflater)
@@ -73,6 +77,7 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
 
     private fun initListeners() {
         binding.buttonDone.setOnClickListener(this)
+        binding.buttonTorch.setOnClickListener(this)
         binding.buttonInsertBarcode.setOnClickListener(this)
     }
 
@@ -377,8 +382,40 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
             R.id.button_insert_barcode -> {
                 InsertBarcodeDialog(this, this).showDialog()
             }
+
+            R.id.button_torch -> {
+                openFlashLight()
+            }
         }
 
+    }
+
+    private fun openFlashLight() {
+        val camera = Helper.getCameraFromCameraSource(cameraSource)
+        try {
+            val param = camera?.parameters
+            if (!flashmode) {
+                binding.buttonTorch.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        super.getContext(),
+                        R.drawable.ic_torch_on
+                    )
+                )
+                param?.flashMode = Camera.Parameters.FLASH_MODE_TORCH
+            } else {
+                binding.buttonTorch.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        super.getContext(),
+                        R.drawable.ic_torch_off
+                    )
+                )
+                param?.flashMode = Camera.Parameters.FLASH_MODE_OFF
+            }
+            camera?.parameters = param
+            flashmode = !flashmode
+        } catch (e: java.lang.Exception) {
+            Helper.showErrorMessage(super.getContext(), e.localizedMessage)
+        }
     }
 
     override fun onBarcodeInserted(barcode: String) {

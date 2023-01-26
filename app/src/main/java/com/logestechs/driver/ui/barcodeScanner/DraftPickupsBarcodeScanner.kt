@@ -3,11 +3,13 @@ package com.logestechs.driver.ui.barcodeScanner
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.hardware.Camera
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.os.*
 import android.view.SurfaceHolder
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
@@ -18,7 +20,7 @@ import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.ScanDraftPickupBarcodesRequestBody
 import com.logestechs.driver.data.model.DraftPickup
 import com.logestechs.driver.data.model.ScannedItem
-import com.logestechs.driver.databinding.ActivityBarcodeScannerBinding
+import com.logestechs.driver.databinding.ActivityDraftPickupsBarcodeScannerBinding
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.IntentExtrasKeys
@@ -36,7 +38,7 @@ import java.io.IOException
 
 class DraftPickupsBarcodeScanner : LogesTechsActivity(), View.OnClickListener,
     InsertBarcodeDialogListener {
-    private lateinit var binding: ActivityBarcodeScannerBinding
+    private lateinit var binding: ActivityDraftPickupsBarcodeScannerBinding
 
     private var barcodeDetector: BarcodeDetector? = null
     private var cameraSource: CameraSource? = null
@@ -52,9 +54,11 @@ class DraftPickupsBarcodeScanner : LogesTechsActivity(), View.OnClickListener,
 
     private var toneGen1: ToneGenerator? = null
 
+    private var flashmode: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityBarcodeScannerBinding.inflate(layoutInflater)
+        binding = ActivityDraftPickupsBarcodeScannerBinding.inflate(layoutInflater)
         setContentView(binding.root)
         toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
         initialiseDetectorsAndSources()
@@ -72,6 +76,7 @@ class DraftPickupsBarcodeScanner : LogesTechsActivity(), View.OnClickListener,
 
     private fun initListeners() {
         binding.buttonDone.setOnClickListener(this)
+        binding.buttonTorch.setOnClickListener(this)
         binding.buttonInsertBarcode.setOnClickListener(this)
     }
 
@@ -337,9 +342,41 @@ class DraftPickupsBarcodeScanner : LogesTechsActivity(), View.OnClickListener,
             R.id.button_insert_barcode -> {
                 InsertBarcodeDialog(this, this).showDialog()
             }
-        }
 
+            R.id.button_torch -> {
+                openFlashLight()
+            }
+        }
     }
+
+    private fun openFlashLight() {
+        val camera = Helper.getCameraFromCameraSource(cameraSource)
+        try {
+            val param = camera?.parameters
+            if (!flashmode) {
+                binding.buttonTorch.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        super.getContext(),
+                        R.drawable.ic_torch_on
+                    )
+                )
+                param?.flashMode = Camera.Parameters.FLASH_MODE_TORCH
+            } else {
+                binding.buttonTorch.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        super.getContext(),
+                        R.drawable.ic_torch_off
+                    )
+                )
+                param?.flashMode = Camera.Parameters.FLASH_MODE_OFF
+            }
+            camera?.parameters = param
+            flashmode = !flashmode
+        } catch (e: java.lang.Exception) {
+            Helper.showErrorMessage(super.getContext(), e.localizedMessage)
+        }
+    }
+
 
     override fun onBarcodeInserted(barcode: String) {
         if (!scannedItemsHashMap.containsKey(barcode)) {

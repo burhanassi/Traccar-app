@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
+import android.hardware.Camera
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
@@ -26,6 +27,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
+import com.google.android.gms.vision.CameraSource
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
@@ -195,6 +197,25 @@ class Helper {
 
         fun isLogesTechsDriver(): Boolean {
             return BuildConfig.company_id.toLong() == 0L
+        }
+
+        fun getCameraFromCameraSource(cameraSource: CameraSource?): Camera? {
+            val declaredFields = CameraSource::class.java.declaredFields
+
+            for (field in declaredFields) {
+                if (field.type === Camera::class.java) {
+                    field.isAccessible = true
+
+                    try {
+                        return field.get(cameraSource) as Camera
+                    } catch (e: IllegalAccessException) {
+                        e.printStackTrace()
+                    }
+
+                    break
+                }
+            }
+            return null
         }
 
         fun replaceArabicNumbers(original: String): String? {
