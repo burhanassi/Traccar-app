@@ -150,4 +150,5 @@
     <string name="please_scan_items">Please Scan Items</string>
     <string name="please_insert_barcode">Please insert barcode</string>
     <string name="button_insert">Insert</string>
+    <string name="count">"Count: "</string>
 </resources>

@@ -150,4 +150,5 @@
     <string name="please_scan_items">الرجاء مسح العناصر</string>
     <string name="please_insert_barcode">الرجاء إدخال الباركود</string>
     <string name="button_insert">إدخال</string>
+    <string name="count">"العدد: "</string>
 </resources>

@@ -64,6 +64,7 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
         toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
         initialiseDetectorsAndSources()
         initRecycler()
+        handleScannedItemsCount()
         initListeners()
         getExtras()
     }
@@ -237,6 +238,11 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
         }
     }
 
+    private fun handleScannedItemsCount() {
+        binding.textScannedItemsCount.text =
+            getString(R.string.count) + binding.rvScannedBarcodes.adapter?.itemCount
+    }
+
     //APIs
     private fun callPickupPackage(barcode: String) {
         this.runOnUiThread {
@@ -269,6 +275,7 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                             (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).insertItem(
                                 response.body()?.getPickupScannedItem()
                             )
+                            handleScannedItemsCount()
                         }
                     } else {
                         scannedItemsHashMap.remove(barcode)
@@ -333,6 +340,7 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                                 position
                             )
                             scannedItemsHashMap.remove(pkg?.barcode)
+                            handleScannedItemsCount()
                         }
                     } else {
                         try {
