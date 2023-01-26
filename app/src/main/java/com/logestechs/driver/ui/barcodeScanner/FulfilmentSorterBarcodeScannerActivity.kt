@@ -17,9 +17,8 @@ import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
-import com.logestechs.driver.data.model.Customer
-import com.logestechs.driver.data.model.Package
-import com.logestechs.driver.data.model.WarehouseLocation
+import com.logestechs.driver.api.requests.SortItemIntoBinRequestBody
+import com.logestechs.driver.data.model.*
 import com.logestechs.driver.databinding.ActivityFulfilmentSorterBarcodeScannerBinding
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.ScannedBarcodeCellAdapter
@@ -38,7 +37,7 @@ enum class FulfilmentSorterScanMode {
     LOCATION,
     BIN_INTO_LOCATION,
     BIN,
-    ITEM_INTO_LOCATION,
+    ITEM_INTO_BIN,
     SHIPPING_PLAN
 }
 
@@ -62,7 +61,10 @@ class FulfilmentSorterBarcodeScannerActivity :
     private var scannedBarcode = ""
 
     private var selectedScanMode: FulfilmentSorterScanMode? = null
+
     private var scannedWarehouseLocation: WarehouseLocation? = null
+    private var scannedShippingPlan: ShippingPlan? = null
+    private var scannedBin: Bin? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,10 +93,12 @@ class FulfilmentSorterBarcodeScannerActivity :
                 binding.textTitle.text = getString(R.string.please_scan_bin_barcode)
             }
             FulfilmentSorterScanMode.BIN -> {
-
+                hideScannedItemsContainer()
+                binding.textTitle.text = getString(R.string.please_scan_bin_barcode)
             }
-            FulfilmentSorterScanMode.ITEM_INTO_LOCATION -> {
-
+            FulfilmentSorterScanMode.ITEM_INTO_BIN -> {
+                showScannedItemsContainer()
+                binding.textTitle.text = getString(R.string.please_scan_items)
             }
             FulfilmentSorterScanMode.SHIPPING_PLAN -> {
                 hideScannedItemsContainer()
@@ -293,9 +297,10 @@ class FulfilmentSorterBarcodeScannerActivity :
                 callSortBinIntoWarehouseLocation(barcode)
             }
             FulfilmentSorterScanMode.BIN -> {
+                callGetBin(barcode)
             }
-            FulfilmentSorterScanMode.ITEM_INTO_LOCATION -> {
-
+            FulfilmentSorterScanMode.ITEM_INTO_BIN -> {
+                callSortItemIntoBin(barcode)
             }
             FulfilmentSorterScanMode.SHIPPING_PLAN -> {
                 callGetShippingPlan(barcode)
@@ -342,8 +347,8 @@ class FulfilmentSorterBarcodeScannerActivity :
                                 )
                             }
                         }
-                        scannedItemsHashMap.remove(barcode)
                     }
+                    scannedItemsHashMap.remove(barcode)
                 } catch (e: Exception) {
                     scannedItemsHashMap.remove(barcode)
                     hideWaitDialog()
@@ -409,8 +414,8 @@ class FulfilmentSorterBarcodeScannerActivity :
                                 )
                             }
                         }
-                        scannedItemsHashMap.remove(barcode)
                     }
+                    scannedItemsHashMap.remove(barcode)
                 } catch (e: Exception) {
                     scannedItemsHashMap.remove(barcode)
                     hideWaitDialog()
@@ -449,7 +454,9 @@ class FulfilmentSorterBarcodeScannerActivity :
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-
+                            selectedScanMode = FulfilmentSorterScanMode.BIN
+                            scannedShippingPlan = response.body()
+                            handleSelectedScanMode()
                         }
                     } else {
                         try {
@@ -469,8 +476,135 @@ class FulfilmentSorterBarcodeScannerActivity :
                                 )
                             }
                         }
-                        scannedItemsHashMap.remove(barcode)
                     }
+                    scannedItemsHashMap.remove(barcode)
+                } catch (e: Exception) {
+                    scannedItemsHashMap.remove(barcode)
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            this.runOnUiThread {
+                hideWaitDialog()
+                Helper.showErrorMessage(
+                    super.getContext(), getString(R.string.error_check_internet_connection)
+                )
+            }
+        }
+    }
+
+    private fun callGetBin(barcode: String?) {
+        this.runOnUiThread {
+            showWaitDialog()
+        }
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.getBin(
+                        barcode
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            selectedScanMode = FulfilmentSorterScanMode.ITEM_INTO_BIN
+                            scannedBin = response.body()
+                            handleSelectedScanMode()
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                    scannedItemsHashMap.remove(barcode)
+                } catch (e: Exception) {
+                    scannedItemsHashMap.remove(barcode)
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            this.runOnUiThread {
+                hideWaitDialog()
+                Helper.showErrorMessage(
+                    super.getContext(), getString(R.string.error_check_internet_connection)
+                )
+            }
+        }
+    }
+
+    private fun callSortItemIntoBin(barcode: String?) {
+        this.runOnUiThread {
+            showWaitDialog()
+        }
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.sortItemsIntoBin(
+                        scannedBin?.id,
+                        scannedShippingPlan?.id,
+                        SortItemIntoBinRequestBody(barcode)
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+//                            selectedScanMode = FulfilmentSorterScanMode.ITEM_INTO_BIN
+//                            scannedBin = response.body()
+//                            handleSelectedScanMode()
+                            Helper.showSuccessMessage(super.getContext(), "success")
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                    scannedItemsHashMap.remove(barcode)
                 } catch (e: Exception) {
                     scannedItemsHashMap.remove(barcode)
                     hideWaitDialog()

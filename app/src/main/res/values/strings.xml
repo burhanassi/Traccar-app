@@ -147,6 +147,7 @@
     <string name="please_scan_bin_barcode">Please Scan Bin Barcode</string>
     <string name="bin_location_assigned_successfully">Bin Location was Assigned Successfully</string>
     <string name="please_scan_shipping_plan_barcode">Please Scan Shipping Plan Barcode</string>
+    <string name="please_scan_items">Please Scan Items</string>
     <string name="please_insert_barcode">Please insert barcode</string>
     <string name="button_insert">Insert</string>
 </resources>

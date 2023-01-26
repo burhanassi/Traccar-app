@@ -147,6 +147,7 @@
     <string name="please_scan_bin_barcode">الرجاء مسح باركود السلة</string>
     <string name="bin_location_assigned_successfully">تم تعيين موقع السلة بنجاح</string>
     <string name="please_scan_shipping_plan_barcode">الرجاء مسح باركود طلب التصنيف</string>
+    <string name="please_scan_items">الرجاء مسح العناصر</string>
     <string name="please_insert_barcode">الرجاء إدخال الباركود</string>
     <string name="button_insert">إدخال</string>
 </resources>

@@ -286,4 +286,14 @@ interface LogesTechsDriverApi {
 
     @GET("${AppConstants.PATH}api/handler/shipping-plan")
     suspend fun getShippingPlan(@Query("barcode") barcode: String?): Response<ShippingPlan?>?
+
+    @GET("${AppConstants.PATH}api/handler/hub/bin")
+    suspend fun getBin(@Query("barcode") barcode: String?): Response<Bin?>?
+
+    @PUT("${AppConstants.PATH}api/handler/hub/bins/{binId}/shipping-items/sort")
+    suspend fun sortItemsIntoBin(
+        @Path("binId") binId: Long?,
+        @Query("shippingPlanId") shippingPlanId: Long?,
+        @Body body: SortItemIntoBinRequestBody?
+    ): Response<ResponseBody>?
 }
