@@ -21,8 +21,8 @@ android {
         applicationId "com.logestechs.driver"
         minSdk 21
         targetSdk 32
-        versionCode 14
-        versionName "1.1.4"
+        versionCode 15
+        versionName "1.1.5"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
