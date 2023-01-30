@@ -5,19 +5,20 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class ShippingPlan(
-    val createdDate: String? = null,
-    val id: Long? = null,
-    val companyId: Long? = null,
-    val customerId: Long? = null,
-    val shippingPlanStatus: String? = null,
-    val driverId: Long? = null,
-    val barcode: String? = null,
-    val barcodeImage: String? = null,
-    val notes: String? = null,
-    val totalItemsQuantity: Int? = null,
-    val customerName: String? = null,
-    val customerPhone: String? = null,
-    val customerAddress: String? = null,
-    val customerBusinessName: String? = null,
-    val driverName: String? = null
+    var createdDate: String? = null,
+    var id: Long? = null,
+    var companyId: Long? = null,
+    var customerId: Long? = null,
+    var shippingPlanStatus: String? = null,
+    var driverId: Long? = null,
+    var barcode: String? = null,
+    var barcodeImage: String? = null,
+    var notes: String? = null,
+    var totalItemsQuantity: Int? = null,
+    var customerName: String? = null,
+    var customerPhone: String? = null,
+    var customerAddress: String? = null,
+    var customerBusinessName: String? = null,
+    var driverName: String? = null,
+    var shippingPlanDetails: ShippingPlanDetails? = null
 ) : Parcelable

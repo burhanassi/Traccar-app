@@ -89,31 +89,85 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
-                    <TextView
-                        style="@style/LogesTechsMedium"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            style="@style/LogesTechsMedium"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="@string/received_items" />
+
+                        <TextView
+                            style="@style/LogesTechsMedium"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="@string/unreceived_items" />
+
+                        <TextView
+                            style="@style/LogesTechsMedium"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginBottom="8dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="@string/rejected_items" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:text="@string/title_scanned_packages" />
+                        android:weightSum="3">
 
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_weight="1" />
+                        <TextView
+                            android:id="@+id/text_received"
+                            style="@style/LogesTechsMedium"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="0" />
 
-                    <TextView
-                        android:id="@+id/text_scanned_items_count"
-                        style="@style/LogesTechsMedium"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginBottom="8dp"
-                        android:text="" />
+                        <TextView
+                            android:id="@+id/text_unreceived"
+                            style="@style/LogesTechsMedium"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="0" />
+
+                        <TextView
+                            android:id="@+id/text_rejected"
+                            style="@style/LogesTechsMedium"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="0" />
+                    </LinearLayout>
+
+
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -155,18 +209,40 @@
                 android:layout_height="wrap_content"
                 android:background="@color/peach_orange">
 
-                <Button
-                    android:id="@+id/button_done"
-                    style="@style/LogesTechsMedium"
+
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="32dp"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/background_logestechs_button"
-                    android:text="@string/button_done"
-                    android:textColor="@color/white" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
+
+                    <Button
+                        android:id="@+id/button_done"
+                        style="@style/LogesTechsMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="45dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/background_logestechs_button"
+                        android:text="@string/button_done"
+                        android:textColor="@color/white" />
+
+                    <Button
+                        android:id="@+id/button_new_bin"
+                        style="@style/LogesTechsMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="45dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/background_logestechs_button"
+                        android:text="@string/button_new_bin"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+
             </FrameLayout>
         </LinearLayout>
 

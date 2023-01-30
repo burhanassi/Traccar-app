@@ -17,14 +17,14 @@ import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
-import com.logestechs.driver.api.requests.SortItemIntoBinRequestBody
+import com.logestechs.driver.api.requests.BarcodeRequestBody
 import com.logestechs.driver.data.model.*
 import com.logestechs.driver.databinding.ActivityFulfilmentSorterBarcodeScannerBinding
 import com.logestechs.driver.utils.*
-import com.logestechs.driver.utils.adapters.ScannedBarcodeCellAdapter
+import com.logestechs.driver.utils.adapters.ScannedShippingPlanItemCellAdapter
 import com.logestechs.driver.utils.dialogs.InsertBarcodeDialog
 import com.logestechs.driver.utils.interfaces.InsertBarcodeDialogListener
-import com.logestechs.driver.utils.interfaces.ScannedBarcodeCardListener
+import com.logestechs.driver.utils.interfaces.ScannedShippingPlanItemCardListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -43,7 +43,7 @@ enum class FulfilmentSorterScanMode {
 
 class FulfilmentSorterBarcodeScannerActivity :
     LogesTechsActivity(), View.OnClickListener,
-    InsertBarcodeDialogListener, ScannedBarcodeCardListener {
+    InsertBarcodeDialogListener, ScannedShippingPlanItemCardListener {
     private lateinit var binding: ActivityFulfilmentSorterBarcodeScannerBinding
 
     private var barcodeDetector: BarcodeDetector? = null
@@ -83,6 +83,7 @@ class FulfilmentSorterBarcodeScannerActivity :
     }
 
     private fun handleSelectedScanMode() {
+        scannedItemsHashMap.clear()
         when (selectedScanMode) {
             FulfilmentSorterScanMode.LOCATION -> {
                 hideScannedItemsContainer()
@@ -98,6 +99,7 @@ class FulfilmentSorterBarcodeScannerActivity :
             }
             FulfilmentSorterScanMode.ITEM_INTO_BIN -> {
                 showScannedItemsContainer()
+                updateShippingPlanCountValues(scannedShippingPlan?.shippingPlanDetails)
                 binding.textTitle.text = getString(R.string.please_scan_items)
             }
             FulfilmentSorterScanMode.SHIPPING_PLAN -> {
@@ -118,6 +120,12 @@ class FulfilmentSorterBarcodeScannerActivity :
         binding.containerDoneButton.visibility = View.GONE
     }
 
+    private fun updateShippingPlanCountValues(shippingPlanDetails: ShippingPlanDetails?) {
+        binding.textReceived.text = shippingPlanDetails?.received.toString()
+        binding.textUnreceived.text = shippingPlanDetails?.unreceived.toString()
+        binding.textRejected.text = shippingPlanDetails?.rejected.toString()
+    }
+
     private fun getExtras() {
         val extras = intent.extras
         if (extras != null) {
@@ -128,6 +136,7 @@ class FulfilmentSorterBarcodeScannerActivity :
 
     private fun initListeners() {
         binding.buttonDone.setOnClickListener(this)
+        binding.buttonNewBin.setOnClickListener(this)
         binding.buttonInsertBarcode.setOnClickListener(this)
     }
 
@@ -135,7 +144,10 @@ class FulfilmentSorterBarcodeScannerActivity :
         binding.rvScannedBarcodes.apply {
             layoutManager = LinearLayoutManager(this@FulfilmentSorterBarcodeScannerActivity)
             adapter =
-                ScannedBarcodeCellAdapter(ArrayList(), this@FulfilmentSorterBarcodeScannerActivity)
+                ScannedShippingPlanItemCellAdapter(
+                    ArrayList(),
+                    this@FulfilmentSorterBarcodeScannerActivity
+                )
         }
     }
 
@@ -570,20 +582,97 @@ class FulfilmentSorterBarcodeScannerActivity :
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.sortItemsIntoBin(
+                    val response = ApiAdapter.apiClient.sortItemIntoBin(
                         scannedBin?.id,
                         scannedShippingPlan?.id,
-                        SortItemIntoBinRequestBody(barcode)
+                        BarcodeRequestBody(barcode)
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-//                            selectedScanMode = FulfilmentSorterScanMode.ITEM_INTO_BIN
-//                            scannedBin = response.body()
-//                            handleSelectedScanMode()
-                            Helper.showSuccessMessage(super.getContext(), "success")
+                            val response = response.body()
+                            (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).insertItem(
+                                response?.itemDetails
+                            )
+                            updateShippingPlanCountValues(response?.shippingPlanDetails)
+                        }
+                    } else {
+                        scannedItemsHashMap.remove(barcode)
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    scannedItemsHashMap.remove(barcode)
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            this.runOnUiThread {
+                hideWaitDialog()
+                Helper.showErrorMessage(
+                    super.getContext(), getString(R.string.error_check_internet_connection)
+                )
+            }
+        }
+    }
+
+    private fun callRejectItem(position: Int) {
+        val item =
+            (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).getItem(
+                index = position
+            )
+        this.runOnUiThread {
+            showWaitDialog()
+        }
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.rejectItem(
+                        scannedBin?.id,
+                        scannedShippingPlan?.id,
+                        BarcodeRequestBody(
+                            item?.barcode
+                        )
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            Helper.showSuccessMessage(
+                                super.getContext(),
+                                getString(R.string.success_operation_completed)
+                            )
+                            (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).deleteItem(
+                                position
+                            )
+                            updateShippingPlanCountValues(response.body()?.shippingPlanDetails)
+                            scannedItemsHashMap.remove(item?.barcode)
                         }
                     } else {
                         try {
@@ -604,9 +693,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                             }
                         }
                     }
-                    scannedItemsHashMap.remove(barcode)
                 } catch (e: Exception) {
-                    scannedItemsHashMap.remove(barcode)
                     hideWaitDialog()
                     Helper.logException(e, Throwable().stackTraceToString())
                     withContext(Dispatchers.Main) {
@@ -634,6 +721,12 @@ class FulfilmentSorterBarcodeScannerActivity :
                 onBackPressed()
             }
 
+            R.id.button_new_bin -> {
+                scannedBin = null
+                selectedScanMode = FulfilmentSorterScanMode.BIN
+                handleSelectedScanMode()
+            }
+
             R.id.button_insert_barcode -> {
                 InsertBarcodeDialog(this, this).showDialog()
             }
@@ -648,6 +741,7 @@ class FulfilmentSorterBarcodeScannerActivity :
         }
     }
 
-    override fun onCancelPickup(position: Int, pkg: Package) {
+    override fun rejectItem(index: Int) {
+        callRejectItem(index)
     }
 }

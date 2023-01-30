@@ -151,4 +151,9 @@
     <string name="please_insert_barcode">Please insert barcode</string>
     <string name="button_insert">Insert</string>
     <string name="count">"Count: "</string>
+    <string name="received_items">Received</string>
+    <string name="unreceived_items">Unreceived</string>
+    <string name="rejected_items">Rejected</string>
+    <string name="button_new_bin">New Bin</string>
+    <string name="action_reject">Reject</string>
 </resources>

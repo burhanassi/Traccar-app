@@ -1,5 +1,5 @@
 package com.logestechs.driver.api.requests
 
-data class SortItemIntoBinRequestBody(
+data class BarcodeRequestBody(
     val barcode: String?,
 )
