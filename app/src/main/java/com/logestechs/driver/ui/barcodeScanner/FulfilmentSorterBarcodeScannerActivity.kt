@@ -124,6 +124,7 @@ class FulfilmentSorterBarcodeScannerActivity :
         binding.textReceived.text = shippingPlanDetails?.received.toString()
         binding.textUnreceived.text = shippingPlanDetails?.unreceived.toString()
         binding.textRejected.text = shippingPlanDetails?.rejected.toString()
+        scannedShippingPlan?.shippingPlanDetails = shippingPlanDetails
     }
 
     private fun getExtras() {
@@ -596,6 +597,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                             (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).insertItem(
                                 response?.itemDetails
                             )
+                            binding.rvScannedBarcodes.smoothScrollToPosition(0)
                             updateShippingPlanCountValues(response?.shippingPlanDetails)
                         }
                     } else {
@@ -724,6 +726,7 @@ class FulfilmentSorterBarcodeScannerActivity :
             R.id.button_new_bin -> {
                 scannedBin = null
                 selectedScanMode = FulfilmentSorterScanMode.BIN
+                (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).clearList()
                 handleSelectedScanMode()
             }
 
