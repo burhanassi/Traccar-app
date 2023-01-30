@@ -112,7 +112,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             binding.containerSignature.visibility = View.GONE
         }
 
-        if (companyConfigurations?.isHidePaymentTypesWhenDriverDeliver == true) {
+        if (companyConfigurations?.isShowPaymentTypesWhenDriverDeliver == false) {
             binding.containerPaymentType.visibility = View.GONE
         }
     }
