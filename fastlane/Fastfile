@@ -1,0 +1,42 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Build Development"
+   lane :buildDev do |options|
+     # gradle(task: 'clean')
+     increment_version_code(
+       gradle_file_path: "app/build.gradle",
+#        version_code: options[:build_number]
+     )
+     gradle(
+       task: 'assemble',
+       build_type: 'Debug',
+       flavor: 'logesTechs',
+       print_command: false,
+       system_properties: {
+         "ENVFILE": ".env.dev"
+       }
+     )
+     firebase_app_distribution(
+         app: '1:122047361434:android:68e0f88cc06ab222024a23',
+         firebase_cli_token: '1//09_D97MygmzOaCgYIARAAGAkSNwF-L9IrBCYwjW-9txsFS8l7hg0SZXkK7ACGkBwmCFJbFo6FhhVzeizMqi6iJs3BTmezWwxE2t4',
+         groups: 'qa-team',
+         release_notes: 'Text of driver android release notes'
+     )
+   end
+end
