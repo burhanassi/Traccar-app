@@ -14,6 +14,8 @@ import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.databinding.ActivityFulfilmentSorterDashboardBinding
 import com.logestechs.driver.ui.barcodeScanner.FulfilmentSorterBarcodeScannerActivity
 import com.logestechs.driver.ui.barcodeScanner.FulfilmentSorterScanMode
+import com.logestechs.driver.ui.newFulfilmentOrders.NewFulfilmentOrdersActivity
+import com.logestechs.driver.ui.pickedFulfilmentOrdersActivity.PickedFulfilmentOrdersActivity
 import com.logestechs.driver.ui.profile.ProfileActivity
 import com.logestechs.driver.utils.*
 import com.yariksoffice.lingver.Lingver
@@ -61,6 +63,8 @@ class FulfilmentSorterDashboardActivity : LogesTechsActivity(), View.OnClickList
         binding.imageViewDriverLogo.setOnClickListener(this)
         binding.dashEntrySortItemsIntoBins.root.setOnClickListener(this)
         binding.dashEntrySortBinsIntoLocations.root.setOnClickListener(this)
+        binding.dashEntryNewFulfilmentOrders.root.setOnClickListener(this)
+        binding.dashEntryPickedFulfilmentOrders.root.setOnClickListener(this)
     }
 
 
@@ -109,6 +113,16 @@ class FulfilmentSorterDashboardActivity : LogesTechsActivity(), View.OnClickList
                     IntentExtrasKeys.FULFILMENT_SORTER_SCAN_MODE.name,
                     FulfilmentSorterScanMode.SHIPPING_PLAN
                 )
+                startActivity(mIntent)
+            }
+
+            R.id.dash_entry_new_fulfilment_orders -> {
+                val mIntent = Intent(this, NewFulfilmentOrdersActivity::class.java)
+                startActivity(mIntent)
+            }
+
+            R.id.dash_entry_picked_fulfilment_orders -> {
+                val mIntent = Intent(this, PickedFulfilmentOrdersActivity::class.java)
                 startActivity(mIntent)
             }
         }

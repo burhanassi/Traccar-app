@@ -121,8 +121,8 @@ class FulfilmentSorterBarcodeScannerActivity :
     }
 
     private fun updateShippingPlanCountValues(shippingPlanDetails: ShippingPlanDetails?) {
-        binding.textReceived.text = shippingPlanDetails?.received.toString()
-        binding.textUnreceived.text = shippingPlanDetails?.unreceived.toString()
+        binding.textReceived.text = shippingPlanDetails?.sorted.toString()
+        binding.textUnreceived.text = shippingPlanDetails?.unsorted.toString()
         binding.textRejected.text = shippingPlanDetails?.rejected.toString()
         scannedShippingPlan?.shippingPlanDetails = shippingPlanDetails
     }

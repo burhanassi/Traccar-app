@@ -151,9 +151,18 @@
     <string name="please_insert_barcode">Please insert barcode</string>
     <string name="button_insert">Insert</string>
     <string name="count">"Count: "</string>
-    <string name="received_items">Received</string>
-    <string name="unreceived_items">Unreceived</string>
+    <string name="sorted_items">Sorted</string>
+    <string name="unsorted_items">Unsorted</string>
     <string name="rejected_items">Rejected</string>
     <string name="button_new_bin">New Bin</string>
     <string name="action_reject">Reject</string>
+    <string name="dashboard_new_fulfilment_orders">New Fulfillment Orders</string>
+    <string name="title_new_fulfilment_orders">New Fulfillment Orders</string>
+    <string name="dashboard_picked_fulfilment_orders">Picked Fulfillment Orders</string>
+    <string name="title_picked_fulfilment_orders">Picked Fulfillment Orders</string>
+    <string name="message_no_fulfilment_orders">No fulfilment orders were found \n Please pull the list down to refresh</string>
+    <string name="button_pick">Pick</string>
+    <string name="title_items_number">Items Number</string>
+    <string name="title_skus_number">SKUs Number</string>
+    <string name="button_pack">Pack</string>
 </resources>

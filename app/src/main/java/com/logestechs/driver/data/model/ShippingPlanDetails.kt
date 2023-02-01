@@ -6,6 +6,6 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class ShippingPlanDetails(
     var rejected: Int? = null,
-    var received: Int? = null,
-    var unreceived: Int? = null
+    var sorted: Int? = null,
+    var unsorted: Int? = null
 ) : Parcelable

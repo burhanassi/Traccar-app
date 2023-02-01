@@ -86,6 +86,37 @@
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginEnd="24dp"
+                    android:clipChildren="false">
+
+                    <include
+                        android:id="@+id/dash_entry_new_fulfilment_orders"
+                        layout="@layout/item_dashboard_entry"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="14dp"
+                        android:layout_weight="1"
+                        app:iconSrc="@{@drawable/ic_new_fulfilment_order}"
+                        app:isCountHidden="@{true}"
+                        app:titleText="@{@string/dashboard_new_fulfilment_orders}" />
+
+                    <include
+                        android:id="@+id/dash_entry_picked_fulfilment_orders"
+                        layout="@layout/item_dashboard_entry"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:iconSrc="@{@drawable/ic_picked_fulfilment_order}"
+                        app:isCountHidden="@{true}"
+                        app:titleText="@{@string/dashboard_picked_fulfilment_orders}" />
+
+                </LinearLayout>
+
 
                 <View
                     android:layout_width="wrap_content"

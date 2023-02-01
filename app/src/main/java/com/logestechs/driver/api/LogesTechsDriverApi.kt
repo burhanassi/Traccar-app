@@ -297,10 +297,17 @@ interface LogesTechsDriverApi {
         @Body body: BarcodeRequestBody?
     ): Response<SortItemIntoBinResponse>?
 
-    @PUT("${AppConstants.PATH}api/hub/bins/{binId}/shipping-items/reject")
+    @PUT("${AppConstants.PATH}api/handler/hub/bins/{binId}/shipping-items/reject")
     suspend fun rejectItem(
         @Path("binId") binId: Long?,
         @Query("shippingPlanId") shippingPlanId: Long?,
         @Body body: BarcodeRequestBody?
     ): Response<RejectShippingPlanItemResponse?>?
+
+    @GET("${AppConstants.PATH}api/handler/fulfilment/orders")
+    suspend fun getFulfilmentOrders(
+        @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
+        @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
+        @Query("status") status: String? = null
+    ): Response<GetFulfilmentOrdersResponse?>?
 }
