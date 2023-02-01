@@ -284,7 +284,7 @@ interface LogesTechsDriverApi {
         @Query("barcode") barcode: String?
     ): Response<ResponseBody?>?
 
-    @GET("${AppConstants.PATH}api/handler/shipping-plan")
+    @PUT("${AppConstants.PATH}api/handler/shipping-plan")
     suspend fun getShippingPlan(@Query("barcode") barcode: String?): Response<ShippingPlan?>?
 
     @GET("${AppConstants.PATH}api/handler/hub/bin")
