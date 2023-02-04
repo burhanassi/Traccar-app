@@ -10,7 +10,7 @@ plugins {
 android {
     compileSdk 32
     signingConfigs {
-        LogesTechs {
+        release {
             storeFile file('/Users/abdulsalammansour/projects/keys/android customer/logestechs-customer-key.jks')
             storePassword 'logestechs@password1!'
             keyPassword 'logestechs@password1!'
@@ -21,7 +21,7 @@ android {
         applicationId "com.logestechs.driver"
         minSdk 21
         targetSdk 32
-        versionCode 15
+        versionCode 20
         versionName "1.1.5"
         multiDexEnabled true
 
@@ -35,6 +35,7 @@ android {
             buildConfigField 'String', 'base_url', '\"https://apis-customer.logestechs.com/\"'
             buildConfigField 'String', 'path', '\"/\"'
             manifestPlaceholders = [crashlyticsCollectionEnabled: "true"]
+            signingConfig signingConfigs.release
         }
 
         debug {

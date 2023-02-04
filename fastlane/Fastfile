@@ -39,4 +39,50 @@ platform :android do
          release_notes: 'Text of driver android release notes'
      )
    end
+
+     desc "Build Release Patch"
+     lane :buildRelease do |options|
+#        gradle(task: 'clean')
+       previous_build_number = google_play_track_version_codes(
+         track: "internal",
+       )[0]
+
+       current_build_number = previous_build_number + 1
+
+       increment_version_code(
+         gradle_file_path: "app/build.gradle",
+         version_code: current_build_number
+       )
+
+#               previous_version_name = google_play_track_release_names(
+#                 track: "production",
+#               )[0]
+#
+#               current_version_name = previous_version_name + 1
+
+       increment_version_name(
+         gradle_file_path: "app/build.gradle",
+         bump_type: "patch"
+       )
+
+       gradle(
+         task: 'bundle',
+         build_type: 'Release',
+         flavor: 'logesTechs',
+         print_command: false,
+         system_properties: {
+           "ENVFILE": ".env.production"
+         }
+       )
+
+       upload_to_play_store(track: 'internal',
+         aab: 'app/build/outputs/bundle/logesTechsRelease/app-logesTechs-release.aab',
+         skip_upload_apk: true,
+         skip_upload_metadata: false,
+         skip_upload_images: true,
+         skip_upload_screenshots: true,
+         skip_upload_aab: false,
+       )
+
+     end
 end
