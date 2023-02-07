@@ -165,5 +165,7 @@
     <string name="title_items_number">عدد العناصر</string>
     <string name="title_skus_number">عدد ال SKUs</string>
     <string name="button_pack">تغليف</string>
+    <string name="please_scan_tote">الرجاء مسح باركود سلة التحميل</string>
+    <string name="items">العناصر</string>
 
 </resources>

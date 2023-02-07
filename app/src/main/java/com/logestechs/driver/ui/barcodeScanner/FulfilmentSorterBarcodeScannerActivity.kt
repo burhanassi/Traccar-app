@@ -469,6 +469,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                         withContext(Dispatchers.Main) {
                             selectedScanMode = FulfilmentSorterScanMode.BIN
                             scannedShippingPlan = response.body()
+                            scannedShippingPlan?.groupShippingPlanDetails()
                             handleSelectedScanMode()
                         }
                     } else {

@@ -1,6 +1,7 @@
 package com.logestechs.driver.ui.newFulfilmentOrders
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -9,8 +10,11 @@ import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.FulfilmentOrder
 import com.logestechs.driver.databinding.ActivityNewFulfilmentOrdersBinding
+import com.logestechs.driver.ui.barcodeScanner.FulfilmentPickerBarcodeScannerActivity
+import com.logestechs.driver.ui.barcodeScanner.FulfilmentPickerScanMode
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.adapters.NewFulfilmentOrderCellAdapter
 import com.logestechs.driver.utils.interfaces.NewFulfilmentOrderCardListener
@@ -38,6 +42,12 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
         setContentView(binding.root)
         initRecycler()
         initListeners()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        currentPageIndex = 1
+        (binding.rvFulfilmentOrders.adapter as NewFulfilmentOrderCellAdapter).clearList()
         callGetFulfilmentOrders()
     }
 
@@ -181,6 +191,15 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
     }
 
     override fun onPickFulfilmentOrder(index: Int) {
-        Helper.showSuccessMessage(super.getContext(), index.toString())
+        val mIntent = Intent(this, FulfilmentPickerBarcodeScannerActivity::class.java)
+        mIntent.putExtra(
+            IntentExtrasKeys.FULFILMENT_PICKER_SCAN_MODE.name,
+            FulfilmentPickerScanMode.TOTE
+        )
+        mIntent.putExtra(
+            IntentExtrasKeys.FULFILMENT_ORDER.name,
+            fulfilmentOrdersList[index]
+        )
+        startActivity(mIntent)
     }
 }

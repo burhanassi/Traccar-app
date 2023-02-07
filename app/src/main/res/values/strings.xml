@@ -165,4 +165,6 @@
     <string name="title_items_number">Items Number</string>
     <string name="title_skus_number">SKUs Number</string>
     <string name="button_pack">Pack</string>
+    <string name="please_scan_tote">Please Scan Tote</string>
+    <string name="items">Items</string>
 </resources>

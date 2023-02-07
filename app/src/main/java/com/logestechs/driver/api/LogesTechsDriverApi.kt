@@ -310,4 +310,14 @@ interface LogesTechsDriverApi {
         @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
         @Query("status") status: String? = null
     ): Response<GetFulfilmentOrdersResponse?>?
+
+    @GET("${AppConstants.PATH}api/handler/hub/tote")
+    suspend fun getTote(@Query("barcode") barcode: String?): Response<Bin?>?
+
+    @PUT("${AppConstants.PATH}api/handler/hub/totes/{toteId}/order-items/sort")
+    suspend fun scanItemIntoTote(
+        @Path("toteId") toteId: Long?,
+        @Query("orderId") orderId: Long?,
+        @Body body: BarcodeRequestBody?
+    ): Response<SortItemIntoToteResponse>?
 }

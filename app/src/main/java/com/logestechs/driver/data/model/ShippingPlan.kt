@@ -20,5 +20,12 @@ data class ShippingPlan(
     var customerAddress: String? = null,
     var customerBusinessName: String? = null,
     var driverName: String? = null,
-    var shippingPlanDetails: ShippingPlanDetails? = null
-) : Parcelable
+    var shippingPlanDetails: ShippingPlanDetails? = null,
+    var rejected: Int? = null,
+    var sorted: Int? = null,
+    var unsorted: Int? = null
+) : Parcelable {
+    fun groupShippingPlanDetails() {
+        this.shippingPlanDetails = ShippingPlanDetails(this.rejected, this.sorted, this.unsorted)
+    }
+}

@@ -1,5 +1,9 @@
 package com.logestechs.driver.data.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class FulfilmentOrder(
     val createdDate: String? = null,
     val id: Long? = null,
@@ -28,5 +32,6 @@ data class FulfilmentOrder(
     val status: String? = null,
     val items: List<ProductItem?>? = null,
     val warehouseName: String? = null,
-    val customerName: String? = null
-)
+    val customerName: String? = null,
+    val numberOfItems: Int? = null
+) : Parcelable
