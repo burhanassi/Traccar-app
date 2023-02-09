@@ -167,4 +167,5 @@
     <string name="button_pack">Pack</string>
     <string name="please_scan_tote">Please Scan Tote</string>
     <string name="items">Items</string>
+    <string name="scanned_sub_packages_count">%1$s of %2$s</string>
 </resources>

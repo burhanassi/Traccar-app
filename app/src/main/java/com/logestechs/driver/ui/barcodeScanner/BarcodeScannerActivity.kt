@@ -47,6 +47,9 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
     var scannedItemsHashMap: HashMap<String, String> = HashMap()
     var customer: Customer? = null
 
+    val driverCompanyConfigurations =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
+
     private var currentBarcodeRead: String? = null
     private val confirmTarget = 3
     private var confirmCounter = 0
@@ -272,9 +275,20 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                                     )
                                 }
                             }
-                            (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).insertItem(
-                                response.body()?.getPickupScannedItem()
-                            )
+
+                            if (driverCompanyConfigurations?.isPrintAwbCopiesAsPackageQuantity == true && (response.body()?.quantity
+                                    ?: 0) > 1
+                            ) {
+                                (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).insertSubPackage(
+                                    response.body()?.getPickupScannedItem(),
+                                    !barcode.contains(":")
+                                )
+                            } else {
+                                (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).insertItem(
+                                    response.body()?.getPickupScannedItem()
+                                )
+                            }
+
                             handleScannedItemsCount()
                         }
                     } else {

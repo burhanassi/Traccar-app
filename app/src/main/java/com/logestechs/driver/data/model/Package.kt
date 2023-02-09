@@ -92,8 +92,10 @@ data class Package(
     var expectedDeliveryDate: String? = null,
     var adminNotes: String? = null,
     var isDone: Boolean? = true,
+    @Transient
+    var scannedSubPackagesCount: Int = 0
 
-    ) : Parcelable {
+) : Parcelable {
     fun getFullSenderName(): String {
         return if (senderMiddleName?.trim().isNullOrEmpty()) {
             "$senderFirstName $senderLastName"

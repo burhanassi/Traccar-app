@@ -12,6 +12,7 @@ import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.data.model.ScannedItem
 import com.logestechs.driver.databinding.ItemScannedBarcodeBinding
 import com.logestechs.driver.utils.BarcodeScanType
+import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.interfaces.ScannedBarcodeCardListener
 
 
@@ -22,6 +23,8 @@ class ScannedBarcodeCellAdapter(
     RecyclerView.Adapter<ScannedBarcodeViewHolder>() {
 
     var context: Context? = null
+    val driverCompanyConfigurations =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScannedBarcodeViewHolder {
         context = parent.context
@@ -56,6 +59,25 @@ class ScannedBarcodeCellAdapter(
         notifyItemInserted(0)
     }
 
+    fun insertSubPackage(scannedItem: ScannedItem?, isParent: Boolean) {
+        for (index in list.indices) {
+            if (list[index]?.barcode == scannedItem?.barcode) {
+                if (isParent) {
+                    return
+                } else {
+                    (list[index]?.data as Package).scannedSubPackagesCount += 1
+                }
+                notifyItemChanged(index)
+                return
+            }
+        }
+        if (!isParent) {
+            (scannedItem?.data as Package).scannedSubPackagesCount += 1
+        }
+        list.add(0, scannedItem)
+        notifyItemChanged(0)
+        notifyItemInserted(0)
+    }
 }
 
 class ScannedBarcodeViewHolder(
@@ -77,6 +99,19 @@ class ScannedBarcodeViewHolder(
                 binding.itemInvoiceNumber.root.visibility = View.VISIBLE
             } else {
                 binding.itemInvoiceNumber.root.visibility = View.GONE
+            }
+
+            if (mAdapter.driverCompanyConfigurations?.isPrintAwbCopiesAsPackageQuantity == true && (pkg.quantity
+                    ?: 0) > 1
+            ) {
+                binding.itemPackageQuantity.root.visibility = View.VISIBLE
+                binding.itemPackageQuantity.textItem.text = mAdapter.context?.getString(
+                    R.string.scanned_sub_packages_count,
+                    pkg.scannedSubPackagesCount.toString(),
+                    pkg.quantity.toString()
+                )
+            } else {
+                binding.itemPackageQuantity.root.visibility = View.GONE
             }
 
             binding.buttonContextMenu.setOnClickListener {
