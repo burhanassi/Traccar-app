@@ -19,10 +19,25 @@ platform :android do
   desc "Build Development"
    lane :buildDev do |options|
      # gradle(task: 'clean')
+      latest_release = firebase_app_distribution_get_latest_release(
+        app: "1:122047361434:android:68e0f88cc06ab222024a23"
+      )
+
      increment_version_code(
        gradle_file_path: "app/build.gradle",
-#        version_code: options[:build_number]
+       version_code: latest_release[:buildVersion].to_i + 1
      )
+     previous_version_name = google_play_track_release_names(
+       track: "production",
+     )[0]
+
+     android_set_version_name(version_name: previous_version_name.match(/\d+.\d+.\d+/).to_s)
+
+     increment_version_name(
+       gradle_file_path: "app/build.gradle",
+       bump_type: "patch"
+     )
+
      gradle(
        task: 'assemble',
        build_type: 'Debug',
@@ -32,6 +47,7 @@ platform :android do
          "ENVFILE": ".env.dev"
        }
      )
+
      firebase_app_distribution(
          app: '1:122047361434:android:68e0f88cc06ab222024a23',
          firebase_cli_token: '1//09_D97MygmzOaCgYIARAAGAkSNwF-L9IrBCYwjW-9txsFS8l7hg0SZXkK7ACGkBwmCFJbFo6FhhVzeizMqi6iJs3BTmezWwxE2t4',
@@ -41,7 +57,7 @@ platform :android do
    end
 
      desc "Build Release Patch"
-     lane :buildRelease do |options|
+     lane :buildReleasePatch  do |options|
 #        gradle(task: 'clean')
        previous_build_number = google_play_track_version_codes(
          track: "internal",
@@ -54,11 +70,11 @@ platform :android do
          version_code: current_build_number
        )
 
-#               previous_version_name = google_play_track_release_names(
-#                 track: "production",
-#               )[0]
-#
-#               current_version_name = previous_version_name + 1
+       previous_version_name = google_play_track_release_names(
+         track: "production",
+       )[0]
+
+       android_set_version_name(version_name: previous_version_name.match(/\d+.\d+.\d+/).to_s)
 
        increment_version_name(
          gradle_file_path: "app/build.gradle",
@@ -83,6 +99,5 @@ platform :android do
          skip_upload_screenshots: true,
          skip_upload_aab: false,
        )
-
      end
 end
