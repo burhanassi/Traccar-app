@@ -18,17 +18,23 @@ default_platform(:android)
 platform :android do
   desc "Build Development"
    lane :buildDev do |options|
-     # gradle(task: 'clean')
+      gradle(task: 'clean')
+
+      # handle version code
       latest_release = firebase_app_distribution_get_latest_release(
-        app: "1:122047361434:android:68e0f88cc06ab222024a23"
+        app: ENV["FIREBASE_APP_ID"]
       )
 
      increment_version_code(
        gradle_file_path: "app/build.gradle",
        version_code: latest_release[:buildVersion].to_i + 1
      )
+
+     # handle version name
      previous_version_name = google_play_track_release_names(
        track: "production",
+       package_name: ENV["PACKAGE_NAME"],
+       json_key_data: ENV["GOOGLE_PLAY_API_KEY"]
      )[0]
 
      android_set_version_name(version_name: previous_version_name.match(/\d+.\d+.\d+/).to_s)
@@ -42,27 +48,27 @@ platform :android do
        task: 'assemble',
        build_type: 'Debug',
        flavor: 'logesTechs',
-       print_command: false,
-       system_properties: {
-         "ENVFILE": ".env.dev"
-       }
+       print_command: false
      )
 
      firebase_app_distribution(
-         app: '1:122047361434:android:68e0f88cc06ab222024a23',
-         firebase_cli_token: '1//09_D97MygmzOaCgYIARAAGAkSNwF-L9IrBCYwjW-9txsFS8l7hg0SZXkK7ACGkBwmCFJbFo6FhhVzeizMqi6iJs3BTmezWwxE2t4',
+         app: ENV["FIREBASE_APP_ID"],
+         firebase_cli_token: ENV["FIREBASE_CLI_TOKEN"],
          groups: 'qa-team',
-         release_notes: 'Text of driver android release notes'
+         release_notes: ENV["DEV_RELEASE_NOTES"]
      )
    end
 
-     desc "Build Release Patch"
-     lane :buildReleasePatch  do |options|
-#        gradle(task: 'clean')
+     desc "Build Release Bump"
+     lane :buildReleaseBump  do |options|
+       gradle(task: 'clean')
        previous_build_number = google_play_track_version_codes(
          track: "internal",
+         package_name: ENV["PACKAGE_NAME"],
+         json_key_data: ENV["GOOGLE_PLAY_API_KEY"]
        )[0]
 
+       # handle version code
        current_build_number = previous_build_number + 1
 
        increment_version_code(
@@ -70,8 +76,57 @@ platform :android do
          version_code: current_build_number
        )
 
+       # handle version name
        previous_version_name = google_play_track_release_names(
          track: "production",
+         package_name: ENV["PACKAGE_NAME"],
+         json_key_data: ENV["GOOGLE_PLAY_API_KEY"]
+       )[0]
+
+       android_set_version_name(version_name: previous_version_name.match(/\d+.\d+.\d+/).to_s)
+
+       gradle(
+         task: 'bundle',
+         build_type: 'Release',
+         flavor: 'logesTechs',
+         print_command: false
+       )
+
+       upload_to_play_store(
+         track: 'internal',
+         package_name: ENV["PACKAGE_NAME"],
+         json_key_data: ENV["GOOGLE_PLAY_API_KEY"],
+         aab: 'app/build/outputs/bundle/logesTechsRelease/app-logesTechs-release.aab',
+         skip_upload_apk: true,
+         skip_upload_metadata: false,
+         skip_upload_images: true,
+         skip_upload_screenshots: true,
+         skip_upload_aab: false,
+       )
+     end
+
+     desc "Build Release Patch"
+     lane :buildReleasePatch  do |options|
+       gradle(task: 'clean')
+       previous_build_number = google_play_track_version_codes(
+         track: "internal",
+         package_name: ENV["PACKAGE_NAME"],
+         json_key_data: ENV["GOOGLE_PLAY_API_KEY"]
+       )[0]
+
+       # handle version code
+       current_build_number = previous_build_number + 1
+
+       increment_version_code(
+         gradle_file_path: "app/build.gradle",
+         version_code: current_build_number
+       )
+
+       # handle version name
+       previous_version_name = google_play_track_release_names(
+         track: "production",
+         package_name: ENV["PACKAGE_NAME"],
+         json_key_data: ENV["GOOGLE_PLAY_API_KEY"]
        )[0]
 
        android_set_version_name(version_name: previous_version_name.match(/\d+.\d+.\d+/).to_s)
@@ -85,13 +140,115 @@ platform :android do
          task: 'bundle',
          build_type: 'Release',
          flavor: 'logesTechs',
-         print_command: false,
-         system_properties: {
-           "ENVFILE": ".env.production"
-         }
+         print_command: false
        )
 
-       upload_to_play_store(track: 'internal',
+       upload_to_play_store(
+         track: 'internal',
+         package_name: ENV["PACKAGE_NAME"],
+         json_key_data: ENV["GOOGLE_PLAY_API_KEY"],
+         aab: 'app/build/outputs/bundle/logesTechsRelease/app-logesTechs-release.aab',
+         skip_upload_apk: true,
+         skip_upload_metadata: false,
+         skip_upload_images: true,
+         skip_upload_screenshots: true,
+         skip_upload_aab: false,
+       )
+     end
+
+     desc "Build Release Minor"
+     lane :buildReleaseMinor  do |options|
+       gradle(task: 'clean')
+       previous_build_number = google_play_track_version_codes(
+         track: "internal",
+         package_name: ENV["PACKAGE_NAME"],
+         json_key_data: ENV["GOOGLE_PLAY_API_KEY"]
+       )[0]
+
+       # handle version code
+       current_build_number = previous_build_number + 1
+
+       increment_version_code(
+         gradle_file_path: "app/build.gradle",
+         version_code: current_build_number
+       )
+
+       # handle version name
+       previous_version_name = google_play_track_release_names(
+         track: "production",
+         package_name: ENV["PACKAGE_NAME"],
+         json_key_data: ENV["GOOGLE_PLAY_API_KEY"]
+       )[0]
+
+       android_set_version_name(version_name: previous_version_name.match(/\d+.\d+.\d+/).to_s)
+
+       increment_version_name(
+         gradle_file_path: "app/build.gradle",
+         bump_type: "minor"
+       )
+
+       gradle(
+         task: 'bundle',
+         build_type: 'Release',
+         flavor: 'logesTechs',
+         print_command: false
+       )
+
+       upload_to_play_store(
+         track: 'internal',
+         package_name: ENV["PACKAGE_NAME"],
+         json_key_data: ENV["GOOGLE_PLAY_API_KEY"],
+         aab: 'app/build/outputs/bundle/logesTechsRelease/app-logesTechs-release.aab',
+         skip_upload_apk: true,
+         skip_upload_metadata: false,
+         skip_upload_images: true,
+         skip_upload_screenshots: true,
+         skip_upload_aab: false,
+       )
+     end
+
+     desc "Build Release Major"
+     lane :buildReleaseMajor  do |options|
+       gradle(task: 'clean')
+       previous_build_number = google_play_track_version_codes(
+         track: "internal",
+         package_name: ENV["PACKAGE_NAME"],
+         json_key_data: ENV["GOOGLE_PLAY_API_KEY"]
+       )[0]
+
+       # handle version code
+       current_build_number = previous_build_number + 1
+
+       increment_version_code(
+         gradle_file_path: "app/build.gradle",
+         version_code: current_build_number
+       )
+
+       # handle version name
+       previous_version_name = google_play_track_release_names(
+         track: "production",
+         package_name: ENV["PACKAGE_NAME"],
+         json_key_data: ENV["GOOGLE_PLAY_API_KEY"]
+       )[0]
+
+       android_set_version_name(version_name: previous_version_name.match(/\d+.\d+.\d+/).to_s)
+
+       increment_version_name(
+         gradle_file_path: "app/build.gradle",
+         bump_type: "major"
+       )
+
+       gradle(
+         task: 'bundle',
+         build_type: 'Release',
+         flavor: 'logesTechs',
+         print_command: false
+       )
+
+       upload_to_play_store(
+         track: 'internal',
+         package_name: ENV["PACKAGE_NAME"],
+         json_key_data: ENV["GOOGLE_PLAY_API_KEY"],
          aab: 'app/build/outputs/bundle/logesTechsRelease/app-logesTechs-release.aab',
          skip_upload_apk: true,
          skip_upload_metadata: false,
