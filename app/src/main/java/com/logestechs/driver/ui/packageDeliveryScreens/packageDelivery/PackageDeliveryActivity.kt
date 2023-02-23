@@ -13,22 +13,26 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
+import com.logestechs.driver.api.requests.AddNoteRequestBody
 import com.logestechs.driver.api.requests.DeleteImageRequestBody
 import com.logestechs.driver.api.requests.DeliverPackageRequestBody
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ActivityPackageDeliveryBinding
+import com.logestechs.driver.ui.singleScanBarcodeScanner.SingleScanBarcodeScanner
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.Helper.Companion.format
 import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
@@ -197,6 +201,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         binding.selectorBankTransfer.setOnClickListener(this)
         binding.buttonCaptureImage.setOnClickListener(this)
         binding.buttonLoadImage.setOnClickListener(this)
+        binding.buttonContextMenu.setOnClickListener(this)
     }
 
     private fun getExtras() {
@@ -381,6 +386,20 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     ).show()
                 }
             }
+
+            AppConstants.REQUEST_SCAN_BARCODE -> {
+                if (resultCode == RESULT_OK && data != null) {
+                    callAddPackageNote(
+                        pkg?.id,
+                        AddNoteRequestBody(
+                            data.getStringExtra(IntentExtrasKeys.SCANNED_BARCODE.name),
+                            null,
+                            packageId = pkg?.id
+                        )
+                    )
+                }
+            }
+
             else -> {}
         }
     }
@@ -745,6 +764,64 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
     }
 
+    private fun callAddPackageNote(packageId: Long?, body: AddNoteRequestBody?) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.addPackageNote(
+                        packageId,
+                        body
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            Helper.showSuccessMessage(
+                                super.getContext(),
+                                getString(R.string.success_operation_completed)
+                            )
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_clear_signature -> {
@@ -844,8 +921,30 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             R.id.button_notifications -> {
                 super.getNotifications()
             }
+
+            R.id.button_context_menu -> {
+                binding.buttonContextMenu.setOnClickListener {
+                    val popup = PopupMenu(super.getContext(), binding.buttonContextMenu)
+                    popup.inflate(R.menu.package_delivery_context_menu)
+                    popup.setOnMenuItemClickListener { item: MenuItem? ->
+                        when (item?.itemId) {
+                            R.id.action_scan_barcode -> {
+                                val scanBarcode =
+                                    Intent(super.getContext(), SingleScanBarcodeScanner::class.java)
+                                this.startActivityForResult(
+                                    scanBarcode,
+                                    AppConstants.REQUEST_SCAN_BARCODE
+                                )
+                            }
+                        }
+                        true
+                    }
+                    popup.show()
+                }
+            }
         }
     }
+
 
     override fun onDeleteImage(position: Int) {
         callDeletePodImage(position)

@@ -408,8 +408,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:animateLayoutChanges="true"
-                    android:visibility="gone"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <RadioGroup
                         android:id="@+id/radio_group_partial_delivery"
@@ -490,18 +490,39 @@
 
                 </LinearLayout>
 
-                <Button
-                    android:id="@+id/button_deliver_package"
-                    style="@style/LogesTechsMedium"
-                    android:layout_width="289dp"
-                    android:layout_height="48dp"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/background_logestechs_button"
-                    android:text="@string/button_deliver_package"
-                    android:textColor="#fff" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
+                    <Button
+                        android:id="@+id/button_deliver_package"
+                        style="@style/LogesTechsMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/background_logestechs_button"
+                        android:paddingStart="32dp"
+                        android:paddingEnd="32dp"
+                        android:text="@string/button_deliver_package"
+                        android:textColor="#fff" />
+
+                    <ImageView
+                        android:id="@+id/button_context_menu"
+                        style="@style/LogesTechsMedium"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/ic_context_menu"
+                        android:paddingStart="32dp"
+                        android:paddingEnd="32dp"
+                        android:textColor="#fff"
+                        tools:ignore="ContentDescription" />
+                </FrameLayout>
             </LinearLayout>
         </com.logestechs.driver.utils.customViews.CustomScrollView>
     </LinearLayout>

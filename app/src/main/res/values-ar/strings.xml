@@ -168,5 +168,6 @@
     <string name="please_scan_tote">الرجاء مسح باركود سلة التحميل</string>
     <string name="items">العناصر</string>
     <string name="scanned_sub_packages_count">%1$s من %2$s</string>
+    <string name="scan_barcode">إضافة باركود</string>
 
 </resources>
