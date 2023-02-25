@@ -84,6 +84,7 @@ class FulfilmentSorterBarcodeScannerActivity :
 
     private fun handleSelectedScanMode() {
         scannedItemsHashMap.clear()
+        binding.containerSubTitle.visibility = View.GONE
         when (selectedScanMode) {
             FulfilmentSorterScanMode.LOCATION -> {
                 hideScannedItemsContainer()
@@ -95,11 +96,14 @@ class FulfilmentSorterBarcodeScannerActivity :
             }
             FulfilmentSorterScanMode.BIN -> {
                 hideScannedItemsContainer()
+                binding.containerSubTitle.visibility = View.VISIBLE
+                binding.textSubTitle.text = scannedShippingPlan?.barcode
                 binding.textTitle.text = getString(R.string.please_scan_bin_barcode)
             }
             FulfilmentSorterScanMode.ITEM_INTO_BIN -> {
                 showScannedItemsContainer()
                 updateShippingPlanCountValues(scannedShippingPlan?.shippingPlanDetails)
+                binding.textScannedBin.text = scannedBin?.barcode
                 binding.textTitle.text = getString(R.string.please_scan_items)
             }
             FulfilmentSorterScanMode.SHIPPING_PLAN -> {

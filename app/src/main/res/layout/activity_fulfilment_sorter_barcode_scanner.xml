@@ -59,6 +59,31 @@
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/container_sub_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="56dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/background_floating_message"
+                    android:orientation="horizontal"
+                    android:padding="8dp"
+                    android:visibility="gone">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_sub_title"
+                        style="@style/LogesTechsMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"
+                        tools:text="Please scan barcode" />
+
+                </LinearLayout>
+
                 <!--                <Button-->
                 <!--                    android:id="@+id/button_insert_barcode"-->
                 <!--                    style="@style/LogesTechsMedium"-->
@@ -167,6 +192,25 @@
                             android:text="0" />
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="10dp"
+                        android:orientation="horizontal"
+                        android:padding="2dp">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/text_scanned_bin"
+                            style="@style/LogesTechsMedium"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textAlignment="center"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
