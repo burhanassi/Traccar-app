@@ -320,4 +320,10 @@ interface LogesTechsDriverApi {
         @Query("orderId") orderId: Long?,
         @Body body: BarcodeRequestBody?
     ): Response<SortItemIntoToteResponse>?
+
+    @PUT("${AppConstants.PATH}api/driver/packages/{packageId}/delivery-attempt")
+    suspend fun deliveryAttempt(
+        @Path("packageId") packageId: Long?,
+        @Query("deliveryAttemptType") deliveryAttemptType: String?
+    ): Response<ResponseBody>?
 }

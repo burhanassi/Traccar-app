@@ -15,4 +15,5 @@ interface InCarPackagesCardListener {
     fun onDeliverPackage(pkg: Package?)
     fun onSendWhatsAppMessage(pkg: Package?, isSecondary: Boolean = false)
     fun onSendSmsMessage(pkg: Package?)
+    fun onCallReceiver(pkg: Package?, receiverPhone: String?)
 }

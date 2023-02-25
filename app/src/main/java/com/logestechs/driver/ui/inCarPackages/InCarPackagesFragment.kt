@@ -857,6 +857,16 @@ class InCarPackagesFragment(
         }
     }
 
+    private fun callDeliveryAttempt(packageId: Long?, deliveryAttemptType: String?) {
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                val response = ApiAdapter.apiClient.deliveryAttempt(packageId, deliveryAttemptType)
+            } catch (e: Exception) {
+                Helper.logException(e, Throwable().stackTraceToString())
+            }
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_status_filter -> {
@@ -1266,6 +1276,7 @@ class InCarPackagesFragment(
     }
 
     override fun onSendWhatsAppMessage(pkg: Package?, isSecondary: Boolean) {
+        callDeliveryAttempt(pkg?.id, DeliveryAttemptType.WHATSAPP_SMS.name)
         if (pkg?.partnerId != null && pkg.partnerId != 0L) {
             callGetPartnerNameById(pkg.id, pkg, false, isSecondary)
         } else {
@@ -1283,6 +1294,7 @@ class InCarPackagesFragment(
     }
 
     override fun onSendSmsMessage(pkg: Package?) {
+        callDeliveryAttempt(pkg?.id, DeliveryAttemptType.PHONE_SMS.name)
         if (pkg?.partnerId != null && pkg.partnerId != 0L) {
             callGetPartnerNameById(pkg.id, pkg, isSms = true, isSecondary = false)
         } else {
@@ -1295,6 +1307,11 @@ class InCarPackagesFragment(
                 )
             )
         }
+    }
+
+    override fun onCallReceiver(pkg: Package?, receiverPhone: String?) {
+        callDeliveryAttempt(pkg?.id, DeliveryAttemptType.PHONE_CALL.name)
+        (activity as LogesTechsActivity).callMobileNumber(receiverPhone)
     }
 
     override fun onPackageSearch(keyword: String?) {

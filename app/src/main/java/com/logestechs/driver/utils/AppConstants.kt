@@ -211,3 +211,6 @@ enum class UserRole {
     DISPATCHER, DRIVER, CLERK, CUSTOMER_CARE, HANDLER
 }
 
+enum class DeliveryAttemptType {
+    WHATSAPP_SMS, PHONE_SMS, PHONE_CALL
+}

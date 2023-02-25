@@ -175,9 +175,7 @@ class InCarPackageCellAdapter(
 
             //Receiver Contact Actions
             binding.imageViewReceiverCall.setOnClickListener {
-                if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
-                    (mAdapter.context as LogesTechsActivity).callMobileNumber(pkg?.receiverPhone)
-                }
+                mAdapter.listener?.onCallReceiver(pkg, pkg?.receiverPhone)
             }
 
             binding.imageViewReceiverSms.setOnClickListener {
@@ -200,9 +198,7 @@ class InCarPackageCellAdapter(
             if (pkg?.receiverPhone2?.isNotEmpty() == true) {
                 binding.imageViewReceiverCallSecondary.visibility = View.VISIBLE
                 binding.imageViewReceiverCallSecondary.setOnClickListener {
-                    if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
-                        (mAdapter.context as LogesTechsActivity).callMobileNumber(pkg.receiverPhone2)
-                    }
+                    mAdapter.listener?.onCallReceiver(pkg, pkg.receiverPhone2)
                 }
             } else {
                 binding.imageViewReceiverCallSecondary.visibility = View.GONE
