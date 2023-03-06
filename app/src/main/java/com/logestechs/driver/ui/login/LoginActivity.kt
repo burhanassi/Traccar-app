@@ -110,7 +110,7 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
     }
 
     private fun navigateFromLoginToDashboard(loginResponse: LoginResponse?) {
-        if (loginResponse?.user?.role == UserRole.HANDLER.name) {
+        if (loginResponse?.user?.role == UserRole.STOCKING_AND_PACKING_EMPLOYEE.name) {
             val mIntent = Intent(this, FulfilmentSorterDashboardActivity::class.java)
             mIntent.putExtra(BundleKeys.IS_LOGIN.name, true);
             startActivity(mIntent)
