@@ -61,7 +61,7 @@ class SplashActivity : LogesTechsActivity() {
     }
 
     private fun navigateFromSplashToDashboard() {
-        if (loginResponse?.user?.role == UserRole.HANDLER.name) {
+        if (loginResponse?.user?.role == UserRole.STOCKING_AND_PACKING_EMPLOYEE.name) {
             startActivity(
                 Intent(
                     super.getContext(),

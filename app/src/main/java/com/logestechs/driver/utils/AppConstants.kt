@@ -208,7 +208,7 @@ enum class AdminPackageStatus(
 
 
 enum class UserRole {
-    DISPATCHER, DRIVER, CLERK, CUSTOMER_CARE, HANDLER
+    DISPATCHER, DRIVER, CLERK, CUSTOMER_CARE, HANDLER, STOCKING_AND_PACKING_EMPLOYEE
 }
 
 enum class DeliveryAttemptType {
