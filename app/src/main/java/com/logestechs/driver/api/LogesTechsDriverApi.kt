@@ -321,6 +321,11 @@ interface LogesTechsDriverApi {
         @Body body: BarcodeRequestBody?
     ): Response<SortItemIntoToteResponse>?
 
+    @PUT("${AppConstants.PATH}api/handler/fulfillment-order/pack")
+    suspend fun packFulfilmentOrder(
+        @Query("orderId") orderId: Long?
+    ): Response<ResponseBody?>?
+
     @PUT("${AppConstants.PATH}api/driver/packages/{packageId}/delivery-attempt")
     suspend fun deliveryAttempt(
         @Path("packageId") packageId: Long?,
