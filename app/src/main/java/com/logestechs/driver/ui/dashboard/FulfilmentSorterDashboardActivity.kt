@@ -12,8 +12,10 @@ import com.logestechs.driver.api.requests.LogExceptionRequestBody
 import com.logestechs.driver.data.model.Device
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.databinding.ActivityFulfilmentSorterDashboardBinding
+import com.logestechs.driver.ui.arrivedShippingPlans.ArrivedShippingPlansActivity
 import com.logestechs.driver.ui.barcodeScanner.FulfilmentSorterBarcodeScannerActivity
 import com.logestechs.driver.ui.barcodeScanner.FulfilmentSorterScanMode
+import com.logestechs.driver.ui.barcodeScanner.ShippingPlanBarcodeScanner
 import com.logestechs.driver.ui.newFulfilmentOrders.NewFulfilmentOrdersActivity
 import com.logestechs.driver.ui.pickedFulfilmentOrdersActivity.PickedFulfilmentOrdersActivity
 import com.logestechs.driver.ui.profile.ProfileActivity
@@ -61,6 +63,9 @@ class FulfilmentSorterDashboardActivity : LogesTechsActivity(), View.OnClickList
 
     private fun initOnClickListeners() {
         binding.imageViewDriverLogo.setOnClickListener(this)
+        binding.dashEntryReceiveShippingPlan.root.setOnClickListener(this)
+        binding.dashEntryArrivedShippingPlans.root.setOnClickListener(this)
+        binding.dashEntryPickedFulfilmentOrders.root.setOnClickListener(this)
         binding.dashEntrySortItemsIntoBins.root.setOnClickListener(this)
         binding.dashEntrySortBinsIntoLocations.root.setOnClickListener(this)
         binding.dashEntryNewFulfilmentOrders.root.setOnClickListener(this)
@@ -94,6 +99,16 @@ class FulfilmentSorterDashboardActivity : LogesTechsActivity(), View.OnClickList
         when (v?.id) {
             R.id.image_view_driver_logo -> {
                 val mIntent = Intent(this, ProfileActivity::class.java)
+                startActivity(mIntent)
+            }
+
+            R.id.dash_entry_receive_shipping_plan -> {
+                val mIntent = Intent(this, ShippingPlanBarcodeScanner::class.java)
+                startActivity(mIntent)
+            }
+
+            R.id.dash_entry_arrived_shipping_plans -> {
+                val mIntent = Intent(this, ArrivedShippingPlansActivity::class.java)
                 startActivity(mIntent)
             }
 

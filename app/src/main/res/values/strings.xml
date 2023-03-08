@@ -169,4 +169,7 @@
     <string name="items">Items</string>
     <string name="scanned_sub_packages_count">%1$s of %2$s</string>
     <string name="scan_barcode">Scan Barcode</string>
+    <string name="dashboard_receive_shipping_plan">Receive ASN</string>
+    <string name="dashboard_arrived_shipping_plans">Arrived ASNs</string>
+    <string name="message_no_shipping_plans">No shipping plans were found \n Please pull the list down to refresh</string>
 </resources>

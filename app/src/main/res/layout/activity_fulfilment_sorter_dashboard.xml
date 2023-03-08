@@ -64,6 +64,37 @@
                     android:clipChildren="false">
 
                     <include
+                        android:id="@+id/dash_entry_receive_shipping_plan"
+                        layout="@layout/item_dashboard_entry"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="14dp"
+                        android:layout_weight="1"
+                        app:iconSrc="@{@drawable/ic_scan_barcode_pink}"
+                        app:isCountHidden="@{true}"
+                        app:titleText="@{@string/dashboard_receive_shipping_plan}" />
+
+                    <include
+                        android:id="@+id/dash_entry_arrived_shipping_plans"
+                        layout="@layout/item_dashboard_entry"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:iconSrc="@{@drawable/ic_shipping_plan}"
+                        app:isCountHidden="@{true}"
+                        app:titleText="@{@string/dashboard_arrived_shipping_plans}" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginEnd="24dp"
+                    android:clipChildren="false">
+
+                    <include
                         android:id="@+id/dash_entry_sort_bins_into_locations"
                         layout="@layout/item_dashboard_entry"
                         android:layout_width="0dp"

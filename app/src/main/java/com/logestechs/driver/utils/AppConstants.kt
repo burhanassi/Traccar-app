@@ -214,3 +214,13 @@ enum class UserRole {
 enum class DeliveryAttemptType {
     WHATSAPP_SMS, PHONE_SMS, PHONE_CALL
 }
+
+
+enum class ShippingPlanStatus {
+    AWAITING_PICKUP,
+    ASSIGNED_TO_DRIVER,
+    PICKED_UP,
+    ARRIVED_AT_DESTINATION,
+    PARTIALLY_RECEIVED,
+    RECEIVED
+}

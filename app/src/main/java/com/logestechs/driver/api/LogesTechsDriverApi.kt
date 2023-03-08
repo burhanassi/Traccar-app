@@ -331,4 +331,11 @@ interface LogesTechsDriverApi {
         @Path("packageId") packageId: Long?,
         @Query("deliveryAttemptType") deliveryAttemptType: String?
     ): Response<ResponseBody>?
+
+    @GET("${AppConstants.PATH}api/handler/shipping-plans")
+    suspend fun getShippingPlansForHandler(
+        @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
+        @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
+        @Query("status") status: String? = null
+    ): Response<GetShippingPlansResponse?>?
 }
