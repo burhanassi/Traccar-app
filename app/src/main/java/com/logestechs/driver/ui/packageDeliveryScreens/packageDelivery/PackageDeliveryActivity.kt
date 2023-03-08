@@ -119,6 +119,27 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         if (companyConfigurations?.isShowPaymentTypesWhenDriverDeliver == false) {
             binding.containerPaymentType.visibility = View.GONE
         }
+        handleWarningText()
+    }
+
+    private fun handleWarningText() {
+        var hasWarnings = false
+        val warningText = StringBuilder()
+        if (pkg?.shipmentType == PackageType.SWAP.name) {
+            if (warningText.isNotEmpty()) {
+                warningText.append("\n")
+                warningText.append("\n")
+            }
+            warningText.append("*")
+            warningText.append(getString(R.string.warning_pickup_returned_packages))
+            hasWarnings = true
+        }
+
+        binding.textWarningMessage.text = warningText.toString()
+
+        if (hasWarnings) {
+            binding.containerWarningMessage.visibility = View.VISIBLE
+        }
     }
 
     private fun isSignatureEntered(): Boolean {

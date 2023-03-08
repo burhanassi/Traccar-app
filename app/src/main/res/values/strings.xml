@@ -172,4 +172,5 @@
     <string name="dashboard_receive_shipping_plan">Receive ASN</string>
     <string name="dashboard_arrived_shipping_plans">Arrived ASNs</string>
     <string name="message_no_shipping_plans">No shipping plans were found \n Please pull the list down to refresh</string>
+    <string name="warning_pickup_returned_packages">Please make sure to pick up the returned packages</string>
 </resources>

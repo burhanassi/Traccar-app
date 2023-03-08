@@ -172,6 +172,5 @@
     <string name="dashboard_receive_shipping_plan">Receive ASN</string>
     <string name="dashboard_arrived_shipping_plans">Arrived ASNs</string>
     <string name="message_no_shipping_plans">لا يوجد طلبات تصنيف \nالرجاء سحب الشاشة لأسفل لتحديث القائمة</string>
-
-
+    <string name="warning_pickup_returned_packages">الرجاء التاكد من تحميل الطرود المرجعة</string>
 </resources>
