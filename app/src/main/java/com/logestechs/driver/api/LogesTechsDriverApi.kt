@@ -275,6 +275,11 @@ interface LogesTechsDriverApi {
         @Path("packageId") long: Long?,
     ): Response<ResponseBody>?
 
+    @PUT("${AppConstants.PATH}api/driver/shipping-plan/pickup/cancel")
+    suspend fun cancelShippingPlanPickup(
+        @Query("barcode") barcode: String?,
+    ): Response<ResponseBody>?
+
     @GET("${AppConstants.PATH}api/handler/hub/location")
     suspend fun getWarehouseLocation(@Query("barcode") barcode: String?): Response<WarehouseLocation?>?
 

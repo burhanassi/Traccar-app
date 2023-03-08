@@ -93,7 +93,8 @@ data class Package(
     var adminNotes: String? = null,
     var isDone: Boolean? = true,
     @Transient
-    var scannedSubPackagesCount: Int = 0
+    var scannedSubPackagesCount: Int = 0,
+    var isShippingPlan: Boolean? = null
 
 ) : Parcelable {
     fun getFullSenderName(): String {

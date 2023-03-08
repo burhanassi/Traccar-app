@@ -395,6 +395,68 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
         }
     }
 
+    private fun callCancelShippingPlanPickup(position: Int, pkg: Package?) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.cancelShippingPlanPickup(
+                        pkg?.barcode
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            Helper.showSuccessMessage(
+                                super.getContext(),
+                                getString(R.string.success_operation_completed)
+                            )
+                            (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).deleteItem(
+                                position
+                            )
+                            scannedItemsHashMap.remove(pkg?.barcode)
+                            handleScannedItemsCount()
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_done -> {
@@ -448,6 +510,10 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
     }
 
     override fun onCancelPickup(position: Int, pkg: Package) {
-        callCancelPickup(position, pkg)
+        if (pkg.isShippingPlan == true) {
+            callCancelShippingPlanPickup(position, pkg)
+        } else {
+            callCancelPickup(position, pkg)
+        }
     }
 }
