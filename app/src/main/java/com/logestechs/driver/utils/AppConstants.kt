@@ -224,3 +224,13 @@ enum class ShippingPlanStatus {
     PARTIALLY_RECEIVED,
     RECEIVED
 }
+
+enum class FulfilmentOrderStatus {
+    CREATED,
+    PICKED,
+    PARTIALLY_PICKED,
+    PACKED,
+    DELIVERED,
+    CANCELED,
+    RETURNED
+}

@@ -10,6 +10,7 @@ import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.FulfilmentOrder
 import com.logestechs.driver.databinding.ActivityPickedFulfilmentOrdersBinding
 import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.FulfilmentOrderStatus
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.adapters.PickedFulfilmentOrderCellAdapter
@@ -108,7 +109,7 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
                 try {
                     val response = ApiAdapter.apiClient.getFulfilmentOrders(
                         page = currentPageIndex,
-                        status = "PICKED"
+                        status = FulfilmentOrderStatus.PICKED.name
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()

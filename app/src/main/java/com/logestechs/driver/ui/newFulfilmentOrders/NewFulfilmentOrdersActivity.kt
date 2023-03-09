@@ -12,10 +12,7 @@ import com.logestechs.driver.data.model.FulfilmentOrder
 import com.logestechs.driver.databinding.ActivityNewFulfilmentOrdersBinding
 import com.logestechs.driver.ui.barcodeScanner.FulfilmentPickerBarcodeScannerActivity
 import com.logestechs.driver.ui.barcodeScanner.FulfilmentPickerScanMode
-import com.logestechs.driver.utils.AppConstants
-import com.logestechs.driver.utils.Helper
-import com.logestechs.driver.utils.IntentExtrasKeys
-import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.NewFulfilmentOrderCellAdapter
 import com.logestechs.driver.utils.interfaces.NewFulfilmentOrderCardListener
 import kotlinx.coroutines.Dispatchers
@@ -116,7 +113,10 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
             isLoading = true
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.getFulfilmentOrders(page = currentPageIndex)
+                    val response = ApiAdapter.apiClient.getFulfilmentOrders(
+                        page = currentPageIndex,
+                        status = FulfilmentOrderStatus.CREATED.name
+                    )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
