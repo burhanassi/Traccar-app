@@ -430,6 +430,26 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="24dp"
+                    android:baselineAligned="false"
+                    android:clipChildren="false">
+
+                    <include
+                        android:id="@+id/dash_entry_warehouse_packages"
+                        layout="@layout/item_dashboard_entry"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:iconSrc="@{@drawable/ic_warehouse_packages_pink}"
+                        app:isCountHidden="@{true}"
+                        app:titleText="@{@string/dashboard_warehouse_packages}" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/button_show_dashboard_sub_entries"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

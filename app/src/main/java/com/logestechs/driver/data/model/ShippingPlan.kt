@@ -25,7 +25,9 @@ data class ShippingPlan(
     var sorted: Int? = null,
     var unsorted: Int? = null,
     var numberOfSkus: Int? = null,
-    var totalQuantity: Int? = null
+    var totalQuantity: Int? = null,
+    var numberOfBoxes: Int? = null,
+    var warehouseName: String? = null
 
 ) : Parcelable {
     fun groupShippingPlanDetails() {

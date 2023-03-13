@@ -68,7 +68,7 @@ class InCarPackagesFragment(
     private var _binding: FragmentInCarPackagesBinding? = null
     private val binding get() = _binding!!
 
-    private var activityDelegate: DriverPackagesByStatusViewPagerActivityDelegate? = null
+    private var activityDelegate: ViewPagerCountValuesDelegate? = null
     private var searchWord: String? = null
 
     private val messageTemplates =
@@ -118,7 +118,7 @@ class InCarPackagesFragment(
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
         initListeners()
-        activityDelegate = activity as DriverPackagesByStatusViewPagerActivityDelegate
+        activityDelegate = activity as ViewPagerCountValuesDelegate
         binding.textTitle.text = getString(R.string.packages_view_pager_in_car_packages)
         binding.textSelectedStatus.text =
             "(${Helper.getLocalizedInCarStatus(super.getContext(), selectedStatus)})"

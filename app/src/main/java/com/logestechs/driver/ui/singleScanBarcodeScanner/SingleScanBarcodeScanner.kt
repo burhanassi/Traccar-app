@@ -13,8 +13,14 @@ import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.logestechs.driver.R
+import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.databinding.ActivitySingleScanBarcodeScannerBinding
 import com.logestechs.driver.utils.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import java.io.IOException
 
 
@@ -26,6 +32,7 @@ class SingleScanBarcodeScanner : LogesTechsActivity() {
     private val REQUEST_CAMERA_PERMISSION = 201
 
     private var scanType: BarcodeScanType = BarcodeScanType.PACKAGE_PICKUP
+    private var shippingPlanBarcode: String? = null
     var scannedItemsHashMap: HashMap<String, String> = HashMap()
 
     private var currentBarcodeRead: String? = null
@@ -47,6 +54,9 @@ class SingleScanBarcodeScanner : LogesTechsActivity() {
     private fun getExtras() {
         val extras = intent.extras
         if (extras != null) {
+            scanType = extras.getSerializable(IntentExtrasKeys.SCAN_TYPE.name) as BarcodeScanType
+            shippingPlanBarcode =
+                extras.getString(IntentExtrasKeys.SHIPPING_PLAN_BARCODE.name, null)
         }
     }
 
@@ -171,10 +181,90 @@ class SingleScanBarcodeScanner : LogesTechsActivity() {
             scannedItemsHashMap[barcode] = barcode
             toneGen1?.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
             vibrate()
-            val returnIntent = Intent()
-            returnIntent.putExtra(IntentExtrasKeys.SCANNED_BARCODE.name, barcode)
-            setResult(RESULT_OK, returnIntent)
-            finish()
+            if (scanType == BarcodeScanType.SHIPPING_PLAN_PICKUP) {
+                if (shippingPlanBarcode == barcode) {
+                    this.runOnUiThread {
+                        callPickupShippingPlan(barcode)
+                    }
+                } else {
+                    scannedItemsHashMap.remove(barcode)
+                    this.runOnUiThread {
+                        Helper.showErrorMessage(
+                            this,
+                            getString(R.string.error_shipping_plan_barcode_different_from_selected)
+                        )
+                    }
+                }
+            } else {
+                val returnIntent = Intent()
+                returnIntent.putExtra(IntentExtrasKeys.SCANNED_BARCODE.name, barcode)
+                setResult(RESULT_OK, returnIntent)
+                finish()
+            }
         }
     }
+
+
+    //APIs
+    private fun callPickupShippingPlan(barcode: String) {
+        this.runOnUiThread {
+            showWaitDialog()
+        }
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.pickupShippingPlan(barcode)
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            Helper.showSuccessMessage(
+                                super.getContext(),
+                                getString(R.string.success_operation_completed)
+                            )
+                            onBackPressed()
+                        }
+                    } else {
+                        scannedItemsHashMap.remove(barcode)
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    scannedItemsHashMap.remove(barcode)
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            scannedItemsHashMap.remove(barcode)
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
 }

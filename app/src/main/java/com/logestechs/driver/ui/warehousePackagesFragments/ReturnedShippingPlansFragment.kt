@@ -1,21 +1,19 @@
-package com.logestechs.driver.ui.acceptedPackages
+package com.logestechs.driver.ui.warehousePackagesFragments
 
-import android.content.Intent
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
-import com.logestechs.driver.data.model.Customer
-import com.logestechs.driver.data.model.Village
-import com.logestechs.driver.databinding.FragmentAcceptedPackagesBinding
-import com.logestechs.driver.ui.barcodeScanner.BarcodeScannerActivity
+import com.logestechs.driver.data.model.ShippingPlan
+import com.logestechs.driver.databinding.FragmentReturnedShippingPlansBinding
 import com.logestechs.driver.utils.*
-import com.logestechs.driver.utils.adapters.AcceptedPackageVillageCellAdapter
-import com.logestechs.driver.utils.interfaces.AcceptedPackagesCardListener
+import com.logestechs.driver.utils.adapters.DriverShippingPlanCellAdapter
 import com.logestechs.driver.utils.interfaces.ViewPagerCountValuesDelegate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -23,11 +21,21 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
-class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListener {
 
-    private var _binding: FragmentAcceptedPackagesBinding? = null
+class ReturnedShippingPlansFragment : LogesTechsFragment() {
+
+    private var _binding: FragmentReturnedShippingPlansBinding? = null
     private val binding get() = _binding!!
     private var activityDelegate: ViewPagerCountValuesDelegate? = null
+
+    //pagination fields
+    private var isLoading = false
+    private var isLastPage = false
+    private var currentPageIndex = 1
+
+    private var shippingPlansList: ArrayList<ShippingPlan?> = ArrayList()
+
+    private var searchWord: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,9 +45,9 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val v: FragmentAcceptedPackagesBinding = DataBindingUtil.inflate(
+        val v: FragmentReturnedShippingPlansBinding = DataBindingUtil.inflate(
             inflater,
-            R.layout.fragment_accepted_packages,
+            R.layout.fragment_returned_shipping_plans,
             container,
             false
         )
@@ -56,15 +64,16 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
         initListeners()
-        callGetAcceptedPackages()
         activityDelegate = activity as ViewPagerCountValuesDelegate
-        binding.textTitle.text = getString(R.string.packages_view_pager_accepted_packages)
+        binding.textTitle.text = getString(R.string.returned_shipping_plans)
     }
 
     override fun onResume() {
         super.onResume()
         if (!LogesTechsApp.isInBackground) {
-            callGetAcceptedPackages()
+            currentPageIndex = 1
+            (binding.rvShippingPlans.adapter as DriverShippingPlanCellAdapter).clearList()
+            callGetShippingPlans()
         }
     }
 
@@ -72,57 +81,90 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
         val layoutManager = LinearLayoutManager(
             super.getContext()
         )
-        binding.rvVillages.adapter = AcceptedPackageVillageCellAdapter(
-            ArrayList(),
-            super.getContext(),
-            this
+        binding.rvShippingPlans.adapter = DriverShippingPlanCellAdapter(
+            shippingPlansList,
+            null
         )
-        binding.rvVillages.layoutManager = layoutManager
+        binding.rvShippingPlans.layoutManager = layoutManager
+        binding.rvShippingPlans.addOnScrollListener(recyclerViewOnScrollListener)
     }
 
     private fun initListeners() {
-        binding.refreshLayoutCustomers.setOnRefreshListener {
-            callGetAcceptedPackages()
+        binding.refreshLayout.setOnRefreshListener {
+            searchWord = null
+            currentPageIndex = 1
+            (binding.rvShippingPlans.adapter as DriverShippingPlanCellAdapter).clearList()
+            callGetShippingPlans()
         }
     }
 
-    private fun handleNoPackagesLabelVisibility(count: Int) {
-        if (count > 0) {
-            binding.textNoPackagesFound.visibility = View.GONE
-            binding.rvVillages.visibility = View.VISIBLE
-        } else {
+    private fun handleNoPackagesLabelVisibility(isEmpty: Boolean) {
+        if (isEmpty) {
             binding.textNoPackagesFound.visibility = View.VISIBLE
-            binding.rvVillages.visibility = View.GONE
+        } else {
+            binding.textNoPackagesFound.visibility = View.GONE
         }
     }
 
     override fun hideWaitDialog() {
         super.hideWaitDialog()
         try {
-            binding.refreshLayoutCustomers.isRefreshing = false
+            binding.refreshLayout.isRefreshing = false
         } catch (e: java.lang.Exception) {
             Helper.logException(e, Throwable().stackTraceToString())
         }
     }
 
+
+    private val recyclerViewOnScrollListener: RecyclerView.OnScrollListener =
+        object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val visibleItemCount: Int = binding.rvShippingPlans.layoutManager!!.childCount
+                val totalItemCount: Int = binding.rvShippingPlans.layoutManager!!.itemCount
+                val firstVisibleItemPosition: Int =
+                    (binding.rvShippingPlans.layoutManager!! as LinearLayoutManager).findFirstVisibleItemPosition()
+
+                if (!isLoading && !isLastPage) {
+                    if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount >= AppConstants.DEFAULT_PAGE_SIZE) {
+                        callGetShippingPlans()
+                    }
+                }
+            }
+        }
+
+
     //APIs
-    private fun callGetAcceptedPackages() {
+    @SuppressLint("NotifyDataSetChanged")
+    private fun callGetShippingPlans() {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
+            isLoading = true
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.getAcceptedPackages()
+                    val response = ApiAdapter.apiClient.getShippingPlansForDriver(
+                        page = currentPageIndex,
+                        status = ShippingPlanStatus.REJECTED_ITEMS.name
+                    )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         val body = response.body()
+                        val totalRound: Int =
+                            (body?.totalRecordsNo
+                                ?: 0) / (AppConstants.DEFAULT_PAGE_SIZE * currentPageIndex)
+                        if (totalRound == 0) {
+                            currentPageIndex = 1
+                            isLastPage = true
+                        } else {
+                            currentPageIndex++
+                            isLastPage = false
+                        }
                         withContext(Dispatchers.Main) {
-                            (binding.rvVillages.adapter as AcceptedPackageVillageCellAdapter).update(
-                                body?.villages as ArrayList<Village?>
-                            )
-                            activityDelegate?.updateCountValues()
-                            handleNoPackagesLabelVisibility(body.villages?.size ?: 0)
+                            shippingPlansList.addAll(body?.data ?: ArrayList())
+                            binding.rvShippingPlans.adapter?.notifyDataSetChanged()
+                            handleNoPackagesLabelVisibility(body?.data?.isEmpty() ?: true && shippingPlansList.isEmpty())
                         }
                     } else {
                         try {
@@ -143,7 +185,9 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
                             }
                         }
                     }
+                    isLoading = false
                 } catch (e: Exception) {
+                    isLoading = false
                     hideWaitDialog()
                     Helper.logException(e, Throwable().stackTraceToString())
                     withContext(Dispatchers.Main) {
@@ -161,11 +205,5 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
                 super.getContext(), getString(R.string.error_check_internet_connection)
             )
         }
-    }
-
-    override fun scanForPickup(customer: Customer?) {
-        val mIntent = Intent(super.getContext(), BarcodeScannerActivity::class.java)
-        mIntent.putExtra(IntentExtrasKeys.CUSTOMER_WITH_PACKAGES_FOR_PICKUP.name, customer)
-        startActivity(mIntent)
     }
 }

@@ -343,4 +343,16 @@ interface LogesTechsDriverApi {
         @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
         @Query("status") status: String? = null
     ): Response<GetShippingPlansResponse?>?
+
+
+    @GET("${AppConstants.PATH}api/driver/shipping-plans")
+    suspend fun getShippingPlansForDriver(
+        @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
+        @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
+        @Query("status") status: String? = null,
+        @Query("search") search: String? = null,
+    ): Response<GetShippingPlansResponse?>?
+
+    @PUT("${AppConstants.PATH}api/driver/shipping-plan")
+    suspend fun pickupShippingPlan(@Query("barcode") barcode: String): Response<ResponseBody?>?
 }

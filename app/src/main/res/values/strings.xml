@@ -171,6 +171,15 @@
     <string name="scan_barcode">Scan Barcode</string>
     <string name="dashboard_receive_shipping_plan">Receive ASN</string>
     <string name="dashboard_arrived_shipping_plans">Arrived ASNs</string>
-    <string name="message_no_shipping_plans">No shipping plans were found \n Please pull the list down to refresh</string>
+    <string name="message_no_shipping_plans">No ASNs were found \n Please pull the list down to refresh</string>
     <string name="warning_pickup_returned_packages">Please make sure to pick up the returned packages</string>
+    <string name="dashboard_warehouse_packages">Warehouse\nPackages</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="boxes">Boxes</string>
+    <string name="assigned_shipping_plans">Assigned ASNs</string>
+    <string name="in_car_shipping_plans">In Car ASNs</string>
+    <string name="arrived_shipping_plans">Arrived ASNs</string>
+    <string name="returned_shipping_plans">Returned ASNs</string>
+    <string name="error_shipping_plan_barcode_different_from_selected">The scanned barcode of the ASN does not match the selected one</string>
 </resources>

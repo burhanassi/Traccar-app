@@ -173,4 +173,11 @@
     <string name="dashboard_arrived_shipping_plans">Arrived ASNs</string>
     <string name="message_no_shipping_plans">لا يوجد طلبات تصنيف \nالرجاء سحب الشاشة لأسفل لتحديث القائمة</string>
     <string name="warning_pickup_returned_packages">الرجاء التاكد من تحميل الطرود المرجعة</string>
+    <string name="dashboard_warehouse_packages">طرود\nالمستودع</string>
+    <string name="boxes">الصناديق</string>
+    <string name="assigned_shipping_plans">طلبات التصنيف المعينة</string>
+    <string name="in_car_shipping_plans">طلبات التصنيف المحملة في المركبة</string>
+    <string name="arrived_shipping_plans">طلبات التصنيف المسلمة</string>
+    <string name="returned_shipping_plans">طلبات التصنيف المرجعة</string>
+    <string name="error_shipping_plan_barcode_different_from_selected">الباركود الممسوح لا يتطابق مع طلب التصنيف المختار</string>
 </resources>

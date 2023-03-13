@@ -36,6 +36,7 @@ import com.logestechs.driver.ui.driverPackagesByStatusViewPager.DriverPackagesBy
 import com.logestechs.driver.ui.massCodReports.MassCodReportsActivity
 import com.logestechs.driver.ui.profile.ProfileActivity
 import com.logestechs.driver.ui.returnedPackages.ReturnedPackagesActivity
+import com.logestechs.driver.ui.warehousePackagesByStatusViewPager.WarehousePackagesByStatusViewPagerActivity
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.Helper.Companion.format
 import com.logestechs.driver.utils.location.AlarmReceiver
@@ -119,6 +120,7 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
         binding.dashSubEntryMassCodReports.root.setOnClickListener(this)
         binding.dashSubEntryDraftPickups.root.setOnClickListener(this)
         binding.containerServiceTypeView.setOnClickListener(this)
+        binding.dashEntryWarehousePackages.root.setOnClickListener(this)
     }
 
     @SuppressLint("SetTextI18n")
@@ -293,6 +295,11 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
 
             R.id.container_service_type_view -> {
                 callChangeWorkLogStatus()
+            }
+
+            R.id.dash_entry_warehouse_packages -> {
+                val mIntent = Intent(this, WarehousePackagesByStatusViewPagerActivity::class.java)
+                startActivity(mIntent)
             }
         }
     }

@@ -17,8 +17,8 @@ import com.logestechs.driver.utils.LogesTechsApp
 import com.logestechs.driver.utils.LogesTechsFragment
 import com.logestechs.driver.utils.adapters.PendingPackageCellAdapter
 import com.logestechs.driver.utils.adapters.PendingPackageCustomerCellAdapter
-import com.logestechs.driver.utils.interfaces.DriverPackagesByStatusViewPagerActivityDelegate
 import com.logestechs.driver.utils.interfaces.PendingPackagesCardListener
+import com.logestechs.driver.utils.interfaces.ViewPagerCountValuesDelegate
 import kotlinx.coroutines.*
 import org.json.JSONObject
 
@@ -26,7 +26,7 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
 
     private var _binding: FragmentPendingPackagesBinding? = null
     private val binding get() = _binding!!
-    private var activityDelegate: DriverPackagesByStatusViewPagerActivityDelegate? = null
+    private var activityDelegate: ViewPagerCountValuesDelegate? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +55,7 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
         initListeners()
-        activityDelegate = activity as DriverPackagesByStatusViewPagerActivityDelegate
+        activityDelegate = activity as ViewPagerCountValuesDelegate
         binding.textTitle.text = getString(R.string.packages_view_pager_pending_packages)
     }
 

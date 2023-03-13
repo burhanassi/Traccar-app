@@ -1,4 +1,4 @@
-package com.logestechs.driver.ui.driverPackagesByStatusViewPager
+package com.logestechs.driver.ui.warehousePackagesByStatusViewPager
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -23,10 +23,10 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 
-class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnClickListener,
+class WarehousePackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnClickListener,
     ViewPagerCountValuesDelegate {
     private lateinit var binding: ActivityDriverPackagesByStatusViewPagerBinding
-    private lateinit var packagesByStatusViewPagerAdapter: PackagesByStatusViewPagerAdapter
+    private lateinit var warehousePackagesByStatusViewPagerAdapter: WarehousePackagesByStatusViewPagerAdapter
 
     private var selectedTabIndex = 0
     private var selectedInCarStatus: String? = InCarPackageStatus.TO_DELIVER.name
@@ -56,13 +56,13 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
 
     private fun initViewPager() {
         binding.viewPager.isUserInputEnabled = false
-        packagesByStatusViewPagerAdapter =
-            PackagesByStatusViewPagerAdapter(
+        warehousePackagesByStatusViewPagerAdapter =
+            WarehousePackagesByStatusViewPagerAdapter(
                 supportFragmentManager,
                 lifecycle,
                 selectedInCarStatus ?: InCarPackageStatus.TO_DELIVER.name
             )
-        binding.viewPager.adapter = packagesByStatusViewPagerAdapter
+        binding.viewPager.adapter = warehousePackagesByStatusViewPagerAdapter
         binding.viewPager.setCurrentItem(selectedTabIndex, false)
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             val inflater = LayoutInflater.from(tab.parent?.context)
@@ -89,7 +89,7 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
                     imageViewTabIcon.setImageDrawable(
                         ContextCompat.getDrawable(
                             this,
-                            R.drawable.ic_accepted_packages_tab_item
+                            R.drawable.ic_in_car_packages_tab_item
                         )
                     )
                     if (position == selectedTabIndex) {
@@ -102,7 +102,7 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
                     imageViewTabIcon.setImageDrawable(
                         ContextCompat.getDrawable(
                             this,
-                            R.drawable.ic_in_car_packages_tab_item
+                            R.drawable.ic_delivered_packages_tab_item
                         )
                     )
                     if (position == selectedTabIndex) {
@@ -115,7 +115,7 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
                     imageViewTabIcon.setImageDrawable(
                         ContextCompat.getDrawable(
                             this,
-                            R.drawable.ic_delivered_packages_tab_item
+                            R.drawable.ic_accepted_packages_tab_item
                         )
                     )
                     if (position == selectedTabIndex) {
@@ -286,6 +286,6 @@ class DriverPackagesByStatusViewPagerActivity : LogesTechsActivity(), View.OnCli
     }
 
     override fun updateCountValues() {
-        callGetDashboardInfo()
+//        callGetDashboardInfo()
     }
 }

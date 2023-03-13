@@ -94,6 +94,8 @@ enum class DraftPickupStatus {
 enum class IntentExtrasKeys() {
     SELECTED_PACKAGES_TAB,
     CUSTOMER_WITH_PACKAGES_FOR_PICKUP,
+    SCAN_TYPE,
+    SHIPPING_PLAN_BARCODE,
     SINGLE_SCAN_BARCODE_SCANNER_LISTENER,
     PACKAGE_TO_DELIVER,
     DRAFT_PICKUP,
@@ -107,7 +109,7 @@ enum class IntentExtrasKeys() {
 }
 
 enum class BarcodeScanType {
-    PACKAGE_PICKUP
+    PACKAGE_PICKUP, SHIPPING_PLAN_PICKUP
 }
 
 enum class PackageType {
@@ -222,7 +224,8 @@ enum class ShippingPlanStatus {
     PICKED_UP,
     ARRIVED_AT_DESTINATION,
     PARTIALLY_RECEIVED,
-    RECEIVED
+    RECEIVED,
+    REJECTED_ITEMS
 }
 
 enum class FulfilmentOrderStatus {

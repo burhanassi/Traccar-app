@@ -14,7 +14,7 @@ import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsApp
 import com.logestechs.driver.utils.LogesTechsFragment
 import com.logestechs.driver.utils.adapters.DeliveredPackageCellAdapter
-import com.logestechs.driver.utils.interfaces.DriverPackagesByStatusViewPagerActivityDelegate
+import com.logestechs.driver.utils.interfaces.ViewPagerCountValuesDelegate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -26,7 +26,7 @@ class DeliveredPackagesFragment : LogesTechsFragment() {
     private var _binding: FragmentDeliveredPackagesBinding? = null
     private val binding get() = _binding!!
 
-    private var activityDelegate: DriverPackagesByStatusViewPagerActivityDelegate? = null
+    private var activityDelegate: ViewPagerCountValuesDelegate? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +55,7 @@ class DeliveredPackagesFragment : LogesTechsFragment() {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
         initListeners()
-        activityDelegate = activity as DriverPackagesByStatusViewPagerActivityDelegate
+        activityDelegate = activity as ViewPagerCountValuesDelegate
         binding.textTitle.text = getString(R.string.title_delivered_packages)
     }
 
