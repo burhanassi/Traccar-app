@@ -59,8 +59,7 @@ class WarehousePackagesByStatusViewPagerActivity : LogesTechsActivity(), View.On
         warehousePackagesByStatusViewPagerAdapter =
             WarehousePackagesByStatusViewPagerAdapter(
                 supportFragmentManager,
-                lifecycle,
-                selectedInCarStatus ?: InCarPackageStatus.TO_DELIVER.name
+                lifecycle
             )
         binding.viewPager.adapter = warehousePackagesByStatusViewPagerAdapter
         binding.viewPager.setCurrentItem(selectedTabIndex, false)
