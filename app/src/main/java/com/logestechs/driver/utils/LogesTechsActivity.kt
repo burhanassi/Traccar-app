@@ -163,9 +163,15 @@ abstract class LogesTechsActivity : AppCompatActivity() {
     }
 
     fun callMobileNumber(mobileNumber: String?) {
+        var number: String? = mobileNumber
         if (mobileNumber != null && mobileNumber.trim().isNotEmpty()) {
-            val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$mobileNumber"))
-
+            if (Helper.getCompanyCurrency() == AppCurrency.SAR.value) {
+                number = Helper.formatNumberForWhatsApp(
+                    mobileNumber,
+                    false
+                )
+            }
+            val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$number"))
             if (ActivityCompat.checkSelfPermission(
                     this,
                     Manifest.permission.CALL_PHONE
@@ -176,7 +182,7 @@ abstract class LogesTechsActivity : AppCompatActivity() {
                         arrayOf(Manifest.permission.CALL_PHONE),
                         AppConstants.PERMISSIONS_REQUEST_PHONE_CALL
                     )
-                    tempMobileNumber = mobileNumber
+                    tempMobileNumber = number
                 }
             } else {
                 this.startActivity(intent)
@@ -185,7 +191,14 @@ abstract class LogesTechsActivity : AppCompatActivity() {
     }
 
     fun sendSms(mobileNumber: String?, messageText: String?) {
-        val uri = Uri.parse("smsto:$mobileNumber")
+        var number: String? = mobileNumber
+        if (Helper.getCompanyCurrency() == AppCurrency.SAR.value) {
+            number = Helper.formatNumberForWhatsApp(
+                mobileNumber,
+                false
+            )
+        }
+        val uri = Uri.parse("smsto:$number")
         val intent = Intent(Intent.ACTION_SENDTO, uri)
         intent.putExtra("sms_body", messageText)
         startActivity(intent)
