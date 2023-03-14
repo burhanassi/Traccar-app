@@ -98,6 +98,11 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
         if (companyConfigurations?.isDriverPickupPackagesByScanDisabled == true) {
             binding.dashEntryScanPackages.root.visibility = View.GONE
         }
+
+        if (companyConfigurations?.isFulfilmentEnabled == true) {
+            binding.containerWarehousePackages.visibility = View.VISIBLE
+        }
+
         createLocationRequest()
 
         if (Helper.isLogesTechsDriver()) {
