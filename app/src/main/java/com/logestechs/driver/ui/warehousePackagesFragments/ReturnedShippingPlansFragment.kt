@@ -165,6 +165,7 @@ class ReturnedShippingPlansFragment : LogesTechsFragment() {
                             shippingPlansList.addAll(body?.data ?: ArrayList())
                             binding.rvShippingPlans.adapter?.notifyDataSetChanged()
                             handleNoPackagesLabelVisibility(body?.data?.isEmpty() ?: true && shippingPlansList.isEmpty())
+                            activityDelegate?.updateCountValues()
                         }
                     } else {
                         try {

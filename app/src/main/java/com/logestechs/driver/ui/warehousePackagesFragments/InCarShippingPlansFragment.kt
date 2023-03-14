@@ -187,6 +187,7 @@ class InCarShippingPlansFragment : LogesTechsFragment(), View.OnClickListener,
                             shippingPlansList.addAll(body?.data ?: ArrayList())
                             binding.rvShippingPlans.adapter?.notifyDataSetChanged()
                             handleNoPackagesLabelVisibility(body?.data?.isEmpty() ?: true && shippingPlansList.isEmpty())
+                            activityDelegate?.updateCountValues()
                         }
                     } else {
                         try {

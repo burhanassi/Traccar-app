@@ -355,4 +355,7 @@ interface LogesTechsDriverApi {
 
     @PUT("${AppConstants.PATH}api/driver/shipping-plan")
     suspend fun pickupShippingPlan(@Query("barcode") barcode: String): Response<ResponseBody?>?
+
+    @GET("${AppConstants.PATH}api/driver/shipping-plans/stats")
+    suspend fun getDriverShippingPlansCountValues(): Response<GetDriverShippingPlansCountValuesResponse?>?
 }

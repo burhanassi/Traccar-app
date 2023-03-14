@@ -12,7 +12,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
-import com.logestechs.driver.api.responses.GetDashboardInfoResponse
+import com.logestechs.driver.api.responses.GetDriverShippingPlansCountValuesResponse
 import com.logestechs.driver.databinding.ActivityDriverPackagesByStatusViewPagerBinding
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.interfaces.ViewPagerCountValuesDelegate
@@ -43,7 +43,7 @@ class WarehousePackagesByStatusViewPagerActivity : LogesTechsActivity(), View.On
 
     override fun onResume() {
         super.onResume()
-        callGetDashboardInfo()
+        callGetDriverShippingPlansCountValues()
     }
 
     private fun getExtras() {
@@ -213,15 +213,15 @@ class WarehousePackagesByStatusViewPagerActivity : LogesTechsActivity(), View.On
 //        }
     }
 
-    private fun updateCountValues(data: GetDashboardInfoResponse?) {
+    private fun updateCountValues(data: GetDriverShippingPlansCountValuesResponse?) {
         binding.tabLayout.getTabAt(0)?.customView?.findViewById<TextView>(R.id.text_view_count)?.text =
-            data?.pendingPackagesCount.toString()
+            data?.assignedToDriverCount.toString()
         binding.tabLayout.getTabAt(1)?.customView?.findViewById<TextView>(R.id.text_view_count)?.text =
-            data?.acceptedPackagesCount.toString()
+            data?.pickedUpCount.toString()
         binding.tabLayout.getTabAt(2)?.customView?.findViewById<TextView>(R.id.text_view_count)?.text =
-            data?.inCarPackagesCount.toString()
+            data?.arrivedAtDestinationCount.toString()
         binding.tabLayout.getTabAt(3)?.customView?.findViewById<TextView>(R.id.text_view_count)?.text =
-            data?.deliveredPackagesCount.toString()
+            data?.rejectedCount.toString()
     }
 
     override fun onClick(v: View?) {
@@ -236,11 +236,11 @@ class WarehousePackagesByStatusViewPagerActivity : LogesTechsActivity(), View.On
         }
     }
 
-    private fun callGetDashboardInfo() {
+    private fun callGetDriverShippingPlansCountValues() {
         if (Helper.isInternetAvailable(this)) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.getDashboardInfo(loginResponse?.device?.id)
+                    val response = ApiAdapter.apiClient.getDriverShippingPlansCountValues()
                     if (response?.isSuccessful == true && response.body() != null) {
                         val data = response.body()
                         withContext(Dispatchers.Main) {
@@ -285,6 +285,6 @@ class WarehousePackagesByStatusViewPagerActivity : LogesTechsActivity(), View.On
     }
 
     override fun updateCountValues() {
-//        callGetDashboardInfo()
+        callGetDriverShippingPlansCountValues()
     }
 }
