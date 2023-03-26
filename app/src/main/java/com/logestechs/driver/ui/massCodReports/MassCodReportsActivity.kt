@@ -8,25 +8,29 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
+import com.logestechs.driver.data.model.GroupedMassCodReports
 import com.logestechs.driver.data.model.MassCodReport
 import com.logestechs.driver.databinding.ActivityMassCodReportsBinding
 import com.logestechs.driver.ui.packageDeliveryScreens.massCodReportDelivery.MassCodReportDeliveryActivity
-import com.logestechs.driver.utils.AppConstants
-import com.logestechs.driver.utils.Helper
-import com.logestechs.driver.utils.IntentExtrasKeys
-import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.*
+import com.logestechs.driver.utils.adapters.InCarGroupedMassCodReportAdapter
 import com.logestechs.driver.utils.adapters.MassCodReportCellAdapter
+import com.logestechs.driver.utils.dialogs.MassCodReportViewModeDialog
 import com.logestechs.driver.utils.interfaces.MassCodReportCardListener
+import com.logestechs.driver.utils.interfaces.MassCodReportViewModeDialogListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
-class MassCodReportsActivity : LogesTechsActivity(), MassCodReportCardListener,
+class MassCodReportsActivity : LogesTechsActivity(),
+    MassCodReportCardListener,
+    MassCodReportViewModeDialogListener,
     View.OnClickListener {
     private lateinit var binding: ActivityMassCodReportsBinding
     private var massReportsList: ArrayList<MassCodReport?> = ArrayList()
+    private var selectedViewMode: MassCodReportsViewMode = MassCodReportsViewMode.BY_CUSTOMER
 
     //pagination fields
     private var isLoading = false
@@ -39,7 +43,7 @@ class MassCodReportsActivity : LogesTechsActivity(), MassCodReportCardListener,
         setContentView(binding.root)
         initRecycler()
         initListeners()
-        callGetMassCodReports()
+        getMassCodReportsBySelectedMode()
     }
 
     private fun initRecycler() {
@@ -60,30 +64,69 @@ class MassCodReportsActivity : LogesTechsActivity(), MassCodReportCardListener,
                 super.getContext(),
                 getString(R.string.success_operation_completed)
             )
-            currentPageIndex = 1
-            (binding.rvMassCodReports.adapter as MassCodReportCellAdapter).clearList()
-            callGetMassCodReports()
+            clearList()
+            getMassCodReportsBySelectedMode()
         }
     }
 
     private fun initListeners() {
         binding.refreshLayoutCustomers.setOnRefreshListener {
-            currentPageIndex = 1
-            (binding.rvMassCodReports.adapter as MassCodReportCellAdapter).clearList()
-            callGetMassCodReports()
+            clearList()
+            getMassCodReportsBySelectedMode()
         }
 
         binding.toolbarMain.buttonNotifications.setOnClickListener(this)
         binding.toolbarMain.buttonBack.setOnClickListener(this)
+        binding.buttonViewMode.setOnClickListener(this)
     }
 
-    private fun handleNoPackagesLabelVisibility(isEmpty: Boolean) {
-        if (isEmpty) {
-            binding.textNoPackagesFound.visibility = View.VISIBLE
+    private fun getMassCodReportsBySelectedMode() {
+        if (selectedViewMode == MassCodReportsViewMode.BY_CUSTOMER) {
+            if (binding.rvMassCodReports.adapter !is InCarGroupedMassCodReportAdapter) {
+                val layoutManager = LinearLayoutManager(
+                    super.getContext()
+                )
+                binding.rvMassCodReports.adapter = InCarGroupedMassCodReportAdapter(
+                    java.util.ArrayList(),
+                    super.getContext(),
+                    this
+                )
+                binding.rvMassCodReports.layoutManager = layoutManager
+            }
+            callGetMassCodReportsByCustomer()
         } else {
-            binding.textNoPackagesFound.visibility = View.GONE
+            if (binding.rvMassCodReports.adapter !is MassCodReportCellAdapter) {
+                val layoutManager = LinearLayoutManager(
+                    super.getContext()
+                )
+                binding.rvMassCodReports.adapter = MassCodReportCellAdapter(
+                    massReportsList, super.getContext(), listener = this
+                )
+                binding.rvMassCodReports.layoutManager = layoutManager
+            }
+            callGetMassCodReports()
         }
     }
+
+    private fun handleNoPackagesLabelVisibility(count: Int) {
+        if (count > 0) {
+            binding.textNoPackagesFound.visibility = View.GONE
+            binding.rvMassCodReports.visibility = View.VISIBLE
+        } else {
+            binding.textNoPackagesFound.visibility = View.VISIBLE
+            binding.rvMassCodReports.visibility = View.GONE
+        }
+    }
+
+    private fun clearList() {
+        currentPageIndex = 1
+        if (binding.rvMassCodReports.adapter is MassCodReportCellAdapter) {
+            (binding.rvMassCodReports.adapter as MassCodReportCellAdapter).clearList()
+        } else if (binding.rvMassCodReports.adapter is InCarGroupedMassCodReportAdapter) {
+            (binding.rvMassCodReports.adapter as InCarGroupedMassCodReportAdapter).clearList()
+        }
+    }
+
 
     override fun hideWaitDialog() {
         super.hideWaitDialog()
@@ -106,7 +149,9 @@ class MassCodReportsActivity : LogesTechsActivity(), MassCodReportCardListener,
 
                 if (!isLoading && !isLastPage) {
                     if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount >= AppConstants.DEFAULT_PAGE_SIZE) {
-                        callGetMassCodReports()
+                        if (selectedViewMode == MassCodReportsViewMode.BY_REPORT) {
+                            callGetMassCodReports()
+                        }
                     }
                 }
             }
@@ -140,7 +185,7 @@ class MassCodReportsActivity : LogesTechsActivity(), MassCodReportCardListener,
                         withContext(Dispatchers.Main) {
                             massReportsList.addAll(body?.massCodPackages ?: ArrayList())
                             binding.rvMassCodReports.adapter?.notifyDataSetChanged()
-                            handleNoPackagesLabelVisibility(body?.massCodPackages?.isEmpty() ?: true && massReportsList.isEmpty())
+                            handleNoPackagesLabelVisibility(body?.massCodPackages?.size ?: 0)
 
                         }
                     } else {
@@ -184,8 +229,71 @@ class MassCodReportsActivity : LogesTechsActivity(), MassCodReportCardListener,
         }
     }
 
-    override fun onDeliverMassReport(index: Int) {
-        val massCodReport = massReportsList[index]
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun callGetMassCodReportsByCustomer() {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            isLoading = true
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.getMassCodReportsByCustomer()
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        val body = response.body()
+                        withContext(Dispatchers.Main) {
+                            (binding.rvMassCodReports.adapter as InCarGroupedMassCodReportAdapter).update(
+                                body?.massCodPackagesByCustomer as java.util.ArrayList<GroupedMassCodReports?>,
+                                selectedViewMode
+                            )
+                            handleNoPackagesLabelVisibility(
+                                body.massCodPackagesByCustomer.size ?: 0
+                            )
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                    isLoading = false
+                } catch (e: Exception) {
+                    isLoading = false
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
+    override fun onDeliverMassReport(index: Int, massCodReport: MassCodReport?) {
         val mIntent = Intent(this, MassCodReportDeliveryActivity::class.java)
         mIntent.putExtra(IntentExtrasKeys.MASS_COD_REPORT_TO_DELIVER.name, massCodReport)
         startActivityForResult(mIntent, 1)
@@ -200,7 +308,17 @@ class MassCodReportsActivity : LogesTechsActivity(), MassCodReportCardListener,
             R.id.button_notifications -> {
                 super.getNotifications()
             }
+
+            R.id.button_view_mode -> {
+                MassCodReportViewModeDialog(super.getContext(), this, selectedViewMode).showDialog()
+            }
         }
+    }
+
+    override fun onViewModeChanged(selectedViewMode: MassCodReportsViewMode) {
+        this.selectedViewMode = selectedViewMode
+        clearList()
+        getMassCodReportsBySelectedMode()
     }
 }
 

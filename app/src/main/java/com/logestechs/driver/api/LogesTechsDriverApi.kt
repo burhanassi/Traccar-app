@@ -99,6 +99,9 @@ interface LogesTechsDriverApi {
         @Query("page") page: Int = AppConstants.DEFAULT_PAGE
     ): Response<GetMassCodReportsResponse?>?
 
+    @GET("${AppConstants.PATH}api/driver/mass-packages/by-customer")
+    suspend fun getMassCodReportsByCustomer(): Response<GetMassCodReportsByCustomerResponse?>?
+
     @PUT("${AppConstants.PATH}api/driver/mass-packages/{reportId}/deliver")
     suspend fun deliverMassCodReport(
         @Path("reportId") packageId: Long?,

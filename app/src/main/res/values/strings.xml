@@ -182,4 +182,6 @@
     <string name="arrived_shipping_plans">Arrived ASNs</string>
     <string name="returned_shipping_plans">Returned ASNs</string>
     <string name="error_shipping_plan_barcode_different_from_selected">The scanned barcode of the ASN does not match the selected one</string>
+    <string name="view_mode_customers">Customers</string>
+    <string name="view_mode_mass_cod_reports">Mass COD Reports</string>
 </resources>

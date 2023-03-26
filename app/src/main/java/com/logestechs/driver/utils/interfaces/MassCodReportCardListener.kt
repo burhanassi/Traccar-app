@@ -1,5 +1,7 @@
 package com.logestechs.driver.utils.interfaces
 
+import com.logestechs.driver.data.model.MassCodReport
+
 interface MassCodReportCardListener {
-    fun onDeliverMassReport(index: Int)
+    fun onDeliverMassReport(index: Int, massCodReport: MassCodReport?)
 }

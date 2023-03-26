@@ -180,4 +180,6 @@
     <string name="arrived_shipping_plans">طلبات التصنيف المسلمة</string>
     <string name="returned_shipping_plans">طلبات التصنيف المرجعة</string>
     <string name="error_shipping_plan_barcode_different_from_selected">الباركود الممسوح لا يتطابق مع طلب التصنيف المختار</string>
+    <string name="view_mode_customers">زبائن</string>
+    <string name="view_mode_mass_cod_reports">تقارير تحصيل</string>
 </resources>

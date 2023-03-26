@@ -30,6 +30,16 @@
                 android:textColor="@color/fontTrackHint"
                 android:textSize="14sp" />
 
+            <ImageView
+                android:id="@+id/button_view_mode"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_view_mode"
+                tools:ignore="ContentDescription" />
+
+
         </LinearLayout>
 
         <FrameLayout
@@ -63,7 +73,7 @@
                     android:paddingTop="4dp"
                     android:paddingBottom="80dp"
                     android:scrollbars="vertical"
-                    tools:listitem="@layout/item_returned_package_customer_cell" />
+                    tools:listitem="@layout/item_mass_cod_report" />
             </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
         </FrameLayout>
 

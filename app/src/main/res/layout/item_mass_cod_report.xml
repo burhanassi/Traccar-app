@@ -56,7 +56,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        bind:isCopyVisible="@{true}"
+                        bind:isCopyVisible="@{false}"
                         bind:itemSrc="@{@drawable/ic_package_gray}" />
 
 

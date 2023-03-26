@@ -137,6 +137,11 @@ enum class InCarPackageStatus(val value: String) {
 }
 
 
+enum class MassCodReportsViewMode(val value: String) {
+    BY_REPORT("BY_REPORT"),
+    BY_CUSTOMER("BY_CUSTOMER")
+}
+
 enum class ConfirmationDialogAction {
     RETURN_PACKAGE
 }

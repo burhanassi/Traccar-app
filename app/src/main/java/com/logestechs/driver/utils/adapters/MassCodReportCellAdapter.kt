@@ -124,7 +124,7 @@ class MassCodReportCellAdapter(
             }
 
             binding.buttonDeliver.setOnClickListener {
-                mAdapter.listener?.onDeliverMassReport(adapterPosition)
+                mAdapter.listener?.onDeliverMassReport(adapterPosition, massCodReport)
             }
 
             binding.itemPackageBarcode.buttonCopy.setOnClickListener {
