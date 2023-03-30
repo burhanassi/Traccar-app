@@ -182,4 +182,8 @@
     <string name="error_shipping_plan_barcode_different_from_selected">الباركود الممسوح لا يتطابق مع طلب التصنيف المختار</string>
     <string name="view_mode_customers">زبائن</string>
     <string name="view_mode_mass_cod_reports">تقارير تحصيل</string>
+    <string name="shipment_type_cod">تحصيل عند الاستلام</string>
+    <string name="shipment_type_regular">مدفوع مسبقا</string>
+    <string name="shipment_type_swap">تبديل</string>
+    <string name="shipment_type_bring">إحضار</string>
 </resources>

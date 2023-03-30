@@ -299,7 +299,7 @@
                             layout="@layout/item_card_row"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="13dp"
+                            android:layout_marginTop="8dp"
                             bind:isCopyVisible="@{true}"
                             bind:itemSrc="@{@drawable/ic_invoice_gray}" />
 
@@ -310,6 +310,14 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             bind:itemSrc="@{@drawable/ic_package_quantity}" />
+
+                        <include
+                            android:id="@+id/item_shipment_type"
+                            layout="@layout/item_card_row"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            bind:itemSrc="@{@drawable/ic_shipment_type}" />
 
                         <include
                             android:id="@+id/item_notes"

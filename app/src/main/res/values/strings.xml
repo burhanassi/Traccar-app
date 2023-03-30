@@ -184,4 +184,8 @@
     <string name="error_shipping_plan_barcode_different_from_selected">The scanned barcode of the ASN does not match the selected one</string>
     <string name="view_mode_customers">Customers</string>
     <string name="view_mode_mass_cod_reports">Mass COD Reports</string>
+    <string name="shipment_type_cod">COD</string>
+    <string name="shipment_type_regular">Prepaid</string>
+    <string name="shipment_type_swap">Swap</string>
+    <string name="shipment_type_bring">Bring</string>
 </resources>

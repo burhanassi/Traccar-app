@@ -13,11 +13,8 @@ import com.logestechs.driver.api.requests.*
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemInCarPackageCellBinding
-import com.logestechs.driver.utils.AppCurrency
-import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.Helper.Companion.format
-import com.logestechs.driver.utils.LogesTechsActivity
-import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.dialogs.*
 import com.logestechs.driver.utils.interfaces.*
 
@@ -96,6 +93,34 @@ class InCarPackageCellAdapter(
             binding.itemReceiverAddress.textItem.text = pkg?.destinationAddress?.toStringAddress()
 
             binding.textCod.text = pkg?.cod?.format()
+
+            if (pkg?.shipmentType != null) {
+                binding.itemShipmentType.root.visibility = View.VISIBLE
+
+                when (pkg.shipmentType) {
+                    PackageType.COD.name -> {
+                        binding.itemShipmentType.textItem.text =
+                            mAdapter.context?.getString(R.string.shipment_type_cod)
+                    }
+                    PackageType.REGULAR.name -> {
+                        binding.itemShipmentType.textItem.text =
+                            mAdapter.context?.getString(R.string.shipment_type_regular)
+                    }
+                    PackageType.SWAP.name -> {
+                        binding.itemShipmentType.textItem.text =
+                            mAdapter.context?.getString(R.string.shipment_type_swap)
+                    }
+                    PackageType.BRING.name -> {
+                        binding.itemShipmentType.textItem.text =
+                            mAdapter.context?.getString(R.string.shipment_type_bring)
+                    }
+                    else -> {
+                        binding.itemShipmentType.root.visibility = View.GONE
+                    }
+                }
+            } else {
+                binding.itemShipmentType.root.visibility = View.GONE
+            }
 
             binding.itemPackageBarcode.textItem.text = pkg?.barcode
 
