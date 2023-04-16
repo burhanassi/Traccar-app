@@ -44,7 +44,10 @@ interface LogesTechsDriverApi {
     ): Response<ResponseBody?>?
 
     @PUT("${AppConstants.PATH}api/driver/packages/pickup")
-    suspend fun pickupPackage(@Query("barcode") barcode: String): Response<Package?>?
+    suspend fun pickupPackage(
+        @Query("barcode") barcode: String,
+        @Query("is-bundle-pod-enabled") isBundlePodEnabled: Boolean? = null
+    ): Response<Package?>?
 
     @GET("${AppConstants.PATH}api/driver/customers/accepted")
     suspend fun getAcceptedPackages(
@@ -361,4 +364,10 @@ interface LogesTechsDriverApi {
 
     @GET("${AppConstants.PATH}api/driver/shipping-plans/stats")
     suspend fun getDriverShippingPlansCountValues(): Response<GetDriverShippingPlansCountValuesResponse?>?
+
+    @PUT("${AppConstants.PATH}api/driver/sub-bundles/pickup")
+    suspend fun pickupBundle(
+        @Query("packageId") packageId: Long?,
+        @Body body: PickupBundleRequestBody?
+    ): Response<ResponseBody?>?
 }

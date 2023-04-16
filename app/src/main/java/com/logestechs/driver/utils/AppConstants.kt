@@ -29,6 +29,7 @@ class AppConstants {
         const val REQUEST_STORAGE_PERMISSION = 5002
         const val REQUEST_CAMERA_PERMISSION = 5003
         const val REQUEST_LOCATION_PERMISSION = 5004
+        const val REQUEST_SCAN_BUNDLE = 5005
 
         //permission codes
         const val PERMISSIONS_REQUEST_PHONE_CALL = 1
@@ -105,7 +106,8 @@ enum class IntentExtrasKeys() {
     SCANNED_BARCODE,
     FULFILMENT_SORTER_SCAN_MODE,
     FULFILMENT_PICKER_SCAN_MODE,
-    FULFILMENT_ORDER
+    FULFILMENT_ORDER,
+    BUNDLE
 }
 
 enum class BarcodeScanType {

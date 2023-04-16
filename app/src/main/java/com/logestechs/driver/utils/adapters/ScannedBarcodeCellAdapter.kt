@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.data.model.Package
@@ -18,7 +19,8 @@ import com.logestechs.driver.utils.interfaces.ScannedBarcodeCardListener
 
 class ScannedBarcodeCellAdapter(
     var list: ArrayList<ScannedItem?>,
-    var listener: ScannedBarcodeCardListener? = null
+    var listener: ScannedBarcodeCardListener? = null,
+    var isSubBundles: Boolean = false
 ) :
     RecyclerView.Adapter<ScannedBarcodeViewHolder>() {
 
@@ -59,6 +61,32 @@ class ScannedBarcodeCellAdapter(
         notifyItemInserted(0)
     }
 
+    fun makePackageSelected(barcode: String?): Boolean {
+        for (i in 0 until list.size) {
+            val existingPackage = list[i]?.data as Package
+            if (existingPackage.barcode == barcode) {
+                existingPackage.isSelected = true
+                notifyItemChanged(i)
+                return true
+            }
+        }
+
+        for (i in 0 until list.size) {
+            val existingPackage = list[i]?.data as Package
+            if (existingPackage.invoiceNumber == barcode) {
+                existingPackage.isSelected = true
+                notifyItemChanged(i)
+                return true
+            }
+        }
+        return false
+    }
+
+    fun getSelectedPackagesIds(): List<Long?> {
+        val selectedPackages = list.filter { (it?.data as Package).isSelected }
+        return selectedPackages.map { it?.id }
+    }
+
     fun insertSubPackage(scannedItem: ScannedItem?, isParent: Boolean) {
         for (index in list.indices) {
             if (list[index]?.barcode == scannedItem?.barcode) {
@@ -91,7 +119,7 @@ class ScannedBarcodeViewHolder(
         if (scannedItem?.barcodeScanType == BarcodeScanType.PACKAGE_PICKUP) {
             val pkg = scannedItem.data as Package
 
-            binding.itemReceiverName.textItem.text = pkg.getFullReceiverName()
+            binding.itemReceiverName.textItem.text = pkg.receiverName
             binding.itemBarcode.textItem.text = pkg.barcode
             binding.itemReceiverCity.textItem.text = pkg.destinationCity
             if (pkg.invoiceNumber != null) {
@@ -112,6 +140,23 @@ class ScannedBarcodeViewHolder(
                 )
             } else {
                 binding.itemPackageQuantity.root.visibility = View.GONE
+            }
+
+            if (mAdapter.isSubBundles) {
+                binding.buttonContextMenu.visibility = View.GONE
+                if (mAdapter.context != null) {
+                    if (pkg.isSelected) {
+                        binding.viewBackground.background = ContextCompat.getDrawable(
+                            mAdapter.context!!,
+                            R.drawable.background_oval_orange
+                        )
+                    } else {
+                        binding.viewBackground.background = ContextCompat.getDrawable(
+                            mAdapter.context!!,
+                            R.drawable.background_oval_white
+                        )
+                    }
+                }
             }
 
             binding.buttonContextMenu.setOnClickListener {

@@ -188,4 +188,6 @@
     <string name="shipment_type_regular">Prepaid</string>
     <string name="shipment_type_swap">Swap</string>
     <string name="shipment_type_bring">Bring</string>
+    <string name="title_please_scan_bundle_items">Please scan bundle items</string>
+    <string name="error_package_not_found">Package not found</string>
 </resources>

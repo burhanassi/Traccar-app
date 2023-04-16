@@ -86,6 +86,7 @@ data class Package(
     var customerNotes: String? = null,
     var phoneType: String? = null,
     var isReceiverPayCost: Boolean? = null,
+    var isBundle: Boolean? = null,
 
     @Transient
     var isSelected: Boolean = false,
@@ -94,7 +95,8 @@ data class Package(
     var isDone: Boolean? = true,
     @Transient
     var scannedSubPackagesCount: Int = 0,
-    var isShippingPlan: Boolean? = null
+    var isShippingPlan: Boolean? = null,
+    var subBundles: List<Package?>? = null
 
 ) : Parcelable {
     fun getFullSenderName(): String {

@@ -20,29 +20,31 @@ import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
+import com.logestechs.driver.api.requests.PickupBundleRequestBody
 import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.data.model.Package
-import com.logestechs.driver.databinding.ActivityBarcodeScannerBinding
+import com.logestechs.driver.data.model.ScannedItem
+import com.logestechs.driver.databinding.ActivitySubBundlesBarcodeScannerBinding
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.ScannedBarcodeCellAdapter
 import com.logestechs.driver.utils.dialogs.InsertBarcodeDialog
 import com.logestechs.driver.utils.interfaces.InsertBarcodeDialogListener
-import com.logestechs.driver.utils.interfaces.ScannedBarcodeCardListener
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.io.IOException
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 
-class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
-    InsertBarcodeDialogListener, ScannedBarcodeCardListener {
-    private lateinit var binding: ActivityBarcodeScannerBinding
+class SubBundlesBarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
+    InsertBarcodeDialogListener {
+    private lateinit var binding: ActivitySubBundlesBarcodeScannerBinding
 
     private var barcodeDetector: BarcodeDetector? = null
     private var cameraSource: CameraSource? = null
     private val REQUEST_CAMERA_PERMISSION = 201
+
+    private var pkg: Package? = null
 
     private var scanType: BarcodeScanType = BarcodeScanType.PACKAGE_PICKUP
     var scannedItemsHashMap: HashMap<String, String> = HashMap()
@@ -63,39 +65,19 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityBarcodeScannerBinding.inflate(layoutInflater)
+        getExtras()
+        binding = ActivitySubBundlesBarcodeScannerBinding.inflate(layoutInflater)
         setContentView(binding.root)
         toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
         initialiseDetectorsAndSources()
         initRecycler()
-        handleScannedItemsCount()
         initListeners()
-        getExtras()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == AppConstants.REQUEST_SCAN_BUNDLE && resultCode == RESULT_OK) {
-
-            val extras = data?.extras
-            if (extras != null) {
-                val pkg: Package? = extras.getParcelable(IntentExtrasKeys.BUNDLE.name)
-                (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).insertItem(
-                    pkg?.getPickupScannedItem()
-                )
-                handleScannedItemsCount()
-                Helper.showSuccessMessage(
-                    super.getContext(),
-                    getString(R.string.success_operation_completed)
-                )
-            }
-        }
     }
 
     private fun getExtras() {
         val extras = intent.extras
         if (extras != null) {
-            customer = extras.getParcelable(IntentExtrasKeys.CUSTOMER_WITH_PACKAGES_FOR_PICKUP.name)
+            pkg = extras.getParcelable(IntentExtrasKeys.BUNDLE.name)
         }
     }
 
@@ -106,9 +88,20 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
     }
 
     private fun initRecycler() {
+        val subBundlesList: ArrayList<ScannedItem?> = ArrayList()
+        if (pkg != null && pkg?.subBundles != null) {
+            for (pkg in pkg?.subBundles!!) {
+                subBundlesList.add(pkg?.getPickupScannedItem())
+            }
+        }
+
         binding.rvScannedBarcodes.apply {
-            layoutManager = LinearLayoutManager(this@BarcodeScannerActivity)
-            adapter = ScannedBarcodeCellAdapter(ArrayList(), this@BarcodeScannerActivity)
+            layoutManager = LinearLayoutManager(this@SubBundlesBarcodeScannerActivity)
+            adapter = ScannedBarcodeCellAdapter(
+                subBundlesList,
+                null,
+                true
+            )
         }
     }
 
@@ -154,7 +147,15 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
         ) {
             if (!scannedItemsHashMap.containsKey(scannedBarcode)) {
                 scannedItemsHashMap[scannedBarcode] = scannedBarcode
-                callPickupPackage(scannedBarcode)
+                if (!(binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).makePackageSelected(
+                        scannedBarcode
+                    )
+                ) {
+                    Helper.showErrorMessage(this, getString(R.string.error_package_not_found))
+                    Executors.newSingleThreadScheduledExecutor().schedule({
+                        scannedItemsHashMap.remove(scannedBarcode)
+                    }, 2, TimeUnit.SECONDS)
+                }
             }
             scannedBarcode = ""
         }
@@ -206,8 +207,8 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
             @SuppressLint("MissingPermission")
             override fun surfaceCreated(holder: SurfaceHolder) {
                 try {
-                    if (Helper.isCameraPermissionNeeded(this@BarcodeScannerActivity)) {
-                        Helper.showAndRequestCameraDialog(this@BarcodeScannerActivity)
+                    if (Helper.isCameraPermissionNeeded(this@SubBundlesBarcodeScannerActivity)) {
+                        Helper.showAndRequestCameraDialog(this@SubBundlesBarcodeScannerActivity)
                     } else {
                         cameraSource?.start(binding.surfaceView.holder)
                     }
@@ -255,7 +256,17 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
     private fun handleDetectedBarcode(barcode: String) {
         if (!scannedItemsHashMap.containsKey(barcode)) {
             scannedItemsHashMap[barcode] = barcode
-            callPickupPackage(barcode)
+            this.runOnUiThread {
+                if (!(binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).makePackageSelected(
+                        barcode
+                    )
+                ) {
+                    Helper.showErrorMessage(this, getString(R.string.error_package_not_found))
+                    Executors.newSingleThreadScheduledExecutor().schedule({
+                        scannedItemsHashMap.remove(barcode)
+                    }, 2, TimeUnit.SECONDS)
+                }
+            }
             toneGen1?.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
             vibrate()
         }
@@ -267,192 +278,26 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
     }
 
     //APIs
-    private fun callPickupPackage(barcode: String) {
+    private fun callPickupBundle(scannedPackagesIds: List<Long?>) {
         this.runOnUiThread {
             showWaitDialog()
         }
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.pickupPackage(
-                        barcode,
-                        driverCompanyConfigurations?.isBundlePodEnabled
+                    val response = ApiAdapter.apiClient.pickupBundle(
+                        pkg?.id,
+                        PickupBundleRequestBody(scannedPackagesIds)
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            if (response.body()?.status == AdminPackageStatus.RETURNED_BY_RECIPIENT.name) {
-                                Helper.run {
-                                    showErrorMessage(
-                                        super.getContext(),
-                                        getString(R.string.error_package_is_returned)
-                                    )
-                                }
-                            } else if (response.body()?.status == AdminPackageStatus.FAILED.name) {
-                                Helper.run {
-                                    showErrorMessage(
-                                        super.getContext(),
-                                        getString(R.string.error_package_is_failed)
-                                    )
-                                }
-                            }
-
-                            if (response.body()?.isBundle == true && driverCompanyConfigurations?.isBundlePodEnabled == true) {
-                                Helper.run {
-                                    val mIntent = Intent(
-                                        this@BarcodeScannerActivity,
-                                        SubBundlesBarcodeScannerActivity::class.java
-                                    )
-                                    mIntent.putExtra(IntentExtrasKeys.BUNDLE.name, response.body())
-                                    startActivityForResult(
-                                        mIntent,
-                                        AppConstants.REQUEST_SCAN_BUNDLE
-                                    )
-                                }
-
-                            } else if (driverCompanyConfigurations?.isPrintAwbCopiesAsPackageQuantity == true && (response.body()?.quantity
-                                    ?: 0) > 1
-                            ) {
-                                (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).insertSubPackage(
-                                    response.body()?.getPickupScannedItem(),
-                                    !barcode.contains(":")
-                                )
-                            } else {
-                                (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).insertItem(
-                                    response.body()?.getPickupScannedItem()
-                                )
-                            }
-
-                            handleScannedItemsCount()
-                        }
-                    } else {
-                        scannedItemsHashMap.remove(barcode)
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    hideWaitDialog()
-                    scannedItemsHashMap.remove(barcode)
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            hideWaitDialog()
-            scannedItemsHashMap.remove(barcode)
-            Helper.showErrorMessage(
-                super.getContext(), getString(R.string.error_check_internet_connection)
-            )
-        }
-    }
-
-    private fun callCancelPickup(position: Int, pkg: Package?) {
-        showWaitDialog()
-        if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response = ApiAdapter.apiClient.cancelPickup(
-                        pkg?.id
-                    )
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        withContext(Dispatchers.Main) {
-                            Helper.showSuccessMessage(
-                                super.getContext(),
-                                getString(R.string.success_operation_completed)
-                            )
-                            (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).deleteItem(
-                                position
-                            )
-                            scannedItemsHashMap.remove(pkg?.barcode)
-                            handleScannedItemsCount()
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            hideWaitDialog()
-            Helper.showErrorMessage(
-                super.getContext(), getString(R.string.error_check_internet_connection)
-            )
-        }
-    }
-
-    private fun callCancelShippingPlanPickup(position: Int, pkg: Package?) {
-        showWaitDialog()
-        if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response = ApiAdapter.apiClient.cancelShippingPlanPickup(
-                        pkg?.barcode
-                    )
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        withContext(Dispatchers.Main) {
-                            Helper.showSuccessMessage(
-                                super.getContext(),
-                                getString(R.string.success_operation_completed)
-                            )
-                            (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).deleteItem(
-                                position
-                            )
-                            scannedItemsHashMap.remove(pkg?.barcode)
-                            handleScannedItemsCount()
+                            val returnIntent = Intent()
+                            returnIntent.putExtra(IntentExtrasKeys.BUNDLE.name, pkg)
+                            setResult(RESULT_OK, returnIntent)
+                            finish()
                         }
                     } else {
                         try {
@@ -496,7 +341,16 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_done -> {
-                onBackPressed()
+                val barcodes =
+                    (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).getSelectedPackagesIds()
+                if (barcodes.isNotEmpty()) {
+                    callPickupBundle(barcodes)
+                } else {
+                    Helper.showErrorMessage(
+                        this,
+                        getString(R.string.title_please_scan_bundle_items)
+                    )
+                }
             }
 
             R.id.button_insert_barcode -> {
@@ -541,15 +395,15 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
     override fun onBarcodeInserted(barcode: String) {
         if (!scannedItemsHashMap.containsKey(barcode)) {
             scannedItemsHashMap[barcode] = barcode
-            callPickupPackage(barcode)
-        }
-    }
-
-    override fun onCancelPickup(position: Int, pkg: Package) {
-        if (pkg.isShippingPlan == true) {
-            callCancelShippingPlanPickup(position, pkg)
-        } else {
-            callCancelPickup(position, pkg)
+            if (!(binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).makePackageSelected(
+                    barcode
+                )
+            ) {
+                Helper.showErrorMessage(this, getString(R.string.error_package_not_found))
+                Executors.newSingleThreadScheduledExecutor().schedule({
+                    scannedItemsHashMap.remove(barcode)
+                }, 2, TimeUnit.SECONDS)
+            }
         }
     }
 }

@@ -22,6 +22,7 @@
     <color name="c3">#F24645</color>
     <color name="notificationTableBreakGray">#F1F1F1</color>
     <color name="orange_sea_buckthorn">#FCA429</color>
+    <color name="scanned_sub_bundle_orange">#33FCA429</color>
     <color name="orange_sea_buckthorn_line_break">#4DFCA429</color>
     <color name="detailsTextBlack">#606060</color>
     <color name="selectedBottomBarItemTint">#F24462</color>

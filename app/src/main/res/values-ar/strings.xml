@@ -186,4 +186,6 @@
     <string name="shipment_type_regular">مدفوع مسبقا</string>
     <string name="shipment_type_swap">تبديل</string>
     <string name="shipment_type_bring">إحضار</string>
+    <string name="title_please_scan_bundle_items">الرجاء مسح عناصر الحزمة</string>
+    <string name="error_package_not_found">لم يتم العثور على الطرد</string>
 </resources>
