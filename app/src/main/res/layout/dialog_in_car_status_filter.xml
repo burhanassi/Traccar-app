@@ -74,7 +74,32 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:textStatus="@string/in_car_status_to_deliver" />
+                        app:textStatus="@string/in_car_status_pickup_and_delivery" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:orientation="horizontal">
+
+                    <com.logestechs.driver.utils.customViews.StatusSelector
+                        android:id="@+id/selector_pickup"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        app:textStatus="@string/in_car_status_pickup" />
+
+                    <com.logestechs.driver.utils.customViews.StatusSelector
+                        android:id="@+id/selector_delivery"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:textStatus="@string/in_car_status_delivery" />
 
                 </LinearLayout>
 

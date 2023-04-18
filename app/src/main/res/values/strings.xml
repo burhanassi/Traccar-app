@@ -190,4 +190,7 @@
     <string name="shipment_type_bring">Bring</string>
     <string name="title_please_scan_bundle_items">Please scan bundle items</string>
     <string name="error_package_not_found">Package not found</string>
+    <string name="in_car_status_pickup">Pickup</string>
+    <string name="in_car_status_delivery">Delivery</string>
+    <string name="in_car_status_pickup_and_delivery">Pickup and Delivery</string>
 </resources>

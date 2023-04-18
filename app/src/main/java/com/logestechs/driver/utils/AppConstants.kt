@@ -135,7 +135,9 @@ enum class InCarPackageStatus(val value: String) {
     RETURNED("RETURNED"),
     POSTPONED("POSTPONED"),
     COD("COD"),
-    FAILED("FAILED")
+    FAILED("FAILED"),
+    TO_DELIVER_PICKUP("TO_DELIVER_PICKUP"),
+    TO_DELIVER_DELIVERY("TO_DELIVER_DELIVERY")
 }
 
 

@@ -188,4 +188,7 @@
     <string name="shipment_type_bring">إحضار</string>
     <string name="title_please_scan_bundle_items">الرجاء مسح عناصر الحزمة</string>
     <string name="error_package_not_found">لم يتم العثور على الطرد</string>
+    <string name="in_car_status_pickup">جلب</string>
+    <string name="in_car_status_delivery">توصيل</string>
+    <string name="in_car_status_pickup_and_delivery">جلب و توصيل</string>
 </resources>

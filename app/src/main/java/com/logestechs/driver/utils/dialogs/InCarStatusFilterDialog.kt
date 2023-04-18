@@ -10,6 +10,7 @@ import com.logestechs.driver.R
 import com.logestechs.driver.databinding.DialogInCarStatusFilterBinding
 import com.logestechs.driver.utils.InCarPackageStatus
 import com.logestechs.driver.utils.LogesTechsApp
+import com.logestechs.driver.utils.customViews.StatusSelector
 import com.logestechs.driver.utils.interfaces.InCarStatusFilterDialogListener
 
 class InCarStatusFilterDialog(
@@ -21,6 +22,8 @@ class InCarStatusFilterDialog(
     lateinit var binding: DialogInCarStatusFilterBinding
     lateinit var alertDialog: AlertDialog
 
+    private val selectors: ArrayList<StatusSelector> = ArrayList()
+
     fun showDialog() {
         val dialogBuilder = AlertDialog.Builder(context, 0)
         val binding: DialogInCarStatusFilterBinding = DataBindingUtil.inflate(
@@ -31,48 +34,54 @@ class InCarStatusFilterDialog(
         dialogBuilder.setView(binding.root)
         val alertDialog = dialogBuilder.create()
         this.binding = binding
+        selectors.clear()
+        selectors.addAll(
+            arrayListOf(
+                binding.selectorToDeliver,
+                binding.selectorAll,
+                binding.selectorFailed,
+                binding.selectorCod,
+                binding.selectorPostponed,
+                binding.selectorPickup,
+                binding.selectorDelivery
+            )
+        )
         binding.buttonCancel.setOnClickListener {
             alertDialog.dismiss()
         }
-
         binding.selectorToDeliver.setOnClickListener {
             selectedStatus = InCarPackageStatus.TO_DELIVER
+            clearSelection()
             binding.selectorToDeliver.makeSelected()
-            binding.selectorAll.makeUnselected()
-            binding.selectorFailed.makeUnselected()
-            binding.selectorCod.makeUnselected()
-            binding.selectorPostponed.makeUnselected()
+        }
+        binding.selectorPickup.setOnClickListener {
+            selectedStatus = InCarPackageStatus.TO_DELIVER_PICKUP
+            clearSelection()
+            binding.selectorPickup.makeSelected()
+        }
+        binding.selectorDelivery.setOnClickListener {
+            selectedStatus = InCarPackageStatus.TO_DELIVER_DELIVERY
+            clearSelection()
+            binding.selectorDelivery.makeSelected()
         }
         binding.selectorAll.setOnClickListener {
             selectedStatus = InCarPackageStatus.ALL
-            binding.selectorToDeliver.makeUnselected()
+            clearSelection()
             binding.selectorAll.makeSelected()
-            binding.selectorFailed.makeUnselected()
-            binding.selectorCod.makeUnselected()
-            binding.selectorPostponed.makeUnselected()
         }
         binding.selectorFailed.setOnClickListener {
             selectedStatus = InCarPackageStatus.FAILED
-            binding.selectorToDeliver.makeUnselected()
-            binding.selectorAll.makeUnselected()
+            clearSelection()
             binding.selectorFailed.makeSelected()
-            binding.selectorCod.makeUnselected()
-            binding.selectorPostponed.makeUnselected()
         }
         binding.selectorCod.setOnClickListener {
             selectedStatus = InCarPackageStatus.COD
-            binding.selectorToDeliver.makeUnselected()
-            binding.selectorAll.makeUnselected()
-            binding.selectorFailed.makeUnselected()
+            clearSelection()
             binding.selectorCod.makeSelected()
-            binding.selectorPostponed.makeUnselected()
         }
         binding.selectorPostponed.setOnClickListener {
             selectedStatus = InCarPackageStatus.POSTPONED
-            binding.selectorToDeliver.makeUnselected()
-            binding.selectorAll.makeUnselected()
-            binding.selectorFailed.makeUnselected()
-            binding.selectorCod.makeUnselected()
+            clearSelection()
             binding.selectorPostponed.makeSelected()
         }
 
@@ -104,9 +113,21 @@ class InCarStatusFilterDialog(
             InCarPackageStatus.COD -> {
                 binding.selectorCod.makeSelected()
             }
+            InCarPackageStatus.TO_DELIVER_PICKUP -> {
+                binding.selectorPickup.makeSelected()
+            }
+            InCarPackageStatus.TO_DELIVER_DELIVERY -> {
+                binding.selectorDelivery.makeSelected()
+            }
             else -> {
                 binding.selectorToDeliver.makeSelected()
             }
+        }
+    }
+
+    private fun clearSelection() {
+        for (selector in selectors) {
+            selector.makeUnselected()
         }
     }
 
