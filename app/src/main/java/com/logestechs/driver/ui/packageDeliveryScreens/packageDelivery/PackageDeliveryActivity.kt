@@ -948,7 +948,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                         }
                     }
                 } else if (companyConfigurations?.isEnableDeliveryVerificationPinCodeForPkgsWithCodGreaterThan != null && (pkg?.cod
-                        ?: 0.0) > companyConfigurations!!.isEnableDeliveryVerificationPinCodeForPkgsWithCodGreaterThan!!
+                        ?: 0.0) >= companyConfigurations!!.isEnableDeliveryVerificationPinCodeForPkgsWithCodGreaterThan!!
                 ) {
                     return when (pkg?.verificationStatus) {
                         VerificationStatus.NOT_SENT.toString() -> {
