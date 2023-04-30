@@ -191,4 +191,9 @@
     <string name="in_car_status_pickup">جلب</string>
     <string name="in_car_status_delivery">توصيل</string>
     <string name="in_car_status_pickup_and_delivery">جلب و توصيل</string>
+    <string name="enter_verification_code">أدخل رمز التحقق</string>
+    <string name="verification_code">رمز التحقق</string>
+    <string name="verify">تحقق</string>
+    <string name="error_insert_verification_code">الرجاء إدخال رمز التحقق</string>
+    <string name="error_verification_code_must_be_four_digits">رقم التحقق يجب ان يتكوّن من 4 ارقام</string>
 </resources>

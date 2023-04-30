@@ -96,7 +96,8 @@ data class Package(
     @Transient
     var scannedSubPackagesCount: Int = 0,
     var isShippingPlan: Boolean? = null,
-    var subBundles: List<Package?>? = null
+    var subBundles: List<Package?>? = null,
+    var verificationStatus: String? = null
 
 ) : Parcelable {
     fun getFullSenderName(): String {

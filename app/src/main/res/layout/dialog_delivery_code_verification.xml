@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/background_edit_cod_dialog_bottom"
+            android:clipChildren="false"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="30dp"
+            android:paddingTop="20dp"
+            android:paddingEnd="30dp"
+            android:paddingBottom="20dp">
+
+            <TextView
+                style="@style/LogesTechsMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="8dp"
+                android:text="@string/enter_verification_code"
+                android:textColor="@color/fontTitleBlack"
+                android:textSize="18sp" />
+
+            <com.logestechs.driver.utils.customViews.OutlinedFormEditText
+                android:id="@+id/et_verification_code"
+                android:layout_width="250dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center_horizontal"
+                app:hintText="@string/verification_code"
+                app:isNumeric="true" />
+
+            <Button
+                android:id="@+id/button_done"
+                style="@style/LogesTechsMedium"
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/background_logestechs_button"
+                android:text="@string/verify"
+                android:textColor="#fff" />
+        </LinearLayout>
+    </LinearLayout>
+
+</layout>

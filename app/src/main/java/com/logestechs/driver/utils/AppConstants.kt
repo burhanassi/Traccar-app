@@ -246,3 +246,7 @@ enum class FulfilmentOrderStatus {
     CANCELED,
     RETURNED
 }
+
+enum class VerificationStatus {
+    SENT, VERIFIED, NOT_SENT
+}

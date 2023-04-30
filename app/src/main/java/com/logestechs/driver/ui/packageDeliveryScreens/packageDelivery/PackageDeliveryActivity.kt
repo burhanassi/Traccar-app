@@ -33,11 +33,21 @@ import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ActivityPackageDeliveryBinding
 import com.logestechs.driver.ui.singleScanBarcodeScanner.SingleScanBarcodeScanner
-import com.logestechs.driver.utils.*
+import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.DeliveryType
+import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.Helper.Companion.format
+import com.logestechs.driver.utils.IntentExtrasKeys
+import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.PackageType
+import com.logestechs.driver.utils.PaymentType
+import com.logestechs.driver.utils.SharedPreferenceWrapper
+import com.logestechs.driver.utils.VerificationStatus
 import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
 import com.logestechs.driver.utils.customViews.StatusSelector
+import com.logestechs.driver.utils.dialogs.DeliveryCodeVerificationDialog
 import com.logestechs.driver.utils.interfaces.ThumbnailsListListener
+import com.logestechs.driver.utils.interfaces.VerificationCodeDialogListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -52,10 +62,12 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 
-class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, ThumbnailsListListener {
+class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, ThumbnailsListListener,
+    VerificationCodeDialogListener {
     private lateinit var binding: ActivityPackageDeliveryBinding
 
     private var path: String? = null
@@ -264,6 +276,13 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     }
 
     private fun validateInput(): Boolean {
+        if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled != true) {
+            if (!isSignatureEntered()) {
+                Helper.showErrorMessage(this, getString(R.string.error_enter_signature))
+                return false
+            }
+        }
+
         if (selectedDeliveryType == DeliveryType.PARTIAL) {
             if (binding.etPartialDeliveryNote.text.toString().isEmpty()) {
                 Helper.showErrorMessage(
@@ -526,20 +545,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     )
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            callDeliverPackage(
-                                DeliverPackageRequestBody(
-                                    pkg?.id,
-                                    0.0,
-                                    0.0,
-                                    0.0,
-                                    0.0,
-                                    response.body()?.fileUrl,
-                                    getPodImagesUrls(),
-                                    null,
-                                    null,
-                                    (selectedPaymentType?.enumValue as PaymentType).name
-                                )
-                            )
+                            callDeliverPackage()
                         }
                     } else {
                         try {
@@ -727,7 +733,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
     }
 
-    private fun callDeliverPackage(deliverPackageRequestBody: DeliverPackageRequestBody?) {
+    private fun callDeliverPackage() {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
@@ -740,7 +746,18 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                         pkg?.barcode,
                         selectedDeliveryType?.name,
                         note,
-                        body = deliverPackageRequestBody
+                        body = DeliverPackageRequestBody(
+                            pkg?.id,
+                            0.0,
+                            0.0,
+                            0.0,
+                            0.0,
+                            null,
+                            getPodImagesUrls(),
+                            null,
+                            null,
+                            (selectedPaymentType?.enumValue as PaymentType).name
+                        )
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
@@ -848,6 +865,132 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
     }
 
+    private fun requestPinCodeSms() {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.requestPinCodeSms(
+                        pkg?.id
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            pkg?.verificationStatus = VerificationStatus.SENT.toString()
+                            showDeliveryCodeVerificationDialog()
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
+    private fun showDeliveryCodeVerificationDialog() {
+        DeliveryCodeVerificationDialog(super.getContext(), this, pkg).showDialog()
+    }
+
+    private fun needsPinVerification(): Boolean {
+        if (companyConfigurations != null) {
+            if (isSignatureEntered()) {
+                if ((pkg?.shipmentType == PackageType.REGULAR.toString() || pkg?.cod == 0.0) && companyConfigurations?.isEnableDeliveryVerificationPinCodeForPkgs == true) {
+                    return when (pkg?.verificationStatus) {
+                        VerificationStatus.NOT_SENT.toString() -> {
+                            requestPinCodeSms()
+                            true
+                        }
+
+                        VerificationStatus.SENT.toString() -> {
+                            showDeliveryCodeVerificationDialog()
+                            true
+                        }
+
+                        VerificationStatus.VERIFIED.toString() -> {
+                            false
+                        }
+
+                        else -> {
+                            false
+                        }
+                    }
+                } else if (companyConfigurations?.isEnableDeliveryVerificationPinCodeForPkgsWithCodGreaterThan != null && (pkg?.cod
+                        ?: 0.0) > companyConfigurations!!.isEnableDeliveryVerificationPinCodeForPkgsWithCodGreaterThan!!
+                ) {
+                    return when (pkg?.verificationStatus) {
+                        VerificationStatus.NOT_SENT.toString() -> {
+                            requestPinCodeSms()
+                            true
+                        }
+
+                        VerificationStatus.SENT.toString() -> {
+                            showDeliveryCodeVerificationDialog()
+                            true
+                        }
+
+                        VerificationStatus.VERIFIED.toString() -> {
+                            false
+                        }
+
+                        else -> {
+                            false
+                        }
+                    }
+                }
+            } else {
+                return false
+            }
+        } else {
+            return false
+        }
+        return false
+    }
+
+    private fun handlePackageDelivery() {
+        if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true) {
+            callDeliverPackage()
+        } else {
+            if (Helper.isStoragePermissionNeeded(this)) {
+                Helper.showAndRequestStorageDialog(this)
+            } else {
+                uploadPackageSignature()
+            }
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_clear_signature -> {
@@ -859,34 +1002,9 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             }
 
             R.id.button_deliver_package -> {
-                if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true) {
-                    if (validateInput()) {
-                        callDeliverPackage(
-                            DeliverPackageRequestBody(
-                                pkg?.id,
-                                0.0,
-                                0.0,
-                                0.0,
-                                0.0,
-                                null,
-                                getPodImagesUrls(),
-                                null,
-                                null,
-                                (selectedPaymentType?.enumValue as PaymentType).name
-                            )
-                        )
-                    }
-                } else {
-                    if (isSignatureEntered()) {
-                        if (validateInput()) {
-                            if (Helper.isStoragePermissionNeeded(this)) {
-                                Helper.showAndRequestStorageDialog(this)
-                            } else {
-                                uploadPackageSignature()
-                            }
-                        }
-                    } else {
-                        Helper.showErrorMessage(this, getString(R.string.error_enter_signature))
+                if (validateInput()) {
+                    if (!needsPinVerification()) {
+                        handlePackageDelivery()
                     }
                 }
             }
@@ -914,26 +1032,31 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 binding.selectorCash.makeSelected()
                 selectedPaymentType = binding.selectorCash
             }
+
             R.id.selector_digital_wallet -> {
                 unselectAllPaymentMethods()
                 binding.selectorDigitalWallet.makeSelected()
                 selectedPaymentType = binding.selectorDigitalWallet
             }
+
             R.id.selector_cheque -> {
                 unselectAllPaymentMethods()
                 binding.selectorCheque.makeSelected()
                 selectedPaymentType = binding.selectorCheque
             }
+
             R.id.selector_prepaid -> {
                 unselectAllPaymentMethods()
                 binding.selectorPrepaid.makeSelected()
                 selectedPaymentType = binding.selectorPrepaid
             }
+
             R.id.selector_card_payment -> {
                 unselectAllPaymentMethods()
                 binding.selectorCardPayment.makeSelected()
                 selectedPaymentType = binding.selectorCardPayment
             }
+
             R.id.selector_bank_transfer -> {
                 unselectAllPaymentMethods()
                 binding.selectorBankTransfer.makeSelected()
@@ -974,5 +1097,9 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
     override fun onDeleteImage(position: Int) {
         callDeletePodImage(position)
+    }
+
+    override fun onPackageVerified() {
+        handlePackageDelivery()
     }
 }

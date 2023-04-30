@@ -370,4 +370,15 @@ interface LogesTechsDriverApi {
         @Query("packageId") packageId: Long?,
         @Body body: PickupBundleRequestBody?
     ): Response<ResponseBody?>?
+
+    @POST("${AppConstants.PATH}api/driver/packages/{packageId}/pin-code")
+    suspend fun requestPinCodeSms(
+        @Path("packageId") packageId: Long?
+    ): Response<ResponseBody?>?
+
+    @PUT("${AppConstants.PATH}api/driver/packages/{packageId}/pin-code")
+    suspend fun verifyDeliveryPin(
+        @Path("packageId") packageId: Long?,
+        @Query("pinCode") pinCode: String?
+    ): Response<ResponseBody?>?
 }
