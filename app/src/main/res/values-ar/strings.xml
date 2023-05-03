@@ -196,4 +196,8 @@
     <string name="verify">تحقق</string>
     <string name="error_insert_verification_code">الرجاء إدخال رمز التحقق</string>
     <string name="error_verification_code_must_be_four_digits">رقم التحقق يجب ان يتكوّن من 4 ارقام</string>
+    <string name="show_driver_packages_locations">المسار التلقائي</string>
+    <string name="app_needs_location_permission">الرجاء اعطاء صلاحية الوصول الى الموقع</string>
+    <string name="warning_some_villages_are_not_on_map">انتبه! بعض الوجهات قد تكون غير مضافة على الخريطة</string>
+    <string name="text_number_of_locations">عدد وجهات التوصيل: %1$d</string>
 </resources>

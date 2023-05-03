@@ -49,4 +49,6 @@
     <color name="dropdownSeparatorGray">#DEDEDE</color>
     <color name="add_pod_container_background">#12DC8000</color>
     <color name="floating_message_background">#B3808080</color>
+    <color name="map_bubble_background">#E6FFFFFF</color>
+    <color name="red">#f90404</color>
 </resources>

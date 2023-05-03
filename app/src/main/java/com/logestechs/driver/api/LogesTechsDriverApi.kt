@@ -381,4 +381,10 @@ interface LogesTechsDriverApi {
         @Path("packageId") packageId: Long?,
         @Query("pinCode") pinCode: String?
     ): Response<ResponseBody?>?
+
+    @GET("${AppConstants.PATH}api/driver/destination-locations")
+    suspend fun getDriverPackagesLocations(
+        @Query("latStart") lat: Double?,
+        @Query("longStart") lng: Double?
+    ): Response<GetDriverPackagesLocationsResponse?>?
 }

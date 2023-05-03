@@ -198,4 +198,8 @@
     <string name="verify">Verify</string>
     <string name="error_insert_verification_code">Please insert verification code</string>
     <string name="error_verification_code_must_be_four_digits">Verification code must consist of 4 digits</string>
+    <string name="show_driver_packages_locations">Optimized Route</string>
+    <string name="app_needs_location_permission">The app needs location permission for tracking</string>
+    <string name="warning_some_villages_are_not_on_map">Caution! Some destinations may not appear on the map</string>
+    <string name="text_number_of_locations">Number of destinations: %1$d</string>
 </resources>

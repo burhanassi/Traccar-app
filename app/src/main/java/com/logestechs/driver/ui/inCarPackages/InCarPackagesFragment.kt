@@ -1,5 +1,6 @@
 package com.logestechs.driver.ui.inCarPackages
 
+import android.Manifest
 import android.content.ClipData
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -15,26 +16,61 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
-import com.logestechs.driver.api.requests.*
+import com.logestechs.driver.api.requests.AddNoteRequestBody
+import com.logestechs.driver.api.requests.ChangePackageTypeRequestBody
+import com.logestechs.driver.api.requests.CodChangeRequestBody
+import com.logestechs.driver.api.requests.DeleteImageRequestBody
+import com.logestechs.driver.api.requests.FailDeliveryRequestBody
+import com.logestechs.driver.api.requests.PostponePackageRequestBody
+import com.logestechs.driver.api.requests.ReturnPackageRequestBody
 import com.logestechs.driver.api.responses.GetInCarPackagesGroupedResponse
 import com.logestechs.driver.data.model.GroupedPackages
+import com.logestechs.driver.data.model.LatLng
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.FragmentInCarPackagesBinding
+import com.logestechs.driver.ui.googleMapActivity.GoogleMapActivity
 import com.logestechs.driver.ui.packageDeliveryScreens.packageDelivery.PackageDeliveryActivity
 import com.logestechs.driver.ui.singleScanBarcodeScanner.SingleScanBarcodeScanner
-import com.logestechs.driver.utils.*
+import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.ConfirmationDialogAction
+import com.logestechs.driver.utils.DeliveryAttemptType
+import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.InCarPackageStatus
+import com.logestechs.driver.utils.InCarPackagesViewMode
+import com.logestechs.driver.utils.IntentExtrasKeys
+import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.LogesTechsApp
+import com.logestechs.driver.utils.LogesTechsFragment
+import com.logestechs.driver.utils.PackageType
+import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.InCarPackageCellAdapter
 import com.logestechs.driver.utils.adapters.InCarPackageGroupedCellAdapter
 import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
-import com.logestechs.driver.utils.dialogs.*
-import com.logestechs.driver.utils.interfaces.*
+import com.logestechs.driver.utils.dialogs.AddPackageNoteDialog
+import com.logestechs.driver.utils.dialogs.InCarStatusFilterDialog
+import com.logestechs.driver.utils.dialogs.InCarViewModeDialog
+import com.logestechs.driver.utils.dialogs.PackageTypeFilterDialog
+import com.logestechs.driver.utils.dialogs.ReturnPackageDialog
+import com.logestechs.driver.utils.dialogs.SearchPackagesDialog
+import com.logestechs.driver.utils.interfaces.AddPackageNoteDialogListener
+import com.logestechs.driver.utils.interfaces.ConfirmationDialogActionListener
+import com.logestechs.driver.utils.interfaces.InCarPackagesCardListener
+import com.logestechs.driver.utils.interfaces.InCarStatusFilterDialogListener
+import com.logestechs.driver.utils.interfaces.InCarViewModeDialogListener
+import com.logestechs.driver.utils.interfaces.PackageTypeFilterDialogListener
+import com.logestechs.driver.utils.interfaces.ReturnPackageDialogListener
+import com.logestechs.driver.utils.interfaces.SearchPackagesDialogListener
+import com.logestechs.driver.utils.interfaces.ViewPagerCountValuesDelegate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -49,7 +85,8 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 
 class InCarPackagesFragment(
@@ -81,6 +118,7 @@ class InCarPackagesFragment(
 
     var loadedImagesList: java.util.ArrayList<LoadedImage> = java.util.ArrayList()
     private var isCameraAction = false
+    private var fusedLocationProviderClient: FusedLocationProviderClient? = null
 
     private var selectedPackageType: PackageType = PackageType.ALL
 
@@ -223,6 +261,10 @@ class InCarPackagesFragment(
                         )
                     }
                 }
+
+                R.id.action_driver_packages_locations -> {
+                    getMyLocation()
+                }
             }
             true
         }
@@ -264,6 +306,38 @@ class InCarPackagesFragment(
         }
     }
 
+
+    private fun getMyLocation() {
+        showWaitDialog()
+        val permissionLocation = ContextCompat.checkSelfPermission(
+            super.requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+        if (permissionLocation == PackageManager.PERMISSION_GRANTED) {
+            if (fusedLocationProviderClient == null) {
+                fusedLocationProviderClient =
+                    LocationServices.getFusedLocationProviderClient(
+                        super.requireContext()
+                    )
+            }
+
+
+            fusedLocationProviderClient?.lastLocation?.addOnSuccessListener { location ->
+                if (location != null) {
+                    val latLng = LatLng(location.latitude, location.longitude)
+                    SharedPreferenceWrapper.saveLastSyncLocation(latLng)
+                    callGetDriverPackagesLocations(latLng)
+                }
+            }?.addOnFailureListener {
+                Toast.makeText(
+                    context,
+                    getString(R.string.app_needs_location_permission),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
     //APIs
     private fun callGetInCarPackagesGrouped() {
         showWaitDialog()
@@ -279,6 +353,7 @@ class InCarPackagesFragment(
                                 searchWord
                             )
                         }
+
                         InCarPackagesViewMode.BY_CUSTOMER -> {
                             ApiAdapter.apiClient.getInCarPackagesByCustomer(
                                 status = selectedStatus.value,
@@ -286,6 +361,7 @@ class InCarPackagesFragment(
                                 searchWord
                             )
                         }
+
                         InCarPackagesViewMode.BY_RECEIVER -> {
                             ApiAdapter.apiClient.getInCarPackagesByReceiver(
                                 status = selectedStatus.value,
@@ -293,6 +369,7 @@ class InCarPackagesFragment(
                                 searchWord
                             )
                         }
+
                         else -> {
                             ApiAdapter.apiClient.getInCarPackagesByVillage(
                                 status = selectedStatus.value,
@@ -857,6 +934,67 @@ class InCarPackagesFragment(
         }
     }
 
+    private fun callGetDriverPackagesLocations(latLng: LatLng) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.getDriverPackagesLocations(
+                        latLng.lat,
+                        latLng.lng
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            val mIntent = Intent(context, GoogleMapActivity::class.java)
+                            mIntent.putExtra(
+                                IntentExtrasKeys.DRIVER_PACKAGES_LOCATIONS.name,
+                                response.body()
+                            )
+                            startActivity(mIntent)
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
+
     private fun callDeliveryAttempt(packageId: Long?, deliveryAttemptType: String?) {
         GlobalScope.launch(Dispatchers.IO) {
             try {
@@ -1003,6 +1141,7 @@ class InCarPackagesFragment(
                     SearchPackagesDialog(requireContext(), this, searchWord).showDialog()
                 }
             }
+
             else -> {}
         }
     }

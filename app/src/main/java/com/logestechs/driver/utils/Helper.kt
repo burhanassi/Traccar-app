@@ -5,9 +5,17 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.*
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.database.Cursor
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.ImageDecoder
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.Typeface
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.hardware.Camera
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -27,6 +35,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.vision.CameraSource
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.logestechs.driver.BuildConfig
@@ -1156,6 +1165,99 @@ class Helper {
                 cursor?.close()
             }
             return null
+        }
+
+
+        fun writeTextOnDrawable(
+            context: Context?,
+            resources: Resources,
+            drawableId: Int,
+            text: String
+        ): Bitmap {
+            val bm = drawableToBitmap(
+                ContextCompat.getDrawable(
+                    context!!,
+                    drawableId
+                )!!
+            )?.copy(Bitmap.Config.ARGB_8888, true)
+            val tf = Typeface.create("Helvetica", Typeface.BOLD)
+            val paint = Paint()
+            paint.style = Paint.Style.FILL
+            paint.color = Color.BLACK
+            paint.typeface = tf
+            paint.textAlign = Paint.Align.CENTER
+            paint.textSize = convertToPixels(context, 14).toFloat()
+            val textRect = Rect()
+            paint.getTextBounds(text, 0, text.length, textRect)
+            val canvas = Canvas(bm!!)
+
+            //If the text is bigger than the canvas , reduce the font size
+            if (textRect.width() >= canvas.width - 4) //the padding on either sides is considered as 4, so as to appropriately fit in the text
+                paint.textSize =
+                    convertToPixels(
+                        context,
+                        7
+                    ).toFloat() //Scaling needs to be used for different dpi's
+
+            //Calculate the positions
+            val xPos = canvas.width / 2 - 2 //-2 is for regulating the x position offset
+
+            //"- ((paint.descent() + paint.ascent()) / 2)" is the distance from the baseline to the center.
+            val yPos = (canvas.height / 2 - (paint.descent() + paint.ascent()) / 2).toInt() - 12
+            canvas.drawText(text, xPos.toFloat(), yPos.toFloat(), paint)
+            return bm
+        }
+
+        private fun convertToPixels(context: Context?, nDP: Int): Int {
+            val conversionScale = context!!.resources.displayMetrics.density
+            return (nDP * conversionScale + 0.5f).toInt()
+        }
+
+        fun drawableToBitmap(drawable: Drawable): Bitmap? {
+            if (drawable is BitmapDrawable) {
+                return drawable.bitmap
+            }
+            val bitmap = Bitmap.createBitmap(
+                drawable.intrinsicWidth,
+                drawable.intrinsicHeight,
+                Bitmap.Config.ARGB_8888
+            )
+            val canvas = Canvas(bitmap)
+            drawable.setBounds(0, 0, canvas.width, canvas.height)
+            drawable.draw(canvas)
+            return bitmap
+        }
+
+        fun decodeMapGeometry(encodedPath: String): List<LatLng> {
+            val len = encodedPath.length
+
+            // For speed we preallocate to an upper bound on the final length, then
+            // truncate the array before returning.
+            val path: MutableList<LatLng> = ArrayList()
+            var index = 0
+            var lat = 0
+            var lng = 0
+            while (index < len) {
+                var result = 1
+                var shift = 0
+                var b: Int
+                do {
+                    b = encodedPath[index++].code - 63 - 1
+                    result += b shl shift
+                    shift += 5
+                } while (b >= 0x1f)
+                lat += if (result and 1 != 0) (result shr 1).inv() else result shr 1
+                result = 1
+                shift = 0
+                do {
+                    b = encodedPath[index++].code - 63 - 1
+                    result += b shl shift
+                    shift += 5
+                } while (b >= 0x1f)
+                lng += if (result and 1 != 0) (result shr 1).inv() else result shr 1
+                path.add(LatLng(lat * 1e-5, lng * 1e-5))
+            }
+            return path
         }
     }
 }
