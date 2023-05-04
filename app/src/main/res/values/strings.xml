@@ -202,4 +202,5 @@
     <string name="app_needs_location_permission">The app needs location permission for tracking</string>
     <string name="warning_some_villages_are_not_on_map">Caution! Some destinations may not appear on the map</string>
     <string name="text_number_of_locations">Number of destinations: %1$d</string>
+    <string name="error_no_destinations_on_map">There are no destinations on the map</string>
 </resources>

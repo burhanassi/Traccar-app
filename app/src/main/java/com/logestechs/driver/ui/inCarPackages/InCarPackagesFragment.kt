@@ -108,8 +108,10 @@ class InCarPackagesFragment(
     private var activityDelegate: ViewPagerCountValuesDelegate? = null
     private var searchWord: String? = null
 
-    private val messageTemplates =
-        SharedPreferenceWrapper.getDriverCompanySettings()?.messageTemplates
+    private val companyConfigurations =
+        SharedPreferenceWrapper.getDriverCompanySettings()
+
+    private val messageTemplates = companyConfigurations?.messageTemplates
     var selectedViewMode: InCarPackagesViewMode = InCarPackagesViewMode.BY_VILLAGE
 
     var addPackageNoteDialog: AddPackageNoteDialog? = null
@@ -223,6 +225,7 @@ class InCarPackagesFragment(
                         selectedPackageType
                     ).showDialog()
                 }
+
                 R.id.action_send_sms_to_all -> {
                     val numbers: ArrayList<String?> = ArrayList()
                     if (binding.rvPackages.adapter is InCarPackageGroupedCellAdapter) {
@@ -268,6 +271,9 @@ class InCarPackagesFragment(
             }
             true
         }
+
+        popup.menu.findItem(R.id.action_driver_packages_locations).isVisible =
+            companyConfigurations?.driverCompanyConfigurations?.hasRouteOptimization == true
         popup.show()
     }
 
@@ -948,12 +954,19 @@ class InCarPackagesFragment(
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            val mIntent = Intent(context, GoogleMapActivity::class.java)
-                            mIntent.putExtra(
-                                IntentExtrasKeys.DRIVER_PACKAGES_LOCATIONS.name,
-                                response.body()
-                            )
-                            startActivity(mIntent)
+                            if ((response.body()?.items?.size ?: 0) > 0) {
+                                val mIntent = Intent(context, GoogleMapActivity::class.java)
+                                mIntent.putExtra(
+                                    IntentExtrasKeys.DRIVER_PACKAGES_LOCATIONS.name,
+                                    response.body()
+                                )
+                                startActivity(mIntent)
+                            } else {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_no_destinations_on_map)
+                                )
+                            }
                         }
                     } else {
                         try {
