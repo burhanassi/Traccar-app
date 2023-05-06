@@ -24,6 +24,14 @@ fastlane_](https://docs.fastlane.tools/#installing-fastlane)
 
 Build Development
 
+### android buildBackendDev
+
+```sh
+[bundle exec] fastlane android buildBackendDev
+```
+
+Build Development
+
 ### android buildReleaseBump
 
 ```sh

@@ -59,6 +59,49 @@ platform :android do
      )
    end
 
+   desc "Build Backend Development"
+    lane :buildBackendDev do |options|
+       gradle(task: 'clean')
+
+       # handle version code
+       latest_release = firebase_app_distribution_get_latest_release(
+         app: '1:122047361434:android:507d82468391cb55024a23'
+       )
+
+      increment_version_code(
+        gradle_file_path: "app/build.gradle",
+        version_code: latest_release[:buildVersion].to_i + 1
+      )
+
+      # handle version name
+      previous_version_name = google_play_track_release_names(
+        track: "production",
+        package_name: ENV["PACKAGE_NAME"],
+        json_key_data: ENV["GOOGLE_PLAY_API_KEY"]
+      )[0]
+
+      android_set_version_name(version_name: previous_version_name.match(/\d+.\d+.\d+/).to_s)
+
+      increment_version_name(
+        gradle_file_path: "app/build.gradle",
+        bump_type: "patch"
+      )
+
+      gradle(
+        task: 'assemble',
+        build_type: 'Debug',
+        flavor: 'backend',
+        print_command: false
+      )
+
+      firebase_app_distribution(
+          app: '1:122047361434:android:507d82468391cb55024a23',
+          firebase_cli_token: ENV["FIREBASE_CLI_TOKEN"],
+          groups: 'backend-developers',
+          release_notes: ENV["DEV_RELEASE_NOTES"]
+      )
+    end
+
      desc "Build Release Bump"
      lane :buildReleaseBump  do |options|
        gradle(task: 'clean')
@@ -103,6 +146,7 @@ platform :android do
          skip_upload_screenshots: true,
          skip_upload_aab: false,
        )
+       buildBackendDev()
      end
 
      desc "Build Release Patch"
@@ -154,6 +198,7 @@ platform :android do
          skip_upload_screenshots: true,
          skip_upload_aab: false,
        )
+       buildBackendDev()
      end
 
      desc "Build Release Minor"
@@ -205,6 +250,7 @@ platform :android do
          skip_upload_screenshots: true,
          skip_upload_aab: false,
        )
+       buildBackendDev()
      end
 
      desc "Build Release Major"
@@ -256,5 +302,6 @@ platform :android do
          skip_upload_screenshots: true,
          skip_upload_aab: false,
        )
+       buildBackendDev()
      end
 end
