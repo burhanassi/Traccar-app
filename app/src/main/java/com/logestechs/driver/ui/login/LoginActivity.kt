@@ -14,6 +14,7 @@ import com.logestechs.driver.data.model.Device
 import com.logestechs.driver.databinding.ActivityLoginBinding
 import com.logestechs.driver.ui.dashboard.DriverDashboardActivity
 import com.logestechs.driver.ui.dashboard.FulfilmentSorterDashboardActivity
+import com.logestechs.driver.ui.serverSelectionActivity.ServerSelectionActivity
 import com.logestechs.driver.ui.signUp.SignUpActivity
 import com.logestechs.driver.utils.*
 import com.yariksoffice.lingver.Lingver
@@ -36,6 +37,7 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
         binding.buttonLogin.setOnClickListener(this)
         binding.imageViewLanguage.setOnClickListener(this)
         binding.textCreateNewAccount.setOnClickListener(this)
+        binding.buttonSwitchServer.setOnClickListener(this)
     }
 
     private fun initUi() {
@@ -45,12 +47,18 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
             binding.etPassword.editText.setText("test123")
         }
 
-        if (Helper.isLogesTechsDriver()) {
+        if (Helper.isLogesTechsDriver() || Helper.isBackendDriver()) {
             binding.logestechsLogoContainer.visibility = View.VISIBLE
             binding.etCompanyName.visibility = View.VISIBLE
         } else {
             binding.logestechsLogoContainer.visibility = View.GONE
             binding.etCompanyName.visibility = View.GONE
+        }
+
+        if (Helper.isBackendDriver()) {
+            binding.buttonSwitchServer.visibility = View.VISIBLE
+        } else {
+            binding.buttonSwitchServer.visibility = View.GONE
         }
     }
 
@@ -105,6 +113,12 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
                     )
                     binding.etCompanyName.makeInvalid()
                 }
+            }
+
+            R.id.button_switch_server -> {
+                val mIntent = Intent(this, ServerSelectionActivity::class.java)
+                startActivity(mIntent)
+                finish()
             }
         }
     }
@@ -189,7 +203,7 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
             device = Device(uuid, "ANDROID", fcmToken)
         )
 
-        if (Helper.isLogesTechsDriver()) {
+        if (Helper.isLogesTechsDriver() || Helper.isBackendDriver()) {
             loginRequestBody.businessName = binding.etCompanyName.getText()
         } else {
             loginRequestBody.companyId = BuildConfig.company_id.toLong()

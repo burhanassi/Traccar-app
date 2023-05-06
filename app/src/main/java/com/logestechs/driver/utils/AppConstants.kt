@@ -11,7 +11,6 @@ class AppConstants {
         const val PACKAGE_NAME = BuildConfig.APPLICATION_ID
 
         const val BASE_URL = BuildConfig.base_url
-        const val PATH = BuildConfig.path
         const val BROADCAST_CREDENTIAL = "Broadcast_Credential"
 
 

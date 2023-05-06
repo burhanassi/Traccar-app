@@ -150,8 +150,17 @@ class SplashActivity : LogesTechsActivity() {
                         }
                     }
 
+                } else {
+                    if (Helper.isBackendDriver()) {
+                        SharedPreferenceWrapper.clearData()
+                        SharedPreferenceWrapper.saveSelectedServerIp("")
+                    }
                 }
             } catch (e: java.lang.Exception) {
+                if (Helper.isBackendDriver()) {
+                    SharedPreferenceWrapper.clearData()
+                    SharedPreferenceWrapper.saveSelectedServerIp("")
+                }
                 Helper.logException(e, Throwable().stackTraceToString())
             }
         }

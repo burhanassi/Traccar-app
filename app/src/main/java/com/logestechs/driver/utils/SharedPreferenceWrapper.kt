@@ -113,6 +113,15 @@ class SharedPreferenceWrapper {
         fun getIsWhatsappBusiness(): Boolean {
             return prefs.pull(SharedPrefsKeys.IS_WHATSAPP_BUSINESS.value, false)
         }
+
+        //Driver Company Settings
+        fun saveSelectedServerIp(selectedServerIp: String) {
+            prefs.push(SharedPrefsKeys.SELECTED_SERVER_IP.value, selectedServerIp)
+        }
+
+        fun getSelectedServerIp(): String {
+            return prefs.pull(SharedPrefsKeys.SELECTED_SERVER_IP.value, "")
+        }
     }
 }
 
@@ -123,7 +132,6 @@ private enum class SharedPrefsKeys(val value: String) {
     DRIVER_COMPANY_SETTINGS_KEY("driver_company_settings_key"),
     LAST_SYNC_LOCATION_KEY("last_sync_location_key"),
     WORK_LOG_ID_KEY("work_log_key_id"),
-    IS_WHATSAPP_BUSINESS("is_whatsapp_business")
-
-
+    IS_WHATSAPP_BUSINESS("is_whatsapp_business"),
+    SELECTED_SERVER_IP("selected_server_ip")
 }

@@ -208,6 +208,14 @@ class Helper {
             return BuildConfig.company_id.toLong() == 0L
         }
 
+        fun isBackendDriver(): Boolean {
+            return BuildConfig.company_id.toLong() == -1L
+        }
+
+        fun getCompanyId(): Long {
+            return BuildConfig.company_id.toLong()
+        }
+
         fun getCameraFromCameraSource(cameraSource: CameraSource?): Camera? {
             val declaredFields = CameraSource::class.java.declaredFields
 

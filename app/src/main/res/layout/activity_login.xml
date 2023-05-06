@@ -42,6 +42,14 @@
                             android:src="@drawable/ic_change_language"
                             android:visibility="visible"
                             app:tint="@color/black" />
+
+                        <ImageView
+                            android:id="@+id/button_switch_server"
+                            android:layout_marginTop="8dp"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:src="@drawable/ic_switch_server"
+                            android:visibility="gone" />
                     </LinearLayout>
 
                     <ImageView
@@ -83,7 +91,7 @@
                     android:textSize="16sp" />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="35dp"
                     android:orientation="vertical">

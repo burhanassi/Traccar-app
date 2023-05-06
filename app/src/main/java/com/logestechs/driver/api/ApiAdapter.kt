@@ -2,6 +2,7 @@ package com.logestechs.driver.api
 
 import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.yariksoffice.lingver.Lingver
 import okhttp3.Interceptor
@@ -28,8 +29,22 @@ object ApiAdapter {
         return@Interceptor chain.proceed(builder.build())
     }
 
-    val apiClient: LogesTechsDriverApi = Retrofit.Builder()
-        .baseUrl(AppConstants.BASE_URL)
+    private val baseUrl: String
+        get() {
+            return if (Helper.isBackendDriver()) {
+                val selectedServerIp = SharedPreferenceWrapper.getSelectedServerIp()
+                if (selectedServerIp.isEmpty()) {
+                    AppConstants.BASE_URL
+                } else {
+                    "http://${selectedServerIp}/"
+                }
+            } else {
+                AppConstants.BASE_URL
+            }
+        }
+
+    var apiClient: LogesTechsDriverApi = Retrofit.Builder()
+        .baseUrl(baseUrl)
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
@@ -55,4 +70,14 @@ object ApiAdapter {
                     .build()
             }
         }
+
+    fun recreateApiClient() {
+        apiClient = Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(LogesTechsDriverApi::class.java)
+
+    }
 }
