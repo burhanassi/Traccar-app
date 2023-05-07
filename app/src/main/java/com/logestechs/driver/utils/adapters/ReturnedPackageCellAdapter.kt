@@ -2,6 +2,7 @@ package com.logestechs.driver.utils.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.data.model.Package
@@ -63,6 +64,13 @@ class ReturnedPackageCellAdapter(
             binding.itemPackageBarcode.textItem.text = pkg?.barcode
             binding.itemSenderName.textItem.text = pkg?.getFullReceiverName()
             binding.itemSenderAddress.textItem.text = pkg?.destinationAddress?.toStringAddress()
+
+            if (pkg?.invoiceNumber?.isNotEmpty() == true) {
+                binding.itemInvoiceNumber.root.visibility = View.VISIBLE
+                binding.itemInvoiceNumber.textItem.text = pkg.invoiceNumber
+            } else {
+                binding.itemInvoiceNumber.root.visibility = View.GONE
+            }
 
             binding.buttonDeliverToSender.setThrottleClickListener({
                 mAdapter.listener?.deliverPackage(mAdapter.parentIndex, adapterPosition)

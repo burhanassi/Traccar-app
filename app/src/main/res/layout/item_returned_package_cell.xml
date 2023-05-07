@@ -45,6 +45,14 @@
                         bind:itemSrc="@{@drawable/ic_package_gray}" />
 
                     <include
+                        android:id="@+id/item_invoice_number"
+                        layout="@layout/item_card_row"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        bind:itemSrc="@{@drawable/ic_invoice_gray}" />
+
+                    <include
                         android:id="@+id/item_sender_name"
                         layout="@layout/item_card_row"
                         android:layout_width="wrap_content"
@@ -59,6 +67,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         bind:itemSrc="@{@drawable/ic_location_pin_gray}" />
+
                 </LinearLayout>
             </LinearLayout>
 
