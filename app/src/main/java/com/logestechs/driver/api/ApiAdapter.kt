@@ -50,23 +50,13 @@ object ApiAdapter {
         .build()
         .create(LogesTechsDriverApi::class.java)
 
-
-    private val timeOut: Long
-        get() {
-            return if (Helper.isBackendDriver()) {
-                30L
-            } else {
-                200L
-            }
-        }
-
     private val okHttpClient: OkHttpClient
         get() {
             if (BuildConfig.DEBUG) {
                 return OkHttpClient.Builder()
-                    .connectTimeout(timeOut, TimeUnit.SECONDS)
-                    .readTimeout(timeOut, TimeUnit.SECONDS)
-                    .writeTimeout(timeOut, TimeUnit.SECONDS)
+                    .connectTimeout(200, TimeUnit.SECONDS)
+                    .readTimeout(200, TimeUnit.SECONDS)
+                    .writeTimeout(200, TimeUnit.SECONDS)
                     .addInterceptor(headerInterceptor)
                     .addInterceptor(loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
                     .build()
