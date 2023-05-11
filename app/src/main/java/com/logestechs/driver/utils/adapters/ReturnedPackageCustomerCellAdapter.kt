@@ -70,6 +70,14 @@ class ReturnedPackageCustomerCellAdapter(
         fun bind(customer: Customer?) {
             binding.itemSenderName.textItem.text = customer?.customerName
             binding.itemSenderAddress.textItem.text = customer?.city
+
+            if (customer?.massReturnedPackagesReportBarcode != null && customer.massReturnedPackagesReportBarcode.isNotEmpty()) {
+                binding.itemBarcode.root.visibility = View.VISIBLE
+                binding.itemBarcode.textItem.text = customer.massReturnedPackagesReportBarcode
+            } else {
+                binding.itemBarcode.root.visibility = View.GONE
+            }
+
             binding.textCount.text = customer?.packagesNumber.toString()
 
             handleCardExpansion(adapterPosition)

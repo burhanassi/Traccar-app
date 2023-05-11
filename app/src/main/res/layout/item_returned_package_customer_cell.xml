@@ -43,6 +43,15 @@
                         bind:itemSrc="@{@drawable/ic_sender_gray}" />
 
                     <include
+                        android:id="@+id/item_barcode"
+                        layout="@layout/item_card_row"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:visibility="gone"
+                        bind:itemSrc="@{@drawable/ic_package_gray}" />
+
+                    <include
                         android:id="@+id/item_sender_address"
                         layout="@layout/item_card_row"
                         android:layout_width="wrap_content"

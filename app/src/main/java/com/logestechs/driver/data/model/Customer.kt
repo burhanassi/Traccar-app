@@ -30,6 +30,7 @@ data class Customer(
     val customerName: String? = null,
     val packagesNumber: Int? = null,
     val isAlternateWhatsApp: Boolean? = null,
+    val massReturnedPackagesReportBarcode: String? = null,
     @Transient
     var isExpanded: Boolean = false
 ) : Parcelable {
