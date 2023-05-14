@@ -113,7 +113,8 @@ interface LogesTechsDriverApi {
 
     @PUT("api/driver/customers/{customerId}/returned-packages/deliver-to-sender")
     suspend fun deliverCustomerReturnedPackagesToSender(
-        @Path("customerId") customerId: Long?
+        @Path("customerId") customerId: Long?,
+        @Body body: DeliverMassReturnedPackagesToSenderRequestBody? = null
     ): Response<ResponseBody>?
 
     @PUT("api/admin/packages/deliver-to-sender")
@@ -164,6 +165,14 @@ interface LogesTechsDriverApi {
     ): Response<UploadImageResponse?>?
 
     @Multipart
+    @POST("api/driver/mass-returned-packages/signature/upload")
+    suspend fun uploadMassReturnedPackagesSignature(
+        @Query("customerId") customerId: Long,
+        @Query("barcode") barcode: String?,
+        @Part upload_form: MultipartBody.Part?
+    ): Response<UploadImageResponse?>?
+
+    @Multipart
     @POST("api/driver/mass-packages/{massPackageId}/signature/upload")
     suspend fun uploadMassReportSignature(
         @Path("massPackageId") massPackageId: Long,
@@ -175,6 +184,14 @@ interface LogesTechsDriverApi {
     suspend fun uploadPodImage(
         @Path("packageId") packageId: Long,
         @Query("isMultiAttachment") isMultiAttachment: Boolean? = true,
+        @Part upload_form: MultipartBody.Part?
+    ): Response<UploadImageResponse?>?
+
+    @Multipart
+    @POST("api/driver/mass-returned-packages/delivery-proof/upload-multipart")
+    suspend fun uploadMassReturnedPackagesPod(
+        @Query("customerId") customerId: Long,
+        @Query("barcode") barcode: String?,
         @Part upload_form: MultipartBody.Part?
     ): Response<UploadImageResponse?>?
 

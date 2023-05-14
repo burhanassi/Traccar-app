@@ -223,64 +223,6 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         }
     }
 
-    private fun callDeliverCustomerReturnedPackagesToSender(customerId: Long?) {
-        showWaitDialog()
-        if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response = ApiAdapter.apiClient.deliverCustomerReturnedPackagesToSender(
-                        customerId
-                    )
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        withContext(Dispatchers.Main) {
-                            Helper.showSuccessMessage(
-                                super.getContext(),
-                                getString(R.string.success_operation_completed)
-                            )
-                            callGetCustomersWithReturnedPackages()
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            hideWaitDialog()
-            Helper.showErrorMessage(
-                super.getContext(), getString(R.string.error_check_internet_connection)
-            )
-        }
-    }
-
     override fun deliverPackage(parentIndex: Int, childIndex: Int) {
         val pkg =
             (binding.rvCustomers.adapter as ReturnedPackageCustomerCellAdapter).customersList[parentIndex]?.packages?.get(
@@ -292,7 +234,11 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
     }
 
     override fun deliverCustomerPackages(parentIndex: Int) {
-        callDeliverCustomerReturnedPackagesToSender((binding.rvCustomers.adapter as ReturnedPackageCustomerCellAdapter).customersList[parentIndex]?.customerId)
+        val customer =
+            (binding.rvCustomers.adapter as ReturnedPackageCustomerCellAdapter).customersList[parentIndex]
+        val mIntent = Intent(this, ReturnedPackageDeliveryActivity::class.java)
+        mIntent.putExtra(IntentExtrasKeys.CUSTOMER_WITH_PACKAGES_TO_RETURN.name, customer)
+        startActivityForResult(mIntent, 1)
     }
 
     override fun getCustomerPackages(parentIndex: Int) {

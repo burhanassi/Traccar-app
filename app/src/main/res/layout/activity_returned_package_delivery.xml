@@ -49,6 +49,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
                             android:layout_marginEnd="8dp"
+                            android:layout_marginTop="8dp"
                             android:layout_weight="1"
                             android:orientation="vertical">
 
@@ -57,9 +58,17 @@
                                 layout="@layout/item_card_row"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
                                 app:isCopyVisible="@{true}"
                                 app:itemSrc="@{@drawable/ic_package_gray}" />
+
+                            <include
+                                android:id="@+id/item_sender_name"
+                                layout="@layout/item_card_row"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:visibility="gone"
+                                app:itemSrc="@{@drawable/ic_sender_gray }" />
 
                             <include
                                 android:id="@+id/item_receiver_name"
@@ -89,6 +98,7 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/container_cod"
                             android:layout_width="100dp"
                             android:layout_height="wrap_content"
                             android:background="@drawable/background_card_semi_circle"
