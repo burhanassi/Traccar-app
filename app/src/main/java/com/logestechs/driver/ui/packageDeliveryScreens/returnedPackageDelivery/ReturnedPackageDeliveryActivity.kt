@@ -559,7 +559,7 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
                     )
 
                     val response = ApiAdapter.apiClient.uploadMassReturnedPackagesSignature(
-                        customer?.id ?: -1,
+                        customer?.customerId ?: -1,
                         customer?.massReturnedPackagesReportBarcode,
                         body
                     )
@@ -731,7 +731,7 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
                     )
 
                     val response = ApiAdapter.apiClient.uploadMassReturnedPackagesPod(
-                        customer?.id ?: -1,
+                        customer?.customerId ?: -1,
                         customer?.massReturnedPackagesReportBarcode,
                         body
                     )
@@ -907,7 +907,7 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response = ApiAdapter.apiClient.deliverCustomerReturnedPackagesToSender(
-                        customer?.id ?: -1,
+                        customer?.customerId ?: -1,
                         body
                     )
                     withContext(Dispatchers.Main) {
