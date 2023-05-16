@@ -106,7 +106,7 @@ platform :android do
      lane :buildReleaseBump  do |options|
        gradle(task: 'clean')
        previous_build_number = google_play_track_version_codes(
-         track: "internal",
+         track: "production",
          package_name: ENV["PACKAGE_NAME"],
          json_key_data: ENV["GOOGLE_PLAY_API_KEY"]
        )[0]
@@ -136,7 +136,7 @@ platform :android do
        )
 
        upload_to_play_store(
-         track: 'internal',
+         track: 'production',
          package_name: ENV["PACKAGE_NAME"],
          json_key_data: ENV["GOOGLE_PLAY_API_KEY"],
          aab: 'app/build/outputs/bundle/logesTechsRelease/app-logesTechs-release.aab',
@@ -153,7 +153,7 @@ platform :android do
      lane :buildReleasePatch  do |options|
        gradle(task: 'clean')
        previous_build_number = google_play_track_version_codes(
-         track: "internal",
+         track: "production",
          package_name: ENV["PACKAGE_NAME"],
          json_key_data: ENV["GOOGLE_PLAY_API_KEY"]
        )[0]
@@ -188,7 +188,7 @@ platform :android do
        )
 
        upload_to_play_store(
-         track: 'internal',
+         track: 'production',
          package_name: ENV["PACKAGE_NAME"],
          json_key_data: ENV["GOOGLE_PLAY_API_KEY"],
          aab: 'app/build/outputs/bundle/logesTechsRelease/app-logesTechs-release.aab',
@@ -205,7 +205,7 @@ platform :android do
      lane :buildReleaseMinor  do |options|
        gradle(task: 'clean')
        previous_build_number = google_play_track_version_codes(
-         track: "internal",
+         track: "production",
          package_name: ENV["PACKAGE_NAME"],
          json_key_data: ENV["GOOGLE_PLAY_API_KEY"]
        )[0]
@@ -240,7 +240,7 @@ platform :android do
        )
 
        upload_to_play_store(
-         track: 'internal',
+         track: 'production',
          package_name: ENV["PACKAGE_NAME"],
          json_key_data: ENV["GOOGLE_PLAY_API_KEY"],
          aab: 'app/build/outputs/bundle/logesTechsRelease/app-logesTechs-release.aab',
@@ -257,7 +257,7 @@ platform :android do
      lane :buildReleaseMajor  do |options|
        gradle(task: 'clean')
        previous_build_number = google_play_track_version_codes(
-         track: "internal",
+         track: "production",
          package_name: ENV["PACKAGE_NAME"],
          json_key_data: ENV["GOOGLE_PLAY_API_KEY"]
        )[0]
@@ -292,7 +292,7 @@ platform :android do
        )
 
        upload_to_play_store(
-         track: 'internal',
+         track: 'production',
          package_name: ENV["PACKAGE_NAME"],
          json_key_data: ENV["GOOGLE_PLAY_API_KEY"],
          aab: 'app/build/outputs/bundle/logesTechsRelease/app-logesTechs-release.aab',
