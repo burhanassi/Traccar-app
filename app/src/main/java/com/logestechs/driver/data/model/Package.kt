@@ -97,7 +97,8 @@ data class Package(
     var scannedSubPackagesCount: Int = 0,
     var isShippingPlan: Boolean? = null,
     var subBundles: List<Package?>? = null,
-    var verificationStatus: String? = null
+    var verificationStatus: String? = null,
+    var originalBusinessSenderName: String? = null
 
 ) : Parcelable {
     fun getFullSenderName(): String {

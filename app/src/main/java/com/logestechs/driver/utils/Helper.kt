@@ -601,7 +601,7 @@ class Helper {
                 val pkg = data
                 recipientName = pkg.receiverFirstName
                 barcode = pkg.barcode
-                businessSenderName = pkg.businessSenderName
+                businessSenderName = pkg.originalBusinessSenderName
                 cod = pkg.cod?.format()
                 if (pkg.expectedDeliveryDate != null) {
                     expectedDeliveryDate = formatServerDate(
