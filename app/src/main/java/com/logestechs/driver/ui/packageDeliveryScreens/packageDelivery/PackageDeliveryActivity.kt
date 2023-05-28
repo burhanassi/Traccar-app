@@ -545,7 +545,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     )
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            callDeliverPackage()
+                            callDeliverPackage(response.body()?.fileUrl)
                         }
                     } else {
                         try {
@@ -733,7 +733,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
     }
 
-    private fun callDeliverPackage() {
+    private fun callDeliverPackage(signatureUrl: String?) {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
@@ -752,7 +752,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                             0.0,
                             0.0,
                             0.0,
-                            null,
+                            signatureUrl,
                             getPodImagesUrls(),
                             null,
                             null,
@@ -981,7 +981,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
     private fun handlePackageDelivery() {
         if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true) {
-            callDeliverPackage()
+            callDeliverPackage(null)
         } else {
             if (Helper.isStoragePermissionNeeded(this)) {
                 Helper.showAndRequestStorageDialog(this)
