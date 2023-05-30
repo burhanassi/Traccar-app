@@ -26,6 +26,7 @@
     <string name="dashboard_mass_cod_reports">تحصيل الزبائن</string>
     <string name="dashboard_sort_bins_into_locations">ترتيب السلات\nفي المواقع</string>
     <string name="dashboard_sort_items_into_bins">ترتيب العناصر\nفي السلات</string>
+    <string name="dashboard_sort_items">ترتيب\nالعناصر</string>
     <string name="error_insert_valid_password">يجب أن تتألف كلمة المرور من 6 احرف وارقام على الاقل</string>
     <string name="error_insert_valid_email">يرجى ادخال عنوان بريد الكتروني او اسم مستخدم من ٦ احرف او اكثر</string>
     <string name="error_fill_all_mandatory_fields">الرجاء تعبئة جميع الحقول المطلوبة</string>

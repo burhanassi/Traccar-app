@@ -113,7 +113,7 @@
                         android:layout_weight="1"
                         app:iconSrc="@{@drawable/ic_sort_items_into_bin}"
                         app:isCountHidden="@{true}"
-                        app:titleText="@{@string/dashboard_sort_items_into_bins}" />
+                        app:titleText="@{@string/dashboard_sort_items}" />
 
                 </LinearLayout>
 
