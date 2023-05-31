@@ -164,12 +164,17 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         }
     }
 
-    private fun callGetCustomerReturnedPackages(customerId: Long?, position: Int) {
+    private fun callGetCustomerReturnedPackages(
+        customerId: Long?,
+        barcode: String?,
+        position: Int
+    ) {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.getCustomerReturnedPackages(customerId)
+                    val response =
+                        ApiAdapter.apiClient.getCustomerReturnedPackages(customerId, barcode)
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
@@ -242,9 +247,13 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
     }
 
     override fun getCustomerPackages(parentIndex: Int) {
-        val customerId =
-            (binding.rvCustomers.adapter as ReturnedPackageCustomerCellAdapter).customersList[parentIndex]?.customerId
-        callGetCustomerReturnedPackages(customerId, parentIndex)
+        val customer =
+            (binding.rvCustomers.adapter as ReturnedPackageCustomerCellAdapter).customersList[parentIndex]
+        callGetCustomerReturnedPackages(
+            customer?.customerId,
+            customer?.massReturnedPackagesReportBarcode,
+            parentIndex
+        )
     }
 
     override fun onClick(v: View?) {
