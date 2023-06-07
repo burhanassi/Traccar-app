@@ -675,6 +675,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                 try {
                     val response = ApiAdapter.apiClient.sortItemIntoLocation(
                         scannedWarehouseLocation?.id,
+                        scannedShippingPlan?.id,
                         BarcodeRequestBody(itemBarcode = barcode)
                     )
                     withContext(Dispatchers.Main) {

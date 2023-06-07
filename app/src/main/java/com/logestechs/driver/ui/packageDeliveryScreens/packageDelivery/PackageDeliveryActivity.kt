@@ -926,7 +926,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
     private fun needsPinVerification(): Boolean {
         if (companyConfigurations != null) {
-            if (isSignatureEntered()) {
+            if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true || isSignatureEntered()) {
                 if ((pkg?.shipmentType == PackageType.REGULAR.toString() || pkg?.cod == 0.0) && companyConfigurations?.isEnableDeliveryVerificationPinCodeForPkgs == true) {
                     return when (pkg?.verificationStatus) {
                         VerificationStatus.NOT_SENT.toString() -> {

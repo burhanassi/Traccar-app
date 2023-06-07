@@ -94,6 +94,7 @@ interface LogesTechsDriverApi {
     @GET("api/admin/customers/{customerId}/returned-packages")
     suspend fun getCustomerReturnedPackages(
         @Path("customerId") customerId: Long?,
+        @Query("barcode") barcode: String?
     ): Response<GetCustomerReturnedPackagesResponse?>?
 
     @GET("api/driver/mass-packages/in-car")
@@ -328,6 +329,7 @@ interface LogesTechsDriverApi {
     @PUT("api/handler/locations/{locationId}/items/sort")
     suspend fun sortItemIntoLocation(
         @Path("locationId") locationId: Long?,
+        @Query("shippingPlanId") shippingPlanId: Long?,
         @Body body: BarcodeRequestBody?
     ): Response<SortItemIntoBinResponse>?
 
