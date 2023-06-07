@@ -11,8 +11,10 @@ plugins {
 android {
     compileSdk 32
     signingConfigs {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file("local.properties").newDataInputStream())
         release {
-            storeFile file('/Users/abdulsalammansour/projects/keys/android customer/logestechs-customer-key.jks')
+            storeFile file(properties.getProperty("storeFilePath", "/Users/abdulsalammansour/projects/keys/android customer/logestechs-customer-key.jks"))
             storePassword 'logestechs@password1!'
             keyPassword 'logestechs@password1!'
             keyAlias 'logestechs-customer-key'
