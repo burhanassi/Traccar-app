@@ -865,7 +865,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
     }
 
-    private fun requestPinCodeSms() {
+    private fun requestPinCodeSms(isFirstPin: Boolean = true) {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
@@ -879,7 +879,9 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             pkg?.verificationStatus = VerificationStatus.SENT.toString()
-                            showDeliveryCodeVerificationDialog()
+                            if (isFirstPin) {
+                                showDeliveryCodeVerificationDialog()
+                            }
                         }
                     } else {
                         try {
@@ -1101,5 +1103,9 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
     override fun onPackageVerified() {
         handlePackageDelivery()
+    }
+
+    override fun onResendPinSms() {
+        requestPinCodeSms(isFirstPin = false)
     }
 }
