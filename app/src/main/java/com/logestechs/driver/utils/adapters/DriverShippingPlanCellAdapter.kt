@@ -2,9 +2,12 @@ package com.logestechs.driver.utils.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
+import com.logestechs.driver.R
 import com.logestechs.driver.data.model.ShippingPlan
 import com.logestechs.driver.databinding.ItemDriverShippingPlanBinding
 import com.logestechs.driver.utils.ShippingPlanStatus
@@ -85,6 +88,31 @@ class DriverShippingPlanItemViewHolder(
             }
         } else {
             binding.buttonsContainer.visibility = View.GONE
+        }
+
+        if (shippingPlan?.shippingPlanStatus == ShippingPlanStatus.PICKED_UP.name) {
+            binding.buttonContextMenu.visibility = View.VISIBLE
+        } else {
+            binding.buttonContextMenu.visibility = View.GONE
+        }
+
+        binding.buttonContextMenu.setOnClickListener {
+            val popup = PopupMenu(mAdapter.context, binding.buttonContextMenu)
+            popup.inflate(R.menu.scanned_barcode_context_menu)
+            popup.setOnMenuItemClickListener { item: MenuItem? ->
+                if (mAdapter.context != null) {
+                    when (item?.itemId) {
+                        R.id.action_cancel_pickup -> {
+                            mAdapter.listener?.onCancelPickup(
+                                adapterPosition,
+                                shippingPlan
+                            )
+                        }
+                    }
+                }
+                true
+            }
+            popup.show()
         }
     }
 }

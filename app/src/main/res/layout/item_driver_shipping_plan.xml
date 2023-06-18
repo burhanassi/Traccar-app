@@ -63,9 +63,9 @@
 
                 <LinearLayout
                     android:layout_width="85dp"
-                    android:layout_height="70dp"
+                    android:layout_height="wrap_content"
                     android:gravity="end"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
                     <FrameLayout
                         android:layout_width="wrap_content"
@@ -108,6 +108,18 @@
                         </LinearLayout>
 
                     </FrameLayout>
+
+
+                    <ImageView
+                        android:id="@+id/button_context_menu"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:visibility="visible"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginEnd="4dp"
+                        android:src="@drawable/ic_context_menu_gray"
+                        tools:ignore="ContentDescription" />
                 </LinearLayout>
             </LinearLayout>
 
