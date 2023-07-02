@@ -103,54 +103,57 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
     @SuppressLint("NotifyDataSetChanged")
     private fun callGetFulfilmentOrders() {
         showWaitDialog()
+        val statuses = listOf(
+            FulfilmentOrderStatus.PICKED.name, FulfilmentOrderStatus.PARTIALLY_PICKED.name
+        )
         if (Helper.isInternetAvailable(super.getContext())) {
             isLoading = true
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.getFulfilmentOrders(
-                        page = currentPageIndex,
-                        status = FulfilmentOrderStatus.PICKED.name
-                    )
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        val body = response.body()
-                        val totalRound: Int =
-                            (body?.totalRecordsNo
-                                ?: 0) / (AppConstants.DEFAULT_PAGE_SIZE * currentPageIndex)
-                        if (totalRound == 0) {
-                            currentPageIndex = 1
-                            isLastPage = true
-                        } else {
-                            currentPageIndex++
-                            isLastPage = false
-                        }
+                    statuses.forEach { status ->
+                        val response = ApiAdapter.apiClient.getFulfilmentOrders(
+                            page = currentPageIndex,
+                            status = status
+                        )
                         withContext(Dispatchers.Main) {
-                            fulfilmentOrdersList.addAll(body?.data ?: ArrayList())
-                            binding.rvFulfilmentOrders.adapter?.notifyDataSetChanged()
-                            handleNoPackagesLabelVisibility(body?.data?.isEmpty() ?: true && fulfilmentOrdersList.isEmpty())
+                            hideWaitDialog()
                         }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
+                        if (response?.isSuccessful == true && response.body() != null) {
+                            val body = response.body()
+                            val totalRound: Int = (body?.totalRecordsNo
+                                ?: 0) / (AppConstants.DEFAULT_PAGE_SIZE * currentPageIndex)
+                            if (totalRound == 0) {
+                                currentPageIndex = 1
+                                isLastPage = true
+                            } else {
+                                currentPageIndex++
+                                isLastPage = false
                             }
+                            withContext(Dispatchers.Main) {
+                                fulfilmentOrdersList.addAll(body?.data ?: ArrayList())
+                                binding.rvFulfilmentOrders.adapter?.notifyDataSetChanged()
+                                handleNoPackagesLabelVisibility(body?.data?.isEmpty() ?: true && fulfilmentOrdersList.isEmpty())
+                            }
+                        } else {
+                            try {
+                                val jObjError = JSONObject(response?.errorBody()!!.string())
+                                withContext(Dispatchers.Main) {
+                                    Helper.showErrorMessage(
+                                        super.getContext(),
+                                        jObjError.optString(AppConstants.ERROR_KEY)
+                                    )
+                                }
 
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
+                            } catch (e: java.lang.Exception) {
+                                withContext(Dispatchers.Main) {
+                                    Helper.showErrorMessage(
+                                        super.getContext(), getString(R.string.error_general)
+                                    )
+                                }
                             }
                         }
+                        isLoading = false
                     }
-                    isLoading = false
                 } catch (e: Exception) {
                     isLoading = false
                     hideWaitDialog()
@@ -185,8 +188,7 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             Helper.showSuccessMessage(
-                                super.getContext(),
-                                getString(R.string.success_operation_completed)
+                                super.getContext(), getString(R.string.success_operation_completed)
                             )
                             currentPageIndex = 1
                             (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()
@@ -198,16 +200,14 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
                             val jObjError = JSONObject(response?.errorBody()!!.string())
                             withContext(Dispatchers.Main) {
                                 Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                    super.getContext(), jObjError.optString(AppConstants.ERROR_KEY)
                                 )
                             }
 
                         } catch (e: java.lang.Exception) {
                             withContext(Dispatchers.Main) {
                                 Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
+                                    super.getContext(), getString(R.string.error_general)
                                 )
                             }
                         }
