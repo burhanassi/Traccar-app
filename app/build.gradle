@@ -12,7 +12,7 @@ android {
     compileSdk 32
     signingConfigs {
         release {
-            storeFile file('/Users/abdulsalammansour/projects/keys/android customer/logestechs-customer-key.jks')
+            storeFile file('/Users/sawsanalkhdair/Documents/logestech/mobile/Android App Submission Info/key2/logestechs-customer-key.jks')
             storePassword 'logestechs@password1!'
             keyPassword 'logestechs@password1!'
             keyAlias 'logestechs-customer-key'
@@ -87,6 +87,14 @@ android {
             applicationId 'com.logestechs.driver_sare3'
         }
 
+        sprint {
+            dimension 'driver'
+            resValue 'string', 'app_name', 'Sprint Driver'
+            buildConfigField 'int', 'company_id', '313'
+            buildConfigField 'String', 'company_name', '\"Sprint\"'
+            applicationId 'com.logestechs.driver_sprint'
+        }
+
         backend {
             dimension 'driver'
             resValue 'string', 'app_name', 'Driver Backend'
@@ -107,6 +115,13 @@ android {
                 srcDirs 'src\\sare3\\res'
             }
         }
+
+        sprint {
+            res {
+                srcDirs 'src\\sprint\\res'
+            }
+        }
+
         backend {
             res {
                 srcDirs 'src\\backend\\res'
