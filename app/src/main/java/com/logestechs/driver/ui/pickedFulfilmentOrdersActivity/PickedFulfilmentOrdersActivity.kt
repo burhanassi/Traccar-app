@@ -103,16 +103,12 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
     @SuppressLint("NotifyDataSetChanged")
     private fun callGetFulfilmentOrders() {
         showWaitDialog()
-        val statuses = listOf(
-            FulfilmentOrderStatus.PICKED.name, FulfilmentOrderStatus.PARTIALLY_PICKED.name
-        )
         if (Helper.isInternetAvailable(super.getContext())) {
             isLoading = true
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                         val response = ApiAdapter.apiClient.getFulfilmentOrders(
                             page = currentPageIndex,
-                            status = FulfilmentOrderStatus.PICKED.name,
                             statuses = listOf(FulfilmentOrderStatus.PICKED.name, FulfilmentOrderStatus.PARTIALLY_PICKED.name)
                         )
                         withContext(Dispatchers.Main) {
