@@ -110,10 +110,10 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
             isLoading = true
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    statuses.forEach { status ->
                         val response = ApiAdapter.apiClient.getFulfilmentOrders(
                             page = currentPageIndex,
-                            status = status
+                            status = FulfilmentOrderStatus.PICKED.name,
+                            statuses = listOf(FulfilmentOrderStatus.PICKED.name, FulfilmentOrderStatus.PARTIALLY_PICKED.name)
                         )
                         withContext(Dispatchers.Main) {
                             hideWaitDialog()
@@ -153,7 +153,6 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
                             }
                         }
                         isLoading = false
-                    }
                 } catch (e: Exception) {
                     isLoading = false
                     hideWaitDialog()
