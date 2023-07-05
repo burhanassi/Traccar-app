@@ -18,6 +18,8 @@ import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.BarcodeRequestBody
+import com.logestechs.driver.api.requests.RejectItemRequestBody
+import com.logestechs.driver.api.responses.RejectItemResponse
 import com.logestechs.driver.data.model.*
 import com.logestechs.driver.databinding.ActivityFulfilmentSorterBarcodeScannerBinding
 import com.logestechs.driver.utils.*
@@ -154,8 +156,10 @@ class FulfilmentSorterBarcodeScannerActivity :
             layoutManager = LinearLayoutManager(this@FulfilmentSorterBarcodeScannerActivity)
             adapter =
                 ScannedShippingPlanItemCellAdapter(
-                    ArrayList(),
-                    this@FulfilmentSorterBarcodeScannerActivity
+                    list = ArrayList(),
+                    listener = this@FulfilmentSorterBarcodeScannerActivity,
+                    rejectItemDialogListener = null, // provide the appropriate value or null for 'rejectItemDialogListener'
+                    productItem = null // provide the appropriate value or null for 'pkg'
                 )
         }
     }
@@ -734,11 +738,11 @@ class FulfilmentSorterBarcodeScannerActivity :
     }
 
 
-    private fun callRejectItem(position: Int) {
-        val item =
-            (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).getItem(
-                index = position
-            )
+    private fun callRejectItem(rejectItemRequestBody: RejectItemRequestBody?) {
+//        val item =
+//            (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).getItem(
+//                index = rejectItemRequestBody?.barcode?.toInt()
+//            )
         this.runOnUiThread {
             showWaitDialog()
         }
@@ -748,9 +752,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                     val response = ApiAdapter.apiClient.rejectItem(
                         scannedBin?.id,
                         scannedShippingPlan?.id,
-                        BarcodeRequestBody(
-                            item?.barcode
-                        )
+                        rejectItemRequestBody
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
@@ -762,10 +764,10 @@ class FulfilmentSorterBarcodeScannerActivity :
                                 getString(R.string.success_operation_completed)
                             )
                             (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).deleteItem(
-                                position
+                                response.body()?.shippingPlanDetails?.rejected
                             )
                             updateShippingPlanCountValues(response.body()?.shippingPlanDetails)
-                            scannedItemsHashMap.remove(item?.barcode)
+                            scannedItemsHashMap.remove(response.body()!!.itemDetails?.barcode)
                         }
                     } else {
                         try {
@@ -808,6 +810,65 @@ class FulfilmentSorterBarcodeScannerActivity :
         }
     }
 
+
+    private fun callSetTimeSpent(time: Double?){
+        this.runOnUiThread {
+            showWaitDialog()
+        }
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.setTimeSpent(
+                        scannedShippingPlan?.id,
+                        time
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            Log.d("MyFragment", "OK!")
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            this.runOnUiThread {
+                hideWaitDialog()
+                Helper.showErrorMessage(
+                    super.getContext(), getString(R.string.error_check_internet_connection)
+                )
+            }
+        }
+    }
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_done -> {
@@ -844,7 +905,13 @@ class FulfilmentSorterBarcodeScannerActivity :
         }
     }
 
-    override fun rejectItem(index: Int) {
-        callRejectItem(index)
+
+    override fun onDataReceived(data: Double?) {
+        hours = data
+        callSetTimeSpent(hours)
+    }
+
+    override fun rejectItem(rejectItemRequestBody: RejectItemRequestBody) {
+        callRejectItem(rejectItemRequestBody)
     }
 }

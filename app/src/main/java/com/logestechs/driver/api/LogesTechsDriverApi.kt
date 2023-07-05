@@ -337,8 +337,8 @@ interface LogesTechsDriverApi {
     suspend fun rejectItem(
         @Path("binId") binId: Long?,
         @Query("shippingPlanId") shippingPlanId: Long?,
-        @Body body: BarcodeRequestBody?
-    ): Response<RejectShippingPlanItemResponse?>?
+        @Body body: RejectItemRequestBody?
+    ): Response<RejectItemResponse>?
 
     @GET("api/handler/fulfilment/orders")
     suspend fun getFulfilmentOrders(
