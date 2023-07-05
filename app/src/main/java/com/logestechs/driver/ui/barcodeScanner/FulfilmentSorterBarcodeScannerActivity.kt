@@ -810,65 +810,6 @@ class FulfilmentSorterBarcodeScannerActivity :
         }
     }
 
-
-    private fun callSetTimeSpent(time: Double?){
-        this.runOnUiThread {
-            showWaitDialog()
-        }
-        if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response = ApiAdapter.apiClient.setTimeSpent(
-                        scannedShippingPlan?.id,
-                        time
-                    )
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        withContext(Dispatchers.Main) {
-                            Log.d("MyFragment", "OK!")
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            this.runOnUiThread {
-                hideWaitDialog()
-                Helper.showErrorMessage(
-                    super.getContext(), getString(R.string.error_check_internet_connection)
-                )
-            }
-        }
-    }
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_done -> {
@@ -903,12 +844,6 @@ class FulfilmentSorterBarcodeScannerActivity :
             scannedItemsHashMap[barcode] = barcode
             executeBarcodeAction(barcode)
         }
-    }
-
-
-    override fun onDataReceived(data: Double?) {
-        hours = data
-        callSetTimeSpent(hours)
     }
 
     override fun rejectItem(rejectItemRequestBody: RejectItemRequestBody) {
