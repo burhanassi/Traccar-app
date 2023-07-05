@@ -20,6 +20,7 @@ import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.BarcodeRequestBody
 import com.logestechs.driver.api.requests.RejectItemRequestBody
+import com.logestechs.driver.api.responses.RejectItemResponse
 import com.logestechs.driver.data.model.*
 import com.logestechs.driver.databinding.ActivityFulfilmentSorterBarcodeScannerBinding
 import com.logestechs.driver.utils.*
@@ -159,8 +160,10 @@ class FulfilmentSorterBarcodeScannerActivity :
             layoutManager = LinearLayoutManager(this@FulfilmentSorterBarcodeScannerActivity)
             adapter =
                 ScannedShippingPlanItemCellAdapter(
-                    ArrayList(),
-                    this@FulfilmentSorterBarcodeScannerActivity
+                    list = ArrayList(),
+                    listener = this@FulfilmentSorterBarcodeScannerActivity,
+                    rejectItemDialogListener = null, // provide the appropriate value or null for 'rejectItemDialogListener'
+                    productItem = null // provide the appropriate value or null for 'pkg'
                 )
         }
     }
@@ -740,11 +743,11 @@ class FulfilmentSorterBarcodeScannerActivity :
     }
 
 
-    private fun callRejectItem(position: Int) {
-        val item =
-            (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).getItem(
-                index = position
-            )
+    private fun callRejectItem(rejectItemRequestBody: RejectItemRequestBody?) {
+//        val item =
+//            (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).getItem(
+//                index = rejectItemRequestBody?.barcode?.toInt()
+//            )
         this.runOnUiThread {
             showWaitDialog()
         }
@@ -754,9 +757,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                     val response = ApiAdapter.apiClient.rejectItem(
                         scannedBin?.id,
                         scannedShippingPlan?.id,
-                        BarcodeRequestBody(
-                            item?.barcode
-                        )
+                        rejectItemRequestBody
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
@@ -768,10 +769,10 @@ class FulfilmentSorterBarcodeScannerActivity :
                                 getString(R.string.success_operation_completed)
                             )
                             (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).deleteItem(
-                                position
+                                response.body()?.shippingPlanDetails?.rejected
                             )
                             updateShippingPlanCountValues(response.body()?.shippingPlanDetails)
-                            scannedItemsHashMap.remove(item?.barcode)
+                            scannedItemsHashMap.remove(response.body()!!.itemDetails?.barcode)
                         }
                     } else {
                         try {
@@ -813,6 +814,7 @@ class FulfilmentSorterBarcodeScannerActivity :
             }
         }
     }
+
 
     private fun callSetTimeSpent(time: Double?){
         this.runOnUiThread {
@@ -910,12 +912,13 @@ class FulfilmentSorterBarcodeScannerActivity :
         }
     }
 
-    override fun rejectItem(index: Int) {
-        callRejectItem(index)
-    }
 
     override fun onDataReceived(data: Double?) {
         hours = data
         callSetTimeSpent(hours)
+    }
+
+    override fun rejectItem(rejectItemRequestBody: RejectItemRequestBody) {
+        callRejectItem(rejectItemRequestBody)
     }
 }
