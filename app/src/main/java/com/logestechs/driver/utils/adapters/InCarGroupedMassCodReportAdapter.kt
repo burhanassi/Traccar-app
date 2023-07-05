@@ -10,36 +10,31 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.data.model.GroupedMassCodReports
-import com.logestechs.driver.databinding.ItemInCarPackageGroupedCellBinding
+import com.logestechs.driver.databinding.ItemMassCodReportGroupBinding
 import com.logestechs.driver.utils.MassCodReportsViewMode
 import com.logestechs.driver.utils.customViews.PeekingLinearLayoutManager
 import com.logestechs.driver.utils.interfaces.MassCodReportCardListener
+import com.logestechs.driver.utils.setThrottleClickListener
 
 
 class InCarGroupedMassCodReportAdapter(
     var packagesList: ArrayList<GroupedMassCodReports?>,
     var context: Context?,
     var listener: MassCodReportCardListener?
-) :
-    RecyclerView.Adapter<InCarGroupedMassCodReportAdapter.InCarGroupedMassCodReportViewHolder>() {
+) : RecyclerView.Adapter<InCarGroupedMassCodReportAdapter.InCarGroupedMassCodReportViewHolder>() {
 
     private var selectedViewMode: MassCodReportsViewMode? = null
     override fun onCreateViewHolder(
-        viewGroup: ViewGroup,
-        i: Int
+        viewGroup: ViewGroup, i: Int
     ): InCarGroupedMassCodReportViewHolder {
-        val inflater =
-            ItemInCarPackageGroupedCellBinding.inflate(
-                LayoutInflater.from(viewGroup.context),
-                viewGroup,
-                false
-            )
+        val inflater = ItemMassCodReportGroupBinding.inflate(
+            LayoutInflater.from(viewGroup.context), viewGroup, false
+        )
         return InCarGroupedMassCodReportViewHolder(inflater, viewGroup, this)
     }
 
     override fun onBindViewHolder(
-        AcceptedPackageVillageViewHolder: InCarGroupedMassCodReportViewHolder,
-        position: Int
+        AcceptedPackageVillageViewHolder: InCarGroupedMassCodReportViewHolder, position: Int
     ) {
         val GroupedMassCodReports: GroupedMassCodReports? = packagesList[position]
         AcceptedPackageVillageViewHolder.bind(GroupedMassCodReports)
@@ -70,109 +65,110 @@ class InCarGroupedMassCodReportAdapter(
     }
 
     class InCarGroupedMassCodReportViewHolder(
-        var binding: ItemInCarPackageGroupedCellBinding,
+        var binding: ItemMassCodReportGroupBinding,
         private var parent: ViewGroup,
         private var mAdapter: InCarGroupedMassCodReportAdapter
-    ) :
-        RecyclerView.ViewHolder(binding.root) {
+    ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(groupedPackage: GroupedMassCodReports?) {
             if (mAdapter.context != null) {
                 binding.itemTitle.iconImageView.background = ContextCompat.getDrawable(
-                    mAdapter.context!!,
-                    R.drawable.ic_sender_gray
+                    mAdapter.context!!, R.drawable.ic_sender_gray
                 )
+            }
+
+            if (groupedPackage?.isExpanded == true) {
+                binding.buttonsContainer.visibility = View.GONE
+            } else {
+                binding.buttonsContainer.visibility = View.VISIBLE
             }
 
             binding.itemTitle.textItem.text = groupedPackage?.customerName
             binding.textCount.text = groupedPackage?.pkgs?.size.toString()
+            binding.textCodSum.text = groupedPackage?.codSum.toString()
+
 
             handleCardExpansion(adapterPosition)
 
             binding.containerOvalCount.background = ContextCompat.getDrawable(
-                mAdapter.context!!,
-                R.drawable.background_card_semi_circle
+                mAdapter.context!!, R.drawable.background_card_semi_circle
             )
 
             binding.root.setOnClickListener {
                 onCardClick(adapterPosition)
             }
+            binding.textCodSum.text = groupedPackage?.codSum.toString()
+            binding.buttonDeliver.setThrottleClickListener({
+                mAdapter.listener?.onDeliverGroupReport(adapterPosition, groupedPackage)
+            })
 
             val layoutManager = PeekingLinearLayoutManager(
-                binding.rvPackages
-                    .context,
-                LinearLayoutManager.HORIZONTAL,
-                false
+                binding.rvPackages.context, LinearLayoutManager.HORIZONTAL, false
             )
 
             layoutManager.initialPrefetchItemCount = groupedPackage?.pkgs?.size ?: 0
 
             val childItemAdapter = MassCodReportCellAdapter(
-                groupedPackage?.pkgs ?: ArrayList(),
-                mAdapter.context,
-                mAdapter.listener
+                groupedPackage?.pkgs ?: ArrayList(), mAdapter.context, mAdapter.listener
             )
             binding.rvPackages.layoutManager = layoutManager
             binding.rvPackages.adapter = childItemAdapter
         }
 
         private fun onCardClick(position: Int) {
-            if (mAdapter.packagesList[position]?.isExpanded == true) {
-                mAdapter.packagesList[position]?.isExpanded = false
-                binding.rvPackages.visibility = View.GONE
-                binding.containerOvalCount.background = ContextCompat.getDrawable(
-                    mAdapter.context!!,
-                    R.drawable.background_card_semi_circle
-                )
+            mAdapter.notifyItemChanged(position)
+            val groupedPackage = mAdapter.packagesList[position]
+            groupedPackage?.isExpanded = !groupedPackage?.isExpanded!!
 
-                if (mAdapter.context != null) {
-                    binding.imageArrow.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            mAdapter.context!!,
-                            R.drawable.ic_card_arrow_down_pink
-                        )
-                    )
-                }
-            } else {
-                mAdapter.packagesList[position]?.isExpanded = true
+            if (groupedPackage.isExpanded == true) {
                 binding.rvPackages.visibility = View.VISIBLE
                 binding.containerOvalCount.background = null
-
+                binding.buttonsContainer.visibility = View.GONE
                 if (mAdapter.context != null) {
                     binding.imageArrow.setImageDrawable(
                         ContextCompat.getDrawable(
-                            mAdapter.context!!,
-                            R.drawable.ic_card_arrow_up_pink
-                        )
-                    )
-                }
-            }
-        }
-
-        private fun handleCardExpansion(position: Int) {
-            if (mAdapter.packagesList[position]?.isExpanded == true) {
-
-                binding.rvPackages.visibility = View.VISIBLE
-
-                if (mAdapter.context != null) {
-                    binding.imageArrow.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            mAdapter.context!!,
-                            R.drawable.ic_card_arrow_up_pink
+                            mAdapter.context!!, R.drawable.ic_card_arrow_up_pink
                         )
                     )
                 }
             } else {
                 binding.rvPackages.visibility = View.GONE
-
+                binding.containerOvalCount.background = ContextCompat.getDrawable(
+                    mAdapter.context!!, R.drawable.background_card_semi_circle
+                )
+                binding.buttonsContainer.visibility = View.VISIBLE
                 if (mAdapter.context != null) {
                     binding.imageArrow.setImageDrawable(
                         ContextCompat.getDrawable(
-                            mAdapter.context!!,
-                            R.drawable.ic_card_arrow_down_pink
+                            mAdapter.context!!, R.drawable.ic_card_arrow_down_pink
                         )
                     )
                 }
             }
         }
+
+
+        private fun handleCardExpansion(position: Int) {
+            val groupedPackage = mAdapter.packagesList[position]
+            if (groupedPackage?.isExpanded == true) {
+                binding.rvPackages.visibility = View.VISIBLE
+                if (mAdapter.context != null) {
+                    binding.imageArrow.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            mAdapter.context!!, R.drawable.ic_card_arrow_up_pink
+                        )
+                    )
+                }
+            } else {
+                binding.rvPackages.visibility = View.GONE
+                if (mAdapter.context != null) {
+                    binding.imageArrow.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            mAdapter.context!!, R.drawable.ic_card_arrow_down_pink
+                        )
+                    )
+                }
+            }
+        }
+
     }
 }

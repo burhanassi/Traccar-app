@@ -112,6 +112,12 @@ interface LogesTechsDriverApi {
         @Body body: DeliverMassCodReportRequestBody?
     ): Response<ResponseBody>?
 
+    @PUT("api/driver/customers/{customerId}/mass-packages/deliver")
+    suspend fun deliverMassCodReportGroup(
+        @Path("customerId") packageId: Long?,
+        @Body body: DeliverMassCodReportGroupRequestBody?
+    ): Response<ResponseBody>?
+
     @PUT("api/driver/customers/{customerId}/returned-packages/deliver-to-sender")
     suspend fun deliverCustomerReturnedPackagesToSender(
         @Path("customerId") customerId: Long?,
@@ -412,4 +418,10 @@ interface LogesTechsDriverApi {
         @Query("latStart") lat: Double?,
         @Query("longStart") lng: Double?
     ): Response<GetDriverPackagesLocationsResponse?>?
+
+    @PUT("api/handler/shipping-plan/{shippingPlanId}/sorting-hours")
+    suspend fun setTimeSpent(
+        @Path("shippingPlanId") shippingPlanId: Long?,
+        @Query("sortingHours") sortingHours: Double?
+    ):Response<ResponseBody?>
 }

@@ -38,6 +38,7 @@
     <string name="title_reject_customer_packages">Reject Customer Packages</string>
     <string name="title_reject_package">Reject Package</string>
     <string name="message_no_packages">No packages were found \n Please pull the list down to refresh</string>
+    <string name="success_mass_completed">Mass COD Report Has Been Delivered Successfully</string>
     <string name="success_operation_completed">Operation Completed Successfully</string>
     <string name="button_insert_barcode">Insert Barcode</string>
     <string name="title_scanned_packages">Scanned Packages</string>
@@ -206,4 +207,5 @@
     <string name="error_no_destinations_on_map">There are no destinations on the map</string>
     <string name="time_spent">Enter The Time Spent</string>
     <string name="invalid_time_format">Invalid time format</string>
+    <string name="title_reject_item">Reject</string>
 </resources>

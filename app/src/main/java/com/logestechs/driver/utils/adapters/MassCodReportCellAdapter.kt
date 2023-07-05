@@ -4,7 +4,9 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.logestechs.driver.R
 import com.logestechs.driver.data.model.MassCodReport
 import com.logestechs.driver.databinding.ItemMassCodReportBinding
 import com.logestechs.driver.utils.AppCurrency
@@ -13,7 +15,8 @@ import com.logestechs.driver.utils.Helper.Companion.format
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.interfaces.MassCodReportCardListener
 
-class MassCodReportCellAdapter(
+class MassCodReportCellAdapter
+    (
     var massCodReportsList: ArrayList<MassCodReport?>,
     var context: Context?,
     var listener: MassCodReportCardListener?,
@@ -69,6 +72,7 @@ class MassCodReportCellAdapter(
 
             binding.textCodSum.text = massCodReport?.totalCodWithoutCost?.format()
             binding.textCodPackagesCount.text = massCodReport?.codPackagesNumber.toString()
+//            binding.textCodSum.text = massCodReport?.
 
             binding.imageViewReceiverCall.setOnClickListener {
                 if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {

@@ -38,6 +38,7 @@
     <string name="title_package">طرد</string>
     <string name="title_reject_customer_packages">رفض طرود الزبون</string>
     <string name="title_reject_package">رفض الطرد</string>
+    <string name="success_mass_completed">تم توصيل كشف التحصيلات بنجاح </string>
     <string name="message_no_packages">لا يوجد طرود \nالرجاء سحب الشاشة لأسفل لتحديث القائمة</string>
     <string name="success_operation_completed">تمت العملية بنجاح</string>
     <string name="button_insert_barcode">إدخال باركود</string>
@@ -204,4 +205,6 @@
     <string name="error_no_destinations_on_map">لا يوجد وجهات على الخريطة</string>
     <string name="time_spent">أدخل الوفت المُستَهلك</string>
     <string name="invalid_time_format">طريقة إدخال الوقت غير صحيحة</string>
+    <string name="title_reject_item">رفض</string>
+
 </resources>
