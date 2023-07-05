@@ -739,10 +739,6 @@ class FulfilmentSorterBarcodeScannerActivity :
 
 
     private fun callRejectItem(rejectItemRequestBody: RejectItemRequestBody?) {
-//        val item =
-//            (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).getItem(
-//                index = rejectItemRequestBody?.barcode?.toInt()
-//            )
         this.runOnUiThread {
             showWaitDialog()
         }
