@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.os.*
+import android.util.Log
 import android.view.KeyEvent
 import android.view.SurfaceHolder
 import android.view.View
@@ -38,12 +39,13 @@ enum class FulfilmentSorterScanMode {
     BIN_INTO_LOCATION,
     BIN,
     ITEM_INTO_BIN,
-    SHIPPING_PLAN
+    SHIPPING_PLAN,
+    TIME_SPENT
 }
 
 class FulfilmentSorterBarcodeScannerActivity :
     LogesTechsActivity(), View.OnClickListener,
-    InsertBarcodeDialogListener, ScannedShippingPlanItemCardListener {
+    InsertBarcodeDialogListener, ScannedShippingPlanItemCardListener, SetTimeSpent.DataListener {
     private lateinit var binding: ActivityFulfilmentSorterBarcodeScannerBinding
 
     private var barcodeDetector: BarcodeDetector? = null
@@ -66,6 +68,7 @@ class FulfilmentSorterBarcodeScannerActivity :
     private var scannedShippingPlan: ShippingPlan? = null
     private var scannedBin: Bin? = null
     private var isBinScan = true
+    private var hours: Double? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFulfilmentSorterBarcodeScannerBinding.inflate(layoutInflater)
@@ -114,6 +117,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                 binding.textTitle.text = getString(R.string.please_scan_shipping_plan_barcode)
             }
             null -> return
+            else -> {}
         }
     }
 
@@ -335,6 +339,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                 callGetShippingPlan(barcode)
             }
             null -> return
+            else -> {}
         }
     }
 
@@ -807,11 +812,70 @@ class FulfilmentSorterBarcodeScannerActivity :
             }
         }
     }
+    private fun callSetTimeSpent(time: Double?){
+        this.runOnUiThread {
+            showWaitDialog()
+        }
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.setTimeSpent(
+                        scannedShippingPlan?.id,
+                        time
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            Log.d("MyFragment", "OK!")
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
 
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            this.runOnUiThread {
+                hideWaitDialog()
+                Helper.showErrorMessage(
+                    super.getContext(), getString(R.string.error_check_internet_connection)
+                )
+            }
+        }
+    }
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_done -> {
-                onBackPressed()
+                val fragment = SetTimeSpent()
+                fragment.isCancelable = false
+                fragment.show(supportFragmentManager, "SetTimeSpentDialog")
             }
 
             R.id.button_new_bin -> {
@@ -846,5 +910,10 @@ class FulfilmentSorterBarcodeScannerActivity :
 
     override fun rejectItem(index: Int) {
         callRejectItem(index)
+    }
+
+    override fun onDataReceived(data: Double?) {
+        hours = data
+        callSetTimeSpent(hours)
     }
 }
