@@ -70,7 +70,7 @@
     <string name="button_pickup">تحميل</string>
     <string name="barcode">الباركود</string>
     <string name="title_return">إرجاع</string>
-    <string name="title_please_select_reason">الرجاء إختيار او توضيح السبب</string>
+    <string name="title_please_select_reason">الرجاء توضيح السبب</string>
     <string name="receiver_paid_cost">المستلم دفع الأجور</string>
     <string name="error_insert_message_text">الرجاء إدخال نص الرسالة</string>
     <string name="title_postpone">تأجيل</string>

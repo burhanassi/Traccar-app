@@ -11,20 +11,26 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
+import com.logestechs.driver.api.requests.RejectPackageRequestBody
 import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemPendingPackageCustomerCellBinding
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.customViews.PeekingLinearLayoutManager
+import com.logestechs.driver.utils.dialogs.RejectPackageDialog
 import com.logestechs.driver.utils.interfaces.PendingPackagesCardListener
+import com.logestechs.driver.utils.interfaces.RejectPackageDialogListener
 import com.logestechs.driver.utils.setThrottleClickListener
 
 class PendingPackageCustomerCellAdapter(
     var customersList: ArrayList<Customer?>,
     var context: Context?,
-    var listener: PendingPackagesCardListener?
+    var listener: PendingPackagesCardListener?,
+    var rejectPackageDialogListener: RejectPackageDialogListener?
 ) :
-    RecyclerView.Adapter<PendingPackageCustomerCellAdapter.CustomerViewHolder>() {
+    RecyclerView.Adapter<PendingPackageCustomerCellAdapter.CustomerViewHolder>(), RejectPackageDialogListener {
+
+    private var rejectedPackagePosition: Int = 0
 
     val companyConfigurations =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
@@ -65,7 +71,9 @@ class PendingPackageCustomerCellAdapter(
         notifyItemRemoved(index)
         notifyItemRangeChanged(index, customersList.size)
     }
-
+    override fun onPackageRejected(rejectPackageRequestBody: RejectPackageRequestBody) {
+        listener?.rejectCustomerPackages(rejectedPackagePosition, rejectPackageRequestBody)
+    }
     class CustomerViewHolder(
         var binding: ItemPendingPackageCustomerCellBinding,
         private var parent: ViewGroup,
@@ -96,7 +104,12 @@ class PendingPackageCustomerCellAdapter(
 
                     when (item?.itemId) {
                         R.id.action_reject_customer_packages -> {
-                            mAdapter.listener?.rejectCustomerPackages(adapterPosition)
+//                            mAdapter.listener?.rejectCustomerPackages(adapterPosition)
+                            mAdapter.rejectedPackagePosition = adapterPosition
+                            RejectPackageDialog(
+                                mAdapter.context!!,
+                                mAdapter
+                            ).showDialog()
                         }
                     }
                     true
@@ -117,6 +130,7 @@ class PendingPackageCustomerCellAdapter(
                 customer?.packages ?: ArrayList<Package>(),
                 mAdapter.context,
                 mAdapter.listener,
+                null,
                 adapterPosition
             )
             binding.rvPackages.layoutManager = layoutManager
@@ -188,5 +202,7 @@ class PendingPackageCustomerCellAdapter(
             }
         }
     }
+
+
 }
 
