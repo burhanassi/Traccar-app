@@ -342,7 +342,7 @@ class FulfilmentSorterBarcodeScannerActivity :
             FulfilmentSorterScanMode.SHIPPING_PLAN -> {
                 callGetShippingPlan(barcode)
             }
-
+            null -> return
             else -> {}
         }
     }
@@ -744,10 +744,6 @@ class FulfilmentSorterBarcodeScannerActivity :
 
 
     private fun callRejectItem(rejectItemRequestBody: RejectItemRequestBody?) {
-//        val item =
-//            (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).getItem(
-//                index = rejectItemRequestBody?.barcode?.toInt()
-//            )
         this.runOnUiThread {
             showWaitDialog()
         }
@@ -814,8 +810,6 @@ class FulfilmentSorterBarcodeScannerActivity :
             }
         }
     }
-
-
     private fun callSetTimeSpent(time: Double?){
         this.runOnUiThread {
             showWaitDialog()
@@ -874,6 +868,7 @@ class FulfilmentSorterBarcodeScannerActivity :
             }
         }
     }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_done -> {
@@ -912,13 +907,12 @@ class FulfilmentSorterBarcodeScannerActivity :
         }
     }
 
+    override fun rejectItem(rejectItemRequestBody: RejectItemRequestBody) {
+        callRejectItem(rejectItemRequestBody)
+    }
 
     override fun onDataReceived(data: Double?) {
         hours = data
         callSetTimeSpent(hours)
-    }
-
-    override fun rejectItem(rejectItemRequestBody: RejectItemRequestBody) {
-        callRejectItem(rejectItemRequestBody)
     }
 }

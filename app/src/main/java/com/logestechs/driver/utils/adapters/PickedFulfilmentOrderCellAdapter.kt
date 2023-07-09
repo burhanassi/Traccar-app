@@ -72,7 +72,7 @@ class PickedFulfilmentOrderCellAdapter(
                 binding.itemNotes.textItem.text = fulfilmentOrder?.notes
             }
 
-            binding.textItemsCount.text = fulfilmentOrder?.items?.size.toString()
+            binding.textItemsCount.text = fulfilmentOrder?.numberOfItems?.toString()
             binding.textSkuCount.text = fulfilmentOrder?.items?.size.toString()
 
             binding.buttonPack.setOnClickListener {

@@ -42,10 +42,11 @@ class SetTimeSpent : DialogFragment(), View.OnClickListener {
     override fun onStart() {
         super.onStart()
 
-        val width = resources.getDimensionPixelSize(R.dimen.dialog_width)
-        val height = resources.getDimensionPixelSize(R.dimen.dialog_height)
+        val dialogWidth = resources.displayMetrics.widthPixels * 0.7f
+        val dialogHeight = resources.displayMetrics.heightPixels * 0.5f
 
-        dialog?.window?.setLayout(width, height)
+        dialog?.window?.setLayout(dialogWidth.toInt(), dialogHeight.toInt())
+
     }
     override fun onClick(v: View?) {
         when (v?.id) {

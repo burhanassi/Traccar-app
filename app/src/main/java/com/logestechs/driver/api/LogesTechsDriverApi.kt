@@ -114,7 +114,7 @@ interface LogesTechsDriverApi {
 
     @PUT("api/driver/customers/{customerId}/mass-packages/deliver")
     suspend fun deliverMassCodReportGroup(
-        @Path("customerId") packageId: Long?,
+        @Path("customerId") customerId: Long?,
         @Body body: DeliverMassCodReportGroupRequestBody?
     ): Response<ResponseBody>?
 
@@ -346,6 +346,12 @@ interface LogesTechsDriverApi {
         @Body body: RejectItemRequestBody?
     ): Response<RejectItemResponse>?
 
+    @PUT("api/handler/shipping-plan/{shippingPlanId}/sorting-hours")
+    suspend fun setTimeSpent(
+        @Path("shippingPlanId") shippingPlanId: Long?,
+        @Query("sortingHours") sortingHours: Double?
+    ):Response<ResponseBody?>
+
     @GET("api/handler/fulfilment/orders")
     suspend fun getFulfilmentOrders(
         @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
@@ -418,10 +424,4 @@ interface LogesTechsDriverApi {
         @Query("latStart") lat: Double?,
         @Query("longStart") lng: Double?
     ): Response<GetDriverPackagesLocationsResponse?>?
-
-    @PUT("api/handler/shipping-plan/{shippingPlanId}/sorting-hours")
-    suspend fun setTimeSpent(
-        @Path("shippingPlanId") shippingPlanId: Long?,
-        @Query("sortingHours") sortingHours: Double?
-    ):Response<ResponseBody?>
 }
