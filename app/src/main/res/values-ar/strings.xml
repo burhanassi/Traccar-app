@@ -40,6 +40,7 @@
     <string name="title_reject_package">رفض الطرد</string>
     <string name="message_no_packages">لا يوجد طرود \nالرجاء سحب الشاشة لأسفل لتحديث القائمة</string>
     <string name="success_operation_completed">تمت العملية بنجاح</string>
+    <string name="success_mass_completed">تم توصيل كشف التحصيلات بنجاح </string>
     <string name="button_insert_barcode">إدخال باركود</string>
     <string name="title_scanned_packages">الطرود المقروءة</string>
     <string name="button_done">تم</string>
@@ -69,7 +70,7 @@
     <string name="button_pickup">تحميل</string>
     <string name="barcode">الباركود</string>
     <string name="title_return">إرجاع</string>
-    <string name="title_please_select_reason">الرجاء إختيار او توضيح السبب</string>
+    <string name="title_please_select_reason">الرجاء توضيح السبب</string>
     <string name="receiver_paid_cost">المستلم دفع الأجور</string>
     <string name="error_insert_message_text">الرجاء إدخال نص الرسالة</string>
     <string name="title_postpone">تأجيل</string>
@@ -157,10 +158,10 @@
     <string name="rejected_items">مرفوضة</string>
     <string name="button_new_bin">سلة جديدة</string>
     <string name="action_reject">رفض</string>
-    <string name="dashboard_new_fulfilment_orders">الطلبات المصنفة\nالجديدة</string>
-    <string name="title_new_fulfilment_orders">الطلبات المصنفة الجديدة</string>
-    <string name="dashboard_picked_fulfilment_orders">الطلبات المصنفة\nفي سلات التحميل</string>
-    <string name="title_picked_fulfilment_orders">الطلبات المصنفة في سلات التحميل</string>
+    <string name="dashboard_new_fulfilment_orders">الطلبيات \nالجديدة</string>
+    <string name="title_new_fulfilment_orders">الطلبيات الجديدة</string>
+    <string name="dashboard_picked_fulfilment_orders">الطلبيات \nفي سلات التحميل</string>
+    <string name="title_picked_fulfilment_orders">الطلبيات في سلات التحميل</string>
     <string name="message_no_fulfilment_orders">لا يوجد طلبات مصنفة \nالرجاء سحب الشاشة لأسفل لتحديث القائمة</string>
     <string name="button_pick">تحميل في السلة</string>
     <string name="title_items_number">عدد العناصر</string>
@@ -176,10 +177,10 @@
     <string name="warning_pickup_returned_packages">الرجاء التاكد من تحميل الطرود المرجعة</string>
     <string name="dashboard_warehouse_packages">طرود\nالمستودع</string>
     <string name="boxes">الصناديق</string>
-    <string name="assigned_shipping_plans">طلبات التصنيف المعينة</string>
-    <string name="in_car_shipping_plans">طلبات التصنيف المحملة في المركبة</string>
-    <string name="arrived_shipping_plans">طلبات التصنيف المسلمة</string>
-    <string name="returned_shipping_plans">طلبات التصنيف المرجعة</string>
+    <string name="assigned_shipping_plans">طلبات التوريد المعينة</string>
+    <string name="in_car_shipping_plans">طلبات التوريد المحملة في المركبة</string>
+    <string name="arrived_shipping_plans">طلبات التوريد المسلمة</string>
+    <string name="returned_shipping_plans">طلبات التوريد المرجعة</string>
     <string name="error_shipping_plan_barcode_different_from_selected">الباركود الممسوح لا يتطابق مع طلب التصنيف المختار</string>
     <string name="view_mode_customers">زبائن</string>
     <string name="view_mode_mass_cod_reports">تقارير تحصيل</string>
@@ -202,4 +203,11 @@
     <string name="warning_some_villages_are_not_on_map">انتبه! بعض الوجهات قد تكون غير مضافة على الخريطة</string>
     <string name="text_number_of_locations">عدد وجهات التوصيل: %1$d</string>
     <string name="error_no_destinations_on_map">لا يوجد وجهات على الخريطة</string>
+    <string name="time_spent">أدخل الوفت المُستَهلك</string>
+    <string name="invalid_time_format">طريقة إدخال الوقت غير صحيحة</string>
+    <string name="title_reject_item">رفض</string>
+    <string name="reason_damaged">تالف</string>
+    <string name="reason_color">لون غير مطابق</string>
+    <string name="reason_item">عنصر غير مطابق</string>
+    <string name="reason_SKU">SKU غير مطابق</string>
 </resources>

@@ -333,13 +333,19 @@ interface LogesTechsDriverApi {
         @Body body: BarcodeRequestBody?
     ): Response<SortItemIntoBinResponse>?
 
-
     @PUT("api/handler/hub/bins/{binId}/shipping-items/reject")
     suspend fun rejectItem(
         @Path("binId") binId: Long?,
         @Query("shippingPlanId") shippingPlanId: Long?,
-        @Body body: BarcodeRequestBody?
-    ): Response<RejectShippingPlanItemResponse?>?
+        @Body body: RejectItemRequestBody?
+    ): Response<RejectItemResponse>?
+
+    @PUT("api/handler/shipping-plan/{shippingPlanId}/sorting-hours")
+    suspend fun setTimeSpent(
+        @Path("shippingPlanId") shippingPlanId: Long?,
+        @Query("sortingHours") sortingHours: Double?
+    ):Response<ResponseBody?>
+
     @GET("api/handler/fulfilment/orders")
     suspend fun getFulfilmentOrders(
         @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
