@@ -207,5 +207,4 @@
     <string name="error_no_destinations_on_map">There are no destinations on the map</string>
     <string name="time_spent">Enter The Time Spent</string>
     <string name="invalid_time_format">Invalid time format</string>
-
 </resources>
