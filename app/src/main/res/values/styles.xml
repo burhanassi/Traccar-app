@@ -63,17 +63,6 @@
         <item name="tabRippleColor">@color/transparent</item>
         <item name="tabUnboundedRipple">false</item>
     </style>
-    <style name="TransparentDialogTheme" parent="Theme.AppCompat.Light.Dialog">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowIsFloating">true</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowAnimationStyle">@style/DialogAnimation</item>
-    </style>
 
-    <style name="DialogAnimation">
-        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
-        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
-    </style>
 
 </resources>
