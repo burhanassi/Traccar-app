@@ -1,11 +1,10 @@
 package com.logestechs.driver.ui.barcodeScanner
 
+import android.app.AlertDialog
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.text.Editable
-import android.text.InputFilter
-import android.text.InputType
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,73 +19,56 @@ import java.util.Locale
 class SetTimeSpent : DialogFragment(), View.OnClickListener {
 
     private lateinit var binding: FragmentSetTimeSpentBinding
+    lateinit var alertDialog: AlertDialog
     private var hours: Double? = null
     private var dataListener: DataListener? = null
-    private var isUpdating = false
 
+    private val hoursOptions = arrayOf("00", "01", "02", "03", "04","05", "06", "07", "08")
+    private val minOptions = arrayOf("00","01", "02", "03", "04", "05","06", "07", "08", "09"
+        ,"10", "11", "12", "13", "14","15", "16", "17", "18","19"
+        ,"20", "21", "22", "23", "24","25", "26", "27", "28","29"
+        ,"30", "31", "32", "33", "34","35", "36", "37", "38","39"
+        ,"40", "41", "42", "43", "44","45", "46", "47", "48","49"
+        ,"50", "51", "52", "53", "54","55", "56", "57", "58","59")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentSetTimeSpentBinding.inflate(inflater, container, false)
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog?.setCanceledOnTouchOutside(false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        view.setBackgroundColor(Color.TRANSPARENT)
 
-        binding.editTextNumberHours.inputType = InputType.TYPE_CLASS_NUMBER
 
-        val maxLength = 5
-        val inputFilter = InputFilter.LengthFilter(maxLength)
-        binding.editTextNumberHours.filters = arrayOf(inputFilter)
+        val adapterHours = CenteredArrayAdapter<String>(requireContext(), R.layout.spinner_item_centered, hoursOptions)
+        adapterHours.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerTimeHours.adapter = adapterHours
+        val adapterMin = CenteredArrayAdapter<String>(requireContext(), R.layout.spinner_item_centered, minOptions)
+        adapterMin.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerTimeMin.adapter = adapterMin
 
-        binding.editTextNumberHours.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // No implementation needed
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // No implementation needed
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                if (isUpdating) {
-                    return
-                }
-
-                val text = s.toString()
-                if (text.length == 2 && !text.contains(":")) {
-                    val formattedText = "$text:"
-                    isUpdating = true
-                    binding.editTextNumberHours.setText(formattedText)
-                    binding.editTextNumberHours.setSelection(formattedText.length)
-                    isUpdating = false
-                }
-
-                val isValidTimeFormat = isValidTimeFormat(text)
-                binding.buttonDoneFragment.isEnabled = isValidTimeFormat
-            }
-        })
-        val initialText = binding.editTextNumberHours.text.toString()
-        binding.buttonDoneFragment.isEnabled = isValidTimeFormat(initialText)
-        binding.buttonDoneFragment.setOnClickListener(this)
+        binding.buttonDone.setOnClickListener(this)
         binding.buttonCancel.setOnClickListener(this)
     }
     override fun onStart() {
         super.onStart()
 
-        val dialogWidth = resources.displayMetrics.widthPixels * 0.7f
-        val dialogHeight = resources.displayMetrics.heightPixels * 0.25f
+        val dialogWidth = resources.displayMetrics.widthPixels * 0.9f
+        val dialogHeight = resources.displayMetrics.heightPixels * 0.33f
 
         dialog?.window?.setLayout(dialogWidth.toInt(), dialogHeight.toInt())
 
     }
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.button_done_fragment -> {
-                hours = getTimeAsDoubleFromText(binding.editTextNumberHours.text.toString())
+            R.id.button_done -> {
+                hours = getTimeAsDoubleFromText(binding.spinnerTimeHours.selectedItem.toString()+":"+binding.spinnerTimeMin.selectedItem.toString())
                 dataListener?.onDataReceived(hours)
                 dismiss()
                 (activity as? FulfilmentSorterBarcodeScannerActivity)?.onBackPressed()
@@ -129,18 +111,10 @@ class SetTimeSpent : DialogFragment(), View.OnClickListener {
 
         return null
     }
-    private fun isValidTimeFormat(input: String): Boolean {
-        val pattern = Regex("^\\d{2}:\\d{2}$")
-        return input.matches(pattern)
-    }
     override fun onDestroy() {
         super.onDestroy()
         if (dialog != null && dialog!!.isShowing) {
             dialog!!.dismiss()
         }
     }
-
-
-
-
 }
