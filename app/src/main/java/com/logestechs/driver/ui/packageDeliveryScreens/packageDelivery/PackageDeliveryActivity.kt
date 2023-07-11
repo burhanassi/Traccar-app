@@ -256,7 +256,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         binding.selectorDigitalWallet.enumValue = PaymentType.DIGITAL_WALLET
         binding.selectorCheque.enumValue = PaymentType.CHEQUE
         binding.selectorPrepaid.enumValue = PaymentType.PREPAID
-        binding.selectorCardPayment.enumValue = PaymentType.CARD_PAYMENT
+        binding.selectorCardPayment.enumValue = PaymentType.CARD
         binding.selectorBankTransfer.enumValue = PaymentType.BANK_TRANSFER
     }
 
