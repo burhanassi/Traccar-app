@@ -42,6 +42,8 @@ class SetTimeSpent : DialogFragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         view.setBackgroundColor(Color.TRANSPARENT)
         binding.timePicker.setIs24HourView(true)
+        binding.timePicker.hour = 0
+        binding.timePicker.minute = 0
         binding.timePicker.setOnTimeChangedListener { _, hourOfDay, _ ->
             if (hourOfDay > 8) {
                 binding.timePicker.hour = 8
