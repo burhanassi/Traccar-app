@@ -37,10 +37,16 @@ class SetTimeSpent : DialogFragment(), View.OnClickListener {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.setBackgroundColor(Color.TRANSPARENT)
         binding.timePicker.setIs24HourView(true)
+        binding.timePicker.setOnTimeChangedListener { _, hourOfDay, _ ->
+            if (hourOfDay > 8) {
+                binding.timePicker.hour = 8
+            }
+        }
         binding.buttonDone.setOnClickListener(this)
         binding.buttonCancel.setOnClickListener(this)
     }
