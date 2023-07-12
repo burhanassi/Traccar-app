@@ -337,8 +337,8 @@ interface LogesTechsDriverApi {
     suspend fun rejectItem(
         @Path("binId") binId: Long?,
         @Query("shippingPlanId") shippingPlanId: Long?,
-        @Body body: BarcodeRequestBody?
-    ): Response<RejectShippingPlanItemResponse?>?
+        @Body body: RejectItemRequestBody?
+    ): Response<RejectItemResponse>?
 
     @PUT("api/handler/shipping-plan/{shippingPlanId}/sorting-hours")
     suspend fun setTimeSpent(
@@ -350,7 +350,8 @@ interface LogesTechsDriverApi {
     suspend fun getFulfilmentOrders(
         @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
         @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
-        @Query("status") status: String? = null
+        @Query("status") status: String? = null,
+        @Query("statuses") statuses: List<String>?
     ): Response<GetFulfilmentOrdersResponse?>?
 
     @GET("api/handler/hub/tote")

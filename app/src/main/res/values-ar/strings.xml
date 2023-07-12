@@ -70,7 +70,7 @@
     <string name="button_pickup">تحميل</string>
     <string name="barcode">الباركود</string>
     <string name="title_return">إرجاع</string>
-    <string name="title_please_select_reason">الرجاء إختيار او توضيح السبب</string>
+    <string name="title_please_select_reason">الرجاء توضيح السبب</string>
     <string name="receiver_paid_cost">المستلم دفع الأجور</string>
     <string name="error_insert_message_text">الرجاء إدخال نص الرسالة</string>
     <string name="title_postpone">تأجيل</string>
@@ -205,5 +205,9 @@
     <string name="error_no_destinations_on_map">لا يوجد وجهات على الخريطة</string>
     <string name="time_spent">أدخل الوقت المُستَهلك</string>
     <string name="invalid_time_format">طريقة إدخال الوقت غير صحيحة</string>
-
+    <string name="title_reject_item">رفض</string>
+    <string name="reason_damaged">تالف</string>
+    <string name="reason_color">لون غير مطابق</string>
+    <string name="reason_item">عنصر غير مطابق</string>
+    <string name="reason_SKU">SKU غير مطابق</string>
 </resources>

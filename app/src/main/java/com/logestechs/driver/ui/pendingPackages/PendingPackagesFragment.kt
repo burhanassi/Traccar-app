@@ -18,6 +18,7 @@ import com.logestechs.driver.utils.LogesTechsFragment
 import com.logestechs.driver.utils.adapters.PendingPackageCellAdapter
 import com.logestechs.driver.utils.adapters.PendingPackageCustomerCellAdapter
 import com.logestechs.driver.utils.interfaces.PendingPackagesCardListener
+import com.logestechs.driver.utils.interfaces.RejectPackageDialogListener
 import com.logestechs.driver.utils.interfaces.ViewPagerCountValuesDelegate
 import kotlinx.coroutines.*
 import org.json.JSONObject
@@ -67,11 +68,12 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
     }
 
     private fun initRecycler() {
-        val layoutManager = LinearLayoutManager(
-            context
-        )
+        val layoutManager = LinearLayoutManager(context)
         binding.rvCustomers.adapter = PendingPackageCustomerCellAdapter(
-            ArrayList(), super.getContext(), listener = this
+            ArrayList(),
+            requireContext(),
+            this@PendingPackagesFragment,
+            null
         )
         binding.rvCustomers.layoutManager = layoutManager
     }
@@ -277,13 +279,13 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
         }
     }
 
-    private fun callRejectCustomerPackages(customerId: Long?, parentIndex: Int) {
+    private fun callRejectCustomerPackages(customerId: Long?, parentIndex: Int, rejectPackageRequestBody: RejectPackageRequestBody) {
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response = ApiAdapter.apiClient.rejectCustomerPackages(
                         customerId,
-                        RejectPackageRequestBody("test note")
+                        rejectPackageRequestBody
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
@@ -336,13 +338,13 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
         }
     }
 
-    private fun callRejectPackage(packageId: Long?, parentIndex: Int, childIndex: Int) {
+    private fun callRejectPackage(packageId: Long?, parentIndex: Int, childIndex: Int, rejectPackageRequestBody: RejectPackageRequestBody) {
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response = ApiAdapter.apiClient.rejectPackage(
                         packageId,
-                        RejectPackageRequestBody("")
+                        rejectPackageRequestBody
                     )
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
@@ -440,18 +442,21 @@ class PendingPackagesFragment : LogesTechsFragment(), PendingPackagesCardListene
         )
     }
 
-    override fun rejectPackage(parentIndex: Int, childIndex: Int) {
+    override fun rejectPackage(parentIndex: Int, childIndex: Int, rejectPackageRequestBody: RejectPackageRequestBody) {
         callRejectPackage(
             (binding.rvCustomers.adapter as PendingPackageCustomerCellAdapter).customersList[parentIndex]?.packages?.get(
                 childIndex
-            )?.id, parentIndex, childIndex
+            )?.id, parentIndex, childIndex,
+            rejectPackageRequestBody
         )
     }
 
-    override fun rejectCustomerPackages(parentIndex: Int) {
+    override fun rejectCustomerPackages(parentIndex: Int, rejectPackageRequestBody: RejectPackageRequestBody) {
         callRejectCustomerPackages(
             (binding.rvCustomers.adapter as PendingPackageCustomerCellAdapter).customersList[parentIndex]?.id,
-            parentIndex
+            parentIndex,
+            rejectPackageRequestBody
         )
     }
+
 }
