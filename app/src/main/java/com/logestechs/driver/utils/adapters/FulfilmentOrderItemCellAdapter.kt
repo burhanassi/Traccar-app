@@ -38,7 +38,6 @@ class FulfilmentOrderItemCellAdapter(
         position: Int
     ) {
         val productItem: ProductItem? = productItemsList[position]
-        FulfilmentOrderItemCellViewHolder.setIsRecyclable(false);
         FulfilmentOrderItemCellViewHolder.bind(productItem)
     }
 
@@ -81,12 +80,12 @@ class FulfilmentOrderItemCellAdapter(
             binding.itemBinLocation.textItem.text = productItem?.itemBinLocation
 
             if (productItem?.quantity == 0) {
-//                Handler().post {
-                    val position = adapterPosition
-//                    if (position != RecyclerView.NO_POSITION) {
+                Handler().post {
+                val position = adapterPosition
+                    if (position != RecyclerView.NO_POSITION) {
                         mAdapter.removeItem(position)
-//                    }
-//                }
+                    }
+                }
             }
         }
     }
