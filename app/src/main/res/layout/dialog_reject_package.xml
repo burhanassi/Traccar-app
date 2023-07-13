@@ -6,8 +6,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@android:color/transparent">
+        android:background="@color/transparent"
+        android:orientation="vertical">
 
         <FrameLayout
             android:layout_width="82dp"
@@ -22,8 +22,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_time_white"
-                tools:ignore="ContentDescription" />
+                android:layout_marginLeft="3dp"
+                android:layout_marginTop="2dp"
+                android:src="@drawable/ic_reject_item_white"
+                tools:ignore="ContentDescription,RtlHardcoded" />
         </FrameLayout>
 
         <androidx.cardview.widget.CardView
@@ -41,34 +43,65 @@
                 android:background="@color/transparent"
                 android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/button_cancel"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="end"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/ic_close_white" />
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <Button
+                        android:id="@+id/button_cancel"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/ic_close_white" />
+                </LinearLayout>
                 <TextView
-                    style="@style/LogesTechsMedium"
+                    style="@style/LogesTechsBold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="8dp"
-                    android:text="@string/time_spent"
+                    android:text="@string/action_reject"
                     android:textColor="@color/fontTrackHint"
-                    android:layout_marginBottom="10dp"/>
+                    android:textSize="18sp" />
 
-                <TimePicker
-                    android:id="@+id/timePicker"
-                    android:layout_width="match_parent"
+                <TextView
+                    style="@style/LogesTechsLight"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:timePickerMode="spinner"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/title_please_select_reason"
                     android:textColor="@color/fontTrackHint"
-                    android:format24Hour="true"/>
+                    android:textSize="15sp" />
+
+
+
+                <EditText
+                    android:id="@+id/et_reason"
+                    style="@style/LogesTechsBold"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/background_card_shape_white"
+                    android:gravity="top"
+                    android:inputType="textFilter"
+                    android:padding="10dp"
+                    android:saveEnabled="false"
+                    android:textColor="@color/fontTitleBlack"
+                    android:textSize="14sp"
+                    tools:text="ملاحظات" />
 
                 <Button
                     android:id="@+id/button_done"
@@ -76,7 +109,6 @@
                     android:layout_width="150dp"
                     android:layout_height="35dp"
                     android:layout_gravity="center"
-                    android:layout_marginTop="16dp"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/background_logestechs_button"
                     android:text="@string/button_done"

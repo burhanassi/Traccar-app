@@ -205,7 +205,11 @@
     <string name="warning_some_villages_are_not_on_map">Caution! Some destinations may not appear on the map</string>
     <string name="text_number_of_locations">Number of destinations: %1$d</string>
     <string name="error_no_destinations_on_map">There are no destinations on the map</string>
-    <string name="time_spent">Enter The Time Spent</string>
+    <string name="time_spent">Enter The Sorting Time Spent</string>
     <string name="invalid_time_format">Invalid time format</string>
-
+    <string name="title_reject_item">Reject</string>
+    <string name="reason_damaged">Damaged</string>
+    <string name="reason_color">Wrong Color</string>
+    <string name="reason_item">Wrong Item</string>
+    <string name="reason_SKU">Wrong SKU</string>
 </resources>
