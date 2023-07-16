@@ -333,9 +333,10 @@ interface LogesTechsDriverApi {
         @Body body: BarcodeRequestBody?
     ): Response<SortItemIntoBinResponse>?
 
-    @PUT("api/handler/hub/bins/{binId}/shipping-items/reject")
+    @PUT("api/handler/hub/shipping-items/reject")
     suspend fun rejectItem(
-        @Path("binId") binId: Long?,
+        @Query("binId") binId: Long?,
+        @Query("locationId") locationId: Long?,
         @Query("shippingPlanId") shippingPlanId: Long?,
         @Body body: RejectItemRequestBody?
     ): Response<RejectItemResponse>?

@@ -209,5 +209,6 @@
     <string name="reason_damaged">تالف</string>
     <string name="reason_color">لون غير مطابق</string>
     <string name="reason_item">عنصر غير مطابق</string>
-    <string name="reason_SKU">SKU غير مطابق</string>
+    <string name="reason_SKU">غير مطابقSKU</string>
+    <string name="reason_other">سبب آخر</string>
 </resources>

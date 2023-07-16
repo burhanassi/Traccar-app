@@ -752,6 +752,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                 try {
                     val response = ApiAdapter.apiClient.rejectItem(
                         scannedBin?.id,
+                        scannedWarehouseLocation?.id,
                         scannedShippingPlan?.id,
                         rejectItemRequestBody
                     )
