@@ -180,9 +180,9 @@ interface LogesTechsDriverApi {
     ): Response<UploadImageResponse?>?
 
     @Multipart
-    @POST("api/driver/mass-packages/{massPackageId}/signature/upload")
+    @POST("api/driver/customers/{customerId}/mass-packages/delivery-proof/upload-multipart")
     suspend fun uploadMassReportSignature(
-        @Path("massPackageId") massPackageId: Long,
+        @Path("customerId") massPackageId: Long,
         @Part upload_form: MultipartBody.Part?
     ): Response<UploadImageResponse?>?
 

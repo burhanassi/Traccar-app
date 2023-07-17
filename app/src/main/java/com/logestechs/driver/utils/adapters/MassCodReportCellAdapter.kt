@@ -72,7 +72,6 @@ class MassCodReportCellAdapter
 
             binding.textCodSum.text = massCodReport?.totalCodWithoutCost?.format()
             binding.textCodPackagesCount.text = massCodReport?.codPackagesNumber.toString()
-//            binding.textCodSum.text = massCodReport?.
 
             binding.imageViewReceiverCall.setOnClickListener {
                 if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {

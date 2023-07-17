@@ -121,19 +121,8 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
         if (isBulkDelivery) {
             binding.itemPackageBarcode.textItem.text = groupMassCodReport?.customerName
             binding.itemReceiverAddress.textItem.text = groupMassCodReport?.address
-//            binding.itemPackageBarcode.root.visibility = View.VISIBLE
             binding.itemReceiverName.root.visibility = View.GONE
-//            binding.itemReceiverAddress.root.visibility = View.VISIBLE
             binding.textCod.text = groupMassCodReport?.codSum.toString()
-
-//            if (groupMassCodReport?.massReturnedPackagesReportBarcode != null && customer?.massReturnedPackagesReportBarcode!!.isNotEmpty()) {
-//                binding.itemPackageBarcode.root.visibility = View.VISIBLE
-//                binding.itemPackageBarcode.textItem.text =
-//                    customer?.massReturnedPackagesReportBarcode
-//            } else {
-//                binding.itemPackageBarcode.root.visibility = View.GONE
-//            }
-
         }else {
             binding.itemReceiverName.textItem.text = massCodReport?.customerName
             binding.itemReceiverAddress.textItem.text = massCodReport?.customerCity
@@ -753,7 +742,7 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
             }
 
             R.id.button_deliver_package -> {
-                if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == false) {
+                if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true) {
                     if (validateInput()) {
                         if(isBulkDelivery){
                             callDeliverMassCodReportGroup(
