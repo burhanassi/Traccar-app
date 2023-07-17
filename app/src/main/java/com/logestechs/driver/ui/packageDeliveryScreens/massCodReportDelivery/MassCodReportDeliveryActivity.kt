@@ -927,9 +927,19 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                 if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true) {
                     if (validateInput()) {
                         if(isBulkDelivery){
-                            uploadPackagesSignature()
+                            callDeliverMassCodReportGroup(
+                                groupMassCodReport?.customerId, DeliverMassCodReportGroupRequestBody(
+                                    null,
+                                    getPodImagesUrls()
+                                )
+                            )
                         }else {
-                            uploadPackageSignature()
+                            callDeliverMassCodReport(
+                                massCodReport?.id, DeliverMassCodReportRequestBody(
+                                    null,
+                                    getPodImagesUrls()
+                                )
+                            )
                         }
                     }
                 } else {
