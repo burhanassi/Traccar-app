@@ -415,20 +415,108 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                         bytes.toByteArray().toRequestBody("image/jpeg".toMediaTypeOrNull())
                     val body: MultipartBody.Part = MultipartBody.Part.createFormData(
                         "file",
-                        groupMassCodReport?.customerId.toString() +
+                        massCodReport?.id.toString() +
                                 "__signature_image" +
                                 "_" + System.currentTimeMillis() +
                                 ".jpg", reqFile
                     )
 
                     val response = ApiAdapter.apiClient.uploadMassReportSignature(
-                        groupMassCodReport?.customerId ?: -1,
+                        massCodReport?.id ?: -1,
                         body
                     )
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             callDeliverMassCodReport(
                                 massCodReport?.id, DeliverMassCodReportRequestBody(
+                                    response.body()?.fileUrl,
+                                    getPodImagesUrls()
+                                )
+                            )
+                        }
+                    } else {
+                        hideWaitDialog()
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
+    private fun uploadPackagesSignature() {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    bitmap = Bitmap.createBitmap(
+                        binding.gestureViewSignature.width,
+                        binding.gestureViewSignature.height,
+                        Bitmap.Config.ARGB_8888
+                    )
+                    val canvas = Canvas(bitmap!!)
+                    binding.gestureViewSignature.draw(canvas)
+                    file?.createNewFile()
+                    val fos = FileOutputStream(file)
+                    bitmap?.compress(Bitmap.CompressFormat.PNG, 100, fos)
+                    fos.close()
+
+                    // resize and compress to reasonable size
+                    val bytes = ByteArrayOutputStream()
+                    bitmap?.compress(
+                        Bitmap.CompressFormat.JPEG,
+                        AppConstants.IMAGE_FULL_QUALITY,
+                        bytes
+                    )
+
+                    val reqFile: RequestBody =
+                        bytes.toByteArray().toRequestBody("image/jpeg".toMediaTypeOrNull())
+                    val body: MultipartBody.Part = MultipartBody.Part.createFormData(
+                        "file",
+                        groupMassCodReport?.customerId .toString() +
+                                "__signature_image" +
+                                "_" + System.currentTimeMillis() +
+                                ".jpg", reqFile
+                    )
+
+                    val response = ApiAdapter.apiClient.uploadMassReportSignature(
+                        groupMassCodReport?.customerId  ?: -1,
+                        body
+                    )
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            callDeliverMassCodReportGroup(
+                                groupMassCodReport?.customerId, DeliverMassCodReportGroupRequestBody(
                                     response.body()?.fileUrl,
                                     getPodImagesUrls()
                                 )
@@ -766,7 +854,11 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                             if (Helper.isStoragePermissionNeeded(this)) {
                                 Helper.showAndRequestStorageDialog(this)
                             } else {
-                                uploadPackageSignature()
+                                if(isBulkDelivery){
+                                    uploadPackagesSignature()
+                                }else{
+                                    uploadPackageSignature()
+                                }
                             }
                         }
                     } else {
