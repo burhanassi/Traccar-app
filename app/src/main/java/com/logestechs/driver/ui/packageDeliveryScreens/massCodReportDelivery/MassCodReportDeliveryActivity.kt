@@ -279,7 +279,11 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                         if (loadedImagesList.size > 0 && loadedImagesList[loadedImagesList.size - 1]
                                 .imageUrl == null
                         ) {
-                            callUploadPodImage(loadedImagesList[loadedImagesList.size - 1])
+                            if (isBulkDelivery){
+                                callUploadPodGroupImage(loadedImagesList[loadedImagesList.size - 1])
+                            }else {
+                                callUploadPodImage(loadedImagesList[loadedImagesList.size - 1])
+                            }
                         }
                     } else {
                         Toast.makeText(
@@ -310,7 +314,11 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                         loadedImagesList.add(compressedImage)
                         if (loadedImagesList.size > 0 && loadedImagesList[loadedImagesList.size - 1].imageUrl == null
                         ) {
-                            callUploadPodImage(loadedImagesList[loadedImagesList.size - 1])
+                            if (isBulkDelivery){
+                                callUploadPodGroupImage(loadedImagesList[loadedImagesList.size - 1])
+                            }else {
+                                callUploadPodImage(loadedImagesList[loadedImagesList.size - 1])
+                            }
                         }
                     } else {
                         Toast.makeText(
@@ -517,7 +525,7 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                         withContext(Dispatchers.Main) {
                             callDeliverMassCodReportGroup(
                                 groupMassCodReport?.customerId, DeliverMassCodReportGroupRequestBody(
-                                    response.body()?.fileUrl,
+                                    response.body()!!.fileUrl,
                                     getPodImagesUrls()
                                 )
                             )
@@ -597,6 +605,92 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                     val response = ApiAdapter.apiClient.uploadPodImageForMassReport(
                         massCodReport?.id ?: -1,
                         true,
+                        body
+                    )
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            hideWaitDialog()
+                            loadedImagesList[loadedImagesList.size - 1].imageUrl =
+                                response.body()?.fileUrl
+                            (binding.rvThumbnails.adapter as ThumbnailsAdapter).updateItem(
+                                loadedImagesList.size - 1
+                            )
+                            binding.containerThumbnails.visibility = View.VISIBLE
+                        }
+                    } else {
+                        hideWaitDialog()
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
+    private fun callUploadPodGroupImage(loadedImage: LoadedImage?) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val file: File = File(
+                        Helper.getRealPathFromURI(
+                            super.getContext(),
+                            loadedImage?.imageUri!!
+                        ) ?: ""
+                    )
+                    val bitmap: Bitmap = MediaStore.Images.Media
+                        .getBitmap(super.getContext().contentResolver, Uri.fromFile(file))
+
+                    val bytes = ByteArrayOutputStream()
+                    bitmap.compress(
+                        Bitmap.CompressFormat.JPEG,
+                        AppConstants.IMAGE_FULL_QUALITY,
+                        bytes
+                    )
+
+                    val reqFile: RequestBody =
+                        bytes.toByteArray().toRequestBody("image/jpeg".toMediaTypeOrNull())
+
+                    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale("en")).format(Date())
+                    val imageFileName = "JPEG_" + timeStamp + "_"
+
+                    val body: MultipartBody.Part = MultipartBody.Part.createFormData(
+                        "file",
+                        "$imageFileName.jpeg", reqFile
+                    )
+
+                    val response = ApiAdapter.apiClient.uploadPodGroupImageForMassReport(
+                        groupMassCodReport?.customerId ?: -1,
                         body
                     )
                     if (response?.isSuccessful == true && response.body() != null) {
@@ -833,19 +927,9 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                 if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true) {
                     if (validateInput()) {
                         if(isBulkDelivery){
-                            callDeliverMassCodReportGroup(
-                                groupMassCodReport?.customerId, DeliverMassCodReportGroupRequestBody(
-                                    null,
-                                    getPodImagesUrls()
-                                )
-                            )
+                            uploadPackagesSignature()
                         }else {
-                            callDeliverMassCodReport(
-                                massCodReport?.id, DeliverMassCodReportRequestBody(
-                                    null,
-                                    getPodImagesUrls()
-                                )
-                            )
+                            uploadPackageSignature()
                         }
                     }
                 } else {
