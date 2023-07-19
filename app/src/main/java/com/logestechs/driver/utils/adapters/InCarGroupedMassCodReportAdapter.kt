@@ -70,6 +70,15 @@ class InCarGroupedMassCodReportAdapter(
         private var mAdapter: InCarGroupedMassCodReportAdapter
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(groupedPackage: GroupedMassCodReports?) {
+            val originalHeightInPixels = binding.containerOvalCount.layoutParams.height
+            val heightInDp = 130
+            val heightInPixels = (heightInDp * binding.root.context.resources.displayMetrics.density).toInt()
+            val newHeightInPixels = originalHeightInPixels + heightInPixels
+            val layoutParams = binding.containerOvalCount.layoutParams
+            layoutParams.height = newHeightInPixels
+            binding.containerOvalCount.layoutParams = layoutParams
+
+
             if (mAdapter.context != null) {
                 binding.itemTitle.iconImageView.background = ContextCompat.getDrawable(
                     mAdapter.context!!, R.drawable.ic_sender_gray
