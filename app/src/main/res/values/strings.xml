@@ -167,6 +167,7 @@
     <string name="title_items_number">Items Number</string>
     <string name="title_skus_number">SKUs Number</string>
     <string name="button_pack">Pack</string>
+    <string name="button_continue_picking">Continue Picking</string>
     <string name="please_scan_tote">Please Scan Tote</string>
     <string name="items">Items</string>
     <string name="scanned_sub_packages_count">%1$s of %2$s</string>
@@ -212,4 +213,6 @@
     <string name="reason_color">Wrong Color</string>
     <string name="reason_item">Wrong Item</string>
     <string name="reason_SKU">Wrong SKU</string>
+    <string name="picked_fulfillment">Picked Fulfillment Orders</string>
+    <string name="partially_picked_fulfillment">Partially Picked Fulfillment Orders</string>
 </resources>

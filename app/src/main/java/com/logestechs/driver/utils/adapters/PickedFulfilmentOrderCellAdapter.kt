@@ -5,8 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.logestechs.driver.R
 import com.logestechs.driver.data.model.FulfilmentOrder
 import com.logestechs.driver.databinding.ItemPickedFulfilmentOrderBinding
+import com.logestechs.driver.utils.FulfilmentOrderStatus
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.interfaces.PickedFulfilmentOrderCardListener
 
@@ -28,7 +30,7 @@ class PickedFulfilmentOrderCellAdapter(
                 viewGroup,
                 false
             )
-        return PickedFulfilmentOrderViewHolder(inflater, viewGroup, this)
+        return PickedFulfilmentOrderViewHolder(inflater, viewGroup, this, viewGroup.context)
     }
 
     override fun onBindViewHolder(
@@ -56,15 +58,21 @@ class PickedFulfilmentOrderCellAdapter(
     class PickedFulfilmentOrderViewHolder(
         private var binding: ItemPickedFulfilmentOrderBinding,
         private var parent: ViewGroup,
-        private var mAdapter: PickedFulfilmentOrderCellAdapter
+        private var mAdapter: PickedFulfilmentOrderCellAdapter,
+        private var context: Context
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(fulfilmentOrder: FulfilmentOrder?) {
+            val isPicked = fulfilmentOrder?.status == FulfilmentOrderStatus.PICKED.name
             binding.itemOrderBarcode.textItem.text = fulfilmentOrder?.barcode
             binding.itemCustomerAddress.textItem.text =
                 fulfilmentOrder?.receiverAddress?.toStringAddress()
             binding.itemCustomerName.textItem.text = fulfilmentOrder?.customerName
-
+            if (isPicked) {
+                binding.buttonPack.text = context.getString(R.string.button_pack)
+            } else {
+                binding.buttonPack.text = context.getString(R.string.button_continue_picking)
+            }
             if (fulfilmentOrder?.notes?.trim().isNullOrEmpty()) {
                 binding.itemNotes.root.visibility = View.GONE
             } else {
@@ -75,8 +83,21 @@ class PickedFulfilmentOrderCellAdapter(
             binding.textItemsCount.text = fulfilmentOrder?.numberOfItems?.toString()
             binding.textSkuCount.text = fulfilmentOrder?.items?.size.toString()
 
+//            binding.buttonPack.setOnClickListener {
+//                if(isPicked){
+//                    mAdapter.listener?.onPackFulfilmentOrder(adapterPosition)
+//                }else{
+//                    mAdapter.listener?.onContinuePickingClicked(adapterPosition)
+//                }
+//            }
             binding.buttonPack.setOnClickListener {
-                mAdapter.listener?.onPackFulfilmentOrder(adapterPosition)
+                if (mAdapter.listener != null) {
+                    if (isPicked) {
+                        mAdapter.listener!!.onPackFulfilmentOrder(adapterPosition)
+                    } else {
+                        mAdapter.listener!!.onContinuePickingClicked(fulfilmentOrder)
+                    }
+                }
             }
 
             binding.itemOrderBarcode.buttonCopy.setOnClickListener {

@@ -363,8 +363,8 @@ interface LogesTechsDriverApi {
     suspend fun getFulfilmentOrders(
         @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
         @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
-        @Query("status") status: String? = null,
-        @Query("statuses") statuses: List<String>?
+        @Query("status") status: String?,
+        @Query("statuses") statuses: List<String>? = null
     ): Response<GetFulfilmentOrdersResponse?>?
 
     @GET("api/handler/hub/tote")
@@ -373,6 +373,12 @@ interface LogesTechsDriverApi {
     @PUT("api/handler/hub/totes/{toteId}/order-items/sort")
     suspend fun scanItemIntoTote(
         @Path("toteId") toteId: Long?,
+        @Query("orderId") orderId: Long?,
+        @Body body: BarcodeRequestBody?
+    ): Response<SortItemIntoToteResponse>?
+
+    @PUT("api/handler/hub/order-items/continue-picking")
+    suspend fun continuePicking(
         @Query("orderId") orderId: Long?,
         @Body body: BarcodeRequestBody?
     ): Response<SortItemIntoToteResponse>?

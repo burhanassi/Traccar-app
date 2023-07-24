@@ -1,17 +1,26 @@
 package com.logestechs.driver.ui.pickedFulfilmentOrdersActivity
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.tabs.TabLayout
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.FulfilmentOrder
 import com.logestechs.driver.databinding.ActivityPickedFulfilmentOrdersBinding
+import com.logestechs.driver.ui.barcodeScanner.FulfilmentPickerBarcodeScannerActivity
+import com.logestechs.driver.ui.barcodeScanner.FulfilmentPickerScanMode
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.FulfilmentOrderStatus
 import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.adapters.PickedFulfilmentOrderCellAdapter
 import com.logestechs.driver.utils.interfaces.PickedFulfilmentOrderCardListener
@@ -33,14 +42,52 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
     private var fulfilmentOrdersList: ArrayList<FulfilmentOrder?> = ArrayList()
 
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPickedFulfilmentOrdersBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val tabLayout: TabLayout = findViewById(R.id.tab_layout_fulfillment)
+
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.picked_fulfillment))
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.partially_picked_fulfillment))
+
+        tabLayout.tabTextColors = getColorStateList(R.color.tab_text_color_selector)
+
         initRecycler()
-        initListeners()
-        callGetFulfilmentOrders()
+
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                val status = when (tab.position) {
+                    0 ->{
+                        FulfilmentOrderStatus.PICKED.name
+                    }
+                    1 ->{
+                        FulfilmentOrderStatus.PARTIALLY_PICKED.name
+                    }
+                    else -> null
+                }
+
+                currentPageIndex = 1
+                fulfilmentOrdersList.clear()
+
+                callGetFulfilmentOrders(status)
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+                // Handle tab unselection here if needed
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab) {
+                // Handle tab reselection here if needed
+            }
+        })
+
+        tabLayout.getTabAt(0)?.select()
+        callGetFulfilmentOrders(FulfilmentOrderStatus.PICKED.name)
     }
+
 
     private fun initRecycler() {
         val layoutManager = LinearLayoutManager(
@@ -51,13 +98,15 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
         )
         binding.rvFulfilmentOrders.layoutManager = layoutManager
         binding.rvFulfilmentOrders.addOnScrollListener(recyclerViewOnScrollListener)
+        (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()
+
     }
 
-    private fun initListeners() {
+    private fun initListeners(status: String?) {
         binding.refreshLayoutCustomers.setOnRefreshListener {
             currentPageIndex = 1
             (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()
-            callGetFulfilmentOrders()
+            callGetFulfilmentOrders(status)
         }
 
         binding.toolbarMain.buttonNotifications.setOnClickListener(this)
@@ -93,7 +142,7 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
 
                 if (!isLoading && !isLastPage) {
                     if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount >= AppConstants.DEFAULT_PAGE_SIZE) {
-                        callGetFulfilmentOrders()
+//                        callGetFulfilmentOrders()
                     }
                 }
             }
@@ -101,7 +150,7 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
 
     //apis
     @SuppressLint("NotifyDataSetChanged")
-    private fun callGetFulfilmentOrders() {
+    private fun callGetFulfilmentOrders(status: String?) {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
             isLoading = true
@@ -109,7 +158,7 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
                 try {
                         val response = ApiAdapter.apiClient.getFulfilmentOrders(
                             page = currentPageIndex,
-                            statuses = listOf(FulfilmentOrderStatus.PICKED.name, FulfilmentOrderStatus.PARTIALLY_PICKED.name)
+                            status = status
                         )
                         withContext(Dispatchers.Main) {
                             hideWaitDialog()
@@ -187,7 +236,7 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
                             )
                             currentPageIndex = 1
                             (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()
-                            callGetFulfilmentOrders()
+                            callGetFulfilmentOrders(FulfilmentOrderStatus.PICKED.name)
                         }
 
                     } else {
@@ -241,5 +290,18 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
 
     override fun onPackFulfilmentOrder(index: Int) {
         callPackFulfilmentOrder(index)
+    }
+
+    override fun onContinuePickingClicked(fulfilmentOrder: FulfilmentOrder?) {
+        if (fulfilmentOrder != null) {
+            val intent = Intent(this, FulfilmentPickerBarcodeScannerActivity::class.java)
+
+            intent.putExtra(IntentExtrasKeys.FULFILMENT_ORDER.name, fulfilmentOrder)
+            intent.putExtra(
+                IntentExtrasKeys.FULFILMENT_PICKER_SCAN_MODE.name,
+                FulfilmentPickerScanMode.ITEM_INTO_TOTE
+            )
+            startActivity(intent)
+        }
     }
 }
