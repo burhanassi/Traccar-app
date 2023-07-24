@@ -210,4 +210,7 @@
     <string name="reason_color">لون غير مطابق</string>
     <string name="reason_item">عنصر غير مطابق</string>
     <string name="reason_SKU">SKU غير مطابق</string>
+    <string name="sender_message">من:</string>
+    <string name="title_message">الموضوع:</string>
+<!--    <string name="body_message">Body:</string>-->
 </resources>
