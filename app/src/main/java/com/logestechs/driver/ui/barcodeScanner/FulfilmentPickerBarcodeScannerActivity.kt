@@ -128,6 +128,7 @@ class FulfilmentPickerBarcodeScannerActivity :
                     this@FulfilmentPickerBarcodeScannerActivity
                 )
         }
+        binding.textScannedOrder.text = "Order Barcode: ${selectedFulfilmentOrder?.barcode}"
     }
 
     private fun vibrate() {
@@ -310,6 +311,7 @@ class FulfilmentPickerBarcodeScannerActivity :
                             selectedScanMode = FulfilmentPickerScanMode.ITEM_INTO_TOTE
                             scannedTote = response.body()
                             handleSelectedScanMode()
+                            binding.textScannedTote.text = "Tote Barcode: ${scannedTote?.barcode}"
                         }
                     } else {
                         try {
