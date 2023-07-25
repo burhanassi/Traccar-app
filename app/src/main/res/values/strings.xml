@@ -106,6 +106,7 @@
     <string name="title_delivered_packages">Delivered Packages</string>
     <string name="error_no_packages_for_delivery">There are no packages for delivery</string>
     <string name="title_returned_packages">Returned Packages</string>
+    <string name="title_brought_packages">Brought Packages</string>
     <string name="button_deliver_to_sender">Deliver To Sender</string>
     <string name="button_deliver">Deliver</string>
     <string name="title_cod_sum">COD Sum</string>
