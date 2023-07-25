@@ -58,6 +58,7 @@
     <string name="in_car_status_all">All</string>
     <string name="in_car_status_failed">Failed</string>
     <string name="in_car_status_postponed">Postponed</string>
+    <string name="in_car_status_returned">Returned</string>
     <string name="in_car_status_cod">COD</string>
     <string name="view_mode_villages">Villages</string>
     <string name="view_mode_packages">Packages</string>
