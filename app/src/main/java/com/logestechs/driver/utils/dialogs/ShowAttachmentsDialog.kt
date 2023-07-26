@@ -12,27 +12,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.chrisbanes.photoview.PhotoView
 import com.logestechs.driver.R
-import com.logestechs.driver.api.ApiAdapter
-import com.logestechs.driver.api.requests.DeleteImageRequestBody
-import com.logestechs.driver.api.responses.PackageAttachmentsResponseBody
 import com.logestechs.driver.databinding.DialogShowAttachmentsBinding
-import com.logestechs.driver.utils.AppConstants
-import com.logestechs.driver.utils.Helper
-import com.logestechs.driver.utils.LogesTechsFragment
-import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
-import com.logestechs.driver.utils.interfaces.ShowAttachmentsDialogListener
 import com.smarteist.autoimageslider.SliderViewAdapter
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.json.JSONObject
 
 class ShowAttachmentsDialog(
     var context: Context?,
-    var listener: ShowAttachmentsDialogListener?,
     var packageId: Long?,
-    var packageAttachmentsResponseBody: PackageAttachmentsResponseBody?
+    var packageAttachmentsResponseBody: List<String>?
 ){
     lateinit var binding: DialogShowAttachmentsBinding
     lateinit var alertDialog: AlertDialog
@@ -55,12 +41,11 @@ class ShowAttachmentsDialog(
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.setCanceledOnTouchOutside(false)
         alertDialog.show()
-        listener?.showAttachments(packageId)
         setupImageSlider()
     }
 
     private fun setupImageSlider() {
-        val imageUrls = packageAttachmentsResponseBody?.imageUrls
+        val imageUrls = packageAttachmentsResponseBody
         val adapter = imageUrls?.let { SliderAdapter(it) }
         binding.sliderView.setSliderAdapter(adapter!!)
     }

@@ -103,8 +103,7 @@ class InCarPackagesFragment(
     AddPackageNoteDialogListener,
     ReturnPackageDialogListener,
     ConfirmationDialogActionListener,
-    PackageTypeFilterDialogListener,
-    ShowAttachmentsDialogListener{
+    PackageTypeFilterDialogListener{
 
     private var _binding: FragmentInCarPackagesBinding? = null
     private val binding get() = _binding!!
@@ -1360,11 +1359,17 @@ class InCarPackagesFragment(
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            packageAttachmentsResponseBody = response.body()!!
-                            Helper.showSuccessMessage(
-                                super.getContext(),
-                                getString(R.string.success_operation_completed)
-                            )
+                            response.body()?.let { imageUrls ->
+                                ShowAttachmentsDialog(
+                                    context,
+                                    packageId,
+                                    imageUrls
+                                ).showDialog()
+                                Helper.showSuccessMessage(
+                                    super.getContext(),
+                                    getString(R.string.success_operation_completed)
+                                )
+                            }
                         }
                     } else {
                         try {
@@ -1434,13 +1439,8 @@ class InCarPackagesFragment(
     }
 
     override fun onShowAttachmentsDialog(pkg: Package?){
-        if(pkg?.isAttachmentExist == false){
-            ShowAttachmentsDialog(
-                context,
-                this,
-                pkg.id,
-                packageAttachmentsResponseBody
-            ).showDialog()
+        if(pkg?.isAttachmentExist == true){
+            callGetAttachments(pkg.id)
         }else{
             Toast.makeText(
                 context,
@@ -1487,9 +1487,9 @@ class InCarPackagesFragment(
     override fun onDeleteImage(position: Int) {
         callDeletePodImage(position)
     }
-    override fun showAttachments(packageId: Long?) {
-        callGetAttachments(packageId)
-    }
+//    override fun showAttachments(packageId: Long?) {
+//        callGetAttachments(packageId)
+//    }
     override fun onShowPackageNoteDialog(pkg: Package?) {
         loadedImagesList.clear()
         addPackageNoteDialog = AddPackageNoteDialog(requireContext(), this, pkg, loadedImagesList)
