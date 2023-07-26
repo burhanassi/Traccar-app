@@ -49,6 +49,7 @@
     <string name="button_deliver_package">Deliver Package</string>
     <string name="action_return_package">Return</string>
     <string name="action_postpone_package">Postpone</string>
+    <string name="action_view_attachment">View Attachment</string>
     <string name="action_fail_delivery">Fail Delivery</string>
     <string name="title_fail_delivery">Fail Delivery</string>
     <string name="change_package_type">Change Package Type</string>
@@ -73,6 +74,7 @@
     <string name="receiver_paid_cost">Receiver paid costs</string>
     <string name="error_insert_message_text">Please insert message text</string>
     <string name="title_postpone">Postpone</string>
+    <string name="title_attachments">Attachments</string>
     <string name="error_select_postpone_date">Please select postpone date</string>
     <string name="package_type_cod">COD</string>
     <string name="package_type_regular">Prepaid</string>
@@ -202,6 +204,7 @@
     <string name="error_verification_code_must_be_four_digits">Verification code must consist of 4 digits</string>
     <string name="show_driver_packages_locations">Optimized Route</string>
     <string name="app_needs_location_permission">The app needs location permission for tracking</string>
+    <string name="cannot_open_attachments">You Can`t See The Attachments</string>
     <string name="warning_some_villages_are_not_on_map">Caution! Some destinations may not appear on the map</string>
     <string name="text_number_of_locations">Number of destinations: %1$d</string>
     <string name="error_no_destinations_on_map">There are no destinations on the map</string>
