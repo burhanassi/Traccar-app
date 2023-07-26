@@ -300,7 +300,8 @@ class FulfilmentPickerBarcodeScannerActivity :
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response = ApiAdapter.apiClient.getTote(
-                        barcode
+                        barcode,
+                        selectedFulfilmentOrder?.id
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
