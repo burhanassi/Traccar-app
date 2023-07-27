@@ -133,7 +133,7 @@ class NotificationsListAdapter(val list: ArrayList<Notification>) :
             )
 
             // Show the message title and body views when the card is expanded
-            binding.textSenderMessage.text = "${itemView.context.getString(R.string.sender_message)} ${notification.title}"
+            binding.textSenderMessage.text = "${itemView.context.getString(R.string.sender_message)} ${notification.senderName ?: ""}"
             binding.textTitleMessage.text = "${itemView.context.getString(R.string.title_message)} ${notification.title}"
             binding.textBodyMessage.text = "${notification.body}"
             binding.textSenderMessage.visibility = View.VISIBLE

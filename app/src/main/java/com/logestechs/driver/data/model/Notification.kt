@@ -15,6 +15,7 @@ data class Notification(
     val messageID: Long,
 
     val title: String,
+    val senderName: String,
     val body: String,
     val titleArabic: String,
     val bodyArabic: String,
