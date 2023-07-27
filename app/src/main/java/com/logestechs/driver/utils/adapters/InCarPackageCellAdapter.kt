@@ -262,7 +262,9 @@ class InCarPackageCellAdapter(
                                     pkg
                                 ).showDialog()
                             }
-
+                            R.id.action_view_attachment -> {
+                                mAdapter.listener?.onShowAttachmentsDialog(pkg)
+                            }
                             R.id.action_edit_package_type -> {
                                 ChangePackageTypeDialog(
                                     mAdapter.context!!,

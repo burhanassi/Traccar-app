@@ -4,10 +4,12 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.logestechs.driver.R
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.ProductItem
 import com.logestechs.driver.databinding.ItemFulfilmentOrderItemCellBinding
 import com.logestechs.driver.utils.SharedPreferenceWrapper
+import com.squareup.picasso.Picasso
 
 
 class FulfilmentOrderItemCellAdapter(
@@ -78,7 +80,11 @@ class FulfilmentOrderItemCellAdapter(
             binding.itemProductName.textItem.text = productItem?.productName
             binding.itemProductSku.textItem.text = productItem?.sku
             binding.itemBinLocation.textItem.text = productItem?.itemBinLocation
-
+            if(productItem?.productImageUrl != null){
+                Picasso.get()
+                    .load(productItem.productImageUrl)
+                    .into(binding.itemImage)
+            }
         }
     }
 }
