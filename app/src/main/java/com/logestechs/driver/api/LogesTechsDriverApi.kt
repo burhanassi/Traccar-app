@@ -135,6 +135,11 @@ interface LogesTechsDriverApi {
         @Body body: ReturnPackageRequestBody?
     ): Response<ResponseBody>?
 
+    @GET("api/driver/packages/{packageId}/attachments")
+    suspend fun packageAttachments(
+        @Path("packageId") long: Long?
+    ): Response<List<String>>?
+
     @PUT("api/driver/packages/{packageId}/fail")
     suspend fun failDelivery(
         @Path("packageId") long: Long?,
@@ -368,7 +373,10 @@ interface LogesTechsDriverApi {
     ): Response<GetFulfilmentOrdersResponse?>?
 
     @GET("api/handler/hub/tote")
-    suspend fun getTote(@Query("barcode") barcode: String?): Response<Bin?>?
+    suspend fun getTote(
+        @Query("barcode") barcode: String?,
+        @Query("orderId") orderId: Long?
+    ): Response<Bin?>?
 
     @PUT("api/handler/hub/totes/{toteId}/order-items/sort")
     suspend fun scanItemIntoTote(
