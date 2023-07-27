@@ -8,6 +8,7 @@ import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.ProductItem
 import com.logestechs.driver.databinding.ItemFulfilmentOrderItemCellBinding
 import com.logestechs.driver.utils.SharedPreferenceWrapper
+import android.os.Handler
 
 
 class FulfilmentOrderItemCellAdapter(
@@ -37,7 +38,6 @@ class FulfilmentOrderItemCellAdapter(
         position: Int
     ) {
         val productItem: ProductItem? = productItemsList[position]
-        FulfilmentOrderItemCellViewHolder.setIsRecyclable(false);
         FulfilmentOrderItemCellViewHolder.bind(productItem)
     }
 
@@ -79,6 +79,14 @@ class FulfilmentOrderItemCellAdapter(
             binding.itemProductSku.textItem.text = productItem?.sku
             binding.itemBinLocation.textItem.text = productItem?.itemBinLocation
 
+            if (productItem?.quantity == 0) {
+                Handler().post {
+                val position = adapterPosition
+                    if (position != RecyclerView.NO_POSITION) {
+                        mAdapter.removeItem(position)
+                    }
+                }
+            }
         }
     }
 }
