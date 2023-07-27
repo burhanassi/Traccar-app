@@ -112,6 +112,12 @@ interface LogesTechsDriverApi {
         @Body body: DeliverMassCodReportRequestBody?
     ): Response<ResponseBody>?
 
+    @PUT("api/driver/customers/{customerId}/mass-packages/deliver")
+    suspend fun deliverMassCodReportGroup(
+        @Path("customerId") customerId: Long?,
+        @Body body: DeliverMassCodReportGroupRequestBody?
+    ): Response<ResponseBody>?
+
     @PUT("api/driver/customers/{customerId}/returned-packages/deliver-to-sender")
     suspend fun deliverCustomerReturnedPackagesToSender(
         @Path("customerId") customerId: Long?,
@@ -201,6 +207,13 @@ interface LogesTechsDriverApi {
     suspend fun uploadPodImageForMassReport(
         @Path("massPackageId") massPackageId: Long,
         @Query("isMultiAttachment") isMultiAttachment: Boolean? = true,
+        @Part upload_form: MultipartBody.Part?
+    ): Response<UploadImageResponse?>?
+
+    @Multipart
+    @POST("api/driver/customers/{customerId}/mass-packages/delivery-proof/upload-multipart")
+    suspend fun uploadPodGroupImageForMassReport(
+        @Path("customerId") massPackageId: Long,
         @Part upload_form: MultipartBody.Part?
     ): Response<UploadImageResponse?>?
 
