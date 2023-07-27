@@ -50,20 +50,22 @@
                 android:visibility="gone" />
 
             <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/refresh_layout_customers"
+                android:id="@+id/refresh_layout_packages"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_customers"
+                    android:id="@+id/rv_packages"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToPadding="false"
                     android:overScrollMode="never"
+                    android:paddingStart="5dp"
                     android:paddingTop="4dp"
+                    android:paddingEnd="5dp"
                     android:paddingBottom="80dp"
                     android:scrollbars="vertical"
-                    tools:listitem="@layout/item_returned_package_customer_cell" />
+                    tools:listitem="@layout/item_accepted_package_village_cell" />
             </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
         </FrameLayout>
 
