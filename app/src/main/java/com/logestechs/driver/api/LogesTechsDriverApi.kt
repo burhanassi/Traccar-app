@@ -112,6 +112,12 @@ interface LogesTechsDriverApi {
         @Body body: DeliverMassCodReportRequestBody?
     ): Response<ResponseBody>?
 
+    @PUT("api/driver/customers/{customerId}/mass-packages/deliver")
+    suspend fun deliverMassCodReportGroup(
+        @Path("customerId") customerId: Long?,
+        @Body body: DeliverMassCodReportGroupRequestBody?
+    ): Response<ResponseBody>?
+
     @PUT("api/driver/customers/{customerId}/returned-packages/deliver-to-sender")
     suspend fun deliverCustomerReturnedPackagesToSender(
         @Path("customerId") customerId: Long?,
@@ -128,6 +134,11 @@ interface LogesTechsDriverApi {
         @Path("packageId") long: Long?,
         @Body body: ReturnPackageRequestBody?
     ): Response<ResponseBody>?
+
+    @GET("api/driver/packages/{packageId}/attachments")
+    suspend fun packageAttachments(
+        @Path("packageId") long: Long?
+    ): Response<List<String>>?
 
     @PUT("api/driver/packages/{packageId}/fail")
     suspend fun failDelivery(
@@ -201,6 +212,13 @@ interface LogesTechsDriverApi {
     suspend fun uploadPodImageForMassReport(
         @Path("massPackageId") massPackageId: Long,
         @Query("isMultiAttachment") isMultiAttachment: Boolean? = true,
+        @Part upload_form: MultipartBody.Part?
+    ): Response<UploadImageResponse?>?
+
+    @Multipart
+    @POST("api/driver/customers/{customerId}/mass-packages/delivery-proof/upload-multipart")
+    suspend fun uploadPodGroupImageForMassReport(
+        @Path("customerId") massPackageId: Long,
         @Part upload_form: MultipartBody.Part?
     ): Response<UploadImageResponse?>?
 
@@ -333,9 +351,10 @@ interface LogesTechsDriverApi {
         @Body body: BarcodeRequestBody?
     ): Response<SortItemIntoBinResponse>?
 
-    @PUT("api/handler/hub/bins/{binId}/shipping-items/reject")
+    @PUT("api/handler/hub/shipping-items/reject")
     suspend fun rejectItem(
-        @Path("binId") binId: Long?,
+        @Query("binId") binId: Long?,
+        @Query("locationId") locationId: Long?,
         @Query("shippingPlanId") shippingPlanId: Long?,
         @Body body: RejectItemRequestBody?
     ): Response<RejectItemResponse>?
@@ -355,7 +374,10 @@ interface LogesTechsDriverApi {
     ): Response<GetFulfilmentOrdersResponse?>?
 
     @GET("api/handler/hub/tote")
-    suspend fun getTote(@Query("barcode") barcode: String?): Response<Bin?>?
+    suspend fun getTote(
+        @Query("barcode") barcode: String?,
+        @Query("orderId") orderId: Long?
+    ): Response<Bin?>?
 
     @PUT("api/handler/hub/totes/{toteId}/order-items/sort")
     suspend fun scanItemIntoTote(
