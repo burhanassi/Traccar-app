@@ -9,6 +9,10 @@
         android:title="@string/action_postpone_package" />
 
     <item
+        android:id="@+id/action_view_attachment"
+        android:title="@string/action_view_attachment" />
+
+    <item
         android:id="@+id/action_edit_package_type"
         android:title="@string/change_package_type" />
 

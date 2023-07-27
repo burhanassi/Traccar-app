@@ -423,6 +423,7 @@ class FulfilmentPickerBarcodeScannerActivity :
         }
     }
 
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_done -> {

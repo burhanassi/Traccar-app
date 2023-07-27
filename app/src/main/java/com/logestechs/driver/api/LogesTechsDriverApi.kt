@@ -135,6 +135,11 @@ interface LogesTechsDriverApi {
         @Body body: ReturnPackageRequestBody?
     ): Response<ResponseBody>?
 
+    @GET("api/driver/packages/{packageId}/attachments")
+    suspend fun packageAttachments(
+        @Path("packageId") long: Long?
+    ): Response<List<String>>?
+
     @PUT("api/driver/packages/{packageId}/fail")
     suspend fun failDelivery(
         @Path("packageId") long: Long?,
