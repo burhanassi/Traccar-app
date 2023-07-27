@@ -28,5 +28,7 @@ data class MassCodReport(
     var customerPhone: String? = null,
     var isPrintedByAccountant: Boolean? = null,
     var statusStringForExport: String? = null,
-    var isCustomerBilled: Boolean? = null
+    var isCustomerBilled: Boolean? = null,
+    @Transient
+    var isExpanded: Boolean = false
 ) : Parcelable

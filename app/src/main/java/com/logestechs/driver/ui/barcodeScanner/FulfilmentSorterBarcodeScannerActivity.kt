@@ -41,8 +41,7 @@ enum class FulfilmentSorterScanMode {
     BIN_INTO_LOCATION,
     BIN,
     ITEM_INTO_BIN,
-    SHIPPING_PLAN,
-    TIME_SPENT
+    SHIPPING_PLAN
 }
 
 class FulfilmentSorterBarcodeScannerActivity :
@@ -869,6 +868,7 @@ class FulfilmentSorterBarcodeScannerActivity :
             }
         }
     }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_done -> {

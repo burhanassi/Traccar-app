@@ -153,6 +153,23 @@
                         app:textStatus="@string/in_car_status_cod" />
 
                 </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="16dp"
+                    android:orientation="horizontal">
+
+                    <com.logestechs.driver.utils.customViews.StatusSelector
+                        android:id="@+id/selector_returned"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        app:textStatus="@string/in_car_status_returned" />
+
+                </LinearLayout>
 
                 <Button
                     android:id="@+id/button_done"
