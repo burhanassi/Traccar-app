@@ -70,6 +70,7 @@ class FulfilmentSorterBarcodeScannerActivity :
     private var scannedBin: Bin? = null
     private var isBinScan = true
     private var hours: Double? = null
+    private var rejectedItems: Int? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFulfilmentSorterBarcodeScannerBinding.inflate(layoutInflater)
@@ -136,6 +137,7 @@ class FulfilmentSorterBarcodeScannerActivity :
         binding.textReceived.text = shippingPlanDetails?.sorted.toString()
         binding.textUnreceived.text = shippingPlanDetails?.unsorted.toString()
         binding.textRejected.text = shippingPlanDetails?.rejected.toString()
+        rejectedItems = shippingPlanDetails?.rejected
         scannedShippingPlan?.shippingPlanDetails = shippingPlanDetails
     }
 
@@ -871,9 +873,16 @@ class FulfilmentSorterBarcodeScannerActivity :
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_done -> {
-                val fragment = SetTimeSpent()
-                fragment.isCancelable = false
-                fragment.show(supportFragmentManager, "SetTimeSpentDialog")
+                if(rejectedItems != 0){
+                    scannedWarehouseLocation = null
+                    selectedScanMode = FulfilmentSorterScanMode.LOCATION
+                    (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).clearList()
+                    handleSelectedScanMode()
+                }else{
+                    val fragment = SetTimeSpent()
+                    fragment.isCancelable = false
+                    fragment.show(supportFragmentManager, "SetTimeSpentDialog")
+                }
             }
 
             R.id.button_new_bin -> {
