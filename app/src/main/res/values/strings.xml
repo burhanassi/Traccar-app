@@ -219,4 +219,5 @@
     <string name="sender_message">From:</string>
     <string name="title_message">Title:</string>
 <!--    <string name="body_message">Body:</string>-->
+    <string name="reason_other">Other</string>
 </resources>
