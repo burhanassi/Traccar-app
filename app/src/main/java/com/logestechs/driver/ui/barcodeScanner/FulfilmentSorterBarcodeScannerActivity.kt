@@ -765,7 +765,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                                 getString(R.string.success_operation_completed)
                             )
                             (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).deleteItem(
-                                response.body()?.shippingPlanDetails?.rejected
+                                response.body()?.shippingPlanDetails?.rejected!!
                             )
                             updateShippingPlanCountValues(response.body()?.shippingPlanDetails)
                             scannedItemsHashMap.remove(response.body()!!.itemDetails?.barcode)
