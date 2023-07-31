@@ -28,6 +28,12 @@ class ScannedShippingPlanItemCellAdapter(
 
     var context: Context? = null
 
+    private fun removeItemByBarcode(barcode: String?) {
+        val position = list.indexOfFirst { it?.barcode == barcode }
+        if (position >= 0) {
+            deleteItem(position)
+        }
+    }
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -51,13 +57,15 @@ class ScannedShippingPlanItemCellAdapter(
 
     override fun getItemCount(): Int = list.size
 
-    fun deleteItem(position: Int?) {
-        list.removeAt(position!!)
-        notifyItemRemoved(position!!)
+    fun deleteItem(position: Int) {
+        if (position >= 0 && position < list.size) {
+            list.removeAt(position)
+            notifyItemRemoved(position)
+        }
     }
 
     fun clearList() {
-        val size: Int = list.size
+        val size = list.size
         list.clear()
         notifyItemRangeRemoved(0, size)
     }
@@ -73,6 +81,8 @@ class ScannedShippingPlanItemCellAdapter(
     }
 
     override fun onItemRejected(rejectItemRequestBody: RejectItemRequestBody) {
+        val barcode = rejectItemRequestBody.barcode
+        removeItemByBarcode(barcode)
         listener?.rejectItem(rejectItemRequestBody)
     }
 
