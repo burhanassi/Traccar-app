@@ -40,7 +40,7 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
     private var currentPageIndex = 1
 
     private var fulfilmentOrdersList: ArrayList<FulfilmentOrder?> = ArrayList()
-
+    private var status: String? = FulfilmentOrderStatus.PICKED.name
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +59,7 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-                val status = when (tab.position) {
+                 status = when (tab.position) {
                     0 ->{
                         FulfilmentOrderStatus.PICKED.name
                     }
@@ -142,7 +142,7 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
 
                 if (!isLoading && !isLastPage) {
                     if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount >= AppConstants.DEFAULT_PAGE_SIZE) {
-//                        callGetFulfilmentOrders()
+                        callGetFulfilmentOrders(status)
                     }
                 }
             }
