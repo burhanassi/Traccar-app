@@ -60,6 +60,7 @@
     <string name="in_car_status_all">الكل</string>
     <string name="in_car_status_failed">عالق</string>
     <string name="in_car_status_postponed">مؤجل</string>
+    <string name="in_car_status_returned">مرجع</string>
     <string name="in_car_status_cod">التحصيل</string>
     <string name="view_mode_villages">مناطق</string>
     <string name="view_mode_packages">طرود</string>
@@ -109,6 +110,7 @@
     <string name="title_delivered_packages">الطرود المسلمة</string>
     <string name="error_no_packages_for_delivery">لا يوجد طرود للتسليم</string>
     <string name="title_returned_packages">الرواجع</string>
+    <string name="title_brought_packages">طرود الإحضار</string>
     <string name="button_deliver_to_sender">تسليم إلى المرسل</string>
     <string name="button_deliver">توصيل</string>
     <string name="title_cod_sum">مجموع التحصيلات</string>
@@ -213,4 +215,8 @@
     <string name="reason_color">لون غير مطابق</string>
     <string name="reason_item">عنصر غير مطابق</string>
     <string name="reason_SKU">SKU غير مطابق</string>
+    <string name="sender_message">من:</string>
+    <string name="title_message">الموضوع:</string>
+<!--    <string name="body_message">Body:</string>-->
+    <string name="reason_other">سبب آخر</string>
 </resources>

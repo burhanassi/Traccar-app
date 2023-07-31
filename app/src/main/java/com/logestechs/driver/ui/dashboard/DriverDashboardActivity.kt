@@ -31,6 +31,7 @@ import com.logestechs.driver.data.model.Device
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.databinding.ActivityDriverDashboardBinding
 import com.logestechs.driver.ui.barcodeScanner.BarcodeScannerActivity
+import com.logestechs.driver.ui.broughtPackages.BroughtPackagesActivity
 import com.logestechs.driver.ui.driverDraftPickupsByStatusViewPager.DriverDraftPickupsByStatusViewPagerActivity
 import com.logestechs.driver.ui.driverPackagesByStatusViewPager.DriverPackagesByStatusViewPagerActivity
 import com.logestechs.driver.ui.massCodReports.MassCodReportsActivity
@@ -121,6 +122,7 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
         binding.dashEntryScanPackages.root.setOnClickListener(this)
         binding.dashEntryFailedPackages.root.setOnClickListener(this)
         binding.dashEntryPostponedPackages.root.setOnClickListener(this)
+        binding.dashSubEntryBroughtPackages.root.setOnClickListener(this)
         binding.dashSubEntryReturnedPackages.root.setOnClickListener(this)
         binding.dashSubEntryMassCodReports.root.setOnClickListener(this)
         binding.dashSubEntryDraftPickups.root.setOnClickListener(this)
@@ -282,6 +284,10 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
                 startActivity(mIntent)
             }
 
+            R.id.dash_sub_entry_brought_packages -> {
+                val mIntent = Intent(this, BroughtPackagesActivity::class.java)
+                startActivity(mIntent)
+            }
             R.id.dash_sub_entry_returned_packages -> {
                 val mIntent = Intent(this, ReturnedPackagesActivity::class.java)
                 startActivity(mIntent)

@@ -4,11 +4,12 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.logestechs.driver.R
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.ProductItem
 import com.logestechs.driver.databinding.ItemFulfilmentOrderItemCellBinding
 import com.logestechs.driver.utils.SharedPreferenceWrapper
-import android.os.Handler
+import com.squareup.picasso.Picasso
 
 
 class FulfilmentOrderItemCellAdapter(
@@ -38,6 +39,7 @@ class FulfilmentOrderItemCellAdapter(
         position: Int
     ) {
         val productItem: ProductItem? = productItemsList[position]
+        FulfilmentOrderItemCellViewHolder.setIsRecyclable(false);
         FulfilmentOrderItemCellViewHolder.bind(productItem)
     }
 
@@ -78,14 +80,10 @@ class FulfilmentOrderItemCellAdapter(
             binding.itemProductName.textItem.text = productItem?.productName
             binding.itemProductSku.textItem.text = productItem?.sku
             binding.itemBinLocation.textItem.text = productItem?.itemBinLocation
-
-            if (productItem?.quantity == 0) {
-                Handler().post {
-                val position = adapterPosition
-                    if (position != RecyclerView.NO_POSITION) {
-                        mAdapter.removeItem(position)
-                    }
-                }
+            if(productItem?.productImageUrl != null){
+                Picasso.get()
+                    .load(productItem.productImageUrl)
+                    .into(binding.itemImage)
             }
         }
     }

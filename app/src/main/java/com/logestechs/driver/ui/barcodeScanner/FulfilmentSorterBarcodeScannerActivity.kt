@@ -110,7 +110,7 @@ class FulfilmentSorterBarcodeScannerActivity :
             FulfilmentSorterScanMode.ITEM_INTO_BIN -> {
                 showScannedItemsContainer()
                 updateShippingPlanCountValues(scannedShippingPlan?.shippingPlanDetails)
-                binding.textScannedBin.text = scannedBin?.barcode
+                binding.textScannedBin.text = scannedBin?.barcode ?: scannedWarehouseLocation?.barcode
                 binding.textTitle.text = getString(R.string.please_scan_items)
             }
             FulfilmentSorterScanMode.SHIPPING_PLAN -> {
@@ -751,6 +751,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                 try {
                     val response = ApiAdapter.apiClient.rejectItem(
                         scannedBin?.id,
+                        scannedWarehouseLocation?.id,
                         scannedShippingPlan?.id,
                         rejectItemRequestBody
                     )
@@ -764,7 +765,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                                 getString(R.string.success_operation_completed)
                             )
                             (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).deleteItem(
-                                response.body()?.shippingPlanDetails?.rejected
+                                response.body()?.shippingPlanDetails?.rejected!!
                             )
                             updateShippingPlanCountValues(response.body()?.shippingPlanDetails)
                             scannedItemsHashMap.remove(response.body()!!.itemDetails?.barcode)

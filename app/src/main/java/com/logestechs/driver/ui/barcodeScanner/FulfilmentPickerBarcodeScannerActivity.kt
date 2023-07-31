@@ -128,6 +128,7 @@ class FulfilmentPickerBarcodeScannerActivity :
                     this@FulfilmentPickerBarcodeScannerActivity
                 )
         }
+        binding.textScannedOrder.text = "Order Barcode: ${selectedFulfilmentOrder?.barcode}"
     }
 
     private fun vibrate() {
@@ -300,7 +301,8 @@ class FulfilmentPickerBarcodeScannerActivity :
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response = ApiAdapter.apiClient.getTote(
-                        barcode
+                        barcode,
+                        selectedFulfilmentOrder?.id
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
@@ -310,6 +312,7 @@ class FulfilmentPickerBarcodeScannerActivity :
                             selectedScanMode = FulfilmentPickerScanMode.ITEM_INTO_TOTE
                             scannedTote = response.body()
                             handleSelectedScanMode()
+                            binding.textScannedTote.text = "Tote Barcode: ${scannedTote?.barcode}"
                         }
                     } else {
                         try {

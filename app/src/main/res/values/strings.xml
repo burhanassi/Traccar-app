@@ -59,6 +59,7 @@
     <string name="in_car_status_all">All</string>
     <string name="in_car_status_failed">Failed</string>
     <string name="in_car_status_postponed">Postponed</string>
+    <string name="in_car_status_returned">Returned</string>
     <string name="in_car_status_cod">COD</string>
     <string name="view_mode_villages">Villages</string>
     <string name="view_mode_packages">Packages</string>
@@ -108,6 +109,7 @@
     <string name="title_delivered_packages">Delivered Packages</string>
     <string name="error_no_packages_for_delivery">There are no packages for delivery</string>
     <string name="title_returned_packages">Returned Packages</string>
+    <string name="title_brought_packages">Brought Packages</string>
     <string name="button_deliver_to_sender">Deliver To Sender</string>
     <string name="button_deliver">Deliver</string>
     <string name="title_cod_sum">COD Sum</string>
@@ -215,4 +217,8 @@
     <string name="reason_color">Wrong Color</string>
     <string name="reason_item">Wrong Item</string>
     <string name="reason_SKU">Wrong SKU</string>
+    <string name="sender_message">From:</string>
+    <string name="title_message">Title:</string>
+<!--    <string name="body_message">Body:</string>-->
+    <string name="reason_other">Other</string>
 </resources>

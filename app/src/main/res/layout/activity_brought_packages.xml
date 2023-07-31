@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.inCarPackages.InCarPackagesFragment">
+    tools:context=".ui.broughtPackages.BroughtPackagesActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <include
+            android:id="@+id/toolbar_main"
+            layout="@layout/toolbar_main" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="35dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
             android:background="@color/peach_orange_tab_pager_bar">
 
             <TextView
@@ -20,55 +22,15 @@
                 style="@style/LogesTechsBold"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="10dp"
+                android:text="@string/title_brought_packages"
                 android:textColor="@color/fontTrackHint"
                 android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/text_selected_status"
-                style="@style/LogesTechsBold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="5dp"
-                android:textColor="@color/fontTrackHint"
-                android:textSize="14sp" />
-
-            <ImageView
-                android:id="@+id/button_view_mode"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_view_mode"
-                tools:ignore="ContentDescription" />
-
-            <ImageView
-                android:id="@+id/button_search"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_search_gray"
-                tools:ignore="ContentDescription" />
-
-            <ImageView
-                android:id="@+id/button_status_filter"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="8dp"
-                android:src="@drawable/ic_status_filter"
-                tools:ignore="ContentDescription" />
-
-            <ImageView
-                android:id="@+id/button_options"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="8dp"
-                android:src="@drawable/ic_context_menu_gray"
-                tools:ignore="ContentDescription" />
         </LinearLayout>
-
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -108,6 +70,5 @@
         </FrameLayout>
 
     </LinearLayout>
-
 
 </layout>

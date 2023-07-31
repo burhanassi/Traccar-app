@@ -32,7 +32,7 @@ class RejectItemDialog(
         "WRONG_COLOR" to context.getString(R.string.reason_color),
         "WRONG_ITEM" to context.getString(R.string.reason_item),
         "WRONG_SKU" to context.getString(R.string.reason_SKU),
-        "OTHER" to ""
+        "OTHER" to context.getString(R.string.reason_other)
     )
 
     fun showDialog() {
