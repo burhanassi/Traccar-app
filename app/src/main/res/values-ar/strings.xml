@@ -50,6 +50,7 @@
     <string name="button_deliver_package">توصيل الطرد</string>
     <string name="action_return_package">إرجاع</string>
     <string name="action_postpone_package">تأجيل</string>
+    <string name="action_view_attachment">عرض المرفقات</string>
     <string name="action_fail_delivery">فشل في التوصيل</string>
     <string name="title_fail_delivery">فشل في التوصيل</string>
     <string name="change_package_type">تعديل نوع الطرد</string>
@@ -59,6 +60,7 @@
     <string name="in_car_status_all">الكل</string>
     <string name="in_car_status_failed">عالق</string>
     <string name="in_car_status_postponed">مؤجل</string>
+    <string name="in_car_status_returned">مرجع</string>
     <string name="in_car_status_cod">التحصيل</string>
     <string name="view_mode_villages">مناطق</string>
     <string name="view_mode_packages">طرود</string>
@@ -74,6 +76,7 @@
     <string name="receiver_paid_cost">المستلم دفع الأجور</string>
     <string name="error_insert_message_text">الرجاء إدخال نص الرسالة</string>
     <string name="title_postpone">تأجيل</string>
+    <string name="title_attachments">المرفقات</string>
     <string name="error_select_postpone_date">اختر تاريخ التأجيل</string>
     <string name="package_type_cod">تحصيل عند الاستلام</string>
     <string name="package_type_regular">مدفوع مسبقا</string>
@@ -167,7 +170,6 @@
     <string name="title_items_number">عدد العناصر</string>
     <string name="title_skus_number">عدد ال SKUs</string>
     <string name="button_pack">تغليف</string>
-    <string name="button_continue_picking">مواصلة التحميل</string>
     <string name="please_scan_tote">الرجاء مسح باركود سلة التحميل</string>
     <string name="items">العناصر</string>
     <string name="scanned_sub_packages_count">%1$s من %2$s</string>
@@ -201,6 +203,7 @@
     <string name="error_verification_code_must_be_four_digits">رقم التحقق يجب ان يتكوّن من 4 ارقام</string>
     <string name="show_driver_packages_locations">المسار التلقائي</string>
     <string name="app_needs_location_permission">الرجاء اعطاء صلاحية الوصول الى الموقع</string>
+    <string name="cannot_open_attachments">لا يمكنك عرض المرفقات</string>
     <string name="warning_some_villages_are_not_on_map">انتبه! بعض الوجهات قد تكون غير مضافة على الخريطة</string>
     <string name="text_number_of_locations">عدد وجهات التوصيل: %1$d</string>
     <string name="error_no_destinations_on_map">لا يوجد وجهات على الخريطة</string>
@@ -211,6 +214,10 @@
     <string name="reason_color">لون غير مطابق</string>
     <string name="reason_item">عنصر غير مطابق</string>
     <string name="reason_SKU">SKU غير مطابق</string>
+    <string name="sender_message">من:</string>
+    <string name="title_message">الموضوع:</string>
+<!--    <string name="body_message">Body:</string>-->
+    <string name="reason_other">سبب آخر</string>
     <string name="picked_fulfillment">طلبات محملة في السلات</string>
     <string name="partially_picked_fulfillment">طلبات محملة جزئيا</string>
 </resources>

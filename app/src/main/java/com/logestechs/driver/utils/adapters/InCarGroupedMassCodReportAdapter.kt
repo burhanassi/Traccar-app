@@ -70,6 +70,7 @@ class InCarGroupedMassCodReportAdapter(
         private var mAdapter: InCarGroupedMassCodReportAdapter
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(groupedPackage: GroupedMassCodReports?) {
+
             if (mAdapter.context != null) {
                 binding.itemTitle.iconImageView.background = ContextCompat.getDrawable(
                     mAdapter.context!!, R.drawable.ic_sender_gray

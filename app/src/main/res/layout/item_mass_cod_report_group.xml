@@ -38,8 +38,9 @@
 
                 <LinearLayout
                     android:id="@+id/container_oval_count"
-                    android:layout_width="175dp"
-                    android:layout_height="100dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:background="@drawable/background_card_semi_circle"
                     android:gravity="end"
                     android:orientation="horizontal">
@@ -48,9 +49,6 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginStart="23dp"
-                        android:layout_marginEnd="2dp"
-                        android:layout_marginBottom="6dp"
                         android:layout_weight="1"
                         android:gravity="center"
                         android:orientation="vertical">
@@ -63,7 +61,7 @@
                             android:gravity="center"
                             android:text="0"
                             android:textColor="@color/fontTrackHint"
-                            android:textSize="20sp" />
+                            android:textSize="16sp" />
 
                         <TextView
                             style="@style/LogesTechsLight"
@@ -80,7 +78,7 @@
                             android:gravity="center"
                             android:text="0"
                             android:textColor="@color/fontTrackHint"
-                            android:textSize="20sp" />
+                            android:textSize="16sp" />
 
                         <TextView
                             style="@style/LogesTechsLight"
