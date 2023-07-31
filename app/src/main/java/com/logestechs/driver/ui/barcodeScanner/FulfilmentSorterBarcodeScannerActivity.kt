@@ -110,7 +110,7 @@ class FulfilmentSorterBarcodeScannerActivity :
             FulfilmentSorterScanMode.ITEM_INTO_BIN -> {
                 showScannedItemsContainer()
                 updateShippingPlanCountValues(scannedShippingPlan?.shippingPlanDetails)
-                binding.textScannedBin.text = scannedBin?.barcode
+                binding.textScannedBin.text = scannedBin?.barcode ?: scannedWarehouseLocation?.barcode
                 binding.textTitle.text = getString(R.string.please_scan_items)
             }
             FulfilmentSorterScanMode.SHIPPING_PLAN -> {
