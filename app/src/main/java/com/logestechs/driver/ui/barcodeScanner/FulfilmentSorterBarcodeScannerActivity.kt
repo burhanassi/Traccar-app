@@ -20,7 +20,8 @@ import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.BarcodeRequestBody
 import com.logestechs.driver.api.requests.RejectItemRequestBody
-import com.logestechs.driver.api.responses.RejectItemResponse
+import com.logestechs.driver.api.requests.RejectedRequestBody
+import com.logestechs.driver.api.responses.SortItemIntoBinResponse
 import com.logestechs.driver.data.model.*
 import com.logestechs.driver.databinding.ActivityFulfilmentSorterBarcodeScannerBinding
 import com.logestechs.driver.utils.*
@@ -33,6 +34,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import retrofit2.Response
 import java.io.IOException
 
 
@@ -71,6 +73,8 @@ class FulfilmentSorterBarcodeScannerActivity :
     private var isBinScan = true
     private var hours: Double? = null
     private var rejectedItems: Int? = null
+    private var isReject: Boolean = false
+    private var idsListWrapper: List<Long>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFulfilmentSorterBarcodeScannerBinding.inflate(layoutInflater)
@@ -96,28 +100,42 @@ class FulfilmentSorterBarcodeScannerActivity :
                 hideScannedItemsContainer()
                 binding.textTitle.text = getString(R.string.please_scan_location_barcode)
             }
+
             FulfilmentSorterScanMode.BIN_INTO_LOCATION -> {
                 hideScannedItemsContainer()
                 binding.textTitle.text = getString(R.string.please_scan_bin_barcode)
             }
+
             FulfilmentSorterScanMode.BIN -> {
                 hideScannedItemsContainer()
-                isBinScan = true
-                binding.buttonSwitchBinAndLocation.visibility = View.VISIBLE
-                binding.containerSubTitle.visibility = View.VISIBLE
-                binding.textSubTitle.text = scannedShippingPlan?.barcode
-                binding.textTitle.text = getString(R.string.please_scan_bin_barcode)
+                if (isReject) {
+                    binding.textTitle.text = getString(R.string.please_scan_location_barcode)
+                    scannedBin?.barcode = null
+                } else {
+                    isBinScan = true
+                    binding.buttonSwitchBinAndLocation.visibility = View.VISIBLE
+                    binding.containerSubTitle.visibility = View.VISIBLE
+                    binding.textSubTitle.text = scannedShippingPlan?.barcode
+                    binding.textTitle.text = getString(R.string.please_scan_bin_barcode)
+                }
             }
+
             FulfilmentSorterScanMode.ITEM_INTO_BIN -> {
                 showScannedItemsContainer()
                 updateShippingPlanCountValues(scannedShippingPlan?.shippingPlanDetails)
-                binding.textScannedBin.text = scannedBin?.barcode ?: scannedWarehouseLocation?.barcode
+                binding.textScannedBin.text =
+                    scannedBin?.barcode ?: scannedWarehouseLocation?.barcode
                 binding.textTitle.text = getString(R.string.please_scan_items)
+                if(isReject){
+                    binding.buttonNewBin.text = getString(R.string.button_new_location)
+                }
             }
+
             FulfilmentSorterScanMode.SHIPPING_PLAN -> {
                 hideScannedItemsContainer()
                 binding.textTitle.text = getString(R.string.please_scan_shipping_plan_barcode)
             }
+
             null -> return
             else -> {}
         }
@@ -183,7 +201,7 @@ class FulfilmentSorterBarcodeScannerActivity :
 
         } else {
             @Suppress("DEPRECATION")
-            val vibrator = getSystemService(AppCompatActivity.VIBRATOR_SERVICE) as Vibrator
+            val vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
             vibrator.vibrate(200)
         }
     }
@@ -323,9 +341,11 @@ class FulfilmentSorterBarcodeScannerActivity :
             FulfilmentSorterScanMode.LOCATION -> {
                 callGetWarehouseLocation(barcode)
             }
+
             FulfilmentSorterScanMode.BIN_INTO_LOCATION -> {
                 callSortBinIntoWarehouseLocation(barcode)
             }
+
             FulfilmentSorterScanMode.BIN -> {
                 if (isBinScan) {
                     callGetBin(barcode)
@@ -333,16 +353,19 @@ class FulfilmentSorterBarcodeScannerActivity :
                     callGetWarehouseLocation(barcode)
                 }
             }
+
             FulfilmentSorterScanMode.ITEM_INTO_BIN -> {
                 if (isBinScan) {
                     callSortItemIntoBin(barcode)
                 } else {
-                    callSortItemIntoLocation(barcode)
+//                    callSortItemIntoLocation(barcode)
                 }
             }
+
             FulfilmentSorterScanMode.SHIPPING_PLAN -> {
                 callGetShippingPlan(barcode)
             }
+
             null -> return
             else -> {}
         }
@@ -365,6 +388,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             if (selectedScanMode == FulfilmentSorterScanMode.BIN) {
+                                isReject = true
                                 selectedScanMode = FulfilmentSorterScanMode.ITEM_INTO_BIN
                                 scannedWarehouseLocation = response.body()
                                 handleSelectedScanMode()
@@ -683,15 +707,27 @@ class FulfilmentSorterBarcodeScannerActivity :
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.sortItemIntoLocation(
-                        scannedWarehouseLocation?.id,
-                        scannedShippingPlan?.id,
-                        BarcodeRequestBody(itemBarcode = barcode)
-                    )
+                    var response: Response<SortItemIntoBinResponse>? = null
+
+                    response = if(isReject){
+                        ApiAdapter.apiClient.sortRejectedItemIntoLocation(
+                            scannedWarehouseLocation?.id,
+                            RejectedRequestBody(ids = idsListWrapper)
+                        )
+                    }else{
+                        ApiAdapter.apiClient.sortItemIntoLocation(
+                            scannedWarehouseLocation?.id,
+                            scannedShippingPlan?.id,
+                            BarcodeRequestBody(itemBarcode = barcode)
+                        )
+                    }
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
+                        if(isReject){
+                            rejectedItems = rejectedItems?.minus(1)
+                        }
                         withContext(Dispatchers.Main) {
                             val response = response.body()
                             (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).insertItem(
@@ -812,7 +848,8 @@ class FulfilmentSorterBarcodeScannerActivity :
             }
         }
     }
-    private fun callSetTimeSpent(time: Double?){
+
+    private fun callSetTimeSpent(time: Double?) {
         this.runOnUiThread {
             showWaitDialog()
         }
@@ -826,13 +863,13 @@ class FulfilmentSorterBarcodeScannerActivity :
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
-                    if (response?.isSuccessful == true && response.body() != null) {
+                    if (response.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             Log.d("MyFragment", "OK!")
                         }
                     } else {
                         try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            val jObjError = JSONObject(response.errorBody()!!.string())
                             withContext(Dispatchers.Main) {
                                 Helper.showErrorMessage(
                                     super.getContext(),
@@ -874,12 +911,14 @@ class FulfilmentSorterBarcodeScannerActivity :
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_done -> {
-                if(rejectedItems != 0){
+                if (rejectedItems != 0) {
                     scannedWarehouseLocation = null
-                    selectedScanMode = FulfilmentSorterScanMode.LOCATION
+                    selectedScanMode = FulfilmentSorterScanMode.BIN
+                    isBinScan = false
+                    isReject = true
                     (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).clearList()
                     handleSelectedScanMode()
-                }else{
+                } else {
                     val fragment = SetTimeSpent()
                     fragment.isCancelable = false
                     fragment.show(supportFragmentManager, "SetTimeSpentDialog")

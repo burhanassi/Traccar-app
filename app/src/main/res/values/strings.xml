@@ -160,6 +160,7 @@
     <string name="unsorted_items">Unsorted</string>
     <string name="rejected_items">Rejected</string>
     <string name="button_new_bin">New Bin</string>
+    <string name="button_new_location">New Location</string>
     <string name="action_reject">Reject</string>
     <string name="dashboard_new_fulfilment_orders">New Fulfillment Orders</string>
     <string name="title_new_fulfilment_orders">New Fulfillment Orders</string>
