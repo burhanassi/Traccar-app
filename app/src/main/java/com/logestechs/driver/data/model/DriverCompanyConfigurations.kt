@@ -26,4 +26,5 @@ data class DriverCompanyConfigurations(
     var isShowDriverLocationInPackageTracking: Boolean? = null,
     var isAllowDriverRejectingOrders: Boolean? = null,
     var isPrintAwbCopiesAsPackageQuantity: Boolean? = null,
+    var isAllowDriversToViewAttachments: Boolean? = null
 )

@@ -1439,14 +1439,13 @@ class InCarPackagesFragment(
     }
 
     override fun onShowAttachmentsDialog(pkg: Package?){
-        if(pkg?.isAttachmentExist == true){
+        if(pkg?.isAttachmentExist == true && companyConfigurations?.driverCompanyConfigurations?.isAllowDriversToViewAttachments == true){
             callGetAttachments(pkg.id)
         }else{
-            Toast.makeText(
-                context,
-                getString(R.string.cannot_open_attachments),
-                Toast.LENGTH_SHORT
-            ).show()
+                Helper.showErrorMessage(
+                    super.getContext(),
+                    getString(R.string.cannot_open_attachments)
+                )
         }
     }
 
