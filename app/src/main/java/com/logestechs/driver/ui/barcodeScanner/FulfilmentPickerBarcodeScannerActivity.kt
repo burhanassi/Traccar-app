@@ -370,7 +370,7 @@ class FulfilmentPickerBarcodeScannerActivity :
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     var response: Response<SortItemIntoToteResponse>? = null
-                    if(fulfilmentOrder != null){
+                    if(fulfilmentOrder?.status == "PARTIALLY_PICKED"){
                         response = ApiAdapter.apiClient.continuePicking(
                             selectedFulfilmentOrder?.id,
                             BarcodeRequestBody(barcode)
