@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:src="@drawable/ic_collapse_expand" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/background_sheet_round_corners"
+            android:elevation="12dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/background_sheet_round_corners"
+                android:backgroundTint="@color/c44"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/LogesTechsMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="19dp"
+                    android:text="@string/pickup_packages"
+                    android:textColor="@color/fontTitleBlack"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/text_unread_notifications_count"
+                    android:layout_width="35dp"
+                    android:layout_height="21dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="15dp"
+                    android:background="@drawable/background_notification_count"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    tools:ignore="RtlCompat"
+                    tools:text="0" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/button_mark_all_as_read"
+                    style="@style/LogesTechsMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="15dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/read_all_notifications"
+                    android:textColor="@color/c13"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:ignore="RtlCompat" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_notifications"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                tools:listitem="@layout/item_notification" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</layout>

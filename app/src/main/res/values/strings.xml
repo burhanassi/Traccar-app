@@ -224,4 +224,6 @@
     <string name="reason_other">Other</string>
     <string name="picked_fulfillment">Picked Fulfillment Orders</string>
     <string name="partially_picked_fulfillment">Partially Picked Fulfillment Orders</string>
+    <string name="action_show_packages">Show Packages</string>
+    <string name="pickup_packages">Pickup Packages</string>
 </resources>

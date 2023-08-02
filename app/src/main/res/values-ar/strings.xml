@@ -221,4 +221,6 @@
     <string name="reason_other">سبب آخر</string>
     <string name="picked_fulfillment">طلبات محملة في السلات</string>
     <string name="partially_picked_fulfillment">طلبات محملة جزئيا</string>
+    <string name="action_show_packages">عرض الطرود</string>
+    <string name="pickup_packages">الطرود المراد تحميلها</string>
 </resources>

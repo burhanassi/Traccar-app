@@ -75,6 +75,7 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
         binding.rvVillages.adapter = AcceptedPackageVillageCellAdapter(
             ArrayList(),
             super.getContext(),
+            requireFragmentManager(),
             this
         )
         binding.rvVillages.layoutManager = layoutManager
