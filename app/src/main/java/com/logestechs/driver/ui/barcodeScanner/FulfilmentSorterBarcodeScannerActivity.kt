@@ -74,7 +74,7 @@ class FulfilmentSorterBarcodeScannerActivity :
     private var hours: Double? = null
     private var rejectedItems: Int? = null
     private var isReject: Boolean = false
-    private var idsListWrapper: List<Long>? = null
+//    private var idsListWrapper: MutableList<Long>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFulfilmentSorterBarcodeScannerBinding.inflate(layoutInflater)
@@ -128,6 +128,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                 binding.textTitle.text = getString(R.string.please_scan_items)
                 if(isReject){
                     binding.buttonNewBin.text = getString(R.string.button_new_location)
+                    binding.itemsCounts.visibility = View.INVISIBLE
                 }
             }
 
@@ -358,7 +359,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                 if (isBinScan) {
                     callSortItemIntoBin(barcode)
                 } else {
-//                    callSortItemIntoLocation(barcode)
+                    callSortItemIntoLocation(barcode)
                 }
             }
 
@@ -707,55 +708,85 @@ class FulfilmentSorterBarcodeScannerActivity :
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    var response: Response<SortItemIntoBinResponse>? = null
-
-                    response = if(isReject){
-                        ApiAdapter.apiClient.sortRejectedItemIntoLocation(
+                    if(isReject){
+                        var response = ApiAdapter.apiClient.sortRejectedItemIntoLocation(
                             scannedWarehouseLocation?.id,
-                            RejectedRequestBody(ids = idsListWrapper)
+                            barcode!!
                         )
+                        if (response?.isSuccessful == true && response.body() != null) {
+                            if(isReject){
+                                rejectedItems = rejectedItems?.minus(1)
+                            }
+                        } else {
+                            scannedItemsHashMap.remove(barcode)
+                            withContext(Dispatchers.Main) {
+                                val response = response?.body()
+                                (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).insertItem(
+                                    response
+                                )
+                                binding.rvScannedBarcodes.smoothScrollToPosition(0)
+                            }
+                            try {
+                                val jObjError = JSONObject(response?.errorBody()!!.string())
+                                withContext(Dispatchers.Main) {
+                                    Helper.showErrorMessage(
+                                        super.getContext(),
+                                        jObjError.optString(AppConstants.ERROR_KEY)
+                                    )
+                                }
+
+                            } catch (e: java.lang.Exception) {
+                                withContext(Dispatchers.Main) {
+                                    Helper.showErrorMessage(
+                                        super.getContext(),
+                                        getString(R.string.error_general)
+                                    )
+                                }
+                            }
+                        }
                     }else{
-                        ApiAdapter.apiClient.sortItemIntoLocation(
+                        var response = ApiAdapter.apiClient.sortItemIntoLocation(
                             scannedWarehouseLocation?.id,
                             scannedShippingPlan?.id,
                             BarcodeRequestBody(itemBarcode = barcode)
                         )
+                        if (response?.isSuccessful == true && response.body() != null) {
+                            if(isReject){
+                                rejectedItems = rejectedItems?.minus(1)
+                            }
+                            withContext(Dispatchers.Main) {
+                                val response = response.body()
+                                (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).insertItem(
+                                    response?.itemDetails
+                                )
+                                binding.rvScannedBarcodes.smoothScrollToPosition(0)
+                                updateShippingPlanCountValues(response?.shippingPlanDetails)
+                            }
+                        } else {
+                            scannedItemsHashMap.remove(barcode)
+                            try {
+                                val jObjError = JSONObject(response?.errorBody()!!.string())
+                                withContext(Dispatchers.Main) {
+                                    Helper.showErrorMessage(
+                                        super.getContext(),
+                                        jObjError.optString(AppConstants.ERROR_KEY)
+                                    )
+                                }
+
+                            } catch (e: java.lang.Exception) {
+                                withContext(Dispatchers.Main) {
+                                    Helper.showErrorMessage(
+                                        super.getContext(),
+                                        getString(R.string.error_general)
+                                    )
+                                }
+                            }
+                        }
                     }
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        if(isReject){
-                            rejectedItems = rejectedItems?.minus(1)
-                        }
-                        withContext(Dispatchers.Main) {
-                            val response = response.body()
-                            (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).insertItem(
-                                response?.itemDetails
-                            )
-                            binding.rvScannedBarcodes.smoothScrollToPosition(0)
-                            updateShippingPlanCountValues(response?.shippingPlanDetails)
-                        }
-                    } else {
-                        scannedItemsHashMap.remove(barcode)
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
 
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
                 } catch (e: Exception) {
                     scannedItemsHashMap.remove(barcode)
                     hideWaitDialog()
