@@ -1439,7 +1439,7 @@ class InCarPackagesFragment(
     }
 
     override fun onShowAttachmentsDialog(pkg: Package?){
-        if(pkg?.isAttachmentExist == true && companyConfigurations?.driverCompanyConfigurations?.isAllowDriversToViewAttachments == true){
+        if(pkg?.isAttachmentExist == true ){
             callGetAttachments(pkg.id)
         }else{
                 Helper.showErrorMessage(
