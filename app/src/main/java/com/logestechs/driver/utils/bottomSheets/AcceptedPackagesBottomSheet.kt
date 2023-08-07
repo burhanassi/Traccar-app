@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
@@ -24,6 +25,7 @@ import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.LogesTechsBottomSheetFragment
+import com.logestechs.driver.utils.RefreshViewModel
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.NotificationsListAdapter
 import com.logestechs.driver.utils.adapters.PackagesListAdapter
@@ -50,6 +52,7 @@ class AcceptedPackagesBottomSheet: LogesTechsBottomSheetFragment(),
     private var currentPageIndex = 2
 
     val listener: AcceptedPackagesFragmentListener = this
+    private lateinit var viewModel: RefreshViewModel
 
     val driverCompanyConfigurations =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
@@ -69,7 +72,7 @@ class AcceptedPackagesBottomSheet: LogesTechsBottomSheetFragment(),
             container,
             false
         )
-
+        viewModel = ViewModelProvider(requireActivity()).get(RefreshViewModel::class.java)
         packagesList=
             arguments?.getParcelableArrayList(BundleKeys.PACKAGES_KEY.toString())
                 ?: ArrayList()
@@ -134,7 +137,7 @@ class AcceptedPackagesBottomSheet: LogesTechsBottomSheetFragment(),
                                 getString(R.string.success_operation_completed)
                             )
                             dismiss()
-                            (activity as AcceptedPackagesFragment).onResume()
+                            viewModel.refreshData()
                         }
                     } else {
                         try {

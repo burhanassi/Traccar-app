@@ -10,6 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
@@ -40,7 +42,7 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
     private var fragmentListener: AcceptedPackagesFragmentListener? = null
 
     private lateinit var parentActivity: AppCompatActivity
-
+    private lateinit var viewModel: RefreshViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -71,6 +73,16 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(requireActivity()).get(RefreshViewModel::class.java)
+        viewModel.dataRefresh.observe(viewLifecycleOwner, Observer { refresh ->
+            if (refresh) {
+                initRecycler()
+                initListeners()
+                callGetAcceptedPackages()
+                activityDelegate = activity as ViewPagerCountValuesDelegate
+                binding.textTitle.text = getString(R.string.packages_view_pager_accepted_packages)
+            }
+        })
         initRecycler()
         initListeners()
         callGetAcceptedPackages()
