@@ -8,7 +8,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
@@ -21,7 +20,6 @@ import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.bottomSheets.AcceptedPackagesBottomSheet
-import com.logestechs.driver.utils.dialogs.PostponePackageDialog
 import com.logestechs.driver.utils.interfaces.AcceptedPackagesCardListener
 
 
@@ -60,7 +58,7 @@ class AcceptedPackageCustomerCellAdapter(
         position: Int
     ) {
         val customer: Customer? = customersList[position]
-        AcceptedPackageCustomerCellViewHolder.setIsRecyclable(false);
+        AcceptedPackageCustomerCellViewHolder.setIsRecyclable(false)
         AcceptedPackageCustomerCellViewHolder.bind(customer)
     }
 
@@ -162,19 +160,7 @@ class AcceptedPackageCustomerCellAdapter(
                     if (mAdapter.context != null) {
                         when (item?.itemId) {
                             R.id.action_show_packages -> {
-                              val bottomSheet = AcceptedPackagesBottomSheet()
-                        val bundle = Bundle()
-//                        bundle.putParcelableArrayList(
-//                            BundleKeys.NOTIFICATIONS_KEY.toString(),
-//                            data.notificationsList
-//                        )
-
-//                        bundle.putInt(
-//                            BundleKeys.UNREAD_NOTIFICATIONS_COUNT.toString(),
-//                            data.totalRecordsNo
-//                        )
-                        bottomSheet.arguments = bundle
-                        bottomSheet.show(mAdapter.fragmentManager, "exampleBottomSheet")
+                                mAdapter.listener?.getAcceptedPackages(customer)
                             }
                         }
                     }
