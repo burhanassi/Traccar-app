@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.os.*
+import android.util.Log
 import android.view.KeyEvent
 import android.view.SurfaceHolder
 import android.view.View
@@ -18,6 +19,7 @@ import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.BarcodeRequestBody
+import com.logestechs.driver.api.responses.SortItemIntoToteResponse
 import com.logestechs.driver.data.model.*
 import com.logestechs.driver.databinding.ActivityFulfilmentPickerBarcodeScannerBinding
 import com.logestechs.driver.utils.AppConstants
@@ -32,6 +34,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import retrofit2.Response
 import java.io.IOException
 
 enum class FulfilmentPickerScanMode {
@@ -63,12 +66,14 @@ class FulfilmentPickerBarcodeScannerActivity :
     private var scannedTote: Bin? = null
     private var selectedFulfilmentOrder: FulfilmentOrder? = null
 
+    private var fulfilmentOrder: FulfilmentOrder? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFulfilmentPickerBarcodeScannerBinding.inflate(layoutInflater)
         setContentView(binding.root)
         getExtras()
         toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+        fulfilmentOrder = intent.getParcelableExtra(IntentExtrasKeys.FULFILMENT_ORDER.name)
         initialiseDetectorsAndSources()
         initRecycler()
         initListeners()
@@ -128,6 +133,7 @@ class FulfilmentPickerBarcodeScannerActivity :
                     this@FulfilmentPickerBarcodeScannerActivity
                 )
         }
+        binding.textScannedOrder.text = "Order Barcode: ${selectedFulfilmentOrder?.barcode}"
     }
 
     private fun vibrate() {
@@ -300,7 +306,8 @@ class FulfilmentPickerBarcodeScannerActivity :
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response = ApiAdapter.apiClient.getTote(
-                        barcode
+                        barcode,
+                        selectedFulfilmentOrder?.id
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
@@ -310,6 +317,7 @@ class FulfilmentPickerBarcodeScannerActivity :
                             selectedScanMode = FulfilmentPickerScanMode.ITEM_INTO_TOTE
                             scannedTote = response.body()
                             handleSelectedScanMode()
+                            binding.textScannedTote.text = "Tote Barcode: ${scannedTote?.barcode}"
                         }
                     } else {
                         try {
@@ -361,11 +369,19 @@ class FulfilmentPickerBarcodeScannerActivity :
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.scanItemIntoTote(
+                    var response: Response<SortItemIntoToteResponse>? = null
+                    if(fulfilmentOrder?.status == "PARTIALLY_PICKED"){
+                        response = ApiAdapter.apiClient.continuePicking(
+                            selectedFulfilmentOrder?.id,
+                            BarcodeRequestBody(barcode)
+                        )
+                    }else{
+                        response = ApiAdapter.apiClient.scanItemIntoTote(
                         scannedTote?.id,
                         selectedFulfilmentOrder?.id,
                         BarcodeRequestBody(barcode)
                     )
+                    }
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }

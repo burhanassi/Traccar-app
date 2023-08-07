@@ -15,6 +15,7 @@ data class Notification(
     val messageID: Long,
 
     val title: String,
+    val senderName: String,
     val body: String,
     val titleArabic: String,
     val bodyArabic: String,
@@ -22,6 +23,7 @@ data class Notification(
     val type: String,
     val isDeleted: Boolean,
     val createdDate: String,
-    val id: Long
+    val id: Long,
+    var isExpanded: Boolean = false
 
 ) : Parcelable
