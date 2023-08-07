@@ -1,5 +1,6 @@
 package com.logestechs.driver.ui.packageDeliveryScreens.packageDelivery
 
+import android.Manifest
 import android.content.ClipData
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -7,6 +8,7 @@ import android.gesture.GestureOverlayView
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Rect
+import android.location.Location
 import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
@@ -20,8 +22,10 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.location.LocationServices
 import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
@@ -736,70 +740,89 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     private fun callDeliverPackage(signatureUrl: String?) {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    var note: String? = null
-                    if (selectedDeliveryType == DeliveryType.PARTIAL) {
-                        note = binding.etPartialDeliveryNote.text.toString()
-                    }
-                    val response = ApiAdapter.apiClient.deliverPackage(
-                        pkg?.barcode,
-                        selectedDeliveryType?.name,
-                        note,
-                        body = DeliverPackageRequestBody(
-                            pkg?.id,
-                            0.0,
-                            0.0,
-                            0.0,
-                            0.0,
-                            signatureUrl,
-                            getPodImagesUrls(),
-                            null,
-                            null,
-                            (selectedPaymentType?.enumValue as PaymentType).name
-                        )
-                    )
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        withContext(Dispatchers.Main) {
-                            val returnIntent = Intent()
-                            setResult(RESULT_OK, returnIntent)
-                            finish()
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
+            val fusedLocationClient =
+                LocationServices.getFusedLocationProviderClient(super.getContext())
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                return
             }
-        } else {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                    val latitude = location?.latitude
+                    val longitude = location?.longitude
+                    GlobalScope.launch(Dispatchers.IO) {
+                        try {
+                            var note: String? = null
+                            if (selectedDeliveryType == DeliveryType.PARTIAL) {
+                                note = binding.etPartialDeliveryNote.text.toString()
+                            }
+                            val response = ApiAdapter.apiClient.deliverPackage(
+                                pkg?.barcode,
+                                selectedDeliveryType?.name,
+                                note,
+                                body = DeliverPackageRequestBody(
+                                    pkg?.id,
+                                    longitude,
+                                    latitude,
+                                    0.0,
+                                    0.0,
+                                    signatureUrl,
+                                    getPodImagesUrls(),
+                                    null,
+                                    null,
+                                    (selectedPaymentType?.enumValue as PaymentType).name
+                                )
+                            )
+                            withContext(Dispatchers.Main) {
+                                hideWaitDialog()
+                            }
+                            if (response?.isSuccessful == true && response.body() != null) {
+                                withContext(Dispatchers.Main) {
+                                    val returnIntent = Intent()
+                                    setResult(RESULT_OK, returnIntent)
+                                    finish()
+                                }
+                            } else {
+                                try {
+                                    val jObjError = JSONObject(response?.errorBody()!!.string())
+                                    withContext(Dispatchers.Main) {
+                                        Helper.showErrorMessage(
+                                            super.getContext(),
+                                            jObjError.optString(AppConstants.ERROR_KEY)
+                                        )
+                                    }
+
+                                } catch (e: java.lang.Exception) {
+                                    withContext(Dispatchers.Main) {
+                                        Helper.showErrorMessage(
+                                            super.getContext(),
+                                            getString(R.string.error_general)
+                                        )
+                                    }
+                                }
+                            }
+                        } catch (e: Exception) {
+                            hideWaitDialog()
+                            Helper.logException(e, Throwable().stackTraceToString())
+                            withContext(Dispatchers.Main) {
+                                if (e.message != null && e.message!!.isNotEmpty()) {
+                                    Helper.showErrorMessage(super.getContext(), e.message)
+                                } else {
+                                    Helper.showErrorMessage(
+                                        super.getContext(),
+                                        e.stackTraceToString()
+                                    )
+                                }
+                            }
+                        }
+                    }
+            }
+        }else {
             hideWaitDialog()
             Helper.showErrorMessage(
                 super.getContext(), getString(R.string.error_check_internet_connection)

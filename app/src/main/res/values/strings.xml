@@ -109,6 +109,7 @@
     <string name="title_delivered_packages">Delivered Packages</string>
     <string name="error_no_packages_for_delivery">There are no packages for delivery</string>
     <string name="title_returned_packages">Returned Packages</string>
+    <string name="title_brought_packages">Brought Packages</string>
     <string name="button_deliver_to_sender">Deliver To Sender</string>
     <string name="button_deliver">Deliver</string>
     <string name="title_cod_sum">COD Sum</string>
@@ -171,6 +172,7 @@
     <string name="title_items_number">Items Number</string>
     <string name="title_skus_number">SKUs Number</string>
     <string name="button_pack">Pack</string>
+    <string name="button_continue_picking">Continue Picking</string>
     <string name="please_scan_tote">Please Scan Tote</string>
     <string name="items">Items</string>
     <string name="scanned_sub_packages_count">%1$s of %2$s</string>
@@ -221,4 +223,6 @@
     <string name="title_message">Title:</string>
 <!--    <string name="body_message">Body:</string>-->
     <string name="reason_other">Other</string>
+    <string name="picked_fulfillment">Picked Fulfillment Orders</string>
+    <string name="partially_picked_fulfillment">Partially Picked Fulfillment Orders</string>
 </resources>
