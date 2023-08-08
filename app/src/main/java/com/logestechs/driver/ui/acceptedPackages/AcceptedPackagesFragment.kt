@@ -262,7 +262,6 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
         startActivity(mIntent)
     }
     override fun getAcceptedPackages(customer: Customer?){
-        Log.d("sss", "barcode")
         callGetAcceptedPackagesByCustomer(customer)
     }
 }

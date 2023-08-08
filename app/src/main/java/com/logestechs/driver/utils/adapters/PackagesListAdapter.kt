@@ -1,38 +1,31 @@
 package com.logestechs.driver.utils.adapters
 
 import android.content.Context
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.VectorDrawable
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.content.ContextCompat
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
-import com.logestechs.driver.R
-import com.logestechs.driver.data.model.Notification
+import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
-import com.logestechs.driver.databinding.ItemAcceptedPackageCustomerCellBinding
 import com.logestechs.driver.databinding.ItemAcceptedPackagesBinding
-import com.logestechs.driver.databinding.ItemNotificationBinding
-import com.logestechs.driver.utils.DateFormats
-import com.logestechs.driver.utils.Helper
-import com.logestechs.driver.utils.interfaces.AcceptedPackagesCardListener
+import com.logestechs.driver.utils.dialogs.AddPackageNoteDialog
 import com.logestechs.driver.utils.interfaces.AcceptedPackagesFragmentListener
+import com.logestechs.driver.utils.interfaces.AddPackageNoteDialogListener
+import com.logestechs.driver.utils.interfaces.PackagesListCardListener
 
 
 class PackagesListAdapter(
     val list: ArrayList<Package>,
-    var listener: AcceptedPackagesFragmentListener?
+    var listener: PackagesListCardListener
     ) :
     RecyclerView.Adapter<PackagesListAdapter.PackagesViewHolder>() {
-    lateinit var mContext: Context
+    var mContext: Context? = null
+    var loadedImagesList: java.util.ArrayList<LoadedImage> = java.util.ArrayList()
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
         i: Int
     ): PackagesViewHolder {
+        mContext = viewGroup.context
         val inflater =
             ItemAcceptedPackagesBinding.inflate(
                 LayoutInflater.from(viewGroup.context),
@@ -70,8 +63,14 @@ class PackagesListAdapter(
             binding.textTitle.text =  packages.getFullReceiverName()
             binding.textAddress.text =  packages.destinationAddress?.city
 
+            val context = mAdapter.mContext
+//            val noteListener = mAdapter.noteListener
+
             binding.buttonPickup?.setOnClickListener {
-                mAdapter.listener?.callPickupPackageFromFragment(packages.barcode!!)
+                mAdapter.listener?.onPickupPackage(packages.barcode!!)
+            }
+            binding.buttonAddNote?.setOnClickListener {
+                mAdapter.listener.onShowPackageNoteDialog(packages)
             }
         }
     }
