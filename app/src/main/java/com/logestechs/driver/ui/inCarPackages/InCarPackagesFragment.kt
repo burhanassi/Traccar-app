@@ -1395,7 +1395,7 @@ class InCarPackagesFragment(
                     Helper.logException(e, Throwable().stackTraceToString())
                     withContext(Dispatchers.Main) {
                         if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
+                            Helper.showErrorMessage(super.getContext(), getString(R.string.cannot_open_attachments))
                         } else {
                             Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
                         }
