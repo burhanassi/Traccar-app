@@ -8,7 +8,6 @@ import android.hardware.Camera
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.os.*
-import android.util.Log
 import android.view.KeyEvent
 import android.view.SurfaceHolder
 import android.view.View
@@ -27,7 +26,6 @@ import com.logestechs.driver.databinding.ActivityBarcodeScannerBinding
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.ScannedBarcodeCellAdapter
 import com.logestechs.driver.utils.dialogs.InsertBarcodeDialog
-import com.logestechs.driver.utils.interfaces.AcceptedPackagesFragmentListener
 import com.logestechs.driver.utils.interfaces.InsertBarcodeDialogListener
 import com.logestechs.driver.utils.interfaces.ScannedBarcodeCardListener
 import kotlinx.coroutines.Dispatchers
@@ -39,8 +37,7 @@ import java.io.IOException
 
 
 class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
-    InsertBarcodeDialogListener, ScannedBarcodeCardListener,
-    AcceptedPackagesFragmentListener {
+    InsertBarcodeDialogListener, ScannedBarcodeCardListener {
     private lateinit var binding: ActivityBarcodeScannerBinding
 
     private var barcodeDetector: BarcodeDetector? = null
@@ -540,9 +537,6 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
             Helper.showErrorMessage(super.getContext(), e.localizedMessage)
         }
     }
-    fun callPickupPackageFromActivity(barcode: String) {
-        callPickupPackage(barcode)
-    }
     override fun onBarcodeInserted(barcode: String) {
         if (!scannedItemsHashMap.containsKey(barcode)) {
             scannedItemsHashMap[barcode] = barcode
@@ -556,9 +550,5 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
         } else {
             callCancelPickup(position, pkg)
         }
-    }
-    override fun callPickupPackageFromFragment(barcode:String) {
-        Log.d("sasa",barcode)
-        callPickupPackage(barcode)
     }
 }

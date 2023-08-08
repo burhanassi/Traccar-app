@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,13 +18,10 @@ import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.data.model.Village
 import com.logestechs.driver.databinding.FragmentAcceptedPackagesBinding
 import com.logestechs.driver.ui.barcodeScanner.BarcodeScannerActivity
-import com.logestechs.driver.ui.barcodeScanner.SubBundlesBarcodeScannerActivity
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.AcceptedPackageVillageCellAdapter
-import com.logestechs.driver.utils.adapters.ScannedBarcodeCellAdapter
 import com.logestechs.driver.utils.bottomSheets.AcceptedPackagesBottomSheet
 import com.logestechs.driver.utils.interfaces.AcceptedPackagesCardListener
-import com.logestechs.driver.utils.interfaces.AcceptedPackagesFragmentListener
 import com.logestechs.driver.utils.interfaces.ViewPagerCountValuesDelegate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -39,7 +35,6 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
     private val binding get() = _binding!!
     private var activityDelegate: ViewPagerCountValuesDelegate? = null
 
-    private var fragmentListener: AcceptedPackagesFragmentListener? = null
 
     private lateinit var parentActivity: AppCompatActivity
     private lateinit var viewModel: RefreshViewModel

@@ -3,14 +3,10 @@ package com.logestechs.driver.utils.adapters
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemAcceptedPackagesBinding
-import com.logestechs.driver.utils.dialogs.AddPackageNoteDialog
-import com.logestechs.driver.utils.interfaces.AcceptedPackagesFragmentListener
-import com.logestechs.driver.utils.interfaces.AddPackageNoteDialogListener
 import com.logestechs.driver.utils.interfaces.PackagesListCardListener
 
 

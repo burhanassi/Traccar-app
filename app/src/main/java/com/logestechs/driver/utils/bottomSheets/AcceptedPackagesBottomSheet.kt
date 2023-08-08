@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,7 +25,6 @@ import com.logestechs.driver.api.requests.DeleteImageRequestBody
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.BottomSheetAcceptedPackagesBinding
-import com.logestechs.driver.ui.inCarPackages.InCarPackagesFragment
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.BundleKeys
 import com.logestechs.driver.utils.Helper
@@ -38,8 +36,6 @@ import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.PackagesListAdapter
 import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
 import com.logestechs.driver.utils.dialogs.AddPackageNoteDialog
-import com.logestechs.driver.utils.dialogs.SearchPackagesDialog
-import com.logestechs.driver.utils.interfaces.AcceptedPackagesFragmentListener
 import com.logestechs.driver.utils.interfaces.AddPackageNoteDialogListener
 import com.logestechs.driver.utils.interfaces.PackagesListCardListener
 import kotlinx.coroutines.Dispatchers
