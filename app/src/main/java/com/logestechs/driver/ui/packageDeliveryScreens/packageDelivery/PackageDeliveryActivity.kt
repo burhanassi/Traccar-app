@@ -753,9 +753,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 return
             }
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                if (location != null) {
-                    val latitude = location.latitude
-                    val longitude = location.longitude
+                    val latitude = location?.latitude
+                    val longitude = location?.longitude
                     GlobalScope.launch(Dispatchers.IO) {
                         try {
                             var note: String? = null
@@ -822,13 +821,12 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                             }
                         }
                     }
-                } else {
-                    hideWaitDialog()
-                    Helper.showErrorMessage(
-                        super.getContext(), getString(R.string.error_check_internet_connection)
-                    )
-                }
             }
+        }else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
         }
     }
 

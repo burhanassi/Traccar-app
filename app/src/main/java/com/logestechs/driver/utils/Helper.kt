@@ -542,6 +542,9 @@ class Helper {
                 InCarPackageStatus.TO_DELIVER_DELIVERY -> {
                     return context?.getString(R.string.in_car_status_delivery) ?: ""
                 }
+                InCarPackageStatus.RETURNED -> {
+                    return context?.getString(R.string.in_car_status_returned) ?: ""
+                }
                 else -> {
                     return ""
                 }

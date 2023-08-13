@@ -161,6 +161,7 @@
     <string name="unsorted_items">Unsorted</string>
     <string name="rejected_items">Rejected</string>
     <string name="button_new_bin">New Bin</string>
+    <string name="button_new_location">New Location</string>
     <string name="action_reject">Reject</string>
     <string name="dashboard_new_fulfilment_orders">New Fulfillment Orders</string>
     <string name="title_new_fulfilment_orders">New Fulfillment Orders</string>
@@ -207,7 +208,7 @@
     <string name="error_verification_code_must_be_four_digits">Verification code must consist of 4 digits</string>
     <string name="show_driver_packages_locations">Optimized Route</string>
     <string name="app_needs_location_permission">The app needs location permission for tracking</string>
-    <string name="cannot_open_attachments">You Can`t See The Attachments</string>
+    <string name="cannot_open_attachments">No attachment found</string>
     <string name="warning_some_villages_are_not_on_map">Caution! Some destinations may not appear on the map</string>
     <string name="text_number_of_locations">Number of destinations: %1$d</string>
     <string name="error_no_destinations_on_map">There are no destinations on the map</string>
