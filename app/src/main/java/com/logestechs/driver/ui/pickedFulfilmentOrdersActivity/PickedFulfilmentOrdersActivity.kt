@@ -22,6 +22,7 @@ import com.logestechs.driver.utils.FulfilmentOrderStatus
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.adapters.NewFulfilmentOrderCellAdapter
 import com.logestechs.driver.utils.adapters.PickedFulfilmentOrderCellAdapter
 import com.logestechs.driver.utils.interfaces.PickedFulfilmentOrderCardListener
 import kotlinx.coroutines.Dispatchers
@@ -56,8 +57,9 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
         tabLayout.tabTextColors = getColorStateList(R.color.tab_text_color_selector)
 
         initRecycler()
-
+        initListeners(status)
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+
             override fun onTabSelected(tab: TabLayout.Tab) {
                  status = when (tab.position) {
                     0 ->{
@@ -82,12 +84,19 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
             override fun onTabReselected(tab: TabLayout.Tab) {
                 // Handle tab reselection here if needed
             }
+
         })
+
 
         tabLayout.getTabAt(0)?.select()
         callGetFulfilmentOrders(FulfilmentOrderStatus.PICKED.name)
     }
-
+    override fun onResume() {
+        super.onResume()
+        currentPageIndex = 1
+        (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()
+        callGetFulfilmentOrders(status)
+    }
 
     private fun initRecycler() {
         val layoutManager = LinearLayoutManager(
