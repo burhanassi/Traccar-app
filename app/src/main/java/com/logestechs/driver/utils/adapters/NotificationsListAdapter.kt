@@ -60,7 +60,7 @@ class NotificationsListAdapter(val list: ArrayList<Notification>) :
         }
 
         fun bind(notification: Notification) {
-            mTitleTextView?.text = notification.bodyArabic
+            mTitleTextView?.text = notification.title
             mDateTextView?.text = "${
                 Helper.formatServerDateLocalized(
                     notification.createdDate,
