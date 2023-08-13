@@ -2,11 +2,13 @@ package com.logestechs.driver.utils.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemAcceptedPackagesBinding
+import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.interfaces.PackagesListCardListener
 
 
@@ -16,7 +18,6 @@ class PackagesListAdapter(
     ) :
     RecyclerView.Adapter<PackagesListAdapter.PackagesViewHolder>() {
     var mContext: Context? = null
-    var loadedImagesList: java.util.ArrayList<LoadedImage> = java.util.ArrayList()
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
         i: Int
@@ -54,16 +55,18 @@ class PackagesListAdapter(
         private var mAdapter: PackagesListAdapter
     ) :
         RecyclerView.ViewHolder(binding.root){
-
+        val driverCompanyConfigurations =
+            SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
         fun bind(packages: Package) {
             binding.textTitle.text =  packages.getFullReceiverName()
             binding.textAddress.text =  packages.destinationAddress?.city
 
-            val context = mAdapter.mContext
-//            val noteListener = mAdapter.noteListener
-
-            binding.buttonPickup?.setOnClickListener {
-                mAdapter.listener?.onPickupPackage(packages.barcode!!)
+            if(driverCompanyConfigurations?.isDriverPickupAcceptedPackages!!){
+                binding.buttonPickup?.setOnClickListener {
+                    mAdapter.listener?.onPickupPackage(packages.barcode!!)
+                }
+            }else {
+                binding.buttonPickup.visibility = View.GONE
             }
             binding.buttonAddNote?.setOnClickListener {
                 mAdapter.listener.onShowPackageNoteDialog(packages)
