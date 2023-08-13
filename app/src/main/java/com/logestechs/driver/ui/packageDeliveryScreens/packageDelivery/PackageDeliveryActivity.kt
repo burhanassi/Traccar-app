@@ -19,7 +19,9 @@ import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -95,6 +97,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
     private var companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
+
+    private val checkedItems = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -219,11 +223,29 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         binding.radioGroupPartialDelivery.setOnCheckedChangeListener { _, checkedId ->
             if (checkedId == R.id.radio_button_full_delivery) {
                 binding.containerPartialDeliveryNote.visibility = View.GONE
-                binding.etPartialDeliveryNote.setText("")
                 selectedDeliveryType = DeliveryType.FULL
             } else if (checkedId == R.id.radio_button_partial_delivery) {
                 binding.containerPartialDeliveryNote.visibility = View.VISIBLE
                 selectedDeliveryType = DeliveryType.PARTIAL
+
+                val items = listOf("Ali", "Malluh", "Test")
+                val checkBoxContainer = findViewById<LinearLayout>(R.id.check_box_container)
+                for (item in items) {
+                    val checkBox = CheckBox(this)
+                    checkBox.text = item
+                    checkBox.layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
+                    checkBox.setOnCheckedChangeListener { _, isChecked ->
+                        if (isChecked) {
+                            checkedItems.add(item)
+                        } else {
+                            checkedItems.remove(item)
+                        }
+                    }
+                    checkBoxContainer.addView(checkBox)
+                }
             }
         }
 
@@ -288,7 +310,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
 
         if (selectedDeliveryType == DeliveryType.PARTIAL) {
-            if (binding.etPartialDeliveryNote.text.toString().isEmpty()) {
+            if (checkedItems.isEmpty()) {
                 Helper.showErrorMessage(
                     super.getContext(),
                     getString(R.string.error_enter_partial_delivery_note)
@@ -759,7 +781,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                         try {
                             var note: String? = null
                             if (selectedDeliveryType == DeliveryType.PARTIAL) {
-                                note = binding.etPartialDeliveryNote.text.toString()
+//                                note = binding.etPartialDeliveryNote.text.toString()
                             }
                             val response = ApiAdapter.apiClient.deliverPackage(
                                 pkg?.barcode,
