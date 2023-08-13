@@ -57,8 +57,9 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
         tabLayout.tabTextColors = getColorStateList(R.color.tab_text_color_selector)
 
         initRecycler()
-
+        initListeners(status)
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+
             override fun onTabSelected(tab: TabLayout.Tab) {
                  status = when (tab.position) {
                     0 ->{
@@ -83,7 +84,9 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
             override fun onTabReselected(tab: TabLayout.Tab) {
                 // Handle tab reselection here if needed
             }
+
         })
+
 
         tabLayout.getTabAt(0)?.select()
         callGetFulfilmentOrders(FulfilmentOrderStatus.PICKED.name)
