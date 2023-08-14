@@ -111,6 +111,7 @@
     <string name="error_no_packages_for_delivery">لا يوجد طرود للتسليم</string>
     <string name="title_returned_packages">الرواجع</string>
     <string name="title_brought_packages">طرود الإحضار</string>
+    <string name="title_driver_route">Driver Route</string>
     <string name="button_deliver_to_sender">تسليم إلى المرسل</string>
     <string name="button_deliver">توصيل</string>
     <string name="title_cod_sum">مجموع التحصيلات</string>
