@@ -74,6 +74,7 @@ class FulfilmentSorterBarcodeScannerActivity :
     private var hours: Double? = null
     private var rejectedItems: Int? = null
     private var isReject: Boolean = false
+    private var flagLocation: Boolean = false
 //    private var idsListWrapper: MutableList<Long>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -126,9 +127,11 @@ class FulfilmentSorterBarcodeScannerActivity :
                 binding.textScannedBin.text =
                     scannedBin?.barcode ?: scannedWarehouseLocation?.barcode
                 binding.textTitle.text = getString(R.string.please_scan_items)
-                if(isReject){
+                if(isReject && flagLocation){
                     binding.buttonNewBin.text = getString(R.string.button_new_location)
                     binding.itemsCounts.visibility = View.INVISIBLE
+                }else if(isReject){
+                    binding.buttonNewBin.text = getString(R.string.button_new_location)
                 }
             }
 
@@ -947,6 +950,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                     selectedScanMode = FulfilmentSorterScanMode.BIN
                     isBinScan = false
                     isReject = true
+                    flagLocation = true
                     (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).clearList()
                     handleSelectedScanMode()
                 } else {
