@@ -1,23 +1,32 @@
 package com.logestechs.driver.utils.adapters
 
 import android.content.Context
+import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
+import com.logestechs.driver.R
 import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.databinding.ItemAcceptedPackageCustomerCellBinding
 import com.logestechs.driver.utils.AppCurrency
+import com.logestechs.driver.utils.BundleKeys
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.SharedPreferenceWrapper
+import com.logestechs.driver.utils.bottomSheets.AcceptedPackagesBottomSheet
 import com.logestechs.driver.utils.interfaces.AcceptedPackagesCardListener
 
 
 class AcceptedPackageCustomerCellAdapter(
     var customersList: List<Customer?>,
     var context: Context?,
+    var fragmentManager: FragmentManager,
     var listener: AcceptedPackagesCardListener?,
     var parentIndex: Int
 ) :
@@ -49,7 +58,7 @@ class AcceptedPackageCustomerCellAdapter(
         position: Int
     ) {
         val customer: Customer? = customersList[position]
-        AcceptedPackageCustomerCellViewHolder.setIsRecyclable(false);
+        AcceptedPackageCustomerCellViewHolder.setIsRecyclable(false)
         AcceptedPackageCustomerCellViewHolder.bind(customer)
     }
 
@@ -143,7 +152,22 @@ class AcceptedPackageCustomerCellAdapter(
                 mAdapter.listener?.scanForPickup(customer)
             }
 
-            binding.buttonContextMenu.visibility = View.GONE
+            binding.buttonContextMenu.setOnClickListener {
+                val popup = PopupMenu(mAdapter.context, binding.buttonContextMenu)
+                popup.inflate(R.menu.accepted_pickup_context_menu)
+                popup.setOnMenuItemClickListener { item: MenuItem? ->
+
+                    if (mAdapter.context != null) {
+                        when (item?.itemId) {
+                            R.id.action_show_packages -> {
+                                mAdapter.listener?.getAcceptedPackages(customer)
+                            }
+                        }
+                    }
+                    true
+                }
+                popup.show()
+            }
 
         }
     }

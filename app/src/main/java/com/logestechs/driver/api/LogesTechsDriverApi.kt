@@ -54,6 +54,11 @@ interface LogesTechsDriverApi {
         @Query("is-grouped") isGrouped: Boolean = true,
     ): Response<GetAcceptedPackagesResponse?>?
 
+    @GET("api/driver/customers/{customerId}/packages/accepted")
+    suspend fun getAcceptedPackagesByCustomer(
+        @Path("customerId") customerId: Long?,
+    ): Response<List<Package>?>?
+
     @GET("api/driver/packages/in-car/by-villages")
     suspend fun getInCarPackagesByVillage(
         @Query("in-car-status") status: String?,

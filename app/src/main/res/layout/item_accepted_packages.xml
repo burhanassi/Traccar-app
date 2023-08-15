@@ -17,7 +17,7 @@
             android:layout_marginStart="13dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:src="@drawable/ic_customer_logo"
+            android:src="@drawable/ic_package_gray"
             tools:ignore="ContentDescription" />
 
         <LinearLayout
@@ -39,7 +39,7 @@
                 tools:text="تم مراجعة طرد رقم #100919003663" />
 
             <TextView
-                android:id="@+id/text_date"
+                android:id="@+id/text_address"
                 style="@style/LogesTechsLight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -51,13 +51,20 @@
         </LinearLayout>
 
         <ImageView
-            android:id="@+id/image_arrow"
-            android:layout_width="15dp"
-            android:layout_height="13dp"
+            android:id="@+id/button_add_note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="14dp"
-            android:src="@drawable/ic_arrow_notifications"
-            app:tint="@color/orange_sea_buckthorn"
+            android:src="@drawable/ic_add_note_gray"
+            tools:ignore="ContentDescription" />
+        <ImageView
+            android:id="@+id/button_pickup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="14dp"
+            android:src="@drawable/ic_pickup_accepted"
             tools:ignore="ContentDescription" />
     </LinearLayout>
 
@@ -73,6 +80,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginRight="16dp"
+            android:drawableStart="@drawable/ic_sender_message"
             android:drawablePadding="8dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/black"
@@ -88,6 +96,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginRight="16dp"
+            android:drawableStart="@drawable/ic_title_message"
             android:drawablePadding="8dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/black"

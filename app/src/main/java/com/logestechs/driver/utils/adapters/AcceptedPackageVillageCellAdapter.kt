@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
@@ -18,6 +19,7 @@ import com.logestechs.driver.utils.interfaces.AcceptedPackagesCardListener
 class AcceptedPackageVillageCellAdapter(
     var villagesList: ArrayList<Village?>,
     var context: Context?,
+    var fragmentManager: FragmentManager,
     var listener: AcceptedPackagesCardListener
 ) :
     RecyclerView.Adapter<AcceptedPackageVillageCellAdapter.AcceptedPackageVillageViewHolder>() {
@@ -93,6 +95,7 @@ class AcceptedPackageVillageCellAdapter(
             val childItemAdapter = AcceptedPackageCustomerCellAdapter(
                 village?.customers ?: ArrayList<Customer>(),
                 mAdapter.context,
+                mAdapter.fragmentManager,
                 mAdapter.listener,
                 adapterPosition
             )

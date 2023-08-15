@@ -305,7 +305,7 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/background_logestechs_button"
-                    android:text="@string/button_deliver_package"
+                    android:text="@string/button_deliver_mass_cod"
                     android:textColor="#fff" />
 
             </LinearLayout>

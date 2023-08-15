@@ -60,7 +60,7 @@ class NotificationsListAdapter(val list: ArrayList<Notification>) :
         }
 
         fun bind(notification: Notification) {
-            mTitleTextView?.text = notification.bodyArabic
+            mTitleTextView?.text = notification.title
             mDateTextView?.text = "${
                 Helper.formatServerDateLocalized(
                     notification.createdDate,
@@ -72,7 +72,6 @@ class NotificationsListAdapter(val list: ArrayList<Notification>) :
                     DateFormats.NOTIFICATION_LIST_ITEM_FORMAT
                 )
             }"
-            sizeIcons()
             if (notification.type == "RECEIVE_MESSAGE") {
                 handleCardExpansion(adapterPosition)
                 binding.root.setOnClickListener {
@@ -85,24 +84,6 @@ class NotificationsListAdapter(val list: ArrayList<Notification>) :
                 binding.root.setOnClickListener(null)
                 binding.imageArrow.visibility = View.GONE
             }
-        }
-
-        private fun sizeIcons() {
-            val iconTitle: Drawable? = ContextCompat.getDrawable(itemView.context, R.drawable.ic_title_message)
-            val iconSender: Drawable? = ContextCompat.getDrawable(itemView.context, R.drawable.ic_sender_message)
-
-            val iconWidth = 60
-            val iconHeight = 60
-
-            if (iconTitle is VectorDrawable) {
-                iconTitle.setBounds(0, 0, iconWidth, iconHeight)
-            }
-            if (iconSender is VectorDrawable) {
-                iconSender.setBounds(0, 0, iconWidth, iconHeight)
-            }
-
-            binding.textTitleMessage.setCompoundDrawablesRelative(iconTitle, null, null, null)
-            binding.textSenderMessage.setCompoundDrawablesRelative(iconSender, null, null, null)
         }
 
         private fun onCardClick(position: Int) {
