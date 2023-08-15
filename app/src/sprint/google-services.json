@@ -1,41 +1,40 @@
 {
   "project_info": {
-    "project_number": "122047361434",
-    "firebase_url": "https://loges-techs.firebaseio.com",
-    "project_id": "loges-techs",
-    "storage_bucket": "loges-techs.appspot.com"
+    "project_number": "736592178394",
+    "project_id": "logestechs-customers5",
+    "storage_bucket": "logestechs-customers5.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:122047361434:android:e29c9783d555b6fb",
+        "mobilesdk_app_id": "1:736592178394:android:0a24328e727ef9f23fc9e3",
         "android_client_info": {
-          "package_name": "com.android.client.palship"
+          "package_name": "com.logestechs.customer_adroit"
         }
       },
       "oauth_client": [
         {
-          "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+          "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDruAHrrsvjRu0cSyGizoMH3aRpYusE7IQ"
+          "current_key": "AIzaSyDaRCVUQ1XKk6V6O0vRsrARxQzfKKpmJMw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+              "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "122047361434-lm944cnu40g9s4d8jaa6ov3g98jiugca.apps.googleusercontent.com",
+              "client_id": "736592178394-o3jetijd3si9d2dedch6qaduobvsvara.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.logestechs.LogesTechsCustomer"
+                "bundle_id": "com.logestechs.customer.sprint"
               }
             }
           ]
@@ -44,34 +43,34 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:122047361434:android:75cbb1b616dbc29c024a23",
+        "mobilesdk_app_id": "1:736592178394:android:7baa4fb1584e6b623fc9e3",
         "android_client_info": {
-          "package_name": "com.logestechs.client.palship"
+          "package_name": "com.logestechs.customer_airlink"
         }
       },
       "oauth_client": [
         {
-          "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+          "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDruAHrrsvjRu0cSyGizoMH3aRpYusE7IQ"
+          "current_key": "AIzaSyDaRCVUQ1XKk6V6O0vRsrARxQzfKKpmJMw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+              "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "122047361434-lm944cnu40g9s4d8jaa6ov3g98jiugca.apps.googleusercontent.com",
+              "client_id": "736592178394-o3jetijd3si9d2dedch6qaduobvsvara.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.logestechs.LogesTechsCustomer"
+                "bundle_id": "com.logestechs.customer.sprint"
               }
             }
           ]
@@ -80,34 +79,34 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:122047361434:android:13481cf6a7db7124024a23",
+        "mobilesdk_app_id": "1:736592178394:android:cb52763c2cefc3ff3fc9e3",
         "android_client_info": {
-          "package_name": "com.logestechs.client.palship_local"
+          "package_name": "com.logestechs.customer_alHawi"
         }
       },
       "oauth_client": [
         {
-          "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+          "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDruAHrrsvjRu0cSyGizoMH3aRpYusE7IQ"
+          "current_key": "AIzaSyDaRCVUQ1XKk6V6O0vRsrARxQzfKKpmJMw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+              "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "122047361434-lm944cnu40g9s4d8jaa6ov3g98jiugca.apps.googleusercontent.com",
+              "client_id": "736592178394-o3jetijd3si9d2dedch6qaduobvsvara.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.logestechs.LogesTechsCustomer"
+                "bundle_id": "com.logestechs.customer.sprint"
               }
             }
           ]
@@ -116,34 +115,34 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:122047361434:android:64b1790764aed634024a23",
+        "mobilesdk_app_id": "1:736592178394:android:2c43792ba745dc043fc9e3",
         "android_client_info": {
-          "package_name": "com.logestechs.customer"
+          "package_name": "com.logestechs.customer_captain"
         }
       },
       "oauth_client": [
         {
-          "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+          "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDruAHrrsvjRu0cSyGizoMH3aRpYusE7IQ"
+          "current_key": "AIzaSyDaRCVUQ1XKk6V6O0vRsrARxQzfKKpmJMw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+              "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "122047361434-lm944cnu40g9s4d8jaa6ov3g98jiugca.apps.googleusercontent.com",
+              "client_id": "736592178394-o3jetijd3si9d2dedch6qaduobvsvara.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.logestechs.LogesTechsCustomer"
+                "bundle_id": "com.logestechs.customer.sprint"
               }
             }
           ]
@@ -152,34 +151,34 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:122047361434:android:f92fac98c9fb4aa7024a23",
+        "mobilesdk_app_id": "1:736592178394:android:69e5963fe46223593fc9e3",
         "android_client_info": {
-          "package_name": "com.logestechs.customer_backend"
+          "package_name": "com.logestechs.customer_captainKittaneh"
         }
       },
       "oauth_client": [
         {
-          "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+          "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDruAHrrsvjRu0cSyGizoMH3aRpYusE7IQ"
+          "current_key": "AIzaSyDaRCVUQ1XKk6V6O0vRsrARxQzfKKpmJMw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+              "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "122047361434-lm944cnu40g9s4d8jaa6ov3g98jiugca.apps.googleusercontent.com",
+              "client_id": "736592178394-o3jetijd3si9d2dedch6qaduobvsvara.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.logestechs.LogesTechsCustomer"
+                "bundle_id": "com.logestechs.customer.sprint"
               }
             }
           ]
@@ -188,34 +187,34 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:122047361434:android:dc9176acd3ba29e5024a23",
+        "mobilesdk_app_id": "1:736592178394:android:81a84e18ceff5de93fc9e3",
         "android_client_info": {
-          "package_name": "com.logestechs.customer_multiCustomer"
+          "package_name": "com.logestechs.customer_deer"
         }
       },
       "oauth_client": [
         {
-          "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+          "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDruAHrrsvjRu0cSyGizoMH3aRpYusE7IQ"
+          "current_key": "AIzaSyDaRCVUQ1XKk6V6O0vRsrARxQzfKKpmJMw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+              "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "122047361434-lm944cnu40g9s4d8jaa6ov3g98jiugca.apps.googleusercontent.com",
+              "client_id": "736592178394-o3jetijd3si9d2dedch6qaduobvsvara.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.logestechs.LogesTechsCustomer"
+                "bundle_id": "com.logestechs.customer.sprint"
               }
             }
           ]
@@ -224,34 +223,34 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:122047361434:android:d7a8d4dc99bb638b024a23",
+        "mobilesdk_app_id": "1:736592178394:android:7e40f7d632e208013fc9e3",
         "android_client_info": {
-          "package_name": "com.logestechs.customer_salesjordan"
+          "package_name": "com.logestechs.customer_enjoy"
         }
       },
       "oauth_client": [
         {
-          "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+          "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDruAHrrsvjRu0cSyGizoMH3aRpYusE7IQ"
+          "current_key": "AIzaSyDaRCVUQ1XKk6V6O0vRsrARxQzfKKpmJMw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+              "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "122047361434-lm944cnu40g9s4d8jaa6ov3g98jiugca.apps.googleusercontent.com",
+              "client_id": "736592178394-o3jetijd3si9d2dedch6qaduobvsvara.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.logestechs.LogesTechsCustomer"
+                "bundle_id": "com.logestechs.customer.sprint"
               }
             }
           ]
@@ -260,34 +259,34 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:122047361434:android:68e0f88cc06ab222024a23",
+        "mobilesdk_app_id": "1:736592178394:android:cbe29e8c23a402fe3fc9e3",
         "android_client_info": {
-          "package_name": "com.logestechs.driver"
+          "package_name": "com.logestechs.customer_fastman"
         }
       },
       "oauth_client": [
         {
-          "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+          "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDruAHrrsvjRu0cSyGizoMH3aRpYusE7IQ"
+          "current_key": "AIzaSyDaRCVUQ1XKk6V6O0vRsrARxQzfKKpmJMw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+              "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "122047361434-lm944cnu40g9s4d8jaa6ov3g98jiugca.apps.googleusercontent.com",
+              "client_id": "736592178394-o3jetijd3si9d2dedch6qaduobvsvara.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.logestechs.LogesTechsCustomer"
+                "bundle_id": "com.logestechs.customer.sprint"
               }
             }
           ]
@@ -296,34 +295,34 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:122047361434:android:507d82468391cb55024a23",
+        "mobilesdk_app_id": "1:736592178394:android:a2c4e6ac3461a9e93fc9e3",
         "android_client_info": {
-          "package_name": "com.logestechs.driver_backend"
+          "package_name": "com.logestechs.customer_fda"
         }
       },
       "oauth_client": [
         {
-          "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+          "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDruAHrrsvjRu0cSyGizoMH3aRpYusE7IQ"
+          "current_key": "AIzaSyDaRCVUQ1XKk6V6O0vRsrARxQzfKKpmJMw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+              "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "122047361434-lm944cnu40g9s4d8jaa6ov3g98jiugca.apps.googleusercontent.com",
+              "client_id": "736592178394-o3jetijd3si9d2dedch6qaduobvsvara.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.logestechs.LogesTechsCustomer"
+                "bundle_id": "com.logestechs.customer.sprint"
               }
             }
           ]
@@ -332,34 +331,34 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:122047361434:android:94461248b5ba2196024a23",
+        "mobilesdk_app_id": "1:736592178394:android:a24b3911e9a8e1c23fc9e3",
         "android_client_info": {
-          "package_name": "com.logestechs.driver_sare3"
+          "package_name": "com.logestechs.customer_laendak"
         }
       },
       "oauth_client": [
         {
-          "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+          "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDruAHrrsvjRu0cSyGizoMH3aRpYusE7IQ"
+          "current_key": "AIzaSyDaRCVUQ1XKk6V6O0vRsrARxQzfKKpmJMw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+              "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "122047361434-lm944cnu40g9s4d8jaa6ov3g98jiugca.apps.googleusercontent.com",
+              "client_id": "736592178394-o3jetijd3si9d2dedch6qaduobvsvara.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.logestechs.LogesTechsCustomer"
+                "bundle_id": "com.logestechs.customer.sprint"
               }
             }
           ]
@@ -368,70 +367,322 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:122047361434:android:10de99d59579ddd1024a23",
+        "mobilesdk_app_id": "1:736592178394:android:7cddd58bdbe2c0e13fc9e3",
+        "android_client_info": {
+          "package_name": "com.logestechs.customer_makook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaRCVUQ1XKk6V6O0vRsrARxQzfKKpmJMw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "736592178394-o3jetijd3si9d2dedch6qaduobvsvara.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.logestechs.customer.sprint"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:736592178394:android:f6f296a7ecd3e9cc3fc9e3",
+        "android_client_info": {
+          "package_name": "com.logestechs.customer_minila"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaRCVUQ1XKk6V6O0vRsrARxQzfKKpmJMw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "736592178394-o3jetijd3si9d2dedch6qaduobvsvara.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.logestechs.customer.sprint"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:736592178394:android:935a0d69e74d7c853fc9e3",
+        "android_client_info": {
+          "package_name": "com.logestechs.customer_safeways"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaRCVUQ1XKk6V6O0vRsrARxQzfKKpmJMw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "736592178394-o3jetijd3si9d2dedch6qaduobvsvara.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.logestechs.customer.sprint"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:736592178394:android:e673448af9819e173fc9e3",
+        "android_client_info": {
+          "package_name": "com.logestechs.customer_sekka"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaRCVUQ1XKk6V6O0vRsrARxQzfKKpmJMw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "736592178394-o3jetijd3si9d2dedch6qaduobvsvara.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.logestechs.customer.sprint"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:736592178394:android:bc5ec6168a696eb73fc9e3",
+        "android_client_info": {
+          "package_name": "com.logestechs.customer_snopes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaRCVUQ1XKk6V6O0vRsrARxQzfKKpmJMw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "736592178394-o3jetijd3si9d2dedch6qaduobvsvara.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.logestechs.customer.sprint"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:736592178394:android:ddcff0756e4633133fc9e3",
+        "android_client_info": {
+          "package_name": "com.logestechs.customer_sprint"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaRCVUQ1XKk6V6O0vRsrARxQzfKKpmJMw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "736592178394-o3jetijd3si9d2dedch6qaduobvsvara.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.logestechs.customer.sprint"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:736592178394:android:cb9d668091615d6a3fc9e3",
+        "android_client_info": {
+          "package_name": "com.logestechs.customer_tabex"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaRCVUQ1XKk6V6O0vRsrARxQzfKKpmJMw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "736592178394-o3jetijd3si9d2dedch6qaduobvsvara.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.logestechs.customer.sprint"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:736592178394:android:ac2227ff62a2b1a03fc9e3",
+        "android_client_info": {
+          "package_name": "com.logestechs.customer_zyk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaRCVUQ1XKk6V6O0vRsrARxQzfKKpmJMw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "736592178394-o3jetijd3si9d2dedch6qaduobvsvara.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.logestechs.customer.sprint"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:736592178394:android:bec39c113c05aff03fc9e3",
         "android_client_info": {
           "package_name": "com.logestechs.driver_sprint"
         }
       },
       "oauth_client": [
         {
-          "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+          "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDruAHrrsvjRu0cSyGizoMH3aRpYusE7IQ"
+          "current_key": "AIzaSyDaRCVUQ1XKk6V6O0vRsrARxQzfKKpmJMw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
+              "client_id": "736592178394-6rrcagugfa25nihm8dqavunmkl7udjn1.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "122047361434-lm944cnu40g9s4d8jaa6ov3g98jiugca.apps.googleusercontent.com",
+              "client_id": "736592178394-o3jetijd3si9d2dedch6qaduobvsvara.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.logestechs.LogesTechsCustomer"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:122047361434:android:029f1df5f2510f71024a23",
-        "android_client_info": {
-          "package_name": "com.logestechs.sms"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDruAHrrsvjRu0cSyGizoMH3aRpYusE7IQ"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "122047361434-hb53fkl6b8d9kn6ftddfk0pajagv36t2.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "122047361434-lm944cnu40g9s4d8jaa6ov3g98jiugca.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.logestechs.LogesTechsCustomer"
+                "bundle_id": "com.logestechs.customer.sprint"
               }
             }
           ]
