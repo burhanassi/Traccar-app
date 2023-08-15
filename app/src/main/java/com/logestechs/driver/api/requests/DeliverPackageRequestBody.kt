@@ -1,5 +1,7 @@
 package com.logestechs.driver.api.requests
 
+import com.logestechs.driver.data.model.PackageItemsToDeliver
+
 data class DeliverPackageRequestBody(
     val packageId: Long?,
     val longitude: Double?,
@@ -10,5 +12,6 @@ data class DeliverPackageRequestBody(
     val deliveryProofUrlList: List<String?>?,
     val subBundlesIds: List<Long?>?,
     val cod: Double?,
-    val paymentType: String?
+    val paymentType: String?,
+    val packageItemsToDeliver: List<PackageItemsToDeliver?>?
 )
