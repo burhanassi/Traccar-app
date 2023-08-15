@@ -464,7 +464,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="16dp"
                                 android:layout_marginEnd="16dp"
-                                android:text="@string/title_partial_delivery_note"
+                                android:text="@string/title_delivered_items"
                                 android:textColor="@color/fontTrackHint" />
 
                             <LinearLayout
@@ -475,7 +475,32 @@
                                 android:layout_marginTop="8dp"
                                 android:layout_marginBottom="8dp"
                                 android:orientation="vertical"/>
-
+                            <TextView
+                                style="@style/LogesTechsMedium"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginEnd="16dp"
+                                android:text="@string/title_partial_delivery_note"
+                                android:textColor="@color/fontTrackHint" />
+                            <EditText
+                                android:id="@+id/et_partial_delivery_note"
+                                style="@style/LogesTechsBold"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginEnd="16dp"
+                                android:layout_marginBottom="16dp"
+                                android:background="@drawable/background_card_orange"
+                                android:gravity="top"
+                                android:inputType="textMultiLine"
+                                android:minLines="4"
+                                android:padding="10dp"
+                                android:saveEnabled="false"
+                                android:textColor="@color/fontTitleBlack"
+                                android:textSize="14sp"
+                                tools:ignore="LabelFor" />
 
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
