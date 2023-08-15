@@ -809,7 +809,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     val longitude = location?.longitude
                     GlobalScope.launch(Dispatchers.IO) {
                         try {
-                            var note: String? = "dsss"
+                            var note: String? = null
                             if (selectedDeliveryType == DeliveryType.PARTIAL) {
                                 note = binding.etPartialDeliveryNote.text.toString()
                             }
