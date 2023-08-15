@@ -15,13 +15,17 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.text.Html
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,6 +39,8 @@ import com.logestechs.driver.api.requests.DeliverPackageRequestBody
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
+import com.logestechs.driver.data.model.PackageItemsToDeliver
+import com.logestechs.driver.data.model.Status
 import com.logestechs.driver.databinding.ActivityPackageDeliveryBinding
 import com.logestechs.driver.ui.singleScanBarcodeScanner.SingleScanBarcodeScanner
 import com.logestechs.driver.utils.AppConstants
@@ -96,6 +102,10 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     private var companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
+    var items: List<PackageItemsToDeliver?>? = null
+    private val checkedItems = ArrayList<String>()
+
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPackageDeliveryBinding.inflate(layoutInflater)
@@ -168,6 +178,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     }
 
     private fun initData() {
+        items = pkg?.packageItemsToDeliver
         binding.itemReceiverName.textItem.text = pkg?.getFullReceiverName()
         binding.itemReceiverAddress.textItem.text = pkg?.destinationAddress?.toStringAddress()
         binding.itemPackageBarcode.textItem.text = pkg?.barcode
@@ -185,6 +196,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun initListeners() {
         binding.gestureViewSignature.addOnGestureListener(object :
             GestureOverlayView.OnGestureListener {
@@ -216,17 +228,44 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             }
         })
 
-        binding.radioGroupPartialDelivery.setOnCheckedChangeListener { _, checkedId ->
-            if (checkedId == R.id.radio_button_full_delivery) {
-                binding.containerPartialDeliveryNote.visibility = View.GONE
-                binding.etPartialDeliveryNote.setText("")
-                selectedDeliveryType = DeliveryType.FULL
-            } else if (checkedId == R.id.radio_button_partial_delivery) {
-                binding.containerPartialDeliveryNote.visibility = View.VISIBLE
-                selectedDeliveryType = DeliveryType.PARTIAL
+            binding.radioGroupPartialDelivery.setOnCheckedChangeListener { _, checkedId ->
+                if (checkedId == R.id.radio_button_full_delivery) {
+                    binding.containerPartialDeliveryNote.visibility = View.GONE
+                    selectedDeliveryType = DeliveryType.FULL
+                } else if (checkedId == R.id.radio_button_partial_delivery) {
+                    binding.containerPartialDeliveryNote.visibility = View.VISIBLE
+                    selectedDeliveryType = DeliveryType.PARTIAL
+                    if (companyConfigurations?.isSupportDeliveringPackageItemsPartially == true) {
+                        binding.tvNoteTitle.text = getString(R.string.title_partial_delivery_items_flow)
+                        sumCod()
+                        val checkBoxContainer = findViewById<LinearLayout>(R.id.check_box_container)
+                        for (item in items!!) {
+                            val checkBox = CheckBox(this)
+                            checkBox.text = Html.fromHtml(
+                                "${item?.name}, <b>Price:</b> ${item?.cod ?: 0}",
+                                Html.FROM_HTML_MODE_LEGACY
+                            )
+                            checkBox.layoutParams = LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                            )
+                            checkBox.setOnCheckedChangeListener { _, isChecked ->
+                                if (isChecked) {
+                                    item?.status = Status.DELIVERED
+                                } else {
+                                    item?.status = Status.RETURNED
+                                }
+                                sumCod()
+                            }
+                            checkBoxContainer.addView(checkBox)
+                            checkChosen()
+                        }
+                    }else {
+                        binding.containerItemsFlow.visibility = View.GONE
+                        binding.tvNoteTitle.text = getString(R.string.title_partial_delivery_note)
+                    }
+                }
             }
-        }
-
         binding.itemPackageBarcode.buttonCopy.setOnClickListener {
             Helper.copyTextToClipboard(this, pkg?.barcode)
         }
@@ -246,6 +285,25 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         binding.buttonContextMenu.setOnClickListener(this)
     }
 
+    private fun checkChosen(){
+        for(item in items!!){
+            if(item?.status == null){
+                item?.status = Status.RETURNED
+            }
+        }
+    }
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun sumCod(){
+        var sum: Double? = pkg?.cost
+        for(item in items!!){
+            if(item?.status == Status.DELIVERED){
+                sum = sum?.plus(item.cod!!)
+            }
+        }
+        val boldText = "<b>${getString(R.string.title_partial_delivery_cod)}</b>"
+        val codText = Html.fromHtml("$boldText $sum", Html.FROM_HTML_MODE_LEGACY)
+        binding.tvCodSum.text = codText
+    }
     private fun getExtras() {
         val extras = intent.extras
         if (extras != null) {
@@ -293,6 +351,21 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     super.getContext(),
                     getString(R.string.error_enter_partial_delivery_note)
                 )
+                return false
+            }
+        }
+
+        if (companyConfigurations?.isSupportDeliveringPackageItemsPartially == true) {
+            var deliveredItemFound = false
+            for (item in items!!) {
+                if (item?.status == Status.DELIVERED) {
+                    deliveredItemFound = true
+                    break
+                }
+            }
+
+            if (!deliveredItemFound) {
+                Helper.showErrorMessage(this, getString(R.string.error_no_delivered_items))
                 return false
             }
         }
@@ -775,7 +848,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                                     getPodImagesUrls(),
                                     null,
                                     null,
-                                    (selectedPaymentType?.enumValue as PaymentType).name
+                                    (selectedPaymentType?.enumValue as PaymentType).name,
+                                    items
                                 )
                             )
                             withContext(Dispatchers.Main) {
