@@ -6,7 +6,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/peach_orange_tab_pager_bar">
 
         <include
             android:id="@+id/toolbar_main"
@@ -32,6 +33,43 @@
 
         </LinearLayout>
 
-    </LinearLayout>
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/refresh_layout_packages"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_packages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                android:paddingStart="5dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="5dp"
+                android:paddingBottom="80dp"
+                android:scrollbars="vertical"
+                tools:listitem="@layout/item_accepted_package_village_cell" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+        <Button
+            android:id="@+id/button_done"
+            style="@style/LogesTechsMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/background_logestechs_button"
+            android:paddingStart="32dp"
+            android:paddingEnd="32dp"
+            android:text="@string/button_done"
+            android:textColor="#fff" />
+        </LinearLayout>
+    </LinearLayout>
 </layout>
