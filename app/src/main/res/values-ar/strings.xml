@@ -99,6 +99,8 @@
     <string name="payment_type_card_payment">بطاقة ائتمان</string>
     <string name="title_payment_method">طريقة الدفع</string>
     <string name="title_partial_delivery_note">الرجاء ادخال سبب التوصيل الجزئي والتحصيل المستلم</string>
+    <string name="title_partial_delivery_cod">التحصيل المستلم:</string>
+    <string name="title_partial_delivery_items_flow">الرجاء ادخال سبب التوصيل الجزئي</string>
     <string name="error_enter_partial_delivery_note">الرجاء ادخال سبب التوصيل الجزئي والتحصيل المستلم</string>
     <string name="title_delivered_items">الرجاء اختيار العناصر المراد توصيلها</string>
     <string name="error_no_delivered_items">الرجاء اختيار العناصر المراد توصيلها</string>

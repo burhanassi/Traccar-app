@@ -98,6 +98,8 @@
     <string name="title_payment_method">Payment Method</string>
     <string name="payment_type_card_payment">Card Payment</string>
     <string name="title_partial_delivery_note">Please enter partial delivery reason and collected COD</string>
+    <string name="title_partial_delivery_cod">Collected COD:</string>
+    <string name="title_partial_delivery_items_flow">Please enter partial delivery reason</string>
     <string name="error_enter_partial_delivery_note">Please enter partial delivery reason and collected COD</string>
     <string name="title_delivered_items">Please choose the delivered items</string>
     <string name="error_no_delivered_items">Please choose the delivered items</string>
