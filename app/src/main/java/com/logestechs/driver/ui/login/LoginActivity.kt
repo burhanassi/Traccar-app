@@ -213,6 +213,8 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response = ApiAdapter.apiClient.login(loginRequestBody)
+                    print(loginRequestBody)
+                    print(response)
                     if (response?.isSuccessful == true && response.body() != null) {
                         val body = response.body()
                         SharedPreferenceWrapper.saveLoginResponse(body)
