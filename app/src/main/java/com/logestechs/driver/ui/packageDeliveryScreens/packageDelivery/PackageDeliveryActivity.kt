@@ -228,18 +228,19 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             }
         })
 
-            binding.radioGroupPartialDelivery.setOnCheckedChangeListener { _, checkedId ->
-                if (checkedId == R.id.radio_button_full_delivery) {
-                    binding.containerPartialDeliveryNote.visibility = View.GONE
-                    selectedDeliveryType = DeliveryType.FULL
-                } else if (checkedId == R.id.radio_button_partial_delivery) {
-                    binding.containerPartialDeliveryNote.visibility = View.VISIBLE
-                    selectedDeliveryType = DeliveryType.PARTIAL
-                    if (companyConfigurations?.isSupportDeliveringPackageItemsPartially == true) {
-                        binding.tvNoteTitle.text = getString(R.string.title_partial_delivery_items_flow)
-                        sumCod()
-                        val checkBoxContainer = findViewById<LinearLayout>(R.id.check_box_container)
-                        for (item in items!!) {
+        binding.radioGroupPartialDelivery.setOnCheckedChangeListener { _, checkedId ->
+            if (checkedId == R.id.radio_button_full_delivery) {
+                binding.containerPartialDeliveryNote.visibility = View.GONE
+                selectedDeliveryType = DeliveryType.FULL
+            } else if (checkedId == R.id.radio_button_partial_delivery) {
+                binding.containerPartialDeliveryNote.visibility = View.VISIBLE
+                selectedDeliveryType = DeliveryType.PARTIAL
+                if (companyConfigurations?.isSupportDeliveringPackageItemsPartially == true) {
+                    binding.tvNoteTitle.text = getString(R.string.title_partial_delivery_items_flow)
+                    sumCod()
+                    val checkBoxContainer = findViewById<LinearLayout>(R.id.check_box_container)
+                    items?.let { itemList ->
+                        for (item in itemList) {
                             val checkBox = CheckBox(this)
                             checkBox.text = Html.fromHtml(
                                 "${item?.name}, <b>Price:</b> ${item?.cod ?: 0}",
@@ -260,12 +261,14 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                             checkBoxContainer.addView(checkBox)
                             checkChosen()
                         }
-                    }else {
-                        binding.containerItemsFlow.visibility = View.GONE
-                        binding.tvNoteTitle.text = getString(R.string.title_partial_delivery_note)
                     }
+                } else {
+                    binding.containerItemsFlow.visibility = View.GONE
+                    binding.tvNoteTitle.text = getString(R.string.title_partial_delivery_note)
                 }
             }
+        }
+
         binding.itemPackageBarcode.buttonCopy.setOnClickListener {
             Helper.copyTextToClipboard(this, pkg?.barcode)
         }
@@ -293,17 +296,18 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
     }
     @RequiresApi(Build.VERSION_CODES.N)
-    private fun sumCod(){
-        var sum: Double? = pkg?.cost
-        for(item in items!!){
-            if(item?.status == Status.DELIVERED){
-                sum = sum?.plus(item.cod!!)
+    private fun sumCod() {
+        var sum: Double? = pkg?.cost ?: 0.0
+        for (item in items ?: emptyList()) {
+            if (item?.status == Status.DELIVERED) {
+                sum = sum?.plus(item.cod ?: 0.0)
             }
         }
         val boldText = "<b>${getString(R.string.title_partial_delivery_cod)}</b>"
         val codText = Html.fromHtml("$boldText $sum", Html.FROM_HTML_MODE_LEGACY)
         binding.tvCodSum.text = codText
     }
+
     private fun getExtras() {
         val extras = intent.extras
         if (extras != null) {
@@ -357,7 +361,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
         if (companyConfigurations?.isSupportDeliveringPackageItemsPartially == true) {
             var deliveredItemFound = false
-            for (item in items!!) {
+            for (item in items ?: emptyList()) {
                 if (item?.status == Status.DELIVERED) {
                     deliveredItemFound = true
                     break
