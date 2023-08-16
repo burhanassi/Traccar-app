@@ -36,7 +36,7 @@ data class Package(
     var destinationCity: String? = null,
     var partnerId: Long? = null,
     var isAttachmentExist: Boolean?,
-    var packageItemsToDeliver: List<PackageItemsToDeliver>,
+    var packageItemsToDeliver: List<PackageItemsToDeliver?>?,
 
     //products
     var quantity: Int? = null,
