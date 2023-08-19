@@ -1,0 +1,57 @@
+package com.logestechs.driver.utils
+
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
+import com.logestechs.driver.utils.adapters.DriverRoutePackagesCellAdapter
+import kotlin.math.min
+import kotlin.math.max
+
+
+class ItemTouchHelperCallback(private val adapter: DriverRoutePackagesCellAdapter) :
+    ItemTouchHelper.Callback() {
+
+    override fun isLongPressDragEnabled(): Boolean {
+        return true
+    }
+
+    override fun getMovementFlags(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder
+    ): Int {
+        val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN
+        return makeMovementFlags(dragFlags, 0) // Allow only drag up and down
+    }
+
+    override fun onMove(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        target: RecyclerView.ViewHolder
+    ): Boolean {
+        val fromPosition = viewHolder.adapterPosition
+        val toPosition = target.adapterPosition
+
+        adapter.onItemMove(fromPosition, toPosition)
+
+        val startPosition = min(fromPosition, toPosition)
+        val endPosition = max(fromPosition, toPosition)
+
+        for (position in startPosition..endPosition) {
+            val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
+            if (viewHolder is DriverRoutePackagesCellAdapter.DriverRoutePackagesCellViewHolder) {
+                viewHolder.bindPositionNumber(position)
+            }
+        }
+
+        for (position in startPosition..endPosition) {
+            val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
+            viewHolder?.itemView?.translationY = 0f
+        }
+        return true
+    }
+
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+        // Not needed for drag-and-drop reordering
+    }
+}
+
+

@@ -1,10 +1,11 @@
 package com.logestechs.driver.ui.driverRouteActivity
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.AddNoteRequestBody
@@ -13,22 +14,17 @@ import com.logestechs.driver.api.requests.CodChangeRequestBody
 import com.logestechs.driver.api.requests.FailDeliveryRequestBody
 import com.logestechs.driver.api.requests.PostponePackageRequestBody
 import com.logestechs.driver.api.requests.ReturnPackageRequestBody
-import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ActivityDriverRouteBinding
-import com.logestechs.driver.databinding.ActivityReturnedPackagesBinding
-import com.logestechs.driver.ui.packageDeliveryScreens.returnedPackageDelivery.ReturnedPackageDeliveryActivity
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.InCarPackageStatus
-import com.logestechs.driver.utils.IntentExtrasKeys
+import com.logestechs.driver.utils.ItemTouchHelperCallback
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.PackageType
-import com.logestechs.driver.utils.adapters.InCarPackageCellAdapter
-import com.logestechs.driver.utils.adapters.ReturnedPackageCustomerCellAdapter
+import com.logestechs.driver.utils.adapters.DriverRoutePackagesCellAdapter
 import com.logestechs.driver.utils.interfaces.InCarPackagesCardListener
-import com.logestechs.driver.utils.interfaces.ReturnedPackagesCardListener
-import com.logestechs.driver.utils.interfaces.ViewPagerCountValuesDelegate
+import com.logestechs.driver.utils.interfaces.OnStartDragListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -37,11 +33,15 @@ import org.json.JSONObject
 
 class DriverRouteActivity : LogesTechsActivity(),
     View.OnClickListener,
-    InCarPackagesCardListener {
+    InCarPackagesCardListener,
+    DriverRoutePackagesCellAdapter.ItemTouchHelperAdapter,
+    OnStartDragListener {
     private lateinit var binding: ActivityDriverRouteBinding
 
     private var doesUpdateData = true
     private var enableUpdateData = false
+
+    private lateinit var itemTouchHelper: ItemTouchHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +49,11 @@ class DriverRouteActivity : LogesTechsActivity(),
         setContentView(binding.root)
         initRecycler()
         initListeners()
+
+        val adapter = binding.rvPackages.adapter as DriverRoutePackagesCellAdapter
+        val callback: ItemTouchHelper.Callback = ItemTouchHelperCallback(adapter)
+        itemTouchHelper = ItemTouchHelper(callback)
+        itemTouchHelper.attachToRecyclerView(binding.rvPackages)
     }
 
     override fun onResume() {
@@ -86,7 +91,7 @@ class DriverRouteActivity : LogesTechsActivity(),
         val layoutManager = LinearLayoutManager(
             super.getContext()
         )
-        binding.rvPackages.adapter = InCarPackageCellAdapter(
+        binding.rvPackages.adapter = DriverRoutePackagesCellAdapter(
             ArrayList(),
             super.getContext(),
             this,
@@ -101,11 +106,11 @@ class DriverRouteActivity : LogesTechsActivity(),
         binding.toolbarMain.buttonNotifications.setOnClickListener(this)
 
         binding.refreshLayoutPackages.setOnRefreshListener {
-            if (binding.rvPackages.adapter !is InCarPackageCellAdapter) {
+            if (binding.rvPackages.adapter !is DriverRoutePackagesCellAdapter) {
                 val layoutManager = LinearLayoutManager(
                     super.getContext()
                 )
-                binding.rvPackages.adapter = InCarPackageCellAdapter(
+                binding.rvPackages.adapter = DriverRoutePackagesCellAdapter(
                     ArrayList(),
                     super.getContext(),
                     this,
@@ -145,7 +150,7 @@ class DriverRouteActivity : LogesTechsActivity(),
                     if (response?.isSuccessful == true && response.body() != null) {
                         val body = response.body()
                         withContext(Dispatchers.Main) {
-                            (binding.rvPackages.adapter as InCarPackageCellAdapter).update(
+                            (binding.rvPackages.adapter as DriverRoutePackagesCellAdapter).update(
                                 body?.pkgs ?: ArrayList()
                             )
                         }
@@ -249,5 +254,17 @@ class DriverRouteActivity : LogesTechsActivity(),
 
     override fun onCallReceiver(pkg: Package?, receiverPhone: String?) {
         TODO("Not yet implemented")
+    }
+
+    override fun onItemMove(fromPosition: Int, toPosition: Int) {
+        (binding.rvPackages.adapter as? DriverRoutePackagesCellAdapter)?.onItemMove(fromPosition, toPosition)
+    }
+
+    override fun onItemDismiss(position: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onStartDrag(viewHolder: RecyclerView.ViewHolder) {
+        itemTouchHelper.startDrag(viewHolder)
     }
 }
