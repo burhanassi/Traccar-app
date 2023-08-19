@@ -41,8 +41,6 @@ class DriverRoutePackagesCellAdapter(
 
     private var dragStartListener: OnStartDragListener? = null
 
-    // ... (rest of the code)
-
     fun startDrag(viewHolder: RecyclerView.ViewHolder) {
         dragStartListener?.onStartDrag(viewHolder)
     }

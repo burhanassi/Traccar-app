@@ -19,7 +19,7 @@ class ItemTouchHelperCallback(private val adapter: DriverRoutePackagesCellAdapte
         viewHolder: RecyclerView.ViewHolder
     ): Int {
         val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN
-        return makeMovementFlags(dragFlags, 0) // Allow only drag up and down
+        return makeMovementFlags(dragFlags, 0)
     }
 
     override fun onMove(
