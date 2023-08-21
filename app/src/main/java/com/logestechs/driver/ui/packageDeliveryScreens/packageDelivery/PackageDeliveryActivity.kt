@@ -178,7 +178,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     }
 
     private fun initData() {
-        items = pkg?.packageItemsToDeliver
+        items = pkg?.packageItemsToDeliverList
         binding.itemReceiverName.textItem.text = pkg?.getFullReceiverName()
         binding.itemReceiverAddress.textItem.text = pkg?.destinationAddress?.toStringAddress()
         binding.itemPackageBarcode.textItem.text = pkg?.barcode
