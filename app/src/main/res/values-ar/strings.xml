@@ -229,4 +229,5 @@
     <string name="partially_picked_fulfillment">طلبات محملة جزئيا</string>
     <string name="action_show_packages">عرض الطرود</string>
     <string name="pickup_packages">الطرود المراد تحميلها</string>
+    <string name="item_price">السعر</string>
 </resources>
