@@ -235,17 +235,22 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             } else if (checkedId == R.id.radio_button_partial_delivery) {
                 binding.containerPartialDeliveryNote.visibility = View.VISIBLE
                 selectedDeliveryType = DeliveryType.PARTIAL
-                if (companyConfigurations?.isSupportDeliveringPackageItemsPartially == true) {
+                if (companyConfigurations?.isSupportDeliveringPackageItemsPartially!! && items != null) {
                     binding.tvNoteTitle.text = getString(R.string.title_partial_delivery_items_flow)
                     sumCod()
                     val checkBoxContainer = findViewById<LinearLayout>(R.id.check_box_container)
+                    val itemPriceLabel = getString(R.string.item_price)
+                    val isArabic = resources.configuration.locale.language == "ar"
                     items?.let { itemList ->
                         for (item in itemList) {
                             val checkBox = CheckBox(this)
                             checkBox.text = Html.fromHtml(
-                                "${item?.name}, <b>Price:</b> ${item?.cod ?: 0}",
+                                "${item?.name}, <b>${itemPriceLabel}:</b> ${item?.cod ?: 0}",
                                 Html.FROM_HTML_MODE_LEGACY
                             )
+                            if (isArabic) {
+                                checkBox.layoutDirection = View.LAYOUT_DIRECTION_RTL
+                            }
                             checkBox.layoutParams = LinearLayout.LayoutParams(
                                 LinearLayout.LayoutParams.WRAP_CONTENT,
                                 LinearLayout.LayoutParams.WRAP_CONTENT

@@ -232,4 +232,5 @@
     <string name="partially_picked_fulfillment">Partially Picked Fulfillment Orders</string>
     <string name="action_show_packages">Show Packages</string>
     <string name="pickup_packages">Pickup Packages</string>
+    <string name="item_price">Price</string>
 </resources>
