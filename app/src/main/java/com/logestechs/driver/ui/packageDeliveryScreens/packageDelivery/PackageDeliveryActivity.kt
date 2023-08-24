@@ -290,7 +290,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
     private fun checkChosen(){
         for(item in items!!){
-            if(item?.status == null){
+            if(item?.status != Status.DELIVERED){
                 item?.status = Status.RETURNED
             }
         }
