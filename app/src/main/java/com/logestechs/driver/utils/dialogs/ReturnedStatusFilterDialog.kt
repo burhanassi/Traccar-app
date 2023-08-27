@@ -91,9 +91,6 @@ class ReturnedStatusFilterDialog (
             ReturnedPackageStatus.RETURNED -> {
                 binding.selectorReturned.makeSelected()
             }
-            else -> {
-                binding.selectorAll.makeSelected()
-            }
         }
     }
 
