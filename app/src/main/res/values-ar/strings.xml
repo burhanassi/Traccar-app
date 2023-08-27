@@ -230,4 +230,7 @@
     <string name="action_show_packages">عرض الطرود</string>
     <string name="pickup_packages">الطرود المراد تحميلها</string>
     <string name="item_price">السعر</string>
+    <string name="returned_status_partially_delivered">تم توصليها بشكل جزئي</string>
+    <string name="returned_status_returned">مرجعة</string>
+    <string name="returned_status_swapped">تم تبديلها</string>
 </resources>
