@@ -43,7 +43,8 @@ class InCarStatusFilterDialog(
                 binding.selectorCod,
                 binding.selectorPostponed,
                 binding.selectorPickup,
-                binding.selectorDelivery
+                binding.selectorDelivery,
+                binding.selectorReturned
             )
         )
         binding.buttonCancel.setOnClickListener {
@@ -84,6 +85,11 @@ class InCarStatusFilterDialog(
             clearSelection()
             binding.selectorPostponed.makeSelected()
         }
+        binding.selectorReturned.setOnClickListener {
+            selectedStatus = InCarPackageStatus.RETURNED
+            clearSelection()
+            binding.selectorReturned.makeSelected()
+        }
 
         binding.buttonDone.setOnClickListener {
             alertDialog.dismiss()
@@ -118,6 +124,9 @@ class InCarStatusFilterDialog(
             }
             InCarPackageStatus.TO_DELIVER_DELIVERY -> {
                 binding.selectorDelivery.makeSelected()
+            }
+            InCarPackageStatus.RETURNED -> {
+                binding.selectorReturned.makeSelected()
             }
             else -> {
                 binding.selectorToDeliver.makeSelected()

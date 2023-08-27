@@ -25,6 +25,7 @@
     <string name="dashboard_mass_cod_reports">Mass Reports</string>
     <string name="dashboard_sort_bins_into_locations">Sort Bins Into Locations</string>
     <string name="dashboard_sort_items_into_bins">Sort Items Into Bins</string>
+    <string name="dashboard_sort_items">Sort Items</string>
     <string name="error_insert_valid_password">Password should contain at lease 6 characters or numbers</string>
     <string name="error_insert_valid_email">Please insert a valid email</string>
     <string name="error_fill_all_mandatory_fields">Please fill all required fields</string>
@@ -37,6 +38,7 @@
     <string name="title_reject_customer_packages">Reject Customer Packages</string>
     <string name="title_reject_package">Reject Package</string>
     <string name="message_no_packages">No packages were found \n Please pull the list down to refresh</string>
+    <string name="success_mass_completed">Mass COD Report Has Been Delivered Successfully</string>
     <string name="success_operation_completed">Operation Completed Successfully</string>
     <string name="button_insert_barcode">Insert Barcode</string>
     <string name="title_scanned_packages">Scanned Packages</string>
@@ -45,8 +47,10 @@
     <string name="button_scan_packages_barcodes">Scan Packages Barcodes</string>
     <string name="cod">COD</string>
     <string name="button_deliver_package">Deliver Package</string>
+    <string name="button_deliver_mass_cod">Deliver COD</string>
     <string name="action_return_package">Return</string>
     <string name="action_postpone_package">Postpone</string>
+    <string name="action_view_attachment">View Attachment</string>
     <string name="action_fail_delivery">Fail Delivery</string>
     <string name="title_fail_delivery">Fail Delivery</string>
     <string name="change_package_type">Change Package Type</string>
@@ -56,6 +60,7 @@
     <string name="in_car_status_all">All</string>
     <string name="in_car_status_failed">Failed</string>
     <string name="in_car_status_postponed">Postponed</string>
+    <string name="in_car_status_returned">Returned</string>
     <string name="in_car_status_cod">COD</string>
     <string name="view_mode_villages">Villages</string>
     <string name="view_mode_packages">Packages</string>
@@ -71,6 +76,7 @@
     <string name="receiver_paid_cost">Receiver paid costs</string>
     <string name="error_insert_message_text">Please insert message text</string>
     <string name="title_postpone">Postpone</string>
+    <string name="title_attachments">Attachments</string>
     <string name="error_select_postpone_date">Please select postpone date</string>
     <string name="package_type_cod">COD</string>
     <string name="package_type_regular">Prepaid</string>
@@ -92,8 +98,12 @@
     <string name="payment_type_digital_wallet">Digital Wallet</string>
     <string name="title_payment_method">Payment Method</string>
     <string name="payment_type_card_payment">Card Payment</string>
-    <string name="title_partial_delivery_note">Please enter Partial delivery reason and collected COD</string>
-    <string name="error_enter_partial_delivery_note">Please enter Partial delivery reason and collected COD</string>
+    <string name="title_partial_delivery_note">Please enter partial delivery reason and collected COD</string>
+    <string name="title_partial_delivery_cod">Collected COD:</string>
+    <string name="title_partial_delivery_items_flow">Please enter partial delivery reason</string>
+    <string name="error_enter_partial_delivery_note">Please enter partial delivery reason and collected COD</string>
+    <string name="title_delivered_items">Please choose the delivered items</string>
+    <string name="error_no_delivered_items">Please choose the delivered items</string>
     <string name="error_image_capture_failed">Image capture failed</string>
     <string name="error_image_loading">Image loading failed</string>
     <string name="button_capture_image">Capture Image</string>
@@ -104,6 +114,7 @@
     <string name="title_delivered_packages">Delivered Packages</string>
     <string name="error_no_packages_for_delivery">There are no packages for delivery</string>
     <string name="title_returned_packages">Returned Packages</string>
+    <string name="title_brought_packages">Brought Packages</string>
     <string name="button_deliver_to_sender">Deliver To Sender</string>
     <string name="button_deliver">Deliver</string>
     <string name="title_cod_sum">COD Sum</string>
@@ -155,6 +166,7 @@
     <string name="unsorted_items">Unsorted</string>
     <string name="rejected_items">Rejected</string>
     <string name="button_new_bin">New Bin</string>
+    <string name="button_new_location">New Location</string>
     <string name="action_reject">Reject</string>
     <string name="dashboard_new_fulfilment_orders">New Fulfillment Orders</string>
     <string name="title_new_fulfilment_orders">New Fulfillment Orders</string>
@@ -165,6 +177,7 @@
     <string name="title_items_number">Items Number</string>
     <string name="title_skus_number">SKUs Number</string>
     <string name="button_pack">Pack</string>
+    <string name="button_continue_picking">Continue Picking</string>
     <string name="please_scan_tote">Please Scan Tote</string>
     <string name="items">Items</string>
     <string name="scanned_sub_packages_count">%1$s of %2$s</string>
@@ -200,7 +213,24 @@
     <string name="error_verification_code_must_be_four_digits">Verification code must consist of 4 digits</string>
     <string name="show_driver_packages_locations">Optimized Route</string>
     <string name="app_needs_location_permission">The app needs location permission for tracking</string>
+    <string name="cannot_open_attachments">No attachment found</string>
     <string name="warning_some_villages_are_not_on_map">Caution! Some destinations may not appear on the map</string>
     <string name="text_number_of_locations">Number of destinations: %1$d</string>
     <string name="error_no_destinations_on_map">There are no destinations on the map</string>
+    <string name="time_spent">Enter The Sorting Time Spent</string>
+    <string name="invalid_time_format">Invalid time format</string>
+    <string name="title_reject_item">Reject</string>
+    <string name="reason_damaged">Damaged</string>
+    <string name="reason_color">Wrong Color</string>
+    <string name="reason_item">Wrong Item</string>
+    <string name="reason_SKU">Wrong SKU</string>
+    <string name="sender_message">Sender:</string>
+    <string name="title_message">Title:</string>
+<!--    <string name="body_message">Body:</string>-->
+    <string name="reason_other">Other</string>
+    <string name="picked_fulfillment">Picked Fulfillment Orders</string>
+    <string name="partially_picked_fulfillment">Partially Picked Fulfillment Orders</string>
+    <string name="action_show_packages">Show Packages</string>
+    <string name="pickup_packages">Pickup Packages</string>
+    <string name="item_price">Price</string>
 </resources>

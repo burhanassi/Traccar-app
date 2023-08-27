@@ -247,6 +247,9 @@ class InCarPackageCellAdapter(
             binding.buttonContextMenu.setOnClickListener {
                 val popup = PopupMenu(mAdapter.context, binding.buttonContextMenu)
                 popup.inflate(R.menu.in_car_package_context_menu)
+                if(mAdapter.companyConfigurations?.isAllowDriversToViewAttachments == false){
+                    popup.menu.findItem(R.id.action_view_attachment)?.isVisible = false
+                }
                 popup.setOnMenuItemClickListener { item: MenuItem? ->
 
                     if (mAdapter.context != null) {
@@ -262,7 +265,9 @@ class InCarPackageCellAdapter(
                                     pkg
                                 ).showDialog()
                             }
-
+                            R.id.action_view_attachment -> {
+                                mAdapter.listener?.onShowAttachmentsDialog(pkg)
+                            }
                             R.id.action_edit_package_type -> {
                                 ChangePackageTypeDialog(
                                     mAdapter.context!!,

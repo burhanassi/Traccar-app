@@ -115,7 +115,8 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
                 try {
                     val response = ApiAdapter.apiClient.getFulfilmentOrders(
                         page = currentPageIndex,
-                        status = FulfilmentOrderStatus.CREATED.name
+                        status = FulfilmentOrderStatus.CREATED.name,
+                        statuses = null
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()

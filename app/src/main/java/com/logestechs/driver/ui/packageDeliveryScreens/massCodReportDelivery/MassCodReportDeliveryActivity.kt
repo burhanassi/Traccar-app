@@ -23,10 +23,13 @@ import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.DeleteImageRequestBody
+import com.logestechs.driver.api.requests.DeliverMassCodReportGroupRequestBody
 import com.logestechs.driver.api.requests.DeliverMassCodReportRequestBody
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
+import com.logestechs.driver.data.model.GroupedMassCodReports
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.MassCodReport
+import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ActivityMassCodReportDeliveryBinding
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.Helper.Companion.format
@@ -58,7 +61,9 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
     private var bitmap: Bitmap? = null
     private var gestureTouch = false
     private var massCodReport: MassCodReport? = null
-
+    private var groupMassCodReport: GroupedMassCodReports? = null
+    private var isBulkDelivery = false
+    private var pkg: Package? = null
 
     private var selectedPodImageUri: Uri? = null
     private var mCurrentPhotoPath: String? = null
@@ -113,11 +118,17 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
     }
 
     private fun initData() {
-        binding.itemReceiverName.textItem.text = massCodReport?.customerName
-        binding.itemReceiverAddress.textItem.text = massCodReport?.customerCity
-        binding.itemPackageBarcode.textItem.text = massCodReport?.barcode
-        binding.textCod.text = massCodReport?.totalCodWithoutCost?.format()
-
+        if (isBulkDelivery) {
+            binding.itemPackageBarcode.textItem.text = groupMassCodReport?.customerName
+            binding.itemReceiverAddress.textItem.text = groupMassCodReport?.address
+            binding.itemReceiverName.root.visibility = View.GONE
+            binding.textCod.text = groupMassCodReport?.codSum.toString()
+        }else {
+            binding.itemReceiverName.textItem.text = massCodReport?.customerName
+            binding.itemReceiverAddress.textItem.text = massCodReport?.customerCity
+            binding.itemPackageBarcode.textItem.text = massCodReport?.barcode
+            binding.textCod.text = massCodReport?.totalCodWithoutCost?.format()
+        }
     }
 
     private fun initListeners() {
@@ -167,7 +178,12 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
     private fun getExtras() {
         val extras = intent.extras
         if (extras != null) {
-            massCodReport = extras.getParcelable(IntentExtrasKeys.MASS_COD_REPORT_TO_DELIVER.name)
+            groupMassCodReport = extras.getParcelable(IntentExtrasKeys.MASS_COD_REPORT_TO_DELIVER_ALL.name)
+            if(groupMassCodReport != null){
+                isBulkDelivery = true
+            }else {
+                massCodReport = extras.getParcelable(IntentExtrasKeys.MASS_COD_REPORT_TO_DELIVER.name)
+            }
         }
     }
 
@@ -263,7 +279,11 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                         if (loadedImagesList.size > 0 && loadedImagesList[loadedImagesList.size - 1]
                                 .imageUrl == null
                         ) {
-                            callUploadPodImage(loadedImagesList[loadedImagesList.size - 1])
+                            if (isBulkDelivery){
+                                callUploadPodGroupImage(loadedImagesList[loadedImagesList.size - 1])
+                            }else {
+                                callUploadPodImage(loadedImagesList[loadedImagesList.size - 1])
+                            }
                         }
                     } else {
                         Toast.makeText(
@@ -294,7 +314,11 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                         loadedImagesList.add(compressedImage)
                         if (loadedImagesList.size > 0 && loadedImagesList[loadedImagesList.size - 1].imageUrl == null
                         ) {
-                            callUploadPodImage(loadedImagesList[loadedImagesList.size - 1])
+                            if (isBulkDelivery){
+                                callUploadPodGroupImage(loadedImagesList[loadedImagesList.size - 1])
+                            }else {
+                                callUploadPodImage(loadedImagesList[loadedImagesList.size - 1])
+                            }
                         }
                     } else {
                         Toast.makeText(
@@ -458,6 +482,94 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
         }
     }
 
+    private fun uploadPackagesSignature() {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    bitmap = Bitmap.createBitmap(
+                        binding.gestureViewSignature.width,
+                        binding.gestureViewSignature.height,
+                        Bitmap.Config.ARGB_8888
+                    )
+                    val canvas = Canvas(bitmap!!)
+                    binding.gestureViewSignature.draw(canvas)
+                    file?.createNewFile()
+                    val fos = FileOutputStream(file)
+                    bitmap?.compress(Bitmap.CompressFormat.PNG, 100, fos)
+                    fos.close()
+
+                    // resize and compress to reasonable size
+                    val bytes = ByteArrayOutputStream()
+                    bitmap?.compress(
+                        Bitmap.CompressFormat.JPEG,
+                        AppConstants.IMAGE_FULL_QUALITY,
+                        bytes
+                    )
+
+                    val reqFile: RequestBody =
+                        bytes.toByteArray().toRequestBody("image/jpeg".toMediaTypeOrNull())
+                    val body: MultipartBody.Part = MultipartBody.Part.createFormData(
+                        "file",
+                        groupMassCodReport?.customerId .toString() +
+                                "__signature_image" +
+                                "_" + System.currentTimeMillis() +
+                                ".jpg", reqFile
+                    )
+
+                    val response = ApiAdapter.apiClient.uploadMassReportSignature(
+                        groupMassCodReport?.customerId  ?: -1,
+                        body
+                    )
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            callDeliverMassCodReportGroup(
+                                groupMassCodReport?.customerId, DeliverMassCodReportGroupRequestBody(
+                                    response.body()!!.fileUrl,
+                                    getPodImagesUrls()
+                                )
+                            )
+                        }
+                    } else {
+                        hideWaitDialog()
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
     private fun callUploadPodImage(loadedImage: LoadedImage?) {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
@@ -545,6 +657,92 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
         }
     }
 
+    private fun callUploadPodGroupImage(loadedImage: LoadedImage?) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val file: File = File(
+                        Helper.getRealPathFromURI(
+                            super.getContext(),
+                            loadedImage?.imageUri!!
+                        ) ?: ""
+                    )
+                    val bitmap: Bitmap = MediaStore.Images.Media
+                        .getBitmap(super.getContext().contentResolver, Uri.fromFile(file))
+
+                    val bytes = ByteArrayOutputStream()
+                    bitmap.compress(
+                        Bitmap.CompressFormat.JPEG,
+                        AppConstants.IMAGE_FULL_QUALITY,
+                        bytes
+                    )
+
+                    val reqFile: RequestBody =
+                        bytes.toByteArray().toRequestBody("image/jpeg".toMediaTypeOrNull())
+
+                    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale("en")).format(Date())
+                    val imageFileName = "JPEG_" + timeStamp + "_"
+
+                    val body: MultipartBody.Part = MultipartBody.Part.createFormData(
+                        "file",
+                        "$imageFileName.jpeg", reqFile
+                    )
+
+                    val response = ApiAdapter.apiClient.uploadPodGroupImageForMassReport(
+                        groupMassCodReport?.customerId ?: -1,
+                        body
+                    )
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            hideWaitDialog()
+                            loadedImagesList[loadedImagesList.size - 1].imageUrl =
+                                response.body()?.fileUrl
+                            (binding.rvThumbnails.adapter as ThumbnailsAdapter).updateItem(
+                                loadedImagesList.size - 1
+                            )
+                            binding.containerThumbnails.visibility = View.VISIBLE
+                        }
+                    } else {
+                        hideWaitDialog()
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
     private fun callDeletePodImage(position: Int) {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
@@ -564,7 +762,7 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                             }
                             Helper.showSuccessMessage(
                                 super.getContext(),
-                                getString(R.string.success_operation_completed)
+                                getString(R.string.success_mass_completed)
                             )
                         }
                     } else {
@@ -660,6 +858,60 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
             )
         }
     }
+    private fun callDeliverMassCodReportGroup(reportId: Long?, body: DeliverMassCodReportGroupRequestBody?) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response =
+                        ApiAdapter.apiClient.deliverMassCodReportGroup(reportId, body)
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            val returnIntent = Intent()
+                            setResult(RESULT_OK, returnIntent)
+                            finish()
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
 
     override fun onClick(v: View?) {
         when (v?.id) {
@@ -674,12 +926,21 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
             R.id.button_deliver_package -> {
                 if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true) {
                     if (validateInput()) {
-                        callDeliverMassCodReport(
-                            massCodReport?.id, DeliverMassCodReportRequestBody(
-                                null,
-                                getPodImagesUrls()
+                        if(isBulkDelivery){
+                            callDeliverMassCodReportGroup(
+                                groupMassCodReport?.customerId, DeliverMassCodReportGroupRequestBody(
+                                    null,
+                                    getPodImagesUrls()
+                                )
                             )
-                        )
+                        }else {
+                            callDeliverMassCodReport(
+                                massCodReport?.id, DeliverMassCodReportRequestBody(
+                                    null,
+                                    getPodImagesUrls()
+                                )
+                            )
+                        }
                     }
                 } else {
                     if (isSignatureEntered()) {
@@ -687,7 +948,11 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                             if (Helper.isStoragePermissionNeeded(this)) {
                                 Helper.showAndRequestStorageDialog(this)
                             } else {
-                                uploadPackageSignature()
+                                if(isBulkDelivery){
+                                    uploadPackagesSignature()
+                                }else{
+                                    uploadPackageSignature()
+                                }
                             }
                         }
                     } else {

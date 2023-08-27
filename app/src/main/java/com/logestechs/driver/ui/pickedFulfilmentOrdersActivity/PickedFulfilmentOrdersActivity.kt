@@ -1,18 +1,28 @@
 package com.logestechs.driver.ui.pickedFulfilmentOrdersActivity
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.tabs.TabLayout
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.FulfilmentOrder
 import com.logestechs.driver.databinding.ActivityPickedFulfilmentOrdersBinding
+import com.logestechs.driver.ui.barcodeScanner.FulfilmentPickerBarcodeScannerActivity
+import com.logestechs.driver.ui.barcodeScanner.FulfilmentPickerScanMode
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.FulfilmentOrderStatus
 import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.adapters.NewFulfilmentOrderCellAdapter
 import com.logestechs.driver.utils.adapters.PickedFulfilmentOrderCellAdapter
 import com.logestechs.driver.utils.interfaces.PickedFulfilmentOrderCardListener
 import kotlinx.coroutines.Dispatchers
@@ -31,15 +41,61 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
     private var currentPageIndex = 1
 
     private var fulfilmentOrdersList: ArrayList<FulfilmentOrder?> = ArrayList()
+    private var status: String? = FulfilmentOrderStatus.PICKED.name
 
-
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPickedFulfilmentOrdersBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val tabLayout: TabLayout = findViewById(R.id.tab_layout_fulfillment)
+
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.picked_fulfillment))
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.partially_picked_fulfillment))
+
+        tabLayout.tabTextColors = getColorStateList(R.color.tab_text_color_selector)
+
         initRecycler()
-        initListeners()
-        callGetFulfilmentOrders()
+        initListeners(status)
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                 status = when (tab.position) {
+                    0 ->{
+                        FulfilmentOrderStatus.PICKED.name
+                    }
+                    1 ->{
+                        FulfilmentOrderStatus.PARTIALLY_PICKED.name
+                    }
+                    else -> null
+                }
+
+                currentPageIndex = 1
+                fulfilmentOrdersList.clear()
+
+                callGetFulfilmentOrders(status)
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+                // Handle tab unselection here if needed
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab) {
+                // Handle tab reselection here if needed
+            }
+
+        })
+
+
+        tabLayout.getTabAt(0)?.select()
+        callGetFulfilmentOrders(FulfilmentOrderStatus.PICKED.name)
+    }
+    override fun onResume() {
+        super.onResume()
+        currentPageIndex = 1
+        (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()
+        callGetFulfilmentOrders(status)
     }
 
     private fun initRecycler() {
@@ -51,13 +107,15 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
         )
         binding.rvFulfilmentOrders.layoutManager = layoutManager
         binding.rvFulfilmentOrders.addOnScrollListener(recyclerViewOnScrollListener)
+        (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()
+
     }
 
-    private fun initListeners() {
+    private fun initListeners(status: String?) {
         binding.refreshLayoutCustomers.setOnRefreshListener {
             currentPageIndex = 1
             (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()
-            callGetFulfilmentOrders()
+            callGetFulfilmentOrders(status)
         }
 
         binding.toolbarMain.buttonNotifications.setOnClickListener(this)
@@ -93,7 +151,7 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
 
                 if (!isLoading && !isLastPage) {
                     if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount >= AppConstants.DEFAULT_PAGE_SIZE) {
-                        callGetFulfilmentOrders()
+                        callGetFulfilmentOrders(status)
                     }
                 }
             }
@@ -101,56 +159,54 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
 
     //apis
     @SuppressLint("NotifyDataSetChanged")
-    private fun callGetFulfilmentOrders() {
+    private fun callGetFulfilmentOrders(status: String?) {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
             isLoading = true
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.getFulfilmentOrders(
-                        page = currentPageIndex,
-                        status = FulfilmentOrderStatus.PICKED.name
-                    )
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        val body = response.body()
-                        val totalRound: Int =
-                            (body?.totalRecordsNo
-                                ?: 0) / (AppConstants.DEFAULT_PAGE_SIZE * currentPageIndex)
-                        if (totalRound == 0) {
-                            currentPageIndex = 1
-                            isLastPage = true
-                        } else {
-                            currentPageIndex++
-                            isLastPage = false
-                        }
+                        val response = ApiAdapter.apiClient.getFulfilmentOrders(
+                            page = currentPageIndex,
+                            status = status
+                        )
                         withContext(Dispatchers.Main) {
-                            fulfilmentOrdersList.addAll(body?.data ?: ArrayList())
-                            binding.rvFulfilmentOrders.adapter?.notifyDataSetChanged()
-                            handleNoPackagesLabelVisibility(body?.data?.isEmpty() ?: true && fulfilmentOrdersList.isEmpty())
+                            hideWaitDialog()
                         }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
+                        if (response?.isSuccessful == true && response.body() != null) {
+                            val body = response.body()
+                            val totalRound: Int = (body?.totalRecordsNo
+                                ?: 0) / (AppConstants.DEFAULT_PAGE_SIZE * currentPageIndex)
+                            if (totalRound == 0) {
+                                currentPageIndex = 1
+                                isLastPage = true
+                            } else {
+                                currentPageIndex++
+                                isLastPage = false
                             }
+                            withContext(Dispatchers.Main) {
+                                fulfilmentOrdersList.addAll(body?.data ?: ArrayList())
+                                binding.rvFulfilmentOrders.adapter?.notifyDataSetChanged()
+                                handleNoPackagesLabelVisibility(body?.data?.isEmpty() ?: true && fulfilmentOrdersList.isEmpty())
+                            }
+                        } else {
+                            try {
+                                val jObjError = JSONObject(response?.errorBody()!!.string())
+                                withContext(Dispatchers.Main) {
+                                    Helper.showErrorMessage(
+                                        super.getContext(),
+                                        jObjError.optString(AppConstants.ERROR_KEY)
+                                    )
+                                }
 
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
+                            } catch (e: java.lang.Exception) {
+                                withContext(Dispatchers.Main) {
+                                    Helper.showErrorMessage(
+                                        super.getContext(), getString(R.string.error_general)
+                                    )
+                                }
                             }
                         }
-                    }
-                    isLoading = false
+                        isLoading = false
                 } catch (e: Exception) {
                     isLoading = false
                     hideWaitDialog()
@@ -185,12 +241,11 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             Helper.showSuccessMessage(
-                                super.getContext(),
-                                getString(R.string.success_operation_completed)
+                                super.getContext(), getString(R.string.success_operation_completed)
                             )
                             currentPageIndex = 1
                             (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()
-                            callGetFulfilmentOrders()
+                            callGetFulfilmentOrders(FulfilmentOrderStatus.PICKED.name)
                         }
 
                     } else {
@@ -198,16 +253,14 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
                             val jObjError = JSONObject(response?.errorBody()!!.string())
                             withContext(Dispatchers.Main) {
                                 Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                    super.getContext(), jObjError.optString(AppConstants.ERROR_KEY)
                                 )
                             }
 
                         } catch (e: java.lang.Exception) {
                             withContext(Dispatchers.Main) {
                                 Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
+                                    super.getContext(), getString(R.string.error_general)
                                 )
                             }
                         }
@@ -246,5 +299,18 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
 
     override fun onPackFulfilmentOrder(index: Int) {
         callPackFulfilmentOrder(index)
+    }
+
+    override fun onContinuePickingClicked(fulfilmentOrder: FulfilmentOrder?) {
+        if (fulfilmentOrder != null) {
+            val intent = Intent(this, FulfilmentPickerBarcodeScannerActivity::class.java)
+
+            intent.putExtra(IntentExtrasKeys.FULFILMENT_ORDER.name, fulfilmentOrder)
+            intent.putExtra(
+                IntentExtrasKeys.FULFILMENT_PICKER_SCAN_MODE.name,
+                FulfilmentPickerScanMode.ITEM_INTO_TOTE
+            )
+            startActivity(intent)
+        }
     }
 }

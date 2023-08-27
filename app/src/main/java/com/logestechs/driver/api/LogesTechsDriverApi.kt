@@ -54,6 +54,11 @@ interface LogesTechsDriverApi {
         @Query("is-grouped") isGrouped: Boolean = true,
     ): Response<GetAcceptedPackagesResponse?>?
 
+    @GET("api/driver/customers/{customerId}/packages/accepted")
+    suspend fun getAcceptedPackagesByCustomer(
+        @Path("customerId") customerId: Long?,
+    ): Response<List<Package>?>?
+
     @GET("api/driver/packages/in-car/by-villages")
     suspend fun getInCarPackagesByVillage(
         @Query("in-car-status") status: String?,
@@ -94,6 +99,7 @@ interface LogesTechsDriverApi {
     @GET("api/admin/customers/{customerId}/returned-packages")
     suspend fun getCustomerReturnedPackages(
         @Path("customerId") customerId: Long?,
+        @Query("barcode") barcode: String?
     ): Response<GetCustomerReturnedPackagesResponse?>?
 
     @GET("api/driver/mass-packages/in-car")
@@ -109,6 +115,12 @@ interface LogesTechsDriverApi {
     suspend fun deliverMassCodReport(
         @Path("reportId") packageId: Long?,
         @Body body: DeliverMassCodReportRequestBody?
+    ): Response<ResponseBody>?
+
+    @PUT("api/driver/customers/{customerId}/mass-packages/deliver")
+    suspend fun deliverMassCodReportGroup(
+        @Path("customerId") customerId: Long?,
+        @Body body: DeliverMassCodReportGroupRequestBody?
     ): Response<ResponseBody>?
 
     @PUT("api/driver/customers/{customerId}/returned-packages/deliver-to-sender")
@@ -127,6 +139,11 @@ interface LogesTechsDriverApi {
         @Path("packageId") long: Long?,
         @Body body: ReturnPackageRequestBody?
     ): Response<ResponseBody>?
+
+    @GET("api/driver/packages/{packageId}/attachments")
+    suspend fun packageAttachments(
+        @Path("packageId") long: Long?
+    ): Response<List<String>>?
 
     @PUT("api/driver/packages/{packageId}/fail")
     suspend fun failDelivery(
@@ -200,6 +217,13 @@ interface LogesTechsDriverApi {
     suspend fun uploadPodImageForMassReport(
         @Path("massPackageId") massPackageId: Long,
         @Query("isMultiAttachment") isMultiAttachment: Boolean? = true,
+        @Part upload_form: MultipartBody.Part?
+    ): Response<UploadImageResponse?>?
+
+    @Multipart
+    @POST("api/driver/customers/{customerId}/mass-packages/delivery-proof/upload-multipart")
+    suspend fun uploadPodGroupImageForMassReport(
+        @Path("customerId") massPackageId: Long,
         @Part upload_form: MultipartBody.Part?
     ): Response<UploadImageResponse?>?
 
@@ -325,26 +349,56 @@ interface LogesTechsDriverApi {
         @Body body: BarcodeRequestBody?
     ): Response<SortItemIntoBinResponse>?
 
-    @PUT("api/handler/hub/bins/{binId}/shipping-items/reject")
-    suspend fun rejectItem(
-        @Path("binId") binId: Long?,
+    @PUT("api/handler/locations/{locationId}/items/sort")
+    suspend fun sortItemIntoLocation(
+        @Path("locationId") locationId: Long?,
         @Query("shippingPlanId") shippingPlanId: Long?,
         @Body body: BarcodeRequestBody?
-    ): Response<RejectShippingPlanItemResponse?>?
+    ): Response<SortItemIntoBinResponse>?
+
+    @PUT("api/handler/locations/{locationId}/items/rejected/sort")
+    suspend fun sortRejectedItemIntoLocation(
+        @Path("locationId") locationId: Long?,
+        @Query("itemBarcode") itemBarcode: String
+    ): Response<ItemDetails>?
+
+    @PUT("api/handler/hub/shipping-items/reject")
+    suspend fun rejectItem(
+        @Query("binId") binId: Long?,
+        @Query("locationId") locationId: Long?,
+        @Query("shippingPlanId") shippingPlanId: Long?,
+        @Body body: RejectItemRequestBody?
+    ): Response<RejectItemResponse>?
+
+    @PUT("api/handler/shipping-plan/{shippingPlanId}/sorting-hours")
+    suspend fun setTimeSpent(
+        @Path("shippingPlanId") shippingPlanId: Long?,
+        @Query("sortingHours") sortingHours: Double?
+    ):Response<ResponseBody?>
 
     @GET("api/handler/fulfilment/orders")
     suspend fun getFulfilmentOrders(
         @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
         @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
-        @Query("status") status: String? = null
+        @Query("status") status: String?,
+        @Query("statuses") statuses: List<String>? = null
     ): Response<GetFulfilmentOrdersResponse?>?
 
     @GET("api/handler/hub/tote")
-    suspend fun getTote(@Query("barcode") barcode: String?): Response<Bin?>?
+    suspend fun getTote(
+        @Query("barcode") barcode: String?,
+        @Query("orderId") orderId: Long?
+    ): Response<Bin?>?
 
     @PUT("api/handler/hub/totes/{toteId}/order-items/sort")
     suspend fun scanItemIntoTote(
         @Path("toteId") toteId: Long?,
+        @Query("orderId") orderId: Long?,
+        @Body body: BarcodeRequestBody?
+    ): Response<SortItemIntoToteResponse>?
+
+    @PUT("api/handler/hub/order-items/continue-picking")
+    suspend fun continuePicking(
         @Query("orderId") orderId: Long?,
         @Body body: BarcodeRequestBody?
     ): Response<SortItemIntoToteResponse>?

@@ -1,5 +1,6 @@
 package com.logestechs.driver.ui.packageDeliveryScreens.packageDelivery
 
+import android.Manifest
 import android.content.ClipData
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -7,21 +8,28 @@ import android.gesture.GestureOverlayView
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Rect
+import android.location.Location
 import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.text.Html
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.location.LocationServices
 import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
@@ -31,6 +39,8 @@ import com.logestechs.driver.api.requests.DeliverPackageRequestBody
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
+import com.logestechs.driver.data.model.PackageItemsToDeliver
+import com.logestechs.driver.data.model.Status
 import com.logestechs.driver.databinding.ActivityPackageDeliveryBinding
 import com.logestechs.driver.ui.singleScanBarcodeScanner.SingleScanBarcodeScanner
 import com.logestechs.driver.utils.AppConstants
@@ -92,6 +102,10 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     private var companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
+    var items: List<PackageItemsToDeliver?>? = null
+    private val checkedItems = ArrayList<String>()
+
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPackageDeliveryBinding.inflate(layoutInflater)
@@ -164,6 +178,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     }
 
     private fun initData() {
+        items = pkg?.packageItemsToDeliverList
         binding.itemReceiverName.textItem.text = pkg?.getFullReceiverName()
         binding.itemReceiverAddress.textItem.text = pkg?.destinationAddress?.toStringAddress()
         binding.itemPackageBarcode.textItem.text = pkg?.barcode
@@ -181,6 +196,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun initListeners() {
         binding.gestureViewSignature.addOnGestureListener(object :
             GestureOverlayView.OnGestureListener {
@@ -215,11 +231,46 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         binding.radioGroupPartialDelivery.setOnCheckedChangeListener { _, checkedId ->
             if (checkedId == R.id.radio_button_full_delivery) {
                 binding.containerPartialDeliveryNote.visibility = View.GONE
-                binding.etPartialDeliveryNote.setText("")
                 selectedDeliveryType = DeliveryType.FULL
             } else if (checkedId == R.id.radio_button_partial_delivery) {
                 binding.containerPartialDeliveryNote.visibility = View.VISIBLE
                 selectedDeliveryType = DeliveryType.PARTIAL
+                if (companyConfigurations?.isSupportDeliveringPackageItemsPartially!! && items != null) {
+                    binding.tvNoteTitle.text = getString(R.string.title_partial_delivery_items_flow)
+                    sumCod()
+                    val checkBoxContainer = findViewById<LinearLayout>(R.id.check_box_container)
+                    val itemPriceLabel = getString(R.string.item_price)
+                    val isArabic = resources.configuration.locale.language == "ar"
+                    items?.let { itemList ->
+                        for (item in itemList) {
+                            val checkBox = CheckBox(this)
+                            checkBox.text = Html.fromHtml(
+                                "${item?.name}, <b>${itemPriceLabel}:</b> ${item?.cod ?: 0}",
+                                Html.FROM_HTML_MODE_LEGACY
+                            )
+                            if (isArabic) {
+                                checkBox.layoutDirection = View.LAYOUT_DIRECTION_RTL
+                            }
+                            checkBox.layoutParams = LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                            )
+                            checkBox.setOnCheckedChangeListener { _, isChecked ->
+                                if (isChecked) {
+                                    item?.status = Status.DELIVERED
+                                } else {
+                                    item?.status = Status.RETURNED
+                                }
+                                sumCod()
+                            }
+                            checkBoxContainer.addView(checkBox)
+                            checkChosen()
+                        }
+                    }
+                } else {
+                    binding.containerItemsFlow.visibility = View.GONE
+                    binding.tvNoteTitle.text = getString(R.string.title_partial_delivery_note)
+                }
             }
         }
 
@@ -242,6 +293,26 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         binding.buttonContextMenu.setOnClickListener(this)
     }
 
+    private fun checkChosen(){
+        for(item in items!!){
+            if(item?.status != Status.DELIVERED){
+                item?.status = Status.RETURNED
+            }
+        }
+    }
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun sumCod() {
+        var sum: Double? = pkg?.cost ?: 0.0
+        for (item in items ?: emptyList()) {
+            if (item?.status == Status.DELIVERED) {
+                sum = sum?.plus(item.cod ?: 0.0)
+            }
+        }
+        val boldText = "<b>${getString(R.string.title_partial_delivery_cod)}</b>"
+        val codText = Html.fromHtml("$boldText $sum", Html.FROM_HTML_MODE_LEGACY)
+        binding.tvCodSum.text = codText
+    }
+
     private fun getExtras() {
         val extras = intent.extras
         if (extras != null) {
@@ -256,7 +327,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         binding.selectorDigitalWallet.enumValue = PaymentType.DIGITAL_WALLET
         binding.selectorCheque.enumValue = PaymentType.CHEQUE
         binding.selectorPrepaid.enumValue = PaymentType.PREPAID
-        binding.selectorCardPayment.enumValue = PaymentType.CARD_PAYMENT
+        binding.selectorCardPayment.enumValue = PaymentType.CARD
         binding.selectorBankTransfer.enumValue = PaymentType.BANK_TRANSFER
     }
 
@@ -289,6 +360,21 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     super.getContext(),
                     getString(R.string.error_enter_partial_delivery_note)
                 )
+                return false
+            }
+        }
+
+        if (companyConfigurations?.isSupportDeliveringPackageItemsPartially == true) {
+            var deliveredItemFound = false
+            for (item in items ?: emptyList()) {
+                if (item?.status == Status.DELIVERED) {
+                    deliveredItemFound = true
+                    break
+                }
+            }
+
+            if (!deliveredItemFound) {
+                Helper.showErrorMessage(this, getString(R.string.error_no_delivered_items))
                 return false
             }
         }
@@ -545,7 +631,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     )
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            callDeliverPackage()
+                            callDeliverPackage(response.body()?.fileUrl)
                         }
                     } else {
                         try {
@@ -733,73 +819,93 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
     }
 
-    private fun callDeliverPackage() {
+    private fun callDeliverPackage(signatureUrl: String?) {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    var note: String? = null
-                    if (selectedDeliveryType == DeliveryType.PARTIAL) {
-                        note = binding.etPartialDeliveryNote.text.toString()
-                    }
-                    val response = ApiAdapter.apiClient.deliverPackage(
-                        pkg?.barcode,
-                        selectedDeliveryType?.name,
-                        note,
-                        body = DeliverPackageRequestBody(
-                            pkg?.id,
-                            0.0,
-                            0.0,
-                            0.0,
-                            0.0,
-                            null,
-                            getPodImagesUrls(),
-                            null,
-                            null,
-                            (selectedPaymentType?.enumValue as PaymentType).name
-                        )
-                    )
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        withContext(Dispatchers.Main) {
-                            val returnIntent = Intent()
-                            setResult(RESULT_OK, returnIntent)
-                            finish()
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
+            val fusedLocationClient =
+                LocationServices.getFusedLocationProviderClient(super.getContext())
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                return
             }
-        } else {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                    val latitude = location?.latitude
+                    val longitude = location?.longitude
+                    GlobalScope.launch(Dispatchers.IO) {
+                        try {
+                            var note: String? = null
+                            if (selectedDeliveryType == DeliveryType.PARTIAL) {
+                                note = binding.etPartialDeliveryNote.text.toString()
+                            }
+                            val response = ApiAdapter.apiClient.deliverPackage(
+                                pkg?.barcode,
+                                selectedDeliveryType?.name,
+                                note,
+                                body = DeliverPackageRequestBody(
+                                    pkg?.id,
+                                    longitude,
+                                    latitude,
+                                    0.0,
+                                    0.0,
+                                    signatureUrl,
+                                    getPodImagesUrls(),
+                                    null,
+                                    null,
+                                    (selectedPaymentType?.enumValue as PaymentType).name,
+                                    items
+                                )
+                            )
+                            withContext(Dispatchers.Main) {
+                                hideWaitDialog()
+                            }
+                            if (response?.isSuccessful == true && response.body() != null) {
+                                withContext(Dispatchers.Main) {
+                                    val returnIntent = Intent()
+                                    setResult(RESULT_OK, returnIntent)
+                                    finish()
+                                }
+                            } else {
+                                try {
+                                    val jObjError = JSONObject(response?.errorBody()!!.string())
+                                    withContext(Dispatchers.Main) {
+                                        Helper.showErrorMessage(
+                                            super.getContext(),
+                                            jObjError.optString(AppConstants.ERROR_KEY)
+                                        )
+                                    }
+
+                                } catch (e: java.lang.Exception) {
+                                    withContext(Dispatchers.Main) {
+                                        Helper.showErrorMessage(
+                                            super.getContext(),
+                                            getString(R.string.error_general)
+                                        )
+                                    }
+                                }
+                            }
+                        } catch (e: Exception) {
+                            hideWaitDialog()
+                            Helper.logException(e, Throwable().stackTraceToString())
+                            withContext(Dispatchers.Main) {
+                                if (e.message != null && e.message!!.isNotEmpty()) {
+                                    Helper.showErrorMessage(super.getContext(), e.message)
+                                } else {
+                                    Helper.showErrorMessage(
+                                        super.getContext(),
+                                        e.stackTraceToString()
+                                    )
+                                }
+                            }
+                        }
+                    }
+            }
+        }else {
             hideWaitDialog()
             Helper.showErrorMessage(
                 super.getContext(), getString(R.string.error_check_internet_connection)
@@ -865,7 +971,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
     }
 
-    private fun requestPinCodeSms() {
+    private fun requestPinCodeSms(isFirstPin: Boolean = true) {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
@@ -879,7 +985,9 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             pkg?.verificationStatus = VerificationStatus.SENT.toString()
-                            showDeliveryCodeVerificationDialog()
+                            if (isFirstPin) {
+                                showDeliveryCodeVerificationDialog()
+                            }
                         }
                     } else {
                         try {
@@ -926,7 +1034,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
     private fun needsPinVerification(): Boolean {
         if (companyConfigurations != null) {
-            if (isSignatureEntered()) {
+            if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true || isSignatureEntered()) {
                 if ((pkg?.shipmentType == PackageType.REGULAR.toString() || pkg?.cod == 0.0) && companyConfigurations?.isEnableDeliveryVerificationPinCodeForPkgs == true) {
                     return when (pkg?.verificationStatus) {
                         VerificationStatus.NOT_SENT.toString() -> {
@@ -981,7 +1089,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
     private fun handlePackageDelivery() {
         if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true) {
-            callDeliverPackage()
+            callDeliverPackage(null)
         } else {
             if (Helper.isStoragePermissionNeeded(this)) {
                 Helper.showAndRequestStorageDialog(this)
@@ -1101,5 +1209,9 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
     override fun onPackageVerified() {
         handlePackageDelivery()
+    }
+
+    override fun onResendPinSms() {
+        requestPinCodeSms(isFirstPin = false)
     }
 }

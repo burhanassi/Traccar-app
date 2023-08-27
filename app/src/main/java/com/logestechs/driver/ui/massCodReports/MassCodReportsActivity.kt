@@ -298,6 +298,11 @@ class MassCodReportsActivity : LogesTechsActivity(),
         mIntent.putExtra(IntentExtrasKeys.MASS_COD_REPORT_TO_DELIVER.name, massCodReport)
         startActivityForResult(mIntent, 1)
     }
+    override fun onDeliverGroupReport(index: Int, groupedPackage: GroupedMassCodReports?) {
+        val mIntent = Intent(this, MassCodReportDeliveryActivity::class.java)
+        mIntent.putExtra(IntentExtrasKeys.MASS_COD_REPORT_TO_DELIVER_ALL.name, groupedPackage)
+        startActivityForResult(mIntent, 1)
+    }
 
     override fun onClick(v: View?) {
         when (v?.id) {

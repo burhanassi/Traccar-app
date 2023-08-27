@@ -1,11 +1,16 @@
 package com.logestechs.driver.ui.acceptedPackages
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
@@ -15,6 +20,7 @@ import com.logestechs.driver.databinding.FragmentAcceptedPackagesBinding
 import com.logestechs.driver.ui.barcodeScanner.BarcodeScannerActivity
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.AcceptedPackageVillageCellAdapter
+import com.logestechs.driver.utils.bottomSheets.AcceptedPackagesBottomSheet
 import com.logestechs.driver.utils.interfaces.AcceptedPackagesCardListener
 import com.logestechs.driver.utils.interfaces.ViewPagerCountValuesDelegate
 import kotlinx.coroutines.Dispatchers
@@ -29,6 +35,9 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
     private val binding get() = _binding!!
     private var activityDelegate: ViewPagerCountValuesDelegate? = null
 
+
+    private lateinit var parentActivity: AppCompatActivity
+    private lateinit var viewModel: RefreshViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -51,9 +60,24 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
         super.onDestroy()
         _binding = null
     }
-
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is AppCompatActivity) {
+            parentActivity = context
+        }
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(requireActivity()).get(RefreshViewModel::class.java)
+        viewModel.dataRefresh.observe(viewLifecycleOwner, Observer { refresh ->
+            if (refresh) {
+                initRecycler()
+                initListeners()
+                callGetAcceptedPackages()
+                activityDelegate = activity as ViewPagerCountValuesDelegate
+                binding.textTitle.text = getString(R.string.packages_view_pager_accepted_packages)
+            }
+        })
         initRecycler()
         initListeners()
         callGetAcceptedPackages()
@@ -67,7 +91,6 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
             callGetAcceptedPackages()
         }
     }
-
     private fun initRecycler() {
         val layoutManager = LinearLayoutManager(
             super.getContext()
@@ -75,6 +98,7 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
         binding.rvVillages.adapter = AcceptedPackageVillageCellAdapter(
             ArrayList(),
             super.getContext(),
+            requireFragmentManager(),
             this
         )
         binding.rvVillages.layoutManager = layoutManager
@@ -162,10 +186,77 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
             )
         }
     }
+    private fun callGetAcceptedPackagesByCustomer(customer: Customer?) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.getAcceptedPackagesByCustomer(customerId = customer?.id)
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        val body = response.body()
+                        withContext(Dispatchers.Main) {
+                            val bottomSheet = AcceptedPackagesBottomSheet()
+                                val bundle = Bundle()
+                            val packageList = ArrayList<Parcelable>(response.body() ?: emptyList())
+                            bundle.putParcelableArrayList(
+                                BundleKeys.PACKAGES_KEY.toString(),
+                                packageList
+                            )
 
+                                bundle.putInt(
+                                    BundleKeys.PACKAGES_COUNT.toString(),
+                                    response.body()!!.size
+                                )
+                                bottomSheet.arguments = bundle
+                                bottomSheet.show(requireFragmentManager(), "exampleBottomSheet")
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
     override fun scanForPickup(customer: Customer?) {
         val mIntent = Intent(super.getContext(), BarcodeScannerActivity::class.java)
         mIntent.putExtra(IntentExtrasKeys.CUSTOMER_WITH_PACKAGES_FOR_PICKUP.name, customer)
         startActivity(mIntent)
+    }
+    override fun getAcceptedPackages(customer: Customer?){
+        callGetAcceptedPackagesByCustomer(customer)
     }
 }

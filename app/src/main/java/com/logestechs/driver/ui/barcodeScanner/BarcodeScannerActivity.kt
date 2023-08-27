@@ -537,7 +537,6 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
             Helper.showErrorMessage(super.getContext(), e.localizedMessage)
         }
     }
-
     override fun onBarcodeInserted(barcode: String) {
         if (!scannedItemsHashMap.containsKey(barcode)) {
             scannedItemsHashMap[barcode] = barcode

@@ -18,6 +18,7 @@ import com.logestechs.driver.ui.singleScanBarcodeScanner.SingleScanBarcodeScanne
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.DriverShippingPlanCellAdapter
 import com.logestechs.driver.utils.dialogs.SearchPackagesDialog
+import com.logestechs.driver.utils.interfaces.DriverShippingPlanCardListener
 import com.logestechs.driver.utils.interfaces.SearchPackagesDialogListener
 import com.logestechs.driver.utils.interfaces.ViewPagerCountValuesDelegate
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +28,7 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 class InCarShippingPlansFragment : LogesTechsFragment(), View.OnClickListener,
-    SearchPackagesDialogListener {
+    SearchPackagesDialogListener, DriverShippingPlanCardListener {
 
     private var _binding: FragmentInCarShippingPlansBinding? = null
     private val binding get() = _binding!!
@@ -89,7 +90,7 @@ class InCarShippingPlansFragment : LogesTechsFragment(), View.OnClickListener,
         )
         binding.rvShippingPlans.adapter = DriverShippingPlanCellAdapter(
             shippingPlansList,
-            null
+            this
         )
         binding.rvShippingPlans.layoutManager = layoutManager
         binding.rvShippingPlans.addOnScrollListener(recyclerViewOnScrollListener)
@@ -230,6 +231,67 @@ class InCarShippingPlansFragment : LogesTechsFragment(), View.OnClickListener,
         }
     }
 
+    private fun callCancelShippingPlanPickup(shippingPlan: ShippingPlan?) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.cancelShippingPlanPickup(
+                        shippingPlan?.barcode
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            Helper.showSuccessMessage(
+                                super.getContext(),
+                                getString(R.string.success_operation_completed)
+                            )
+                            searchWord = null
+                            currentPageIndex = 1
+                            (binding.rvShippingPlans.adapter as DriverShippingPlanCellAdapter).clearList()
+                            callGetShippingPlans()
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_search -> {
@@ -251,5 +313,12 @@ class InCarShippingPlansFragment : LogesTechsFragment(), View.OnClickListener,
             scanBarcode,
             AppConstants.REQUEST_SCAN_BARCODE
         )
+    }
+
+    override fun onPickup(index: Int) {
+    }
+
+    override fun onCancelPickup(index: Int, shippingPlan: ShippingPlan?) {
+        callCancelShippingPlanPickup(shippingPlan)
     }
 }

@@ -41,7 +41,7 @@ class AppConstants {
 }
 
 enum class BundleKeys {
-    NOTIFICATIONS_KEY, UNREAD_NOTIFICATIONS_COUNT, IS_LOGIN, COMPANY_INFO
+    NOTIFICATIONS_KEY, UNREAD_NOTIFICATIONS_COUNT, IS_LOGIN, COMPANY_INFO, PACKAGES_KEY, PACKAGES_COUNT
 }
 
 enum class AppLanguages(val value: String) {
@@ -103,6 +103,7 @@ enum class IntentExtrasKeys() {
     EXTRA_RECEIVED_NOTIFICATION,
     IN_CAR_PACKAGE_STATUS,
     MASS_COD_REPORT_TO_DELIVER,
+    MASS_COD_REPORT_TO_DELIVER_ALL,
     SCANNED_BARCODE,
     FULFILMENT_SORTER_SCAN_MODE,
     FULFILMENT_PICKER_SCAN_MODE,
@@ -157,7 +158,7 @@ enum class PaymentType(val englishLabel: String, val arabicLabel: String) {
     BANK_TRANSFER("Bank Transfer", "حوالة بنكية"),
     PREPAID("Prepaid", "دفع مسبق"),
     DIGITAL_WALLET("Digital Wallet", "محفظة الكترونية"),
-    CARD_PAYMENT("Card Payment", "بطاقة ائتمان")
+    CARD("Card Payment", "بطاقة ائتمانية")
 }
 
 enum class DeliveryType {

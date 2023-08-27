@@ -33,6 +33,7 @@ import com.logestechs.driver.api.requests.FailDeliveryRequestBody
 import com.logestechs.driver.api.requests.PostponePackageRequestBody
 import com.logestechs.driver.api.requests.ReturnPackageRequestBody
 import com.logestechs.driver.api.responses.GetInCarPackagesGroupedResponse
+import com.logestechs.driver.api.responses.PackageAttachmentsResponseBody
 import com.logestechs.driver.data.model.GroupedPackages
 import com.logestechs.driver.data.model.LatLng
 import com.logestechs.driver.data.model.LoadedImage
@@ -62,6 +63,7 @@ import com.logestechs.driver.utils.dialogs.InCarViewModeDialog
 import com.logestechs.driver.utils.dialogs.PackageTypeFilterDialog
 import com.logestechs.driver.utils.dialogs.ReturnPackageDialog
 import com.logestechs.driver.utils.dialogs.SearchPackagesDialog
+import com.logestechs.driver.utils.dialogs.ShowAttachmentsDialog
 import com.logestechs.driver.utils.interfaces.AddPackageNoteDialogListener
 import com.logestechs.driver.utils.interfaces.ConfirmationDialogActionListener
 import com.logestechs.driver.utils.interfaces.InCarPackagesCardListener
@@ -70,6 +72,7 @@ import com.logestechs.driver.utils.interfaces.InCarViewModeDialogListener
 import com.logestechs.driver.utils.interfaces.PackageTypeFilterDialogListener
 import com.logestechs.driver.utils.interfaces.ReturnPackageDialogListener
 import com.logestechs.driver.utils.interfaces.SearchPackagesDialogListener
+import com.logestechs.driver.utils.interfaces.ShowAttachmentsDialogListener
 import com.logestechs.driver.utils.interfaces.ViewPagerCountValuesDelegate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -100,7 +103,7 @@ class InCarPackagesFragment(
     AddPackageNoteDialogListener,
     ReturnPackageDialogListener,
     ConfirmationDialogActionListener,
-    PackageTypeFilterDialogListener {
+    PackageTypeFilterDialogListener{
 
     private var _binding: FragmentInCarPackagesBinding? = null
     private val binding get() = _binding!!
@@ -124,6 +127,7 @@ class InCarPackagesFragment(
 
     private var selectedPackageType: PackageType = PackageType.ALL
 
+    private var packageAttachmentsResponseBody: PackageAttachmentsResponseBody? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -1343,7 +1347,68 @@ class InCarPackagesFragment(
             )
         }
     }
+    private fun callGetAttachments(packageId: Long?) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response =
+                        ApiAdapter.apiClient.packageAttachments(packageId)
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            response.body()?.let { imageUrls ->
+                                ShowAttachmentsDialog(
+                                    context,
+                                    packageId,
+                                    imageUrls
+                                ).showDialog()
+                                Helper.showSuccessMessage(
+                                    super.getContext(),
+                                    getString(R.string.success_operation_completed)
+                                )
+                            }
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
 
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), getString(R.string.cannot_open_attachments))
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
     override fun onViewModeChanged(selectedViewMode: InCarPackagesViewMode) {
         this.selectedViewMode = selectedViewMode
         getPackagesBySelectedMode()
@@ -1370,6 +1435,17 @@ class InCarPackagesFragment(
             )
         } else {
             ReturnPackageDialog(context, this, pkg).showDialog()
+        }
+    }
+
+    override fun onShowAttachmentsDialog(pkg: Package?){
+        if(pkg?.isAttachmentExist == true ){
+            callGetAttachments(pkg.id)
+        }else{
+                Helper.showErrorMessage(
+                    super.getContext(),
+                    getString(R.string.cannot_open_attachments)
+                )
         }
     }
 
@@ -1410,7 +1486,9 @@ class InCarPackagesFragment(
     override fun onDeleteImage(position: Int) {
         callDeletePodImage(position)
     }
-
+//    override fun showAttachments(packageId: Long?) {
+//        callGetAttachments(packageId)
+//    }
     override fun onShowPackageNoteDialog(pkg: Package?) {
         loadedImagesList.clear()
         addPackageNoteDialog = AddPackageNoteDialog(requireContext(), this, pkg, loadedImagesList)

@@ -217,4 +217,7 @@ class AssignedShippingPlansFragment : LogesTechsFragment(), DriverShippingPlanCa
             AppConstants.REQUEST_SCAN_BARCODE
         )
     }
+
+    override fun onCancelPickup(index: Int, shippingPlan: ShippingPlan?) {
+    }
 }

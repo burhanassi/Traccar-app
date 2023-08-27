@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.pickedFulfilmentOrdersActivity.PickedFulfilmentOrdersActivity">
 
@@ -12,25 +13,38 @@
             android:id="@+id/toolbar_main"
             layout="@layout/toolbar_main" />
 
-        <LinearLayout
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout_fulfillment"
+            style="@style/CustomTabLayout"
             android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:background="@color/peach_orange_tab_pager_bar">
+            android:layout_height="wrap_content"
+            android:background="@color/orange_sea_buckthorn"
+            app:tabBackground="@color/transparent"
+            app:tabGravity="fill"
+            app:tabIndicator="@color/transparent"
+            app:tabIndicatorColor="@color/transparent"
+            app:tabIndicatorFullWidth="false"
+            app:tabRippleColor="@color/transparent" />
 
-            <TextView
-                android:id="@+id/text_title"
-                style="@style/LogesTechsBold"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_weight="1"
-                android:text="@string/title_picked_fulfilment_orders"
-                android:textColor="@color/fontTrackHint"
-                android:textSize="14sp" />
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="35dp"-->
+<!--            android:background="@color/peach_orange_tab_pager_bar">-->
 
-        </LinearLayout>
+<!--            <TextView-->
+<!--                android:id="@+id/text_title"-->
+<!--                style="@style/LogesTechsBold"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center_vertical"-->
+<!--                android:layout_marginStart="16dp"-->
+<!--                android:layout_marginEnd="16dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="@string/title_picked_fulfilment_orders"-->
+<!--                android:textColor="@color/fontTrackHint"-->
+<!--                android:textSize="14sp" />-->
+
+<!--        </LinearLayout>-->
 
         <FrameLayout
             android:layout_width="match_parent"

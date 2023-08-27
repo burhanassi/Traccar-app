@@ -26,6 +26,7 @@
     <string name="dashboard_mass_cod_reports">تحصيل الزبائن</string>
     <string name="dashboard_sort_bins_into_locations">ترتيب السلات\nفي المواقع</string>
     <string name="dashboard_sort_items_into_bins">ترتيب العناصر\nفي السلات</string>
+    <string name="dashboard_sort_items">ترتيب\nالعناصر</string>
     <string name="error_insert_valid_password">يجب أن تتألف كلمة المرور من 6 احرف وارقام على الاقل</string>
     <string name="error_insert_valid_email">يرجى ادخال عنوان بريد الكتروني او اسم مستخدم من ٦ احرف او اكثر</string>
     <string name="error_fill_all_mandatory_fields">الرجاء تعبئة جميع الحقول المطلوبة</string>
@@ -37,6 +38,7 @@
     <string name="title_package">طرد</string>
     <string name="title_reject_customer_packages">رفض طرود الزبون</string>
     <string name="title_reject_package">رفض الطرد</string>
+    <string name="success_mass_completed">تم توصيل كشف التحصيلات بنجاح </string>
     <string name="message_no_packages">لا يوجد طرود \nالرجاء سحب الشاشة لأسفل لتحديث القائمة</string>
     <string name="success_operation_completed">تمت العملية بنجاح</string>
     <string name="button_insert_barcode">إدخال باركود</string>
@@ -46,8 +48,10 @@
     <string name="button_scan_packages_barcodes">مسح كودات الطرود</string>
     <string name="cod">التحصيل</string>
     <string name="button_deliver_package">توصيل الطرد</string>
+    <string name="button_deliver_mass_cod">توصيل التحصيلات</string>
     <string name="action_return_package">إرجاع</string>
     <string name="action_postpone_package">تأجيل</string>
+    <string name="action_view_attachment">عرض المرفقات</string>
     <string name="action_fail_delivery">فشل في التوصيل</string>
     <string name="title_fail_delivery">فشل في التوصيل</string>
     <string name="change_package_type">تعديل نوع الطرد</string>
@@ -57,6 +61,7 @@
     <string name="in_car_status_all">الكل</string>
     <string name="in_car_status_failed">عالق</string>
     <string name="in_car_status_postponed">مؤجل</string>
+    <string name="in_car_status_returned">مرجع</string>
     <string name="in_car_status_cod">التحصيل</string>
     <string name="view_mode_villages">مناطق</string>
     <string name="view_mode_packages">طرود</string>
@@ -68,10 +73,11 @@
     <string name="button_pickup">تحميل</string>
     <string name="barcode">الباركود</string>
     <string name="title_return">إرجاع</string>
-    <string name="title_please_select_reason">الرجاء إختيار او توضيح السبب</string>
+    <string name="title_please_select_reason">الرجاء توضيح السبب</string>
     <string name="receiver_paid_cost">المستلم دفع الأجور</string>
     <string name="error_insert_message_text">الرجاء إدخال نص الرسالة</string>
     <string name="title_postpone">تأجيل</string>
+    <string name="title_attachments">المرفقات</string>
     <string name="error_select_postpone_date">اختر تاريخ التأجيل</string>
     <string name="package_type_cod">تحصيل عند الاستلام</string>
     <string name="package_type_regular">مدفوع مسبقا</string>
@@ -94,7 +100,11 @@
     <string name="payment_type_card_payment">بطاقة ائتمان</string>
     <string name="title_payment_method">طريقة الدفع</string>
     <string name="title_partial_delivery_note">الرجاء ادخال سبب التوصيل الجزئي والتحصيل المستلم</string>
+    <string name="title_partial_delivery_cod">التحصيل المستلم:</string>
+    <string name="title_partial_delivery_items_flow">الرجاء ادخال سبب التوصيل الجزئي</string>
     <string name="error_enter_partial_delivery_note">الرجاء ادخال سبب التوصيل الجزئي والتحصيل المستلم</string>
+    <string name="title_delivered_items">الرجاء اختيار العناصر المراد توصيلها</string>
+    <string name="error_no_delivered_items">الرجاء اختيار العناصر المراد توصيلها</string>
     <string name="error_image_capture_failed">فشل في التقاط الصورة</string>
     <string name="error_image_loading">فشل في تحميل الصورة</string>
     <string name="button_capture_image">التقاط صورة</string>
@@ -105,6 +115,7 @@
     <string name="title_delivered_packages">الطرود المسلمة</string>
     <string name="error_no_packages_for_delivery">لا يوجد طرود للتسليم</string>
     <string name="title_returned_packages">الرواجع</string>
+    <string name="title_brought_packages">طرود الإحضار</string>
     <string name="button_deliver_to_sender">تسليم إلى المرسل</string>
     <string name="button_deliver">توصيل</string>
     <string name="title_cod_sum">مجموع التحصيلات</string>
@@ -155,6 +166,7 @@
     <string name="unsorted_items">لم يتم تصنيفها</string>
     <string name="rejected_items">مرفوضة</string>
     <string name="button_new_bin">سلة جديدة</string>
+    <string name="button_new_location">موقع جديد</string>
     <string name="action_reject">رفض</string>
     <string name="dashboard_new_fulfilment_orders">الطلبات المصنفة\nالجديدة</string>
     <string name="title_new_fulfilment_orders">الطلبات المصنفة الجديدة</string>
@@ -169,8 +181,8 @@
     <string name="items">العناصر</string>
     <string name="scanned_sub_packages_count">%1$s من %2$s</string>
     <string name="scan_barcode">إضافة باركود</string>
-    <string name="dashboard_receive_shipping_plan">Receive ASN</string>
-    <string name="dashboard_arrived_shipping_plans">Arrived ASNs</string>
+    <string name="dashboard_receive_shipping_plan">استلام طلبات التوريد</string>
+    <string name="dashboard_arrived_shipping_plans">طلبات التوريد في المستودع</string>
     <string name="message_no_shipping_plans">لا يوجد طلبات تصنيف \nالرجاء سحب الشاشة لأسفل لتحديث القائمة</string>
     <string name="warning_pickup_returned_packages">الرجاء التاكد من تحميل الطرود المرجعة</string>
     <string name="dashboard_warehouse_packages">طرود\nالمستودع</string>
@@ -198,7 +210,24 @@
     <string name="error_verification_code_must_be_four_digits">رقم التحقق يجب ان يتكوّن من 4 ارقام</string>
     <string name="show_driver_packages_locations">المسار التلقائي</string>
     <string name="app_needs_location_permission">الرجاء اعطاء صلاحية الوصول الى الموقع</string>
+    <string name="cannot_open_attachments">لا يوجد مرفقات لعرضها</string>
     <string name="warning_some_villages_are_not_on_map">انتبه! بعض الوجهات قد تكون غير مضافة على الخريطة</string>
     <string name="text_number_of_locations">عدد وجهات التوصيل: %1$d</string>
     <string name="error_no_destinations_on_map">لا يوجد وجهات على الخريطة</string>
+    <string name="time_spent">أدخل وقت الفرز المُستَهلك</string>
+    <string name="invalid_time_format">طريقة إدخال الوقت غير صحيحة</string>
+    <string name="title_reject_item">رفض</string>
+    <string name="reason_damaged">تالف</string>
+    <string name="reason_color">لون غير مطابق</string>
+    <string name="reason_item">عنصر غير مطابق</string>
+    <string name="reason_SKU">SKU غير مطابق</string>
+    <string name="sender_message">المرسل:</string>
+    <string name="title_message">العنوان:</string>
+<!--    <string name="body_message">Body:</string>-->
+    <string name="reason_other">سبب آخر</string>
+    <string name="picked_fulfillment">طلبات محملة في السلات</string>
+    <string name="partially_picked_fulfillment">طلبات محملة جزئيا</string>
+    <string name="action_show_packages">عرض الطرود</string>
+    <string name="pickup_packages">الطرود المراد تحميلها</string>
+    <string name="item_price">السعر</string>
 </resources>

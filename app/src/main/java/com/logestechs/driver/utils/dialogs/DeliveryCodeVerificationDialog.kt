@@ -66,6 +66,11 @@ class DeliveryCodeVerificationDialog(
             clearFocus()
         }
 
+        binding.imageViewResend.setOnClickListener {
+            clearFocus()
+            listener?.onResendPinSms()
+        }
+
         this.alertDialog = alertDialog
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.setCanceledOnTouchOutside(false)

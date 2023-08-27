@@ -8,23 +8,28 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
+import com.logestechs.driver.api.requests.RejectPackageRequestBody
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemPendingPackageCellBinding
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.SharedPreferenceWrapper
+import com.logestechs.driver.utils.dialogs.RejectPackageDialog
 import com.logestechs.driver.utils.interfaces.PendingPackagesCardListener
+import com.logestechs.driver.utils.interfaces.RejectPackageDialogListener
 import com.logestechs.driver.utils.setThrottleClickListener
 
 class PendingPackageCellAdapter(
     var packagesList: List<Package?>,
     var context: Context?,
     var listener: PendingPackagesCardListener?,
+    var rejectPackageDialogListener: RejectPackageDialogListener?,
     var parentIndex: Int
 ) :
-    RecyclerView.Adapter<PendingPackageCellAdapter.PendingPackageViewHolder>() {
+    RecyclerView.Adapter<PendingPackageCellAdapter.PendingPackageViewHolder>(), RejectPackageDialogListener {
     val companyConfigurations =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
+    private var rejectedPackagePosition: Int = 0
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
         i: Int
@@ -60,6 +65,10 @@ class PendingPackageCellAdapter(
         notifyItemRemoved(position)
     }
 
+    override fun onPackageRejected(rejectPackageRequestBody: RejectPackageRequestBody) {
+        listener?.rejectPackage(parentIndex, rejectedPackagePosition, rejectPackageRequestBody)
+    }
+
     class PendingPackageViewHolder(
         private var binding: ItemPendingPackageCellBinding,
         private var parent: ViewGroup,
@@ -86,7 +95,13 @@ class PendingPackageCellAdapter(
 
                     when (item?.itemId) {
                         R.id.action_reject_package -> {
-                            mAdapter.listener?.rejectPackage(mAdapter.parentIndex, adapterPosition)
+//                            mAdapter.listener?.rejectPackage(mAdapter.parentIndex, adapterPosition)
+                            mAdapter.rejectedPackagePosition = adapterPosition
+                            RejectPackageDialog(
+                                mAdapter.context!!,
+                                mAdapter
+                            ).showDialog()
+
                         }
                     }
                     true
