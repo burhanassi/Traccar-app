@@ -146,7 +146,7 @@ enum class ReturnedPackageStatus(val value: String) {
     ALL("ALL"),
     PARTIALLY_DELIVERED("PARTIALLY_DELIVERED"),
     RETURNED("RETURNED"),
-    SWAPPED("SWAPPED")
+    EXCHANGE("EXCHANGE")
 }
 
 

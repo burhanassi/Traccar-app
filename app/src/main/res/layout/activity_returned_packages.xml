@@ -31,6 +31,17 @@
                 android:text="@string/title_returned_packages"
                 android:textColor="@color/fontTrackHint"
                 android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/text_selected_status"
+                style="@style/LogesTechsBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="5dp"
+                android:textColor="@color/fontTrackHint"
+                android:textSize="14sp" />
+
             <ImageView
                 android:id="@+id/button_status_filter"
                 android:layout_width="24dp"

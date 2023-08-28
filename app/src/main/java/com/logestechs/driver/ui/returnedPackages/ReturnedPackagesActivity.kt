@@ -37,6 +37,8 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         super.onCreate(savedInstanceState)
         binding = ActivityReturnedPackagesBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.textSelectedStatus.text =
+            "(${Helper.getLocalizedReturnedStatus(super.getContext(), selectedStatus)})"
         initRecycler()
         initListeners()
     }
@@ -84,6 +86,9 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
 
     private fun initListeners() {
         binding.refreshLayoutCustomers.setOnRefreshListener {
+            selectedStatus = ReturnedPackageStatus.ALL
+            binding.textSelectedStatus.text =
+                "(${Helper.getLocalizedReturnedStatus(super.getContext(), selectedStatus)})"
             callGetCustomersWithReturnedPackages()
         }
 
@@ -117,7 +122,8 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.getCustomersWithReturnedPackages()
+                    val response =
+                        ApiAdapter.apiClient.getCustomersWithReturnedPackages(selectedStatus)
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
@@ -180,7 +186,11 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response =
-                        ApiAdapter.apiClient.getCustomerReturnedPackages(customerId, barcode)
+                        ApiAdapter.apiClient.getCustomerReturnedPackages(
+                            customerId,
+                            barcode,
+                            selectedStatus
+                        )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
@@ -279,6 +289,9 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
     }
 
     override fun onStatusChanged(selectedStatus: ReturnedPackageStatus) {
-
+        this.selectedStatus = selectedStatus
+        binding.textSelectedStatus.text =
+            "(${Helper.getLocalizedReturnedStatus(super.getContext(), selectedStatus)})"
+        callGetCustomersWithReturnedPackages()
     }
 }

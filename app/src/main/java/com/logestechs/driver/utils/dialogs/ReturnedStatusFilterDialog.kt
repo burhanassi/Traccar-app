@@ -56,7 +56,7 @@ class ReturnedStatusFilterDialog (
             binding.selectorPartiallyDelivered.makeSelected()
         }
         binding.selectorSwap.setOnClickListener {
-            selectedStatus = ReturnedPackageStatus.SWAPPED
+            selectedStatus = ReturnedPackageStatus.EXCHANGE
             clearSelection()
             binding.selectorSwap.makeSelected()
         }
@@ -82,15 +82,20 @@ class ReturnedStatusFilterDialog (
             ReturnedPackageStatus.ALL -> {
                 binding.selectorAll.makeSelected()
             }
+
             ReturnedPackageStatus.PARTIALLY_DELIVERED -> {
                 binding.selectorPartiallyDelivered.makeSelected()
             }
-            ReturnedPackageStatus.SWAPPED -> {
+
+            ReturnedPackageStatus.EXCHANGE -> {
                 binding.selectorSwap.makeSelected()
             }
+
             ReturnedPackageStatus.RETURNED -> {
                 binding.selectorReturned.makeSelected()
             }
+
+            else -> {}
         }
     }
 
