@@ -237,10 +237,11 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 selectedDeliveryType = DeliveryType.PARTIAL
                 if (companyConfigurations?.isSupportDeliveringPackageItemsPartially!! && items != null) {
                     binding.tvNoteTitle.text = getString(R.string.title_partial_delivery_items_flow)
-                    sumCod()
                     val checkBoxContainer = findViewById<LinearLayout>(R.id.check_box_container)
                     val itemPriceLabel = getString(R.string.item_price)
                     val isArabic = resources.configuration.locale.language == "ar"
+                    var anyCheckBoxChecked = false
+                    sumCod(anyCheckBoxChecked)
                     items?.let { itemList ->
                         for (item in itemList) {
                             val checkBox = CheckBox(this)
@@ -258,10 +259,13 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                             checkBox.setOnCheckedChangeListener { _, isChecked ->
                                 if (isChecked) {
                                     item?.status = Status.DELIVERED
+                                    anyCheckBoxChecked = true
                                 } else {
                                     item?.status = Status.RETURNED
+                                    anyCheckBoxChecked =
+                                        itemList.any { it?.status == Status.DELIVERED }
                                 }
-                                sumCod()
+                                sumCod(anyCheckBoxChecked)
                             }
                             checkBoxContainer.addView(checkBox)
                             checkChosen()
@@ -293,24 +297,32 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         binding.buttonContextMenu.setOnClickListener(this)
     }
 
-    private fun checkChosen(){
-        for(item in items!!){
-            if(item?.status != Status.DELIVERED){
+    private fun checkChosen() {
+        for (item in items!!) {
+            if (item?.status != Status.DELIVERED) {
                 item?.status = Status.RETURNED
             }
         }
     }
+
     @RequiresApi(Build.VERSION_CODES.N)
-    private fun sumCod() {
-        var sum: Double? = pkg?.cost ?: 0.0
+    private fun sumCod(anyCheckBoxChecked: Boolean) {
+        var sum: Double? = pkg?.cod ?: 0.0
+        var temp: Double? = 0.0
         for (item in items ?: emptyList()) {
-            if (item?.status == Status.DELIVERED) {
-                sum = sum?.plus(item.cod ?: 0.0)
+            if (item?.status != Status.DELIVERED) {
+                temp = temp?.plus(item?.cod!!)
             }
         }
+        sum = sum?.minus(temp!!)
         val boldText = "<b>${getString(R.string.title_partial_delivery_cod)}</b>"
         val codText = Html.fromHtml("$boldText $sum", Html.FROM_HTML_MODE_LEGACY)
         binding.tvCodSum.text = codText
+        if (!anyCheckBoxChecked) {
+            binding.tvCodSum.visibility = View.GONE
+        } else {
+            binding.tvCodSum.visibility = View.VISIBLE
+        }
     }
 
     private fun getExtras() {

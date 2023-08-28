@@ -505,7 +505,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="16dp"
                                     android:layout_marginEnd="16dp"
-                                    android:text="@string/title_partial_delivery_cod"
+                                    android:text="@string/title_partial_delivery_items_flow"
                                     android:textColor="@color/fontTrackHint" />
 
                                 <EditText
