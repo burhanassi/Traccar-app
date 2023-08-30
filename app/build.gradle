@@ -23,8 +23,8 @@ android {
     }
     defaultConfig {
         applicationId "com.logestechs.driver"
-        minSdk 21
-        targetSdk 32
+        minSdk 33
+        targetSdk 33
         versionCode 9
         versionName "1.2.1"
         multiDexEnabled true
