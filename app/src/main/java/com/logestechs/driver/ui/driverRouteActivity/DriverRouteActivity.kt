@@ -8,13 +8,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
-import com.logestechs.driver.api.requests.AddNoteRequestBody
-import com.logestechs.driver.api.requests.ChangePackageTypeRequestBody
-import com.logestechs.driver.api.requests.CodChangeRequestBody
-import com.logestechs.driver.api.requests.FailDeliveryRequestBody
-import com.logestechs.driver.api.requests.PostponePackageRequestBody
-import com.logestechs.driver.api.requests.ReturnPackageRequestBody
-import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ActivityDriverRouteBinding
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
@@ -23,7 +16,6 @@ import com.logestechs.driver.utils.ItemTouchHelperCallback
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.PackageType
 import com.logestechs.driver.utils.adapters.DriverRoutePackagesCellAdapter
-import com.logestechs.driver.utils.interfaces.InCarPackagesCardListener
 import com.logestechs.driver.utils.interfaces.OnStartDragListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -33,7 +25,6 @@ import org.json.JSONObject
 
 class DriverRouteActivity : LogesTechsActivity(),
     View.OnClickListener,
-    InCarPackagesCardListener,
     DriverRoutePackagesCellAdapter.ItemTouchHelperAdapter,
     OnStartDragListener {
     private lateinit var binding: ActivityDriverRouteBinding
@@ -42,6 +33,9 @@ class DriverRouteActivity : LogesTechsActivity(),
     private var enableUpdateData = false
 
     private lateinit var itemTouchHelper: ItemTouchHelper
+
+    private val arrangedPackagesList: ArrayList<Package?> = ArrayList()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,7 +88,6 @@ class DriverRouteActivity : LogesTechsActivity(),
         binding.rvPackages.adapter = DriverRoutePackagesCellAdapter(
             ArrayList(),
             super.getContext(),
-            this,
             null,
             isGrouped = false
         )
@@ -113,7 +106,6 @@ class DriverRouteActivity : LogesTechsActivity(),
                 binding.rvPackages.adapter = DriverRoutePackagesCellAdapter(
                     ArrayList(),
                     super.getContext(),
-                    this,
                     null,
                     isGrouped = false
                 )
@@ -129,6 +121,14 @@ class DriverRouteActivity : LogesTechsActivity(),
             binding.refreshLayoutPackages.isRefreshing = false
         } catch (e: java.lang.Exception) {
             Helper.logException(e, Throwable().stackTraceToString())
+        }
+    }
+
+    private fun handleDoneButtonClick() {
+        val adapter = binding.rvPackages.adapter as DriverRoutePackagesCellAdapter
+        if (adapter != null) {
+            arrangedPackagesList.clear()
+            arrangedPackagesList.addAll(adapter.getArrangedPackagesList())
         }
     }
 
@@ -201,59 +201,11 @@ class DriverRouteActivity : LogesTechsActivity(),
             R.id.button_notifications -> {
                 super.getNotifications()
             }
+
+            R.id.button_done -> {
+                handleDoneButtonClick()
+            }
         }
-    }
-
-    override fun onPackageReturned(body: ReturnPackageRequestBody?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onShowReturnPackageDialog(pkg: Package?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onShowAttachmentsDialog(pkg: Package?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onFailDelivery(body: FailDeliveryRequestBody?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onPackagePostponed(body: PostponePackageRequestBody?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onPackageTypeChanged(body: ChangePackageTypeRequestBody?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onPackageNoteAdded(body: AddNoteRequestBody?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onShowPackageNoteDialog(pkg: Package?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onCodChanged(body: CodChangeRequestBody?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onDeliverPackage(pkg: Package?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onSendWhatsAppMessage(pkg: Package?, isSecondary: Boolean) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onSendSmsMessage(pkg: Package?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onCallReceiver(pkg: Package?, receiverPhone: String?) {
-        TODO("Not yet implemented")
     }
 
     override fun onItemMove(fromPosition: Int, toPosition: Int) {

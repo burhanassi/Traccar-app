@@ -29,7 +29,6 @@ interface ItemTouchHelperAdapter {
 class DriverRoutePackagesCellAdapter(
     var packagesList: ArrayList<Package?>,
     var context: Context?,
-    var listener: InCarPackagesCardListener?,
     var parentIndex: Int?,
     var isGrouped: Boolean = true
 ) :
@@ -99,10 +98,16 @@ class DriverRoutePackagesCellAdapter(
     override fun onItemDismiss(position: Int) {
         // Not needed for drag-and-drop reordering
     }
+
     interface ItemTouchHelperAdapter {
         fun onItemMove(fromPosition: Int, toPosition: Int)
         fun onItemDismiss(position: Int)
     }
+
+    fun getArrangedPackagesList(): ArrayList<Package?> {
+        return packagesList
+    }
+
 
     class DriverRoutePackagesCellViewHolder(
         private var binding: ItemDriverRoutePackagesCellBinding,
