@@ -376,7 +376,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             }
         }
 
-        if (companyConfigurations?.isSupportDeliveringPackageItemsPartially == true) {
+        if (companyConfigurations?.isSupportDeliveringPackageItemsPartially == true && items != null) {
             var deliveredItemFound = false
             for (item in items ?: emptyList()) {
                 if (item?.status == Status.DELIVERED) {
@@ -384,11 +384,13 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     break
                 }
             }
-
-            if (!deliveredItemFound) {
-                Helper.showErrorMessage(this, getString(R.string.error_no_delivered_items))
-                return false
+            if (selectedDeliveryType == DeliveryType.PARTIAL) {
+                if (!deliveredItemFound) {
+                    Helper.showErrorMessage(this, getString(R.string.error_no_delivered_items))
+                    return false
+                }
             }
+
         }
         return true
     }
