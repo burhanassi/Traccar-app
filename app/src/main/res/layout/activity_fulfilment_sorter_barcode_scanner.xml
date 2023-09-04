@@ -218,11 +218,29 @@
                             android:layout_weight="1"
                             android:textAlignment="center"
                             android:textSize="15sp" />
-
                     </LinearLayout>
-
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/text_rejected_items"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="horizontal"
+                    android:padding="2dp"
+                    android:visibility="gone">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/LogesTechsMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textAlignment="center"
+                        android:textSize="15sp"
+                        android:text="@string/title_rejected_items" />
+                </LinearLayout>
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_scanned_barcodes"
                     android:layout_width="match_parent"

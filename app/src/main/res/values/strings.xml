@@ -165,6 +165,7 @@
     <string name="sorted_items">Sorted</string>
     <string name="unsorted_items">Unsorted</string>
     <string name="rejected_items">Rejected</string>
+    <string name="title_rejected_items">Rejected Items</string>
     <string name="button_new_bin">New Bin</string>
     <string name="button_new_location">New Location</string>
     <string name="action_reject">Reject</string>

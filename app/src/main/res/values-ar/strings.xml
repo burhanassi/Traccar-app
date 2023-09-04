@@ -165,6 +165,7 @@
     <string name="sorted_items">تم تصنيفها</string>
     <string name="unsorted_items">لم يتم تصنيفها</string>
     <string name="rejected_items">مرفوضة</string>
+    <string name="title_rejected_items">العناصر المرفوضة</string>
     <string name="button_new_bin">سلة جديدة</string>
     <string name="button_new_location">موقع جديد</string>
     <string name="action_reject">رفض</string>

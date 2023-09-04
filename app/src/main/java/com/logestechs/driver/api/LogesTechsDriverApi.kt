@@ -360,7 +360,7 @@ interface LogesTechsDriverApi {
     suspend fun sortRejectedItemIntoLocation(
         @Path("locationId") locationId: Long?,
         @Query("itemBarcode") itemBarcode: String
-    ): Response<ItemDetails>?
+    ): Response<SortItemIntoBinResponse>?
 
     @PUT("api/handler/hub/shipping-items/reject")
     suspend fun rejectItem(
