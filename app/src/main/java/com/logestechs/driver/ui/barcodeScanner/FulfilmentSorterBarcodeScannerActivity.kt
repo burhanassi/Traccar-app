@@ -110,7 +110,8 @@ class FulfilmentSorterBarcodeScannerActivity :
             FulfilmentSorterScanMode.BIN -> {
                 hideScannedItemsContainer()
                 if (isReject) {
-                    binding.textTitle.text = getString(R.string.please_scan_location_barcode)
+                    binding.textTitle.text =
+                        getString(R.string.please_scan_damaged_location_barcode)
                     scannedBin?.barcode = null
                 } else {
                     isBinScan = true
@@ -127,11 +128,11 @@ class FulfilmentSorterBarcodeScannerActivity :
                 binding.textScannedBin.text =
                     scannedBin?.barcode ?: scannedWarehouseLocation?.barcode
                 binding.textTitle.text = getString(R.string.please_scan_items)
-                if(isReject && flagLocation){
+                if (isReject && flagLocation && !isBinScan) {
                     binding.buttonNewBin.text = getString(R.string.button_new_location)
                     binding.itemsCounts.visibility = View.GONE
                     binding.textRejectedItems.visibility = View.VISIBLE
-                }else if(isReject){
+                } else if (isReject || !isBinScan) {
                     binding.buttonNewBin.text = getString(R.string.button_new_location)
                 }
             }

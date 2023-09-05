@@ -155,6 +155,7 @@
     <string name="error_package_is_failed">Caution, this package is failed!</string>
     <string name="cancel_pickup">Cancel Pickup</string>
     <string name="please_scan_location_barcode">Please Scan Location Barcode</string>
+    <string name="please_scan_damaged_location_barcode">Please Scan Damaged Location Barcode</string>
     <string name="please_scan_bin_barcode">Please Scan Bin Barcode</string>
     <string name="bin_location_assigned_successfully">Bin Location was Assigned Successfully</string>
     <string name="please_scan_shipping_plan_barcode">Please Scan Shipping Plan Barcode</string>
