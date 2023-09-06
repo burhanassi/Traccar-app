@@ -1,29 +1,42 @@
 package com.logestechs.driver.utils.dialogs
 
 import android.app.AlertDialog
+import android.content.ClipData
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.inputmethod.InputMethodManager
+import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
 import com.logestechs.driver.api.requests.FailDeliveryRequestBody
+import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.DialogFailDeliveryBinding
+import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsApp
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.RadioGroupListAdapter
+import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
 import com.logestechs.driver.utils.interfaces.FailDeliveryDialogListener
 import com.logestechs.driver.utils.interfaces.RadioGroupListListener
+import com.logestechs.driver.utils.interfaces.ThumbnailsListListener
+import java.io.File
+import java.io.IOException
 
 class FailDeliveryDialog(
     var context: Context,
     var listener: FailDeliveryDialogListener?,
-    var pkg: Package?
-) : RadioGroupListListener {
+    var pkg: Package?,
+    var loadedImagesList: ArrayList<LoadedImage>
+) : RadioGroupListListener, ThumbnailsListListener {
 
     lateinit var binding: DialogFailDeliveryBinding
     lateinit var alertDialog: AlertDialog
@@ -40,6 +53,12 @@ class FailDeliveryDialog(
         this.binding = binding
         binding.buttonCancel.setOnClickListener {
             alertDialog.dismiss()
+        }
+
+        binding.rvThumbnails.apply {
+            layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = ThumbnailsAdapter(loadedImagesList, this@FailDeliveryDialog)
         }
 
         binding.buttonDone.setOnClickListener {
@@ -61,6 +80,14 @@ class FailDeliveryDialog(
 
         }
 
+        binding.buttonCaptureImage.setOnClickListener {
+            listener?.onCaptureImage()
+        }
+
+        binding.buttonLoadImage.setOnClickListener {
+            listener?.onLoadImage()
+        }
+
         binding.rvReasons.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = RadioGroupListAdapter(
@@ -78,6 +105,18 @@ class FailDeliveryDialog(
         alertDialog.show()
     }
 
+    private fun getPodImagesUrls(): List<String?>? {
+        return if (loadedImagesList.isNotEmpty()) {
+            val list: ArrayList<String?> = ArrayList()
+            for (item in loadedImagesList) {
+                list.add(item.imageUrl)
+            }
+            list
+        } else {
+            null
+        }
+    }
+
     private fun getStringForFragment(resId: Int): String {
         return LogesTechsApp.instance.resources.getString(resId)
     }
@@ -92,5 +131,9 @@ class FailDeliveryDialog(
     override fun onItemSelected(title: String?) {
         binding.etReason.setText(title)
         clearFocus()
+    }
+
+    override fun onDeleteImage(position: Int) {
+        listener?.onDeleteImage(position)
     }
 }

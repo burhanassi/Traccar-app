@@ -58,6 +58,7 @@ import com.logestechs.driver.utils.adapters.InCarPackageCellAdapter
 import com.logestechs.driver.utils.adapters.InCarPackageGroupedCellAdapter
 import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
 import com.logestechs.driver.utils.dialogs.AddPackageNoteDialog
+import com.logestechs.driver.utils.dialogs.FailDeliveryDialog
 import com.logestechs.driver.utils.dialogs.InCarStatusFilterDialog
 import com.logestechs.driver.utils.dialogs.InCarViewModeDialog
 import com.logestechs.driver.utils.dialogs.PackageTypeFilterDialog
@@ -66,6 +67,7 @@ import com.logestechs.driver.utils.dialogs.SearchPackagesDialog
 import com.logestechs.driver.utils.dialogs.ShowAttachmentsDialog
 import com.logestechs.driver.utils.interfaces.AddPackageNoteDialogListener
 import com.logestechs.driver.utils.interfaces.ConfirmationDialogActionListener
+import com.logestechs.driver.utils.interfaces.FailDeliveryDialogListener
 import com.logestechs.driver.utils.interfaces.InCarPackagesCardListener
 import com.logestechs.driver.utils.interfaces.InCarStatusFilterDialogListener
 import com.logestechs.driver.utils.interfaces.InCarViewModeDialogListener
@@ -103,7 +105,8 @@ class InCarPackagesFragment(
     AddPackageNoteDialogListener,
     ReturnPackageDialogListener,
     ConfirmationDialogActionListener,
-    PackageTypeFilterDialogListener{
+    PackageTypeFilterDialogListener,
+    FailDeliveryDialogListener {
 
     private var _binding: FragmentInCarPackagesBinding? = null
     private val binding get() = _binding!!
@@ -128,6 +131,8 @@ class InCarPackagesFragment(
     private var selectedPackageType: PackageType = PackageType.ALL
 
     private var packageAttachmentsResponseBody: PackageAttachmentsResponseBody? = null
+
+    var failDeliveryDialog: FailDeliveryDialog? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -1463,6 +1468,12 @@ class InCarPackagesFragment(
 
     override fun onPackageNoteAdded(body: AddNoteRequestBody?) {
         callAddPackageNote(body?.packageId, body)
+    }
+
+    override fun onShowFailDeliveryDialog(pkg: Package?) {
+        loadedImagesList.clear()
+        failDeliveryDialog = FailDeliveryDialog(requireContext(), this, pkg, loadedImagesList)
+        failDeliveryDialog?.showDialog()
     }
 
     override fun onCaptureImage() {
