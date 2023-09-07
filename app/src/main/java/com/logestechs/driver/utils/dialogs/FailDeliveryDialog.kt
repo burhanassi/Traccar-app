@@ -68,6 +68,7 @@ class FailDeliveryDialog(
                     FailDeliveryRequestBody(
                         binding.etReason.text.toString(),
                         (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
+                        getPodImagesUrls(),
                         pkg?.id
                     )
                 )
