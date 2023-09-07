@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.logestechs.driver_sprint",
+  "variantName": "sprintRelease",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 9,
+      "versionName": "1.2.1",
+      "outputFile": "app-sprint-release.apk"
+    }
+  ],
+  "elementType": "File"
+}

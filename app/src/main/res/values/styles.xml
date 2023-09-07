@@ -34,7 +34,7 @@
     </style>
 
     <style name="ColorSwitchStyle">
-        <item name="colorControlActivated">#FCA429</item>
+        <item name="colorControlActivated">#E33986</item>
     </style>
 
     <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">

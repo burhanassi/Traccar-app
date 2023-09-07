@@ -9,12 +9,14 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
     signingConfigs {
         Properties properties = new Properties()
         properties.load(project.rootProject.file("local.properties").newDataInputStream())
         release {
-            storeFile file(properties.getProperty("storeFilePath", "/Users/abdulsalammansour/projects/keys/android customer/logestechs-customer-key.jks"))
+//            storeFile file('/Users/sawsanalkhdair/Documents/logestech/mobile/Android App Submission Info/key2/logestechs-customer-key.jks')
+//            storeFile file(properties.getProperty("storeFilePath", "/Users/abdulsalammansour/projects/keys/android customer/logestechs-customer-key.jks"))
+            storeFile file(properties.getProperty("storeFilePath", "/Users/ali-logestechs/Documents/Android App Submission Info/key2/logestechs-customer-key.jks"))
             storePassword 'logestechs@password1!'
             keyPassword 'logestechs@password1!'
             keyAlias 'logestechs-customer-key'
@@ -23,9 +25,9 @@ android {
     defaultConfig {
         applicationId "com.logestechs.driver"
         minSdk 21
-        targetSdk 32
-        versionCode 9
-        versionName "1.2.1"
+        targetSdk 33
+        versionCode 57
+        versionName "1.4.5"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -44,7 +46,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField 'String', 'base_url', '\"http://pal-ship.com:8080/saas/\"'
-//            buildConfigField 'String', 'base_url', '\"http://192.168.1.8:8080/\"'
             manifestPlaceholders = [crashlyticsCollectionEnabled: "false"]
         }
     }
@@ -90,6 +91,14 @@ android {
             applicationId 'com.logestechs.driver_sare3'
         }
 
+        sprint {
+            dimension 'driver'
+            resValue 'string', 'app_name', 'Sprint Driver'
+            buildConfigField 'int', 'company_id', '313'
+            buildConfigField 'String', 'company_name', '\"Sprint\"'
+            applicationId 'com.logestechs.driver_sprint'
+        }
+
         backend {
             dimension 'driver'
             resValue 'string', 'app_name', 'Driver Backend'
@@ -110,6 +119,13 @@ android {
                 srcDirs 'src\\sare3\\res'
             }
         }
+
+        sprint {
+            res {
+                srcDirs 'src\\sprint\\res'
+            }
+        }
+
         backend {
             res {
                 srcDirs 'src\\backend\\res'

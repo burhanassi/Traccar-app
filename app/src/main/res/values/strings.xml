@@ -155,6 +155,7 @@
     <string name="error_package_is_failed">Caution, this package is failed!</string>
     <string name="cancel_pickup">Cancel Pickup</string>
     <string name="please_scan_location_barcode">Please Scan Location Barcode</string>
+    <string name="please_scan_damaged_location_barcode">Please Scan Damaged Location Barcode</string>
     <string name="please_scan_bin_barcode">Please Scan Bin Barcode</string>
     <string name="bin_location_assigned_successfully">Bin Location was Assigned Successfully</string>
     <string name="please_scan_shipping_plan_barcode">Please Scan Shipping Plan Barcode</string>
@@ -165,6 +166,7 @@
     <string name="sorted_items">Sorted</string>
     <string name="unsorted_items">Unsorted</string>
     <string name="rejected_items">Rejected</string>
+    <string name="title_rejected_items">Rejected Items</string>
     <string name="button_new_bin">New Bin</string>
     <string name="button_new_location">New Location</string>
     <string name="action_reject">Reject</string>

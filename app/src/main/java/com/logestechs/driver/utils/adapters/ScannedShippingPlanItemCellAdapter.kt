@@ -58,10 +58,8 @@ class ScannedShippingPlanItemCellAdapter(
     override fun getItemCount(): Int = list.size
 
     fun deleteItem(position: Int) {
-        if (position >= 0 && position < list.size) {
-            list.removeAt(position)
-            notifyItemRemoved(position)
-        }
+        list.removeAt(position)
+        notifyItemRemoved(position)
     }
 
     fun clearList() {
@@ -71,10 +69,13 @@ class ScannedShippingPlanItemCellAdapter(
     }
 
     fun insertItem(item: ItemDetails?) {
-        list.add(0, item)
-        notifyItemChanged(0)
-        notifyItemInserted(0)
+        if (item != null && !list.contains(item)) {
+            list.add(0, item)
+            notifyItemChanged(0)
+            notifyItemInserted(0)
+        }
     }
+
 
     fun getItem(index: Int?): ItemDetails? {
         return list[index!!]
