@@ -47,7 +47,8 @@ interface LogesTechsDriverApi {
     @PUT("api/driver/packages/pickup")
     suspend fun pickupPackage(
         @Query("barcode") barcode: String,
-        @Query("is-bundle-pod-enabled") isBundlePodEnabled: Boolean? = null
+        @Query("is-bundle-pod-enabled") isBundlePodEnabled: Boolean? = null,
+        @Query("isToFinalDestination") isToFinalDestination: Boolean? = null
     ): Response<Package?>?
 
     @GET("api/driver/customers/accepted")
