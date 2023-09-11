@@ -867,7 +867,7 @@ class Helper {
         }
 
         fun isStorageAndCameraPermissionNeeded(mActivity: Activity): Boolean {
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S_V2) {
                 ContextCompat.checkSelfPermission(
                     mActivity.applicationContext,
                     Manifest.permission.CAMERA

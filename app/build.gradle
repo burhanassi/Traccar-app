@@ -14,8 +14,9 @@ android {
         Properties properties = new Properties()
         properties.load(project.rootProject.file("local.properties").newDataInputStream())
         release {
-            storeFile file('/Users/sawsanalkhdair/Documents/logestech/mobile/Android App Submission Info/key2/logestechs-customer-key.jks')
+//            storeFile file('/Users/sawsanalkhdair/Documents/logestech/mobile/Android App Submission Info/key2/logestechs-customer-key.jks')
             //storeFile file(properties.getProperty("storeFilePath", "/Users/abdulsalammansour/projects/keys/android customer/logestechs-customer-key.jks"))
+            storeFile file(properties.getProperty("storeFilePath", "/Users/ali-logestechs/Documents/Android App Submission Info/key2/logestechs-customer-key.jks"))
             storePassword 'logestechs@password1!'
             keyPassword 'logestechs@password1!'
             keyAlias 'logestechs-customer-key'
@@ -24,7 +25,7 @@ android {
     defaultConfig {
         applicationId "com.logestechs.driver"
         minSdk 21
-        targetSdk 32
+        targetSdk 33
         versionCode 9
         versionName "1.2.1"
         multiDexEnabled true
