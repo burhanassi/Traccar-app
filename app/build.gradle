@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
     signingConfigs {
         Properties properties = new Properties()
         properties.load(project.rootProject.file("local.properties").newDataInputStream())
