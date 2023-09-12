@@ -42,6 +42,7 @@
     <string name="message_no_packages">لا يوجد طرود \nالرجاء سحب الشاشة لأسفل لتحديث القائمة</string>
     <string name="success_operation_completed">تمت العملية بنجاح</string>
     <string name="button_insert_barcode">إدخال باركود</string>
+    <string name="out_of_delivery">الى الوجهة النهائية</string>
     <string name="title_scanned_packages">الطرود المقروءة</string>
     <string name="button_done">تم</string>
     <string name="error_phone_permission">الرجاء اعطاء صلاحية الإتصال</string>
@@ -232,4 +233,7 @@
     <string name="action_show_packages">عرض الطرود</string>
     <string name="pickup_packages">الطرود المراد تحميلها</string>
     <string name="item_price">السعر</string>
+    <string name="returned_status_partially_delivered">تم توصليها بشكل جزئي</string>
+    <string name="returned_status_returned">مرجعة</string>
+    <string name="returned_status_swapped">تم تبديلها</string>
 </resources>

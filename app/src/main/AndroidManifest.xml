@@ -52,6 +52,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".utils.dialogs.ReturnedStatusFilterDialog"
+            android:exported="false" />
+        <activity
             android:name=".ui.broughtPackages.BroughtPackagesActivity"
             android:exported="false" />
         <activity

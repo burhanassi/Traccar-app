@@ -41,6 +41,7 @@
     <string name="success_mass_completed">Mass COD Report Has Been Delivered Successfully</string>
     <string name="success_operation_completed">Operation Completed Successfully</string>
     <string name="button_insert_barcode">Insert Barcode</string>
+    <string name="out_of_delivery">Out Of Delivery</string>
     <string name="title_scanned_packages">Scanned Packages</string>
     <string name="button_done">Done</string>
     <string name="error_phone_permission">The app needs phone permission</string>
@@ -228,11 +229,14 @@
     <string name="reason_SKU">Wrong SKU</string>
     <string name="sender_message">Sender:</string>
     <string name="title_message">Title:</string>
-<!--    <string name="body_message">Body:</string>-->
+    <!--    <string name="body_message">Body:</string>-->
     <string name="reason_other">Other</string>
     <string name="picked_fulfillment">Picked Fulfillment Orders</string>
     <string name="partially_picked_fulfillment">Partially Picked Fulfillment Orders</string>
     <string name="action_show_packages">Show Packages</string>
     <string name="pickup_packages">Pickup Packages</string>
     <string name="item_price">Price</string>
+    <string name="returned_status_partially_delivered">Partially Delivered</string>
+    <string name="returned_status_returned">Returned</string>
+    <string name="returned_status_swapped">Swapped</string>
 </resources>

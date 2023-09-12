@@ -142,6 +142,13 @@ enum class InCarPackageStatus(val value: String) {
     TO_DELIVER_DELIVERY("TO_DELIVER_DELIVERY")
 }
 
+enum class ReturnedPackageStatus(val value: String) {
+    ALL("ALL"),
+    PARTIALLY_DELIVERED("PARTIALLY_DELIVERED"),
+    RETURNED("RETURNED"),
+    EXCHANGE("EXCHANGE")
+}
+
 
 enum class MassCodReportsViewMode(val value: String) {
     BY_REPORT("BY_REPORT"),
