@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
+import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ActivityDriverRouteBinding
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
@@ -97,7 +98,7 @@ class DriverRouteActivity : LogesTechsActivity(),
     private fun initListeners() {
         binding.toolbarMain.buttonBack.setOnClickListener(this)
         binding.toolbarMain.buttonNotifications.setOnClickListener(this)
-
+        binding.buttonDone.setOnClickListener(this)
         binding.refreshLayoutPackages.setOnRefreshListener {
             if (binding.rvPackages.adapter !is DriverRoutePackagesCellAdapter) {
                 val layoutManager = LinearLayoutManager(
@@ -127,8 +128,8 @@ class DriverRouteActivity : LogesTechsActivity(),
     private fun handleDoneButtonClick() {
         val adapter = binding.rvPackages.adapter as DriverRoutePackagesCellAdapter
         if (adapter != null) {
-            arrangedPackagesList.clear()
-            arrangedPackagesList.addAll(adapter.getArrangedPackagesList())
+            arrangedPackagesList?.clear()
+            arrangedPackagesList?.addAll(adapter.getArrangedPackagesList())
         }
     }
 
