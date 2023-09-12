@@ -15,13 +15,17 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.text.Html
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,6 +39,8 @@ import com.logestechs.driver.api.requests.DeliverPackageRequestBody
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
+import com.logestechs.driver.data.model.PackageItemsToDeliver
+import com.logestechs.driver.data.model.Status
 import com.logestechs.driver.databinding.ActivityPackageDeliveryBinding
 import com.logestechs.driver.ui.singleScanBarcodeScanner.SingleScanBarcodeScanner
 import com.logestechs.driver.utils.AppConstants
@@ -96,6 +102,10 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     private var companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
+    var items: List<PackageItemsToDeliver?>? = null
+    private val checkedItems = ArrayList<String>()
+
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPackageDeliveryBinding.inflate(layoutInflater)
@@ -168,6 +178,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     }
 
     private fun initData() {
+        items = pkg?.packageItemsToDeliverList
         binding.itemReceiverName.textItem.text = pkg?.getFullReceiverName()
         binding.itemReceiverAddress.textItem.text = pkg?.destinationAddress?.toStringAddress()
         binding.itemPackageBarcode.textItem.text = pkg?.barcode
@@ -185,6 +196,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun initListeners() {
         binding.gestureViewSignature.addOnGestureListener(object :
             GestureOverlayView.OnGestureListener {
@@ -219,11 +231,50 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         binding.radioGroupPartialDelivery.setOnCheckedChangeListener { _, checkedId ->
             if (checkedId == R.id.radio_button_full_delivery) {
                 binding.containerPartialDeliveryNote.visibility = View.GONE
-                binding.etPartialDeliveryNote.setText("")
                 selectedDeliveryType = DeliveryType.FULL
             } else if (checkedId == R.id.radio_button_partial_delivery) {
                 binding.containerPartialDeliveryNote.visibility = View.VISIBLE
                 selectedDeliveryType = DeliveryType.PARTIAL
+                if (companyConfigurations?.isSupportDeliveringPackageItemsPartially!! && items != null) {
+                    binding.tvNoteTitle.text = getString(R.string.title_partial_delivery_items_flow)
+                    val checkBoxContainer = findViewById<LinearLayout>(R.id.check_box_container)
+                    val itemPriceLabel = getString(R.string.item_price)
+                    val isArabic = resources.configuration.locale.language == "ar"
+                    var anyCheckBoxChecked = false
+                    sumCod(anyCheckBoxChecked)
+                    items?.let { itemList ->
+                        for (item in itemList) {
+                            val checkBox = CheckBox(this)
+                            checkBox.text = Html.fromHtml(
+                                "${item?.name}, <b>${itemPriceLabel}:</b> ${item?.cod ?: 0}",
+                                Html.FROM_HTML_MODE_LEGACY
+                            )
+                            if (isArabic) {
+                                checkBox.layoutDirection = View.LAYOUT_DIRECTION_RTL
+                            }
+                            checkBox.layoutParams = LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                            )
+                            checkBox.setOnCheckedChangeListener { _, isChecked ->
+                                if (isChecked) {
+                                    item?.status = Status.DELIVERED
+                                    anyCheckBoxChecked = true
+                                } else {
+                                    item?.status = Status.RETURNED
+                                    anyCheckBoxChecked =
+                                        itemList.any { it?.status == Status.DELIVERED }
+                                }
+                                sumCod(anyCheckBoxChecked)
+                            }
+                            checkBoxContainer.addView(checkBox)
+                            checkChosen()
+                        }
+                    }
+                } else {
+                    binding.containerItemsFlow.visibility = View.GONE
+                    binding.tvNoteTitle.text = getString(R.string.title_partial_delivery_note)
+                }
             }
         }
 
@@ -244,6 +295,34 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         binding.buttonCaptureImage.setOnClickListener(this)
         binding.buttonLoadImage.setOnClickListener(this)
         binding.buttonContextMenu.setOnClickListener(this)
+    }
+
+    private fun checkChosen() {
+        for (item in items!!) {
+            if (item?.status != Status.DELIVERED) {
+                item?.status = Status.RETURNED
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun sumCod(anyCheckBoxChecked: Boolean) {
+        var sum: Double? = pkg?.cod ?: 0.0
+        var temp: Double? = 0.0
+        for (item in items ?: emptyList()) {
+            if (item?.status != Status.DELIVERED) {
+                temp = temp?.plus(item?.cod!!)
+            }
+        }
+        sum = sum?.minus(temp!!)
+        val boldText = "<b>${getString(R.string.title_partial_delivery_cod)}</b>"
+        val codText = Html.fromHtml("$boldText $sum", Html.FROM_HTML_MODE_LEGACY)
+        binding.tvCodSum.text = codText
+        if (!anyCheckBoxChecked) {
+            binding.tvCodSum.visibility = View.GONE
+        } else {
+            binding.tvCodSum.visibility = View.VISIBLE
+        }
     }
 
     private fun getExtras() {
@@ -295,6 +374,23 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 )
                 return false
             }
+        }
+
+        if (companyConfigurations?.isSupportDeliveringPackageItemsPartially == true && items != null) {
+            var deliveredItemFound = false
+            for (item in items ?: emptyList()) {
+                if (item?.status == Status.DELIVERED) {
+                    deliveredItemFound = true
+                    break
+                }
+            }
+            if (selectedDeliveryType == DeliveryType.PARTIAL) {
+                if (!deliveredItemFound) {
+                    Helper.showErrorMessage(this, getString(R.string.error_no_delivered_items))
+                    return false
+                }
+            }
+
         }
         return true
     }
@@ -775,7 +871,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                                     getPodImagesUrls(),
                                     null,
                                     null,
-                                    (selectedPaymentType?.enumValue as PaymentType).name
+                                    (selectedPaymentType?.enumValue as PaymentType).name,
+                                    items
                                 )
                             )
                             withContext(Dispatchers.Main) {

@@ -74,6 +74,7 @@ class FulfilmentSorterBarcodeScannerActivity :
     private var hours: Double? = null
     private var rejectedItems: Int? = null
     private var isReject: Boolean = false
+    private var flagLocation: Boolean = false
 //    private var idsListWrapper: MutableList<Long>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,7 +110,8 @@ class FulfilmentSorterBarcodeScannerActivity :
             FulfilmentSorterScanMode.BIN -> {
                 hideScannedItemsContainer()
                 if (isReject) {
-                    binding.textTitle.text = getString(R.string.please_scan_location_barcode)
+                    binding.textTitle.text =
+                        getString(R.string.please_scan_damaged_location_barcode)
                     scannedBin?.barcode = null
                 } else {
                     isBinScan = true
@@ -126,9 +128,12 @@ class FulfilmentSorterBarcodeScannerActivity :
                 binding.textScannedBin.text =
                     scannedBin?.barcode ?: scannedWarehouseLocation?.barcode
                 binding.textTitle.text = getString(R.string.please_scan_items)
-                if(isReject){
+                if (isReject && flagLocation && !isBinScan) {
                     binding.buttonNewBin.text = getString(R.string.button_new_location)
-                    binding.itemsCounts.visibility = View.INVISIBLE
+                    binding.itemsCounts.visibility = View.GONE
+                    binding.textRejectedItems.visibility = View.VISIBLE
+                } else if (isReject || !isBinScan) {
+                    binding.buttonNewBin.text = getString(R.string.button_new_location)
                 }
             }
 
@@ -389,7 +394,6 @@ class FulfilmentSorterBarcodeScannerActivity :
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             if (selectedScanMode == FulfilmentSorterScanMode.BIN) {
-                                isReject = true
                                 selectedScanMode = FulfilmentSorterScanMode.ITEM_INTO_BIN
                                 scannedWarehouseLocation = response.body()
                                 handleSelectedScanMode()
@@ -714,18 +718,18 @@ class FulfilmentSorterBarcodeScannerActivity :
                             barcode!!
                         )
                         if (response?.isSuccessful == true && response.body() != null) {
-                            if(isReject){
+                            if (isReject) {
                                 rejectedItems = rejectedItems?.minus(1)
                             }
-                        } else {
                             scannedItemsHashMap.remove(barcode)
                             withContext(Dispatchers.Main) {
                                 val response = response?.body()
                                 (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).insertItem(
-                                    response
+                                    response?.itemDetails
                                 )
                                 binding.rvScannedBarcodes.smoothScrollToPosition(0)
                             }
+                        } else {
                             try {
                                 val jObjError = JSONObject(response?.errorBody()!!.string())
                                 withContext(Dispatchers.Main) {
@@ -833,11 +837,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                                 super.getContext(),
                                 getString(R.string.success_operation_completed)
                             )
-                            (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).deleteItem(
-                                response.body()?.shippingPlanDetails?.rejected!!
-                            )
                             updateShippingPlanCountValues(response.body()?.shippingPlanDetails)
-                            scannedItemsHashMap.remove(response.body()!!.itemDetails?.barcode)
                         }
                     } else {
                         try {
@@ -858,6 +858,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                             }
                         }
                     }
+                    scannedItemsHashMap.remove(response?.body()!!.itemDetails?.barcode)
                 } catch (e: Exception) {
                     hideWaitDialog()
                     Helper.logException(e, Throwable().stackTraceToString())
@@ -942,15 +943,17 @@ class FulfilmentSorterBarcodeScannerActivity :
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_done -> {
-                if (rejectedItems != 0) {
+                if (rejectedItems!! > 0) {
                     scannedWarehouseLocation = null
                     selectedScanMode = FulfilmentSorterScanMode.BIN
                     isBinScan = false
                     isReject = true
+                    flagLocation = true
                     (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).clearList()
                     handleSelectedScanMode()
                 } else {
                     val fragment = SetTimeSpent()
+                    isReject = false
                     fragment.isCancelable = false
                     fragment.show(supportFragmentManager, "SetTimeSpentDialog")
                 }

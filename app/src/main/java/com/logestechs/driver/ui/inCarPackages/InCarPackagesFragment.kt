@@ -58,6 +58,7 @@ import com.logestechs.driver.utils.adapters.InCarPackageCellAdapter
 import com.logestechs.driver.utils.adapters.InCarPackageGroupedCellAdapter
 import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
 import com.logestechs.driver.utils.dialogs.AddPackageNoteDialog
+import com.logestechs.driver.utils.dialogs.FailDeliveryDialog
 import com.logestechs.driver.utils.dialogs.InCarStatusFilterDialog
 import com.logestechs.driver.utils.dialogs.InCarViewModeDialog
 import com.logestechs.driver.utils.dialogs.PackageTypeFilterDialog
@@ -66,6 +67,7 @@ import com.logestechs.driver.utils.dialogs.SearchPackagesDialog
 import com.logestechs.driver.utils.dialogs.ShowAttachmentsDialog
 import com.logestechs.driver.utils.interfaces.AddPackageNoteDialogListener
 import com.logestechs.driver.utils.interfaces.ConfirmationDialogActionListener
+import com.logestechs.driver.utils.interfaces.FailDeliveryDialogListener
 import com.logestechs.driver.utils.interfaces.InCarPackagesCardListener
 import com.logestechs.driver.utils.interfaces.InCarStatusFilterDialogListener
 import com.logestechs.driver.utils.interfaces.InCarViewModeDialogListener
@@ -103,7 +105,8 @@ class InCarPackagesFragment(
     AddPackageNoteDialogListener,
     ReturnPackageDialogListener,
     ConfirmationDialogActionListener,
-    PackageTypeFilterDialogListener{
+    PackageTypeFilterDialogListener,
+    FailDeliveryDialogListener {
 
     private var _binding: FragmentInCarPackagesBinding? = null
     private val binding get() = _binding!!
@@ -128,6 +131,10 @@ class InCarPackagesFragment(
     private var selectedPackageType: PackageType = PackageType.ALL
 
     private var packageAttachmentsResponseBody: PackageAttachmentsResponseBody? = null
+
+    var failDeliveryDialog: FailDeliveryDialog? = null
+
+    var packageIdToUpload: Long? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -1230,7 +1237,7 @@ class InCarPackagesFragment(
                     )
 
                     val response = ApiAdapter.apiClient.uploadPodImage(
-                        addPackageNoteDialog?.pkg?.id ?: -1,
+                        packageIdToUpload ?: -1,
                         true,
                         body
                     )
@@ -1239,11 +1246,21 @@ class InCarPackagesFragment(
                             hideWaitDialog()
                             loadedImagesList[loadedImagesList.size - 1].imageUrl =
                                 response.body()?.fileUrl
-                            (addPackageNoteDialog?.binding?.rvThumbnails?.adapter as ThumbnailsAdapter).updateItem(
-                                loadedImagesList.size - 1
-                            )
-                            addPackageNoteDialog?.binding?.containerThumbnails?.visibility =
-                                View.VISIBLE
+
+                            addPackageNoteDialog?.let { dialog ->
+                                (dialog.binding.rvThumbnails.adapter as ThumbnailsAdapter).updateItem(
+                                    loadedImagesList.size - 1
+                                )
+                                dialog.binding.containerThumbnails.visibility = View.VISIBLE
+                            }
+
+                            failDeliveryDialog?.let { dialog ->
+                                (dialog.binding.rvThumbnails.adapter as ThumbnailsAdapter).updateItem(
+                                    loadedImagesList.size - 1
+                                )
+                                dialog.binding.containerThumbnails.visibility = View.VISIBLE
+                            }
+
                         }
                     } else {
                         try {
@@ -1297,12 +1314,25 @@ class InCarPackagesFragment(
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             loadedImagesList.removeAt(position)
-                            (addPackageNoteDialog?.binding?.rvThumbnails?.adapter as ThumbnailsAdapter).deleteItem(
-                                position
-                            )
-                            if (loadedImagesList.isEmpty()) {
-                                addPackageNoteDialog?.binding?.containerThumbnails?.visibility =
-                                    View.GONE
+
+                            addPackageNoteDialog?.let { dialog ->
+                                (dialog?.binding?.rvThumbnails?.adapter as ThumbnailsAdapter).deleteItem(
+                                    position
+                                )
+                                if (loadedImagesList.isEmpty()) {
+                                    dialog?.binding?.containerThumbnails?.visibility =
+                                        View.GONE
+                                }
+                            }
+
+                            failDeliveryDialog?.let { dialog ->
+                                (dialog?.binding?.rvThumbnails?.adapter as ThumbnailsAdapter).deleteItem(
+                                    position
+                                )
+                                if (loadedImagesList.isEmpty()) {
+                                    dialog?.binding?.containerThumbnails?.visibility =
+                                        View.GONE
+                                }
                             }
                             Helper.showSuccessMessage(
                                 super.getContext(),
@@ -1465,6 +1495,14 @@ class InCarPackagesFragment(
         callAddPackageNote(body?.packageId, body)
     }
 
+    override fun onShowFailDeliveryDialog(pkg: Package?) {
+        loadedImagesList.clear()
+        failDeliveryDialog = FailDeliveryDialog(requireContext(), this, pkg, loadedImagesList)
+        failDeliveryDialog?.showDialog()
+        packageIdToUpload = failDeliveryDialog?.pkg?.id
+        addPackageNoteDialog = null
+    }
+
     override fun onCaptureImage() {
         isCameraAction = true
         if (Helper.isStorageAndCameraPermissionNeeded(activity as LogesTechsActivity)) {
@@ -1490,10 +1528,12 @@ class InCarPackagesFragment(
 //        callGetAttachments(packageId)
 //    }
     override fun onShowPackageNoteDialog(pkg: Package?) {
-        loadedImagesList.clear()
-        addPackageNoteDialog = AddPackageNoteDialog(requireContext(), this, pkg, loadedImagesList)
-        addPackageNoteDialog?.showDialog()
-    }
+    loadedImagesList.clear()
+    addPackageNoteDialog = AddPackageNoteDialog(requireContext(), this, pkg, loadedImagesList)
+    addPackageNoteDialog?.showDialog()
+    packageIdToUpload = addPackageNoteDialog?.pkg?.id
+    failDeliveryDialog = null
+}
 
     override fun onCodChanged(body: CodChangeRequestBody?) {
         callCodChangeRequestApi(body)

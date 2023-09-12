@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.logestechs.driver.BuildConfig
@@ -37,10 +38,12 @@ import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.InCarPackageGroupedCellAdapter
 import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
 import com.logestechs.driver.utils.dialogs.AddPackageNoteDialog
+import com.logestechs.driver.utils.dialogs.FailDeliveryDialog
 import com.logestechs.driver.utils.dialogs.ReturnPackageDialog
 import com.logestechs.driver.utils.dialogs.ShowAttachmentsDialog
 import com.logestechs.driver.utils.interfaces.AddPackageNoteDialogListener
 import com.logestechs.driver.utils.interfaces.ConfirmationDialogActionListener
+import com.logestechs.driver.utils.interfaces.FailDeliveryDialogListener
 import com.logestechs.driver.utils.interfaces.InCarPackagesCardListener
 import com.logestechs.driver.utils.interfaces.ReturnPackageDialogListener
 import com.logestechs.driver.utils.interfaces.ViewPagerCountValuesDelegate
@@ -57,6 +60,7 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
     ConfirmationDialogActionListener,
     ReturnPackageDialogListener,
     AddPackageNoteDialogListener,
+    FailDeliveryDialogListener,
     View.OnClickListener {
     private lateinit var binding: ActivityBroughtPackagesBinding
 
@@ -72,6 +76,8 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
     private val messageTemplates = companyConfigurations?.messageTemplates
     private var isCameraAction = false
     var mCurrentPhotoPath: String? = null
+
+    var failDeliveryDialog: FailDeliveryDialog? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBroughtPackagesBinding.inflate(layoutInflater)
@@ -878,6 +884,12 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
 
     override fun onPackageNoteAdded(body: AddNoteRequestBody?) {
         callAddPackageNote(body?.packageId, body)
+    }
+
+    override fun onShowFailDeliveryDialog(pkg: Package?) {
+        loadedImagesList.clear()
+        failDeliveryDialog = FailDeliveryDialog(this, this, pkg, loadedImagesList)
+        failDeliveryDialog?.showDialog()
     }
 
     override fun onCaptureImage() {

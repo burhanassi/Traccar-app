@@ -4,6 +4,7 @@ import com.logestechs.driver.api.requests.*
 import com.logestechs.driver.api.responses.*
 import com.logestechs.driver.data.model.*
 import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.ReturnedPackageStatus
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -46,7 +47,8 @@ interface LogesTechsDriverApi {
     @PUT("api/driver/packages/pickup")
     suspend fun pickupPackage(
         @Query("barcode") barcode: String,
-        @Query("is-bundle-pod-enabled") isBundlePodEnabled: Boolean? = null
+        @Query("is-bundle-pod-enabled") isBundlePodEnabled: Boolean? = null,
+        @Query("isToFinalDestination") isToFinalDestination: Boolean? = null
     ): Response<Package?>?
 
     @GET("api/driver/customers/accepted")
@@ -94,12 +96,14 @@ interface LogesTechsDriverApi {
 
     @GET("api/admin/customers/with-returned")
     suspend fun getCustomersWithReturnedPackages(
+        @Query("type") type: ReturnedPackageStatus?
     ): Response<GetCustomersWithReturnedPackagesResponse?>?
 
     @GET("api/admin/customers/{customerId}/returned-packages")
     suspend fun getCustomerReturnedPackages(
         @Path("customerId") customerId: Long?,
-        @Query("barcode") barcode: String?
+        @Query("barcode") barcode: String?,
+        @Query("type") type: ReturnedPackageStatus?
     ): Response<GetCustomerReturnedPackagesResponse?>?
 
     @GET("api/driver/mass-packages/in-car")
@@ -360,7 +364,7 @@ interface LogesTechsDriverApi {
     suspend fun sortRejectedItemIntoLocation(
         @Path("locationId") locationId: Long?,
         @Query("itemBarcode") itemBarcode: String
-    ): Response<ItemDetails>?
+    ): Response<SortItemIntoBinResponse>?
 
     @PUT("api/handler/hub/shipping-items/reject")
     suspend fun rejectItem(

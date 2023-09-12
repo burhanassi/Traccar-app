@@ -18,6 +18,7 @@ import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.Detector.Detections
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
+import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.Customer
@@ -66,6 +67,7 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
         binding = ActivityBarcodeScannerBinding.inflate(layoutInflater)
         setContentView(binding.root)
         toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+        handleOutOfDelivery()
         initialiseDetectorsAndSources()
         initRecycler()
         handleScannedItemsCount()
@@ -266,6 +268,15 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
             getString(R.string.count) + binding.rvScannedBarcodes.adapter?.itemCount
     }
 
+    private fun handleOutOfDelivery() {
+        if (Helper.getCompanyCurrency() != AppCurrency.NIS.value &&
+            Helper.getCompanyCurrency() != AppCurrency.JOD.value
+        ) {
+            binding.tvOutOfDelivery.visibility = View.VISIBLE
+            binding.switchOutOfDelivery.visibility = View.VISIBLE
+        }
+    }
+
     //APIs
     private fun callPickupPackage(barcode: String) {
         this.runOnUiThread {
@@ -276,7 +287,8 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                 try {
                     val response = ApiAdapter.apiClient.pickupPackage(
                         barcode,
-                        driverCompanyConfigurations?.isBundlePodEnabled
+                        driverCompanyConfigurations?.isBundlePodEnabled,
+                        binding.switchOutOfDelivery.isChecked
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()

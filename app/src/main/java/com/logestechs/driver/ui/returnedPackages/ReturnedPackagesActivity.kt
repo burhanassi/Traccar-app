@@ -13,8 +13,11 @@ import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.ReturnedPackageStatus
 import com.logestechs.driver.utils.adapters.ReturnedPackageCustomerCellAdapter
+import com.logestechs.driver.utils.dialogs.ReturnedStatusFilterDialog
 import com.logestechs.driver.utils.interfaces.ReturnedPackagesCardListener
+import com.logestechs.driver.utils.interfaces.ReturnedStatusFilterDialogListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -22,16 +25,20 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListener,
+        ReturnedStatusFilterDialogListener,
     View.OnClickListener {
     private lateinit var binding: ActivityReturnedPackagesBinding
 
     private var doesUpdateData = true
     private var enableUpdateData = false
 
+    private var selectedStatus: ReturnedPackageStatus = ReturnedPackageStatus.ALL
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityReturnedPackagesBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.textSelectedStatus.text =
+            "(${Helper.getLocalizedReturnedStatus(super.getContext(), selectedStatus)})"
         initRecycler()
         initListeners()
     }
@@ -79,11 +86,15 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
 
     private fun initListeners() {
         binding.refreshLayoutCustomers.setOnRefreshListener {
+            selectedStatus = ReturnedPackageStatus.ALL
+            binding.textSelectedStatus.text =
+                "(${Helper.getLocalizedReturnedStatus(super.getContext(), selectedStatus)})"
             callGetCustomersWithReturnedPackages()
         }
 
         binding.toolbarMain.buttonBack.setOnClickListener(this)
         binding.toolbarMain.buttonNotifications.setOnClickListener(this)
+        binding.buttonStatusFilter.setOnClickListener(this)
     }
 
     private fun handleNoPackagesLabelVisibility(count: Int) {
@@ -111,7 +122,8 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.getCustomersWithReturnedPackages()
+                    val response =
+                        ApiAdapter.apiClient.getCustomersWithReturnedPackages(selectedStatus)
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
@@ -174,7 +186,11 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response =
-                        ApiAdapter.apiClient.getCustomerReturnedPackages(customerId, barcode)
+                        ApiAdapter.apiClient.getCustomerReturnedPackages(
+                            customerId,
+                            barcode,
+                            selectedStatus
+                        )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
@@ -265,6 +281,17 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
             R.id.button_notifications -> {
                 super.getNotifications()
             }
+
+            R.id.button_status_filter -> {
+                ReturnedStatusFilterDialog(context = getContext(), this, selectedStatus).showDialog()
+            }
         }
+    }
+
+    override fun onStatusChanged(selectedStatus: ReturnedPackageStatus) {
+        this.selectedStatus = selectedStatus
+        binding.textSelectedStatus.text =
+            "(${Helper.getLocalizedReturnedStatus(super.getContext(), selectedStatus)})"
+        callGetCustomersWithReturnedPackages()
     }
 }

@@ -542,9 +542,38 @@ class Helper {
                 InCarPackageStatus.TO_DELIVER_DELIVERY -> {
                     return context?.getString(R.string.in_car_status_delivery) ?: ""
                 }
+
                 InCarPackageStatus.RETURNED -> {
                     return context?.getString(R.string.in_car_status_returned) ?: ""
                 }
+
+                else -> {
+                    return ""
+                }
+            }
+        }
+
+        fun getLocalizedReturnedStatus(
+            context: Context?,
+            returnedStatus: ReturnedPackageStatus
+        ): String {
+            when (returnedStatus) {
+                ReturnedPackageStatus.PARTIALLY_DELIVERED -> {
+                    return context?.getString(R.string.returned_status_partially_delivered) ?: ""
+                }
+
+                ReturnedPackageStatus.ALL -> {
+                    return context?.getString(R.string.in_car_status_all) ?: ""
+                }
+
+                ReturnedPackageStatus.RETURNED -> {
+                    return context?.getString(R.string.returned_status_returned) ?: ""
+                }
+
+                ReturnedPackageStatus.EXCHANGE -> {
+                    return context?.getString(R.string.returned_status_swapped) ?: ""
+                }
+
                 else -> {
                     return ""
                 }
@@ -867,15 +896,21 @@ class Helper {
         }
 
         fun isStorageAndCameraPermissionNeeded(mActivity: Activity): Boolean {
-            return ContextCompat.checkSelfPermission(
-                mActivity.applicationContext,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
-                mActivity.applicationContext,
-                Manifest.permission.CAMERA
-            ) != PackageManager.PERMISSION_GRANTED
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                ContextCompat.checkSelfPermission(
+                    mActivity.applicationContext,
+                    Manifest.permission.CAMERA
+                ) != PackageManager.PERMISSION_GRANTED
+            } else {
+                ContextCompat.checkSelfPermission(
+                    mActivity.applicationContext,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
+                    mActivity.applicationContext,
+                    Manifest.permission.CAMERA
+                ) != PackageManager.PERMISSION_GRANTED
+            }
         }
-
 
         fun showAndRequestCameraAndStorageDialog(mActivity: Activity?) {
             ActivityCompat.requestPermissions(
