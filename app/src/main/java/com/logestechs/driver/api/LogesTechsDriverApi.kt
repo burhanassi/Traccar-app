@@ -458,4 +458,9 @@ interface LogesTechsDriverApi {
         @Query("latStart") lat: Double?,
         @Query("longStart") lng: Double?
     ): Response<GetDriverPackagesLocationsResponse?>?
+
+    @PUT("api/driver/packages/route/order")
+    suspend fun sendDriverRoute(
+        @Body body: DriverRouteRequestBody?
+    ): Response<ResponseBody?>?
 }

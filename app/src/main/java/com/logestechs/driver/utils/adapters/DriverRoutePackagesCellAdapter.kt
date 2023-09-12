@@ -104,8 +104,11 @@ class DriverRoutePackagesCellAdapter(
         fun onItemDismiss(position: Int)
     }
 
-    fun getArrangedPackagesList(): ArrayList<Package?> {
+    fun getArrangedPackageIds(): ArrayList<Long?> {
         return packagesList
+            .map { it?.id }
+            .filterNotNull()
+            .toCollection(ArrayList())
     }
 
 
