@@ -240,4 +240,5 @@
     <string name="returned_status_partially_delivered">Partially Delivered</string>
     <string name="returned_status_returned">Returned</string>
     <string name="returned_status_swapped">Swapped</string>
+    <string name="service_type">Service Type</string>
 </resources>

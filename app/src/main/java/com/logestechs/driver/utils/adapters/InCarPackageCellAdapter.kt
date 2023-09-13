@@ -88,6 +88,10 @@ class InCarPackageCellAdapter(
             binding.itemSenderName.textItem.text = pkg?.getFullSenderName()
             binding.itemSenderAddress.textItem.text = pkg?.originAddress?.toStringAddress()
 
+            if (pkg?.serviceType != null && pkg?.serviceType!!.isNotEmpty()) {
+                binding.containerServiceType.visibility = View.VISIBLE
+                binding.serviceType.text = pkg?.serviceType
+            }
             binding.itemReceiverName.textItem.text = pkg?.getFullReceiverName()
             binding.itemReceiverAddress.textItem.text = pkg?.destinationAddress?.toStringAddress()
 
