@@ -385,9 +385,16 @@ class FulfilmentSorterBarcodeScannerActivity :
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.getWarehouseLocation(
-                        barcode
-                    )
+                    val response = if (!isReject) {
+                        ApiAdapter.apiClient.getWarehouseLocation(
+                            barcode
+                        )
+                    } else {
+                        ApiAdapter.apiClient.getWarehouseDamagedLocation(
+                            barcode,
+                            customer?.customerId!!
+                        )
+                    }
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
