@@ -725,7 +725,8 @@ class FulfilmentSorterBarcodeScannerActivity :
                             withContext(Dispatchers.Main) {
                                 val response = response?.body()
                                 (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).insertItem(
-                                    response?.itemDetails
+                                    response?.itemDetails,
+                                    true
                                 )
                                 binding.rvScannedBarcodes.smoothScrollToPosition(0)
                             }
