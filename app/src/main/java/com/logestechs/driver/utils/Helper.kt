@@ -942,10 +942,14 @@ class Helper {
         }
 
         fun isStoragePermissionNeeded(mActivity: Activity): Boolean {
-            return ContextCompat.checkSelfPermission(
-                mActivity.applicationContext,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
+            return if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S) {
+                ContextCompat.checkSelfPermission(
+                    mActivity.applicationContext,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
+            } else {
+                false
+            }
         }
 
         fun showAndRequestStorageDialog(mActivity: Activity?) {
