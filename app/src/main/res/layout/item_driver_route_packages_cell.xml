@@ -52,6 +52,15 @@
                             android:orientation="vertical">
 
                             <include
+                                android:id="@+id/item_package_barcode"
+                                layout="@layout/item_card_row"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="13dp"
+                                bind:isIconCircleVisible="@{true}"
+                                bind:itemSrc="@{@drawable/ic_barcode_gray}" />
+
+                            <include
                                 android:id="@+id/item_receiver_name"
                                 layout="@layout/item_card_row"
                                 android:layout_width="wrap_content"
