@@ -228,7 +228,8 @@
     <string name="reason_damaged">Damaged</string>
     <string name="reason_color">Wrong Color</string>
     <string name="reason_item">Wrong Item</string>
-    <string name="reason_SKU">Wrong SKU</string>
+    <string name="reason_SKU">Wrong</string>
+    <string name="reason_SKU1">SKU</string>
     <string name="sender_message">Sender:</string>
     <string name="title_message">Title:</string>
     <!--    <string name="body_message">Body:</string>-->

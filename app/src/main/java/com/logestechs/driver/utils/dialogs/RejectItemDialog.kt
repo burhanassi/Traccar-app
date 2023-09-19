@@ -31,7 +31,7 @@ class RejectItemDialog(
         "DAMAGED" to context.getString(R.string.reason_damaged),
         "WRONG_COLOR" to context.getString(R.string.reason_color),
         "WRONG_ITEM" to context.getString(R.string.reason_item),
-        "WRONG_SKU" to context.getString(R.string.reason_SKU),
+        "WRONG_SKU" to context.getString(R.string.reason_SKU) + " " + context.getString(R.string.reason_SKU1),
         "OTHER" to context.getString(R.string.reason_other)
     )
 

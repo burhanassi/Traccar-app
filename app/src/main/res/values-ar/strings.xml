@@ -225,10 +225,11 @@
     <string name="reason_damaged">تالف</string>
     <string name="reason_color">لون غير مطابق</string>
     <string name="reason_item">عنصر غير مطابق</string>
-    <string name="reason_SKU">SKU غير مطابق</string>
+    <string name="reason_SKU">غير مطابق</string>
+    <string name="reason_SKU1">SKU</string>
     <string name="sender_message">المرسل:</string>
     <string name="title_message">العنوان:</string>
-<!--    <string name="body_message">Body:</string>-->
+    <!--    <string name="body_message">Body:</string>-->
     <string name="reason_other">سبب آخر</string>
     <string name="picked_fulfillment">طلبات محملة في السلات</string>
     <string name="partially_picked_fulfillment">طلبات محملة جزئيا</string>
