@@ -106,6 +106,14 @@ interface LogesTechsDriverApi {
         @Query("type") type: ReturnedPackageStatus?
     ): Response<GetCustomerReturnedPackagesResponse?>?
 
+    @GET("api/admin/bundles/returned")
+    suspend fun getCustomersWithReturnedBundles(): Response<GetCustomersWithReturnedBundlesResponse?>?
+
+    @GET("api/admin/bundles/{bundleId}/packages")
+    suspend fun getCustomerReturnedBundles(
+        @Path("bundleId") customerId: Long?
+    ): Response<GetCustomerReturnedPackagesResponse?>?
+
     @GET("api/driver/mass-packages/in-car")
     suspend fun getMassCodReports(
         @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
@@ -130,6 +138,12 @@ interface LogesTechsDriverApi {
     @PUT("api/driver/customers/{customerId}/returned-packages/deliver-to-sender")
     suspend fun deliverCustomerReturnedPackagesToSender(
         @Path("customerId") customerId: Long?,
+        @Body body: DeliverMassReturnedPackagesToSenderRequestBody? = null
+    ): Response<ResponseBody>?
+
+    @PUT("api/driver/returned-bundles/{bundleId}/deliver-to-sender")
+    suspend fun deliverCustomerReturnedBundlesToSender(
+        @Path("bundleId") bundleId: Long?,
         @Body body: DeliverMassReturnedPackagesToSenderRequestBody? = null
     ): Response<ResponseBody>?
 
@@ -451,9 +465,20 @@ interface LogesTechsDriverApi {
         @Path("packageId") packageId: Long?
     ): Response<ResponseBody?>?
 
+    @POST("api/driver/bundles/{bundleId}/pin-code")
+    suspend fun requestPinCodeSmsForBundles(
+        @Path("bundleId") bundleId: Long?
+    ): Response<ResponseBody?>?
+
     @PUT("api/driver/packages/{packageId}/pin-code")
     suspend fun verifyDeliveryPin(
         @Path("packageId") packageId: Long?,
+        @Query("pinCode") pinCode: String?
+    ): Response<ResponseBody?>?
+
+    @PUT("api/driver/bundles/{bundleId}/pin-code")
+    suspend fun verifyDeliveryPinForBundles(
+        @Path("bundleId") bundleId: Long?,
         @Query("pinCode") pinCode: String?
     ): Response<ResponseBody?>?
 

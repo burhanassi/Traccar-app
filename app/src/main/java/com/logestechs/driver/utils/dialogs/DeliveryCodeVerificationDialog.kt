@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.databinding.DataBindingUtil
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
+import com.logestechs.driver.data.model.Bundles
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.DialogDeliveryCodeVerificationBinding
 import com.logestechs.driver.utils.AppConstants
@@ -26,7 +27,9 @@ import org.json.JSONObject
 class DeliveryCodeVerificationDialog(
     var context: Context,
     var listener: VerificationCodeDialogListener?,
-    var pkg: Package?
+    var pkg: Package? = null,
+    var isBundle: Boolean? = false,
+    var bundles: Bundles? = null
 ) {
 
     lateinit var binding: DialogDeliveryCodeVerificationBinding
@@ -82,10 +85,12 @@ class DeliveryCodeVerificationDialog(
         if (Helper.isInternetAvailable(context)) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.verifyDeliveryPin(
-                        packageId,
-                        pinCode
-                    )
+                    val response = if (isBundle == true) {
+                        ApiAdapter.apiClient.verifyDeliveryPinForBundles(bundles?.id, pinCode)
+                    } else {
+                        ApiAdapter.apiClient.verifyDeliveryPin(packageId, pinCode)
+                    }
+
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
