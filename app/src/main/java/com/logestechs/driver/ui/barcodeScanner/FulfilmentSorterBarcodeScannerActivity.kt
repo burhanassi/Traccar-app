@@ -392,7 +392,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                     } else {
                         ApiAdapter.apiClient.getWarehouseDamagedLocation(
                             barcode,
-                            customer?.customerId!!
+                            scannedShippingPlan?.id
                         )
                     }
                     withContext(Dispatchers.Main) {

@@ -337,7 +337,7 @@ interface LogesTechsDriverApi {
     @GET("api/handler/damaged-location")
     suspend fun getWarehouseDamagedLocation(
         @Query("barcode") barcode: String?,
-        @Query("customerId") customerId: Long,
+        @Query("shippingPlanId") shippingPlanId: Long?,
     ): Response<WarehouseLocation?>?
 
     @PUT("api/handler/hub/locations/{locationId}/bins/sort")
