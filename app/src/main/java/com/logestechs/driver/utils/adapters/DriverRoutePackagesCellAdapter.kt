@@ -131,6 +131,7 @@ class DriverRoutePackagesCellAdapter(
         }
 
         fun bind(pkg: Package?, position: Int) {
+            binding.itemPackageBarcode.textItem.text = pkg?.barcode
             binding.itemReceiverName.textItem.text = pkg?.getFullReceiverName()
             binding.itemReceiverAddress.textItem.text = pkg?.destinationAddress?.toStringAddress()
             binding.textCod.text = pkg?.cod?.format()

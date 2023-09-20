@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
@@ -27,7 +28,7 @@ class ScannedShippingPlanItemCellAdapter(
     RejectItemDialogListener{
 
     var context: Context? = null
-
+    var isRejectedItems: Boolean? = null
     private fun removeItemByBarcode(barcode: String?) {
         val position = list.indexOfFirst { it?.barcode == barcode }
         if (position >= 0) {
@@ -68,7 +69,10 @@ class ScannedShippingPlanItemCellAdapter(
         notifyItemRangeRemoved(0, size)
     }
 
-    fun insertItem(item: ItemDetails?) {
+    fun insertItem(item: ItemDetails?, rejectedItems: Boolean? = null) {
+        if (rejectedItems == true) {
+            isRejectedItems = true
+        }
         if (item != null && !list.contains(item)) {
             list.add(0, item)
             notifyItemChanged(0)
@@ -95,6 +99,9 @@ class ScannedShippingPlanItemCellAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(itemDetails: ItemDetails?) {
+            if (mAdapter.isRejectedItems == true) {
+                binding.buttonContextMenu.visibility = View.GONE
+            }
             binding.itemBarcode.textItem.text = itemDetails?.barcode
             binding.itemProductName.textItem.text = itemDetails?.name
             binding.itemProductSku.textItem.text = itemDetails?.sku
