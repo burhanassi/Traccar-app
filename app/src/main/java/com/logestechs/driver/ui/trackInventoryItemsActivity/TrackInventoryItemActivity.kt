@@ -17,6 +17,7 @@ import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
+import com.logestechs.driver.api.responses.InventoryItemResponse
 import com.logestechs.driver.databinding.ActivityTrackInventoryItemBinding
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
@@ -182,6 +183,10 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
         }
     }
 
+    private fun handleDetailsToDisplay(itemDetails: InventoryItemResponse) {
+
+    }
+
     //APIs
     @OptIn(DelicateCoroutinesApi::class)
     private fun callSearchForInventoryItem(barcode: String?) {
@@ -199,7 +204,7 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-
+                            handleDetailsToDisplay(response.body()!!)
                         }
                     } else {
                         try {
