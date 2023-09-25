@@ -348,6 +348,9 @@ interface LogesTechsDriverApi {
     @GET("api/handler/hub/location")
     suspend fun getWarehouseLocation(@Query("barcode") barcode: String?): Response<WarehouseLocation?>?
 
+    @GET("api/handler/item/detail")
+    suspend fun searchForInventoryItem(@Query("barcode") barcode: String?): Response<InventoryItemResponse?>?
+
     @GET("api/handler/damaged-location")
     suspend fun getWarehouseDamagedLocation(
         @Query("barcode") barcode: String?,

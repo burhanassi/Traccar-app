@@ -163,6 +163,7 @@
     <string name="bin_location_assigned_successfully">تم تعيين موقع السلة بنجاح</string>
     <string name="please_scan_shipping_plan_barcode">الرجاء مسح باركود طلب التصنيف</string>
     <string name="please_scan_items">الرجاء مسح العناصر</string>
+    <string name="please_scan_item_barcode">الرجاء مسح باركود العنصر</string>
     <string name="please_insert_barcode">الرجاء إدخال الباركود</string>
     <string name="button_insert">إدخال</string>
     <string name="count">"العدد: "</string>
@@ -174,7 +175,9 @@
     <string name="button_new_location">موقع جديد</string>
     <string name="action_reject">رفض</string>
     <string name="dashboard_new_fulfilment_orders">الطلبات المصنفة\nالجديدة</string>
+    <string name="dashboard_track_inventory_items">تتبع العناصر</string>
     <string name="title_new_fulfilment_orders">الطلبات المصنفة الجديدة</string>
+    <string name="title_tracking_inventory_item">تتبع العناصر</string>
     <string name="dashboard_picked_fulfilment_orders">الطلبات المصنفة\nفي سلات التحميل</string>
     <string name="title_picked_fulfilment_orders">الطلبات المصنفة في سلات التحميل</string>
     <string name="message_no_fulfilment_orders">لا يوجد طلبات مصنفة \nالرجاء سحب الشاشة لأسفل لتحديث القائمة</string>

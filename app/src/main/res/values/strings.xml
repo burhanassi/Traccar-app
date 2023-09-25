@@ -163,6 +163,7 @@
     <string name="bin_location_assigned_successfully">Bin Location was Assigned Successfully</string>
     <string name="please_scan_shipping_plan_barcode">Please Scan Shipping Plan Barcode</string>
     <string name="please_scan_items">Please Scan Items</string>
+    <string name="please_scan_item_barcode">Please Scan Item Barcode</string>
     <string name="please_insert_barcode">Please insert barcode</string>
     <string name="button_insert">Insert</string>
     <string name="count">"Count: "</string>
@@ -174,7 +175,9 @@
     <string name="button_new_location">New Location</string>
     <string name="action_reject">Reject</string>
     <string name="dashboard_new_fulfilment_orders">New Fulfillment Orders</string>
+    <string name="dashboard_track_inventory_items">Track Inventory Items</string>
     <string name="title_new_fulfilment_orders">New Fulfillment Orders</string>
+    <string name="title_tracking_inventory_item">Track Inventory Item</string>
     <string name="dashboard_picked_fulfilment_orders">Picked Fulfillment Orders</string>
     <string name="title_picked_fulfilment_orders">Picked Fulfillment Orders</string>
     <string name="message_no_fulfilment_orders">No fulfilment orders were found \n Please pull the list down to refresh</string>
