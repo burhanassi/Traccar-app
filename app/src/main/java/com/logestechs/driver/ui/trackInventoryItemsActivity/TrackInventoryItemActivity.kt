@@ -50,15 +50,11 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
 
         initUi()
         initialiseDetectorsAndSources()
-        initListeners()
     }
 
     private fun initUi() {
         binding.textTitle.text = getText(R.string.please_scan_item_barcode)
-    }
-
-    private fun initListeners() {
-        binding.buttonDone.setOnClickListener(this)
+        binding.titleItemDetails.text = getString(R.string.item_details)
     }
 
     private fun initialiseDetectorsAndSources() {
@@ -250,10 +246,6 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.button_done -> {
-                onBackPressed()
-            }
-        }
+
     }
 }

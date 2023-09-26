@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.newFulfilmentOrders.NewFulfilmentOrdersActivity">
 
@@ -61,7 +62,7 @@
             </FrameLayout>
 
             <LinearLayout
-                android:id="@+id/container_scanned_items"
+                android:id="@+id/container_scanned_item"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginTop="-16dp"
@@ -69,44 +70,173 @@
                 android:background="@drawable/background_barcode_scanner_bottom_section"
                 android:orientation="vertical">
 
-            </LinearLayout>
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            android:orientation="vertical">
-
-            <FrameLayout
-                android:id="@+id/container_done_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/peach_orange">
-
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="10dp"
                     android:orientation="horizontal"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp">
+                    android:padding="8dp">
 
-                    <Button
-                        android:id="@+id/button_done"
+                    <TextView
+                        android:id="@+id/title_item_details"
                         style="@style/LogesTechsMedium"
                         android:layout_width="0dp"
-                        android:layout_height="45dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="16dp"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/background_logestechs_button"
-                        android:text="@string/button_done"
-                        android:textColor="@color/white" />
+                        android:textAlignment="center"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        tools:text="@string/item_details"
+                        tools:ignore="RtlCompat" />
                 </LinearLayout>
-            </FrameLayout>
+
+                <ScrollView
+                    android:id="@+id/scroll_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fillViewport="true"
+                    android:overScrollMode="never">
+
+                    <LinearLayout
+                        android:id="@+id/container_item_details"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:orientation="vertical">
+
+                        <include
+                            android:id="@+id/item_detail_shipment_id"
+                            layout="@layout/item_package_property"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            bind:isCopyVisible="@{true}"
+                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+
+                        <include
+                            android:id="@+id/item_detail_receiver_phone"
+                            layout="@layout/item_package_property"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            bind:isCopyVisible="@{true}"
+                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+
+                        <include
+                            android:id="@+id/item_detail_sender_name"
+                            layout="@layout/item_package_property"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            bind:isCopyVisible="@{false}"
+                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+
+                        <include
+                            android:id="@+id/item_detail_receiver_name"
+                            layout="@layout/item_package_property"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            bind:isCopyVisible="@{false}"
+                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+
+                        <include
+                            android:id="@+id/item_detail_driver_phone"
+                            layout="@layout/item_package_property"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            bind:isCopyVisible="@{true}"
+                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+
+                        <include
+                            android:id="@+id/item_detail_created_date"
+                            layout="@layout/item_package_property"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            bind:isCopyVisible="@{false}"
+                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+
+                        <include
+                            android:id="@+id/item_detail_postponed_date"
+                            layout="@layout/item_package_property"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            bind:isCopyVisible="@{false}"
+                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+
+                        <include
+                            android:id="@+id/item_detail_location"
+                            layout="@layout/item_package_property"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            bind:isCopyVisible="@{false}"
+                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+
+                        <include
+                            android:id="@+id/item_detail_invoice"
+                            layout="@layout/item_package_property"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            bind:isCopyVisible="@{false}"
+                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+
+                        <include
+                            android:id="@+id/item_detail_comment"
+                            layout="@layout/item_package_property"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            bind:isCopyVisible="@{false}"
+                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+
+                        <include
+                            android:id="@+id/item_private_notes"
+                            layout="@layout/item_package_property"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            bind:isCopyVisible="@{false}"
+                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+
+                        <include
+                            android:id="@+id/item_package_content"
+                            layout="@layout/item_package_property"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            bind:isCopyVisible="@{false}"
+                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+
+                        <include
+                            android:id="@+id/item_package_status"
+                            layout="@layout/item_package_property"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            bind:isCopyVisible="@{false}"
+                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+
+                        <include
+                            android:id="@+id/item_first_pickup_date"
+                            layout="@layout/item_package_property"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            bind:isCopyVisible="@{false}"
+                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+                    </LinearLayout>
+                </ScrollView>
+            </LinearLayout>
         </LinearLayout>
     </FrameLayout>
 </layout>

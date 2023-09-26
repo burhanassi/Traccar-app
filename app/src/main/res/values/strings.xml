@@ -26,6 +26,7 @@
     <string name="dashboard_sort_bins_into_locations">Sort Bins Into Locations</string>
     <string name="dashboard_sort_items_into_bins">Sort Items Into Bins</string>
     <string name="dashboard_sort_items">Sort Items</string>
+    <string name="item_details">Item Details</string>
     <string name="error_insert_valid_password">Password should contain at lease 6 characters or numbers</string>
     <string name="error_insert_valid_email">Please insert a valid email</string>
     <string name="error_fill_all_mandatory_fields">Please fill all required fields</string>
