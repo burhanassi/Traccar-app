@@ -55,6 +55,12 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
     private fun initUi() {
         binding.textTitle.text = getText(R.string.please_scan_item_barcode)
         binding.titleItemDetails.text = getString(R.string.item_details)
+        binding.itemBarcode.textItem.text = "111111111"
+        binding.itemName.textItem.text = "Apple IPhone"
+        binding.itemSku.textItem.text = "Test 1 "
+        binding.warehouseName.textItem.text = "Testing-BD"
+        binding.customerName.textItem.text = "Ali Malluh"
+        binding.itemStatus.textItem.text = "Rejected"
     }
 
     private fun initialiseDetectorsAndSources() {
@@ -180,7 +186,12 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
     }
 
     private fun handleDetailsToDisplay(itemDetails: InventoryItemResponse) {
-
+        binding.itemBarcode.textItem.text = "111111111"
+        binding.itemName.textItem.text = "Apple IPhone"
+        binding.itemSku.textItem.text = "Test 1 "
+        binding.warehouseName.textItem.text = "Testing-BD"
+        binding.customerName.textItem.text = "Ali Malluh"
+        binding.itemStatus.textItem.text = "Rejected"
     }
 
     //APIs

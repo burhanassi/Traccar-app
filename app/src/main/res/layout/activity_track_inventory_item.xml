@@ -104,136 +104,151 @@
                         android:id="@+id/container_item_details"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="10dp"
                         android:layout_marginEnd="10dp"
                         android:orientation="vertical">
 
-                        <include
-                            android:id="@+id/item_detail_shipment_id"
-                            layout="@layout/item_package_property"
+                        <androidx.cardview.widget.CardView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
                             android:layout_marginBottom="10dp"
-                            bind:isCopyVisible="@{true}"
-                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+                            bind:cardCornerRadius="10dp">
 
-                        <include
-                            android:id="@+id/item_detail_receiver_phone"
-                            layout="@layout/item_package_property"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            bind:isCopyVisible="@{true}"
-                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:animateLayoutChanges="true"
+                                android:background="@drawable/background_oval_white"
+                                android:elevation="2dp"
+                                android:orientation="vertical"
+                                tools:ignore="UselessParent">
 
-                        <include
-                            android:id="@+id/item_detail_sender_name"
-                            layout="@layout/item_package_property"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            bind:isCopyVisible="@{false}"
-                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="18dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:orientation="vertical">
 
-                        <include
-                            android:id="@+id/item_detail_receiver_name"
-                            layout="@layout/item_package_property"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            bind:isCopyVisible="@{false}"
-                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+                                    <include
+                                        android:id="@+id/item_status"
+                                        layout="@layout/item_card_row"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        bind:itemSrc="@{@drawable/ic_item_status}" />
 
-                        <include
-                            android:id="@+id/item_detail_driver_phone"
-                            layout="@layout/item_package_property"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            bind:isCopyVisible="@{true}"
-                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+                                    <include
+                                        android:id="@+id/item_sku"
+                                        layout="@layout/item_card_row"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="8dp"
+                                        bind:itemSrc="@{@drawable/ic_sku}" />
+                                </LinearLayout>
 
-                        <include
-                            android:id="@+id/item_detail_created_date"
-                            layout="@layout/item_package_property"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            bind:isCopyVisible="@{false}"
-                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="10dp"
+                                    android:baselineAligned="false"
+                                    android:orientation="horizontal">
 
-                        <include
-                            android:id="@+id/item_detail_postponed_date"
-                            layout="@layout/item_package_property"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            bind:isCopyVisible="@{false}"
-                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+                                    <LinearLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="18dp"
+                                        android:layout_marginEnd="8dp"
+                                        android:layout_weight="1"
+                                        android:orientation="vertical">
 
-                        <include
-                            android:id="@+id/item_detail_location"
-                            layout="@layout/item_package_property"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            bind:isCopyVisible="@{false}"
-                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+                                        <include
+                                            android:id="@+id/item_barcode"
+                                            layout="@layout/item_card_row"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="8dp"
+                                            bind:itemSrc="@{@drawable/ic_barcode_gray}" />
 
-                        <include
-                            android:id="@+id/item_detail_invoice"
-                            layout="@layout/item_package_property"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            bind:isCopyVisible="@{false}"
-                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+                                        <include
+                                            android:id="@+id/customer_name"
+                                            layout="@layout/item_card_row"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="8dp"
+                                            bind:itemSrc="@{@drawable/ic_customer_name}" />
+                                    </LinearLayout>
 
-                        <include
-                            android:id="@+id/item_detail_comment"
-                            layout="@layout/item_package_property"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            bind:isCopyVisible="@{false}"
-                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+                                    <LinearLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="18dp"
+                                        android:layout_marginEnd="8dp"
+                                        android:layout_weight="1"
+                                        android:orientation="vertical">
 
-                        <include
-                            android:id="@+id/item_private_notes"
-                            layout="@layout/item_package_property"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            bind:isCopyVisible="@{false}"
-                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+                                        <include
+                                            android:id="@+id/item_name"
+                                            layout="@layout/item_card_row"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="8dp"
+                                            bind:itemSrc="@{@drawable/ic_item}" />
 
-                        <include
-                            android:id="@+id/item_package_content"
-                            layout="@layout/item_package_property"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            bind:isCopyVisible="@{false}"
-                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+                                        <include
+                                            android:id="@+id/warehouse_name"
+                                            layout="@layout/item_card_row"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="8dp"
+                                            bind:itemSrc="@{@drawable/ic_warehouse_grey}" />
+                                    </LinearLayout>
+                                </LinearLayout>
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
 
-                        <include
-                            android:id="@+id/item_package_status"
-                            layout="@layout/item_package_property"
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/unreceived_card"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
                             android:layout_marginBottom="10dp"
-                            bind:isCopyVisible="@{false}"
-                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+                            bind:cardCornerRadius="10dp">
 
-                        <include
-                            android:id="@+id/item_first_pickup_date"
-                            layout="@layout/item_package_property"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            bind:isCopyVisible="@{false}"
-                            bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:animateLayoutChanges="true"
+                                android:background="@drawable/background_oval_white"
+                                android:elevation="2dp"
+                                android:orientation="vertical"
+                                android:visibility="gone"
+                                tools:ignore="UselessParent">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="18dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:orientation="vertical">
+
+                                    <include
+                                        android:id="@+id/item_asn_barcode_unreceived"
+                                        layout="@layout/item_card_row"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_marginBottom="8dp"
+                                        bind:itemSrc="@{@drawable/ic_barcode_gray}" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
                     </LinearLayout>
                 </ScrollView>
             </LinearLayout>

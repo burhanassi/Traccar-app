@@ -260,3 +260,20 @@ enum class FulfilmentOrderStatus {
 enum class VerificationStatus {
     SENT, VERIFIED, NOT_SENT
 }
+
+enum class ProductItemRejectReasonKey(val englishLabel: String, val arabicLabel: String) {
+    DAMAGED("Damaged", "تالف"),
+    WRONG_COLOR("Wrong color", "لون غير مطابق"),
+    WRONG_ITEM("Wrong Item", "عنصر غير مطابق"),
+    WRONG_SKU("Wrong SKU", "SKU غير مطابق"),
+}
+
+enum class FulfillmentItemStatus {
+    SORTED,
+    REJECTED,
+    UNSORTED,
+    PICKED,
+    PACKED,
+    DAMAGED,
+    RETURNED
+}
