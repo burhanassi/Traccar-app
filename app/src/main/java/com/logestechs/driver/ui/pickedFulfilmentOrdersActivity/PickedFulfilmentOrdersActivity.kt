@@ -297,8 +297,18 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
         }
     }
 
-    override fun onPackFulfilmentOrder(index: Int) {
-        callPackFulfilmentOrder(index)
+    override fun onPackFulfilmentOrder(fulfilmentOrder: FulfilmentOrder?) {
+//        callPackFulfilmentOrder(index)
+        if (fulfilmentOrder != null) {
+            val intent = Intent(this, FulfilmentPickerBarcodeScannerActivity::class.java)
+
+            intent.putExtra(IntentExtrasKeys.FULFILMENT_ORDER.name, fulfilmentOrder)
+            intent.putExtra(
+                IntentExtrasKeys.FULFILMENT_PICKER_SCAN_MODE.name,
+                FulfilmentPickerScanMode.ITEM
+            )
+            startActivity(intent)
+        }
     }
 
     override fun onContinuePickingClicked(fulfilmentOrder: FulfilmentOrder?) {

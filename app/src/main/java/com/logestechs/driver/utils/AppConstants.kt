@@ -260,3 +260,7 @@ enum class FulfilmentOrderStatus {
 enum class VerificationStatus {
     SENT, VERIFIED, NOT_SENT
 }
+
+enum class FulfillmentOrderPackagingType {
+    BY_CUSTOMER, BY_WAREHOUSE
+}

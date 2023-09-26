@@ -39,7 +39,8 @@ import java.io.IOException
 
 enum class FulfilmentPickerScanMode {
     TOTE,
-    ITEM_INTO_TOTE
+    ITEM_INTO_TOTE,
+    ITEM
 }
 
 class FulfilmentPickerBarcodeScannerActivity :
@@ -91,10 +92,17 @@ class FulfilmentPickerBarcodeScannerActivity :
                 hideScannedItemsContainer()
                 binding.textTitle.text = getString(R.string.please_scan_tote)
             }
+
             FulfilmentPickerScanMode.ITEM_INTO_TOTE -> {
                 showScannedItemsContainer()
                 binding.textTitle.text = getString(R.string.please_scan_items)
             }
+
+            FulfilmentPickerScanMode.ITEM -> {
+                showScannedItemsContainer()
+                binding.textTitle.text = getString(R.string.please_scan_items)
+            }
+
             null -> return
         }
     }
@@ -184,7 +192,6 @@ class FulfilmentPickerBarcodeScannerActivity :
         }
         return false
     }
-
 
     @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(
@@ -290,9 +297,15 @@ class FulfilmentPickerBarcodeScannerActivity :
             FulfilmentPickerScanMode.TOTE -> {
                 callGetTote(barcode)
             }
+
             FulfilmentPickerScanMode.ITEM_INTO_TOTE -> {
                 callScanItemIntoTote(barcode)
             }
+
+            FulfilmentPickerScanMode.ITEM -> {
+                callPackFulfilmentOrderByItem(barcode)
+            }
+
             null -> return
         }
     }
@@ -437,12 +450,78 @@ class FulfilmentPickerBarcodeScannerActivity :
         }
     }
 
+    private fun callPackFulfilmentOrderByItem(barcode: String?) {
+        this.runOnUiThread {
+            showWaitDialog()
+        }
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    var response = ApiAdapter.apiClient.packFulfilmentOrderByItem(
+                        fulfilmentOrder?.id!!,
+                        barcode
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            val body = response.body()
+                            val scrollPosition =
+                                (binding.rvScannedBarcodes.adapter as FulfilmentOrderItemCellAdapter).scanItem(
+                                    body?.sku
+                                )
+                            binding.rvScannedBarcodes.smoothScrollToPosition(scrollPosition)
+                        }
+                    } else {
+                        scannedItemsHashMap.remove(barcode)
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    scannedItemsHashMap.remove(barcode)
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            this.runOnUiThread {
+                hideWaitDialog()
+                Helper.showErrorMessage(
+                    super.getContext(), getString(R.string.error_check_internet_connection)
+                )
+            }
+        }
+    }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_done -> {
                 onBackPressed()
             }
+
             R.id.button_insert_barcode -> {
                 InsertBarcodeDialog(this, this).showDialog()
             }

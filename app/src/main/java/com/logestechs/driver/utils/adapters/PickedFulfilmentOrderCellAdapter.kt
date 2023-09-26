@@ -85,7 +85,7 @@ class PickedFulfilmentOrderCellAdapter(
 
             binding.buttonPack.setOnClickListener {
                 if(isPicked){
-                    mAdapter.listener?.onPackFulfilmentOrder(adapterPosition)
+                    mAdapter.listener?.onPackFulfilmentOrder(fulfilmentOrder)
                 }else{
                     mAdapter.listener?.onContinuePickingClicked(fulfilmentOrder)
                 }
@@ -93,7 +93,7 @@ class PickedFulfilmentOrderCellAdapter(
             binding.buttonPack.setOnClickListener {
                 if (mAdapter.listener != null) {
                     if (isPicked) {
-                        mAdapter.listener!!.onPackFulfilmentOrder(adapterPosition)
+                        mAdapter.listener!!.onPackFulfilmentOrder(fulfilmentOrder)
                     } else {
                         mAdapter.listener!!.onContinuePickingClicked(fulfilmentOrder)
                     }
