@@ -246,4 +246,22 @@
     <string name="returned_status_partially_delivered">Partially Delivered</string>
     <string name="returned_status_returned">Returned</string>
     <string name="returned_status_swapped">Swapped</string>
+    <string name="asn_barcode_label">ASN Barcode: </string>
+    <string name="added_method_label">Added Method: </string>
+    <string name="reject_date_label">Reject Date: </string>
+    <string name="rejected_reason_label">Reject Reason: </string>
+    <string name="expiry_date_label">Expiry Date: </string>
+    <string name="location_barcode_label">Location Barcode: </string>
+    <string name="received_date_label">Received Date: </string>
+    <string name="bin_barcode_label">Bin Barcode: </string>
+    <string name="previous_location_label">Previous Location: </string>
+    <string name="previous_bin_label">Previous Bin: </string>
+    <string name="picked_by_label">Picked By: </string>
+    <string name="fulfillment_order_barcode_label">Fulfillment Order Barcode: </string>
+    <string name="tote_number_label">Tote Number: </string>
+    <string name="package_number_barcode_label">Package Barcode: </string>
+    <string name="packed_by_label">Packed By: </string>
+    <string name="return_reason_label">Return Reason: </string>
+    <string name="returned_date_label">Returned Date: </string>
+    <string name="current_location_label">Current Location: </string>
 </resources>

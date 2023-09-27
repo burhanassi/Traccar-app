@@ -876,7 +876,7 @@ class Helper {
 
                 return formatter.format(parser.parse(source)!!)
             }
-            return ""
+            return "-------"
         }
 
         //Attachments handling

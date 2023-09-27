@@ -268,12 +268,12 @@ enum class ProductItemRejectReasonKey(val englishLabel: String, val arabicLabel:
     WRONG_SKU("Wrong SKU", "SKU غير مطابق"),
 }
 
-enum class FulfillmentItemStatus {
-    SORTED,
-    REJECTED,
-    UNSORTED,
-    PICKED,
-    PACKED,
-    DAMAGED,
-    RETURNED
+enum class FulfillmentItemStatus(val english: String, val arabic: String) {
+    SORTED("Sorted", "تم تصنيفها"),
+    REJECTED("Rejected", "مرفوضة"),
+    UNSORTED("Unsorted", "غير مصنفة"),
+    PICKED("Picked", "محملة"),
+    PACKED("Packed", "مغلفة"),
+    DAMAGED("Damaged", "تالف"),
+    RETURNED("Returned", "مرجعة")
 }

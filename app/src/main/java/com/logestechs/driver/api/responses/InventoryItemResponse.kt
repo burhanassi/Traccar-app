@@ -15,7 +15,7 @@ data class InventoryItemResponse(
     var customerName: String?,
     var warehouseName: String?,
     var productName: String?,
-    var biBarcode: String?,
+    var binBarcode: String?,
     var locationBarcode: String?,
     var shippingPlanBarcode: String?,
     var previousLocationBarcode: String?,

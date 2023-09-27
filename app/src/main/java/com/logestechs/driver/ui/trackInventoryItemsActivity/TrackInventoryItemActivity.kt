@@ -3,6 +3,7 @@ package com.logestechs.driver.ui.trackInventoryItemsActivity
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.drawable.GradientDrawable
 import android.media.ToneGenerator
 import android.os.Build
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.os.Vibrator
 import android.os.VibratorManager
 import android.view.SurfaceHolder
 import android.view.View
+import androidx.annotation.RequiresApi
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
@@ -20,6 +22,8 @@ import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.responses.InventoryItemResponse
 import com.logestechs.driver.databinding.ActivityTrackInventoryItemBinding
 import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.DateFormats
+import com.logestechs.driver.utils.FulfillmentItemStatus
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsActivity
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -43,6 +47,8 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
 
     private var scannedItemsHashMap: HashMap<String, String> = HashMap()
     private var toneGen1: ToneGenerator? = null
+
+    private val gradientDrawable = GradientDrawable()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTrackInventoryItemBinding.inflate(layoutInflater)
@@ -55,12 +61,6 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
     private fun initUi() {
         binding.textTitle.text = getText(R.string.please_scan_item_barcode)
         binding.titleItemDetails.text = getString(R.string.item_details)
-        binding.itemBarcode.textItem.text = "111111111"
-        binding.itemName.textItem.text = "Apple IPhone"
-        binding.itemSku.textItem.text = "Test 1 "
-        binding.warehouseName.textItem.text = "Testing-BD"
-        binding.customerName.textItem.text = "Ali Malluh"
-        binding.itemStatus.textItem.text = "Rejected"
     }
 
     private fun initialiseDetectorsAndSources() {
@@ -103,6 +103,7 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
             override fun release() {
             }
 
+            @RequiresApi(Build.VERSION_CODES.M)
             override fun receiveDetections(detections: Detector.Detections<Barcode>) {
                 val barcodes = detections.detectedItems
                 if (barcodes.size() != 0) {
@@ -123,6 +124,7 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
         })
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun handleDetectedBarcode(barcode: String) {
         if (!scannedItemsHashMap.containsKey(barcode)) {
             scannedItemsHashMap[barcode] = barcode
@@ -132,6 +134,7 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun executeBarcodeAction(barcode: String?) {
         callSearchForInventoryItem(barcode)
     }
@@ -185,16 +188,168 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
+    @SuppressLint("ResourceAsColor", "ResourceType")
     private fun handleDetailsToDisplay(itemDetails: InventoryItemResponse) {
-        binding.itemBarcode.textItem.text = "111111111"
-        binding.itemName.textItem.text = "Apple IPhone"
-        binding.itemSku.textItem.text = "Test 1 "
-        binding.warehouseName.textItem.text = "Testing-BD"
-        binding.customerName.textItem.text = "Ali Malluh"
-        binding.itemStatus.textItem.text = "Rejected"
+        binding.containerItemDetails.visibility = View.VISIBLE
+        binding.itemBarcode.textItem.text = itemDetails.barcode
+        binding.itemName.textItem.text = itemDetails.productName
+        binding.itemSku.textItem.text = itemDetails.SKU
+        binding.warehouseName.textItem.text = itemDetails.warehouseName
+        binding.customerName.textItem.text = itemDetails.customerName
+        binding.itemStatus.text = itemDetails.status.english
+
+        gradientDrawable.cornerRadius = resources.getDimension(R.dimen.corner_radius)
+        when (itemDetails.status) {
+            FulfillmentItemStatus.UNSORTED -> {
+                binding.unreceivedCard.visibility = View.VISIBLE
+                binding.rejectedCard.visibility = View.GONE
+                binding.sortedCard.visibility = View.GONE
+                binding.pickedCard.visibility = View.GONE
+                binding.packedCard.visibility = View.GONE
+                binding.returnedCard.visibility = View.GONE
+
+                gradientDrawable.setColor(resources.getColor(R.color.yellow))
+                binding.containerItemStatus.background = gradientDrawable
+                binding.itemAsnBarcodeUnreceived.text = itemDetails.shippingPlanBarcode ?: "-------"
+            }
+
+            FulfillmentItemStatus.REJECTED -> {
+                binding.unreceivedCard.visibility = View.GONE
+                binding.rejectedCard.visibility = View.VISIBLE
+                binding.sortedCard.visibility = View.GONE
+                binding.pickedCard.visibility = View.GONE
+                binding.packedCard.visibility = View.GONE
+                binding.returnedCard.visibility = View.GONE
+                gradientDrawable.setColor(resources.getColor(R.color.red))
+                binding.containerItemStatus.background = gradientDrawable
+                binding.itemAddedMethodRejected.text = itemDetails.shippingPlanBarcode ?: "Manually"
+                binding.itemRejectedDateRejected.text = ""
+                binding.itemLocationBarcodeRejected.text = itemDetails.locationBarcode ?: "-------"
+                binding.itemRejectedReasonRejected.text = itemDetails.rejectReason ?: "-------"
+                binding.itemExpiryDateRejected.text = Helper.formatServerDateLocalized(
+                    itemDetails.expiryDate,
+                    DateFormats.DEFAULT_FORMAT
+                )
+            }
+
+            FulfillmentItemStatus.SORTED -> {
+                binding.unreceivedCard.visibility = View.GONE
+                binding.rejectedCard.visibility = View.GONE
+                binding.sortedCard.visibility = View.VISIBLE
+                binding.pickedCard.visibility = View.GONE
+                binding.packedCard.visibility = View.GONE
+                binding.returnedCard.visibility = View.GONE
+                gradientDrawable.setColor(resources.getColor(R.color.green))
+                binding.containerItemStatus.background = gradientDrawable
+                binding.itemAddedMethodSorted.text = itemDetails.shippingPlanBarcode ?: "Manually"
+                binding.itemReceivedDateSorted.text = Helper.formatServerDateLocalized(
+                    itemDetails.createdDate,
+                    DateFormats.DEFAULT_FORMAT
+                )
+                binding.itemLocationBarcodeSorted.text = itemDetails.locationBarcode ?: "-------"
+                binding.itemBinBarcodeSorted.text = itemDetails.binBarcode ?: "-------"
+                binding.itemExpiryDateSorted.text = Helper.formatServerDateLocalized(
+                    itemDetails.expiryDate,
+                    DateFormats.DEFAULT_FORMAT
+                )
+            }
+
+            FulfillmentItemStatus.PICKED -> {
+                binding.unreceivedCard.visibility = View.GONE
+                binding.rejectedCard.visibility = View.GONE
+                binding.sortedCard.visibility = View.GONE
+                binding.pickedCard.visibility = View.VISIBLE
+                binding.packedCard.visibility = View.GONE
+                binding.returnedCard.visibility = View.GONE
+                gradientDrawable.setColor(resources.getColor(R.color.blue))
+                binding.containerItemStatus.background = gradientDrawable
+                binding.itemAddedMethodPicked.text = itemDetails.shippingPlanBarcode ?: "Manually"
+                binding.itemReceivedDatePicked.text = Helper.formatServerDateLocalized(
+                    itemDetails.createdDate,
+                    DateFormats.DEFAULT_FORMAT
+                )
+                binding.itemPreviousLocationPicked.text =
+                    itemDetails.previousLocationBarcode ?: "-------"
+                binding.itemPreviousBinPicked.text = itemDetails.previousBinBarcode
+                binding.itemExpiryDatePicked.text = Helper.formatServerDateLocalized(
+                    itemDetails.expiryDate,
+                    DateFormats.DEFAULT_FORMAT
+                )
+                binding.itemPickedByPicked.text = itemDetails.pickedUser ?: "-------"
+                binding.itemFulfillmentOrderBarcodePicked.text =
+                    itemDetails.orderBarcode ?: "-------"
+                binding.itemToteNumberPicked.text = itemDetails.toteBarcode ?: "-------"
+            }
+
+            FulfillmentItemStatus.PACKED -> {
+                binding.unreceivedCard.visibility = View.GONE
+                binding.rejectedCard.visibility = View.GONE
+                binding.sortedCard.visibility = View.GONE
+                binding.pickedCard.visibility = View.GONE
+                binding.packedCard.visibility = View.VISIBLE
+                binding.returnedCard.visibility = View.GONE
+                gradientDrawable.setColor(resources.getColor(R.color.purple))
+                binding.containerItemStatus.background = gradientDrawable
+                binding.itemAddedMethodPacked.text = itemDetails.shippingPlanBarcode ?: "Manually"
+                binding.itemReceivedDatePacked.text = Helper.formatServerDateLocalized(
+                    itemDetails.createdDate,
+                    DateFormats.DEFAULT_FORMAT
+                )
+                binding.itemPreviousLocationPacked.text =
+                    itemDetails.previousLocationBarcode ?: "-------"
+                binding.itemPreviousBinPacked.text = itemDetails.previousBinBarcode ?: "-------"
+                binding.itemExpiryDatePacked.text = Helper.formatServerDateLocalized(
+                    itemDetails.expiryDate,
+                    DateFormats.DEFAULT_FORMAT
+                )
+                binding.itemPickedByPacked.text = itemDetails.pickedUser ?: "-------"
+                binding.itemFulfillmentOrderBarcodePacked.text =
+                    itemDetails.orderBarcode ?: "-------"
+                binding.itemToteNumberPacked.text = itemDetails.toteBarcode ?: "-------"
+                binding.itemPackedByPacked.text = itemDetails.packedUser ?: "-------"
+                binding.itemPackageNumberBarcodePacked.text =
+                    itemDetails.packageBarcode ?: "-------"
+            }
+
+            FulfillmentItemStatus.RETURNED -> {
+                binding.unreceivedCard.visibility = View.GONE
+                binding.rejectedCard.visibility = View.GONE
+                binding.sortedCard.visibility = View.GONE
+                binding.pickedCard.visibility = View.GONE
+                binding.packedCard.visibility = View.GONE
+                binding.returnedCard.visibility = View.VISIBLE
+                gradientDrawable.setColor(resources.getColor(R.color.orange))
+                binding.containerItemStatus.background = gradientDrawable
+                binding.itemAddedMethodReturned.text = itemDetails.shippingPlanBarcode ?: "Manually"
+                binding.itemReceivedDateReturned.text = Helper.formatServerDateLocalized(
+                    itemDetails.createdDate,
+                    DateFormats.DEFAULT_FORMAT
+                )
+                binding.itemPreviousLocationReturned.text =
+                    itemDetails.previousLocationBarcode ?: "-------"
+                binding.itemPreviousBinReturned.text = itemDetails.previousBinBarcode ?: "-------"
+                binding.itemExpiryDateReturned.text = Helper.formatServerDateLocalized(
+                    itemDetails.expiryDate,
+                    DateFormats.DEFAULT_FORMAT
+                )
+                binding.itemPickedByReturned.text = itemDetails.pickedUser ?: "-------"
+                binding.itemFulfillmentOrderBarcodeReturned.text =
+                    itemDetails.orderBarcode ?: "-------"
+                binding.itemPackedByReturned.text = itemDetails.packedUser ?: "-------"
+                binding.itemPackageNumberBarcodeReturned.text =
+                    itemDetails.packageBarcode ?: "-------"
+                binding.itemReturnedDateReturned.text = ""
+                binding.itemReturnReasonReturned.text = ""
+                binding.itemCurrentLocationReturned.text = itemDetails.locationBarcode ?: "-------"
+            }
+
+            else -> {}
+        }
     }
 
     //APIs
+    @RequiresApi(Build.VERSION_CODES.M)
     @OptIn(DelicateCoroutinesApi::class)
     private fun callSearchForInventoryItem(barcode: String?) {
         this.runOnUiThread {

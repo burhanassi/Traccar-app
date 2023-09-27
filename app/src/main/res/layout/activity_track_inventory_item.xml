@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:bind="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.newFulfilmentOrders.NewFulfilmentOrdersActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -106,6 +105,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="10dp"
+                        android:visibility="gone"
                         android:orientation="vertical">
 
                         <androidx.cardview.widget.CardView
@@ -126,28 +126,21 @@
                                 tools:ignore="UselessParent">
 
                                 <LinearLayout
-                                    android:layout_width="match_parent"
+                                    android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="18dp"
+                                    android:layout_marginTop="8dp"
                                     android:layout_marginEnd="8dp"
                                     android:layout_weight="1"
-                                    android:gravity="center"
+                                    android:layout_gravity="center_horizontal"
                                     android:orientation="vertical">
-
-                                    <include
-                                        android:id="@+id/item_status"
-                                        layout="@layout/item_card_row"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        bind:itemSrc="@{@drawable/ic_item_status}" />
 
                                     <include
                                         android:id="@+id/item_sku"
                                         layout="@layout/item_card_row"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_marginTop="8dp"
-                                        bind:itemSrc="@{@drawable/ic_sku}" />
+                                        bind:itemSrc="@{@drawable/ic_item_sku}" />
                                 </LinearLayout>
 
                                 <LinearLayout
@@ -171,7 +164,7 @@
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
                                             android:layout_marginTop="8dp"
-                                            bind:itemSrc="@{@drawable/ic_barcode_gray}" />
+                                            bind:itemSrc="@{@drawable/ic_item_barcode}" />
 
                                         <include
                                             android:id="@+id/customer_name"
@@ -204,8 +197,35 @@
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
                                             android:layout_marginTop="8dp"
-                                            bind:itemSrc="@{@drawable/ic_warehouse_grey}" />
+                                            bind:itemSrc="@{@drawable/ic_item_warehouse}" />
                                     </LinearLayout>
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/container_item_status"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="50dp"
+                                    android:layout_marginEnd="50dp"
+                                    android:layout_marginBottom="8dp"
+                                    android:layout_weight="1"
+                                    android:layout_gravity="center_horizontal"
+                                    android:background="@drawable/rounded_background"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/item_status"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_margin="4dp"
+                                        style="@style/LogesTechsMedium"
+                                        android:layout_gravity="center"
+                                        android:layout_marginStart="15dp"
+                                        android:layout_marginEnd="8dp"
+                                        android:textColor="@color/white"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        tools:text="#100919003663" />
                                 </LinearLayout>
                             </LinearLayout>
                         </androidx.cardview.widget.CardView>
@@ -217,7 +237,8 @@
                             android:layout_marginStart="5dp"
                             android:layout_marginEnd="5dp"
                             android:layout_marginBottom="10dp"
-                            bind:cardCornerRadius="10dp">
+                            bind:cardCornerRadius="10dp"
+                            android:visibility="gone">
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -226,29 +247,1383 @@
                                 android:background="@drawable/background_oval_white"
                                 android:elevation="2dp"
                                 android:orientation="vertical"
-                                android:visibility="gone"
                                 tools:ignore="UselessParent">
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginStart="18dp"
+                                    android:layout_marginStart="8dp"
                                     android:layout_marginEnd="8dp"
                                     android:layout_weight="1"
                                     android:gravity="center"
-                                    android:orientation="vertical">
+                                    android:orientation="horizontal">
 
-                                    <include
-                                        android:id="@+id/item_asn_barcode_unreceived"
-                                        layout="@layout/item_card_row"
+                                    <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
                                         android:layout_marginTop="8dp"
                                         android:layout_marginBottom="8dp"
-                                        bind:itemSrc="@{@drawable/ic_barcode_gray}" />
+                                        android:textColor="@color/black"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:text="@string/asn_barcode_label" />
+
+                                    <TextView
+                                        android:id="@+id/item_asn_barcode_unreceived"
+                                        style="@style/LogesTechsMedium"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:layout_marginStart="4dp"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_marginBottom="8dp"
+                                        android:textColor="@color/detailsTextBlack"
+                                        android:textSize="14sp"
+                                        tools:text="#100919003663" />
                                 </LinearLayout>
                             </LinearLayout>
                         </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/rejected_card"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginBottom="10dp"
+                            bind:cardCornerRadius="10dp"
+                            android:visibility="gone">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:animateLayoutChanges="true"
+                                android:background="@drawable/background_oval_white"
+                                android:elevation="2dp"
+                                android:orientation="vertical"
+                                tools:ignore="UselessParent">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center_vertical"
+                                            android:layout_marginTop="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/added_method_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_added_method_rejected"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginTop="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/reject_date_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_rejected_date_rejected"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/rejected_reason_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_rejected_reason_rejected"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/expiry_date_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_expiry_date_rejected"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/location_barcode_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_location_barcode_rejected"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+                                </LinearLayout>
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/sorted_card"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginBottom="10dp"
+                            bind:cardCornerRadius="10dp"
+                            android:visibility="gone">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:animateLayoutChanges="true"
+                                android:background="@drawable/background_oval_white"
+                                android:elevation="2dp"
+                                android:orientation="vertical"
+                                tools:ignore="UselessParent">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center_vertical"
+                                            android:layout_marginTop="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/added_method_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_added_method_sorted"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginTop="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center_vertical"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/received_date_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_received_date_sorted"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center_vertical"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/expiry_date_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_expiry_date_sorted"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center_vertical"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/location_barcode_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_location_barcode_sorted"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center_vertical"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/bin_barcode_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_bin_barcode_sorted"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+                                </LinearLayout>
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/picked_card"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginBottom="10dp"
+                            bind:cardCornerRadius="10dp"
+                            android:visibility="gone">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:animateLayoutChanges="true"
+                                android:background="@drawable/background_oval_white"
+                                android:elevation="2dp"
+                                android:orientation="vertical"
+                                tools:ignore="UselessParent">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/added_method_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_added_method_picked"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginTop="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/received_date_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_received_date_picked"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/previous_location_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_previous_location_picked"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/previous_bin_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_previous_bin_picked"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/expiry_date_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_expiry_date_picked"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/picked_by_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_picked_by_picked"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/fulfillment_order_barcode_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_fulfillment_order_barcode_picked"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/tote_number_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_tote_number_picked"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="15dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+                                </LinearLayout>
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/packed_card"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginBottom="10dp"
+                            bind:cardCornerRadius="10dp"
+                            android:visibility="gone">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:animateLayoutChanges="true"
+                                android:background="@drawable/background_oval_white"
+                                android:elevation="2dp"
+                                android:orientation="vertical"
+                                tools:ignore="UselessParent">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/added_method_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_added_method_packed"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginTop="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/received_date_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_received_date_packed"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/previous_location_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_previous_location_packed"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/previous_bin_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_previous_bin_packed"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/package_number_barcode_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_package_number_barcode_packed"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/expiry_date_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_expiry_date_packed"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/picked_by_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_picked_by_packed"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/fulfillment_order_barcode_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_fulfillment_order_barcode_packed"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/tote_number_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_tote_number_packed"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/packed_by_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_packed_by_packed"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+                                </LinearLayout>
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/returned_card"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginBottom="10dp"
+                            bind:cardCornerRadius="10dp"
+                            android:visibility="gone">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:animateLayoutChanges="true"
+                                android:background="@drawable/background_oval_white"
+                                android:elevation="2dp"
+                                android:orientation="vertical"
+                                tools:ignore="UselessParent">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/added_method_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_added_method_returned"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginTop="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/received_date_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_received_date_returned"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/previous_location_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_previous_location_returned"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/previous_bin_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_previous_bin_returned"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/package_number_barcode_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_package_number_barcode_returned"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/return_reason_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_return_reason_returned"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/expiry_date_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_expiry_date_returned"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/picked_by_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_picked_by_returned"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/fulfillment_order_barcode_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_fulfillment_order_barcode_returned"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/returned_date_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_returned_date_returned"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/packed_by_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_packed_by_returned"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:textColor="@color/black"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:text="@string/current_location_label" />
+
+                                        <TextView
+                                            android:id="@+id/item_current_location_returned"
+                                            style="@style/LogesTechsMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="4dp"
+                                            android:layout_marginEnd="8dp"
+                                            android:layout_marginBottom="8dp"
+                                            android:gravity="end"
+                                            android:textColor="@color/detailsTextBlack"
+                                            android:textSize="14sp"
+                                            tools:text="#100919003663" />
+                                    </LinearLayout>
+                                </LinearLayout>
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
                     </LinearLayout>
                 </ScrollView>
             </LinearLayout>
