@@ -16,6 +16,7 @@ import com.logestechs.driver.data.model.Device
 import com.logestechs.driver.databinding.DialogForceUpdateBinding
 import com.logestechs.driver.ui.dashboard.DriverDashboardActivity
 import com.logestechs.driver.ui.dashboard.FulfilmentSorterDashboardActivity
+import com.logestechs.driver.ui.dashboard.HandlerDashboardActivity
 import com.logestechs.driver.ui.login.LoginActivity
 import com.logestechs.driver.utils.*
 import kotlinx.coroutines.Dispatchers
@@ -66,6 +67,14 @@ class SplashActivity : LogesTechsActivity() {
                 Intent(
                     super.getContext(),
                     FulfilmentSorterDashboardActivity::class.java
+                )
+            )
+            finish()
+        } else if (loginResponse?.user?.role == UserRole.HANDLER.name) {
+            startActivity(
+                Intent(
+                    super.getContext(),
+                    HandlerDashboardActivity::class.java
                 )
             )
             finish()

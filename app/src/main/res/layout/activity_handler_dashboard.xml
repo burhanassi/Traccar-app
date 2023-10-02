@@ -55,6 +55,33 @@
                     android:textColor="@color/pink_carnation"
                     tools:text="Majdi Driver" />
 
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="24dp"-->
+<!--                    android:layout_marginTop="24dp"-->
+<!--                    android:layout_marginEnd="24dp"-->
+<!--                    android:clipChildren="false">-->
+
+<!--                    <include-->
+<!--                        android:id="@+id/dash_entry_scan_packages"-->
+<!--                        layout="@layout/item_dashboard_entry"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginEnd="14dp"-->
+<!--                        android:layout_weight="1"-->
+<!--                        app:iconSrc="@{@drawable/ic_sort_bins_into_locations}"-->
+<!--                        app:titleText="@{@string/dashboard_sort_bins_into_locations}" />-->
+
+<!--                    <include-->
+<!--                        android:id="@+id/dash_entry_accepted_packages"-->
+<!--                        layout="@layout/item_dashboard_entry"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_weight="1"-->
+<!--                        app:iconSrc="@{@drawable/ic_sort_items_into_bin}"-->
+<!--                        app:titleText="@{@string/dashboard_sort_items_into_bins}" />-->
+<!--                </LinearLayout>-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -64,26 +91,15 @@
                     android:clipChildren="false">
 
                     <include
-                        android:id="@+id/dash_entry_scan_packages"
-                        layout="@layout/item_dashboard_entry"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="14dp"
-                        android:layout_weight="1"
-                        app:iconSrc="@{@drawable/ic_sort_bins_into_locations}"
-                        app:titleText="@{@string/dashboard_sort_bins_into_locations}" />
-
-                    <include
-                        android:id="@+id/dash_entry_accepted_packages"
+                        android:id="@+id/dash_entry_sort_on_shelf"
                         layout="@layout/item_dashboard_entry"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:iconSrc="@{@drawable/ic_sort_items_into_bin}"
-                        app:titleText="@{@string/dashboard_sort_items_into_bins}" />
-
+                        app:iconSrc="@{@drawable/ic_sort_on_shelve}"
+                        app:titleText="@{@string/dashboard_sort_on_shelves}"
+                        app:isCountHidden="@{true}"/>
                 </LinearLayout>
-
 
                 <View
                     android:layout_width="wrap_content"

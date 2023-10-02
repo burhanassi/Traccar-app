@@ -63,6 +63,8 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
     private var selectedScanMode: ShelfScanMode? = ShelfScanMode.SHELF
 
     private var scannedBarcode = ""
+
+    private var shelfId: Long? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySortOnShelveBinding.inflate(layoutInflater)
@@ -181,7 +183,7 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
             }
 
             ShelfScanMode.PACKAGE_INTO_SHELF -> {
-                //TODO
+                callScanPackageOnShelf(barcode)
             }
 
             null -> return
@@ -278,6 +280,71 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response = ApiAdapter.apiClient.scanShelfByBarcode(
+                        barcode
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response.isSuccessful && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            selectedScanMode = ShelfScanMode.PACKAGE_INTO_SHELF
+                            handleSelectedScanMode()
+                            shelfId = response.body()!!.id
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                    scannedItemsHashMap.remove(barcode)
+                } catch (e: Exception) {
+                    scannedItemsHashMap.remove(barcode)
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            this.runOnUiThread {
+                hideWaitDialog()
+                Helper.showErrorMessage(
+                    super.getContext(), getString(R.string.error_check_internet_connection)
+                )
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun callScanPackageOnShelf(barcode: String?) {
+        this.runOnUiThread {
+            showWaitDialog()
+        }
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.scanPackagesOnShelf(
+                        shelfId,
                         barcode
                     )
                     withContext(Dispatchers.Main) {

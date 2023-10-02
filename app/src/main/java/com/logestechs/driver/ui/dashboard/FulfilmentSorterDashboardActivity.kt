@@ -75,8 +75,6 @@ class FulfilmentSorterDashboardActivity : LogesTechsActivity(), View.OnClickList
         binding.dashEntryNewFulfilmentOrders.root.setOnClickListener(this)
         binding.dashEntryPickedFulfilmentOrders.root.setOnClickListener(this)
         binding.dashEntryTrackInventoryItems.root.setOnClickListener(this)
-        binding.buttonShowDashboardSubEntries.setOnClickListener(this)
-        binding.dashSubEntrySortOnShelves.root.setOnClickListener(this)
     }
 
 
@@ -150,24 +148,6 @@ class FulfilmentSorterDashboardActivity : LogesTechsActivity(), View.OnClickList
 
             R.id.dash_entry_track_inventory_items -> {
                 val mIntent = Intent(this, TrackInventoryItemActivity::class.java)
-                startActivity(mIntent)
-            }
-
-            R.id.button_show_dashboard_sub_entries -> {
-                if (binding.containerDashboardSubEntries.visibility == View.VISIBLE) {
-                    binding.containerDashboardSubEntries.visibility = View.GONE
-                } else {
-                    binding.containerDashboardSubEntries.visibility = View.VISIBLE
-                    binding.scrollView.postDelayed(Runnable {
-                        binding.scrollView.fullScroll(
-                            ScrollView.FOCUS_DOWN
-                        )
-                    }, 250)
-                }
-            }
-
-            R.id.dash_sub_entry_sort_on_shelves -> {
-                val mIntent = Intent(this, SortOnShelveActivity::class.java)
                 startActivity(mIntent)
             }
         }

@@ -505,5 +505,11 @@ interface LogesTechsDriverApi {
     @GET("api/handler/shelves/scan")
     suspend fun scanShelfByBarcode(
         @Query("barcode") barcode: String?
+    ): Response<Shelf?>
+
+    @GET("api/handler/shelves/{shelfId}/packages/sort")
+    suspend fun scanPackagesOnShelf(
+        @Path("shelfId") shelfId: Long?,
+        @Query("barcode") barcode: String?
     ): Response<ResponseBody>
 }
