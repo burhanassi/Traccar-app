@@ -28,5 +28,7 @@ data class DriverCompanyConfigurations(
     var isPrintAwbCopiesAsPackageQuantity: Boolean? = null,
     var isAllowDriversToViewAttachments: Boolean? = null,
     var isSupportDeliveringPackageItemsPartially: Boolean? = null,
+    var isSupportReturnedBundles: Boolean? = null,
+    var isEnableDeliveryVerificationPinCodeForReturnedBundles: Boolean? = null,
     var isPricingPerServiceTypeEnabled: Boolean? = null
 )

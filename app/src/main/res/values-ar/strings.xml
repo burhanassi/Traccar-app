@@ -27,6 +27,7 @@
     <string name="dashboard_sort_bins_into_locations">ترتيب السلات\nفي المواقع</string>
     <string name="dashboard_sort_items_into_bins">ترتيب العناصر\nفي السلات</string>
     <string name="dashboard_sort_items">ترتيب\nالعناصر</string>
+    <string name="item_details">تفاصيل العنصر</string>
     <string name="error_insert_valid_password">يجب أن تتألف كلمة المرور من 6 احرف وارقام على الاقل</string>
     <string name="error_insert_valid_email">يرجى ادخال عنوان بريد الكتروني او اسم مستخدم من ٦ احرف او اكثر</string>
     <string name="error_fill_all_mandatory_fields">الرجاء تعبئة جميع الحقول المطلوبة</string>
@@ -116,6 +117,7 @@
     <string name="title_delivered_packages">الطرود المسلمة</string>
     <string name="error_no_packages_for_delivery">لا يوجد طرود للتسليم</string>
     <string name="title_returned_packages">الرواجع</string>
+    <string name="title_returned_bundles">الحزم المرجعة</string>
     <string name="title_brought_packages">طرود الإحضار</string>
     <string name="title_driver_route">المسار</string>
     <string name="button_deliver_to_sender">تسليم إلى المرسل</string>
@@ -162,6 +164,7 @@
     <string name="bin_location_assigned_successfully">تم تعيين موقع السلة بنجاح</string>
     <string name="please_scan_shipping_plan_barcode">الرجاء مسح باركود طلب التصنيف</string>
     <string name="please_scan_items">الرجاء مسح العناصر</string>
+    <string name="please_scan_item_barcode">الرجاء مسح باركود العنصر</string>
     <string name="please_insert_barcode">الرجاء إدخال الباركود</string>
     <string name="button_insert">إدخال</string>
     <string name="count">"العدد: "</string>
@@ -173,7 +176,9 @@
     <string name="button_new_location">موقع جديد</string>
     <string name="action_reject">رفض</string>
     <string name="dashboard_new_fulfilment_orders">الطلبات المصنفة\nالجديدة</string>
+    <string name="dashboard_track_inventory_items">تتبع العناصر</string>
     <string name="title_new_fulfilment_orders">الطلبات المصنفة الجديدة</string>
+    <string name="title_tracking_inventory_item">تتبع العناصر</string>
     <string name="dashboard_picked_fulfilment_orders">الطلبات المصنفة\nفي سلات التحميل</string>
     <string name="title_picked_fulfilment_orders">الطلبات المصنفة في سلات التحميل</string>
     <string name="message_no_fulfilment_orders">لا يوجد طلبات مصنفة \nالرجاء سحب الشاشة لأسفل لتحديث القائمة</string>
@@ -224,10 +229,11 @@
     <string name="reason_damaged">تالف</string>
     <string name="reason_color">لون غير مطابق</string>
     <string name="reason_item">عنصر غير مطابق</string>
-    <string name="reason_SKU">SKU غير مطابق</string>
+    <string name="reason_SKU">غير مطابق</string>
+    <string name="reason_SKU1">SKU</string>
     <string name="sender_message">المرسل:</string>
     <string name="title_message">العنوان:</string>
-<!--    <string name="body_message">Body:</string>-->
+    <!--    <string name="body_message">Body:</string>-->
     <string name="reason_other">سبب آخر</string>
     <string name="picked_fulfillment">طلبات محملة في السلات</string>
     <string name="partially_picked_fulfillment">طلبات محملة جزئيا</string>
@@ -237,5 +243,23 @@
     <string name="returned_status_partially_delivered">تم توصليها بشكل جزئي</string>
     <string name="returned_status_returned">مرجعة</string>
     <string name="returned_status_swapped">تم تبديلها</string>
+    <string name="asn_barcode_label">طلب التوريد: </string>
+    <string name="added_method_label">طريقة الاضافة: </string>
+    <string name="reject_date_label">تاريخ الرفض: </string>
+    <string name="rejected_reason_label">سبب الرفض: </string>
+    <string name="expiry_date_label">تاريخ الانتهاء: </string>
+    <string name="location_barcode_label">باركود الموقع: </string>
+    <string name="received_date_label">تاريخ الاستلام: </string>
+    <string name="bin_barcode_label">باركود السلة: </string>
+    <string name="previous_location_label">الموقع السابق: </string>
+    <string name="previous_bin_label">السلة السابقة: </string>
+    <string name="picked_by_label">حملت بواسطة: </string>
+    <string name="fulfillment_order_barcode_label">الطلب: </string>
+    <string name="tote_number_label">باركود سلة التحميل: </string>
+    <string name="package_number_barcode_label">باركود الطرد: </string>
+    <string name="packed_by_label">غلفت بواسطة: </string>
+    <string name="return_reason_label">سبب الارجاع: </string>
+    <string name="returned_date_label">تاريخ الارجاع: </string>
+    <string name="current_location_label">الموقع الحالي: </string>
     <string name="service_type">نوع الخدمة</string>
 </resources>

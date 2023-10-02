@@ -19,6 +19,7 @@ import com.logestechs.driver.ui.barcodeScanner.ShippingPlanBarcodeScanner
 import com.logestechs.driver.ui.newFulfilmentOrders.NewFulfilmentOrdersActivity
 import com.logestechs.driver.ui.pickedFulfilmentOrdersActivity.PickedFulfilmentOrdersActivity
 import com.logestechs.driver.ui.profile.ProfileActivity
+import com.logestechs.driver.ui.trackInventoryItemsActivity.TrackInventoryItemActivity
 import com.logestechs.driver.utils.*
 import com.yariksoffice.lingver.Lingver
 import kotlinx.coroutines.Dispatchers
@@ -70,6 +71,7 @@ class FulfilmentSorterDashboardActivity : LogesTechsActivity(), View.OnClickList
         binding.dashEntrySortBinsIntoLocations.root.setOnClickListener(this)
         binding.dashEntryNewFulfilmentOrders.root.setOnClickListener(this)
         binding.dashEntryPickedFulfilmentOrders.root.setOnClickListener(this)
+        binding.dashEntryTrackInventoryItems.root.setOnClickListener(this)
     }
 
 
@@ -138,6 +140,11 @@ class FulfilmentSorterDashboardActivity : LogesTechsActivity(), View.OnClickList
 
             R.id.dash_entry_picked_fulfilment_orders -> {
                 val mIntent = Intent(this, PickedFulfilmentOrdersActivity::class.java)
+                startActivity(mIntent)
+            }
+
+            R.id.dash_entry_track_inventory_items -> {
+                val mIntent = Intent(this, TrackInventoryItemActivity::class.java)
                 startActivity(mIntent)
             }
         }

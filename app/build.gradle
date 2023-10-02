@@ -46,6 +46,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField 'String', 'base_url', '\"http://pal-ship.com:8080/saas/\"'
+//            buildConfigField 'String', 'base_url', '\"http://192.168.1.8:8080/\"'
             manifestPlaceholders = [crashlyticsCollectionEnabled: "false"]
         }
     }

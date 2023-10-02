@@ -876,7 +876,7 @@ class Helper {
 
                 return formatter.format(parser.parse(source)!!)
             }
-            return ""
+            return "-------"
         }
 
         //Attachments handling
@@ -912,6 +912,7 @@ class Helper {
             }
         }
 
+
         fun showAndRequestCameraAndStorageDialog(mActivity: Activity?) {
             ActivityCompat.requestPermissions(
                 mActivity!!,
@@ -942,29 +943,35 @@ class Helper {
         }
 
         fun isStoragePermissionNeeded(mActivity: Activity): Boolean {
-            return ContextCompat.checkSelfPermission(
-                mActivity.applicationContext,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
+            return if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S) {
+                ContextCompat.checkSelfPermission(
+                    mActivity.applicationContext,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
+            } else false
         }
 
         fun showAndRequestStorageDialog(mActivity: Activity?) {
-            return ActivityCompat.requestPermissions(
-                mActivity!!,
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                AppConstants.REQUEST_STORAGE_PERMISSION
-            )
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S) {
+                return ActivityCompat.requestPermissions(
+                    mActivity!!,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    AppConstants.REQUEST_STORAGE_PERMISSION
+                )
+            }
         }
 
         fun shouldShowStoragePermissionDialog(mActivity: Activity?): Boolean {
-            return if (mActivity != null) {
-                ActivityCompat.shouldShowRequestPermissionRationale(
-                    mActivity,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                )
-            } else {
-                false
-            }
+            return if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S) {
+                if (mActivity != null) {
+                    ActivityCompat.shouldShowRequestPermissionRationale(
+                        mActivity,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                } else {
+                    false
+                }
+            } else false
         }
 
         fun isCameraPermissionNeeded(mActivity: Activity): Boolean {

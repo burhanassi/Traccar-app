@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -25,6 +26,7 @@ import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.DeleteImageRequestBody
 import com.logestechs.driver.api.requests.DeliverMassReturnedPackagesToSenderRequestBody
 import com.logestechs.driver.api.requests.DeliverReturnedPackageToSenderRequestBody
+import com.logestechs.driver.data.model.Bundles
 import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.LoadedImage
@@ -37,9 +39,12 @@ import com.logestechs.driver.utils.Helper.Companion.format
 import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.SharedPreferenceWrapper
+import com.logestechs.driver.utils.VerificationStatus
 import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
 import com.logestechs.driver.utils.customViews.StatusSelector
+import com.logestechs.driver.utils.dialogs.DeliveryCodeVerificationDialog
 import com.logestechs.driver.utils.interfaces.ThumbnailsListListener
+import com.logestechs.driver.utils.interfaces.VerificationCodeDialogListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -58,6 +63,7 @@ import java.util.Date
 import java.util.Locale
 
 class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener,
+    VerificationCodeDialogListener,
     ThumbnailsListListener {
     private lateinit var binding: ActivityReturnedPackageDeliveryBinding
 
@@ -66,7 +72,9 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
     private var bitmap: Bitmap? = null
     private var gestureTouch = false
     private var customer: Customer? = null
+    private var bundles: Bundles? = null
     private var isBulkDelivery = false
+    private var isBundleDelivery = false
     private var pkg: Package? = null
 
     private var paymentTypeButtonsList: ArrayList<StatusSelector> = ArrayList()
@@ -129,18 +137,35 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
 
     private fun initData() {
         if (isBulkDelivery) {
-            binding.itemSenderName.textItem.text = customer?.customerName
-            binding.itemSenderName.root.visibility = View.VISIBLE
-            binding.itemReceiverName.root.visibility = View.GONE
-            binding.itemReceiverAddress.textItem.text = customer?.city
-            binding.containerCod.visibility = View.GONE
+            if (isBundleDelivery) {
+                binding.itemSenderName.textItem.text = bundles?.customerName
+                binding.itemSenderName.root.visibility = View.VISIBLE
+                binding.itemReceiverName.root.visibility = View.GONE
+                binding.itemReceiverAddress.textItem.text = bundles?.cityName
+                binding.containerCod.visibility = View.GONE
 
-            if (customer?.massReturnedPackagesReportBarcode != null && customer?.massReturnedPackagesReportBarcode!!.isNotEmpty()) {
-                binding.itemPackageBarcode.root.visibility = View.VISIBLE
-                binding.itemPackageBarcode.textItem.text =
-                    customer?.massReturnedPackagesReportBarcode
+                if (bundles?.barcode != null && bundles?.barcode!!.isNotEmpty()) {
+                    binding.itemPackageBarcode.root.visibility = View.VISIBLE
+                    binding.itemPackageBarcode.textItem.text =
+                        bundles?.barcode
+                } else {
+                    binding.itemPackageBarcode.root.visibility = View.GONE
+                }
+                binding.buttonDeliverPackage.text = getText(R.string.button_deliver_to_sender)
             } else {
-                binding.itemPackageBarcode.root.visibility = View.GONE
+                binding.itemSenderName.textItem.text = customer?.customerName
+                binding.itemSenderName.root.visibility = View.VISIBLE
+                binding.itemReceiverName.root.visibility = View.GONE
+                binding.itemReceiverAddress.textItem.text = customer?.city
+                binding.containerCod.visibility = View.GONE
+
+                if (customer?.massReturnedPackagesReportBarcode != null && customer?.massReturnedPackagesReportBarcode!!.isNotEmpty()) {
+                    binding.itemPackageBarcode.root.visibility = View.VISIBLE
+                    binding.itemPackageBarcode.textItem.text =
+                        customer?.massReturnedPackagesReportBarcode
+                } else {
+                    binding.itemPackageBarcode.root.visibility = View.GONE
+                }
             }
 
         } else {
@@ -210,8 +235,12 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
         val extras = intent.extras
         if (extras != null) {
             customer = extras.getParcelable(IntentExtrasKeys.CUSTOMER_WITH_PACKAGES_TO_RETURN.name)
+            bundles = extras.getParcelable(IntentExtrasKeys.CUSTOMER_WITH_BUNDLES_TO_RETURN.name)
             if (customer != null) {
                 isBulkDelivery = true
+            } else if (bundles != null) {
+                isBulkDelivery = true
+                isBundleDelivery = true
             } else {
                 pkg = extras.getParcelable(IntentExtrasKeys.PACKAGE_TO_DELIVER.name)
             }
@@ -565,13 +594,33 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
                     )
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            callDeliverMassReturnedPackagesToSender(
-                                DeliverMassReturnedPackagesToSenderRequestBody(
-                                    customer?.massReturnedPackagesReportBarcode,
-                                    response.body()?.fileUrl,
-                                    getPodImagesUrls()
+                            if (isBundleDelivery) {
+                                if (companyConfigurations?.isEnableDeliveryVerificationPinCodeForReturnedBundles!!) {
+                                    requestPinCodeSms()
+                                    DeliveryCodeVerificationDialog(
+                                        super.getContext(),
+                                        this@ReturnedPackageDeliveryActivity,
+                                        isBundle = true,
+                                        bundles = bundles
+                                    ).showDialog()
+                                } else {
+                                    callDeliverReturnedBundlesToSender(
+                                        DeliverMassReturnedPackagesToSenderRequestBody(
+                                            bundles?.barcode,
+                                            null,
+                                            getPodImagesUrls()
+                                        )
+                                    )
+                                }
+                            } else {
+                                callDeliverMassReturnedPackagesToSender(
+                                    DeliverMassReturnedPackagesToSenderRequestBody(
+                                        customer?.massReturnedPackagesReportBarcode,
+                                        response.body()?.fileUrl,
+                                        getPodImagesUrls()
+                                    )
                                 )
-                            )
+                            }
                         }
                     } else {
                         try {
@@ -958,6 +1007,116 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
         }
     }
 
+    private fun callDeliverReturnedBundlesToSender(body: DeliverMassReturnedPackagesToSenderRequestBody?) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.deliverCustomerReturnedBundlesToSender(
+                        bundles?.id ?: -1,
+                        body
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            val returnIntent = Intent()
+                            setResult(RESULT_OK, returnIntent)
+                            finish()
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
+    private fun requestPinCodeSms() {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.requestPinCodeSmsForBundles(
+                        bundles?.id
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_clear_signature -> {
@@ -972,13 +1131,23 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
                 if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true) {
                     if (validateInput()) {
                         if (isBulkDelivery) {
-                            callDeliverMassReturnedPackagesToSender(
-                                DeliverMassReturnedPackagesToSenderRequestBody(
-                                    customer?.massReturnedPackagesReportBarcode,
-                                    null,
-                                    getPodImagesUrls()
+                            if (isBundleDelivery) {
+                                requestPinCodeSms()
+                                DeliveryCodeVerificationDialog(
+                                    super.getContext(),
+                                    this,
+                                    isBundle = true,
+                                    bundles = bundles
+                                ).showDialog()
+                            } else {
+                                callDeliverMassReturnedPackagesToSender(
+                                    DeliverMassReturnedPackagesToSenderRequestBody(
+                                        customer?.massReturnedPackagesReportBarcode,
+                                        null,
+                                        getPodImagesUrls()
+                                    )
                                 )
-                            )
+                            }
                         } else {
                             callDeliverReturnedPackageToSender(
                                 DeliverReturnedPackageToSenderRequestBody(
@@ -1038,5 +1207,19 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
 
     override fun onDeleteImage(position: Int) {
         callDeletePodImage(position)
+    }
+
+    override fun onPackageVerified() {
+        callDeliverReturnedBundlesToSender(
+            DeliverMassReturnedPackagesToSenderRequestBody(
+                bundles?.barcode,
+                null,
+                getPodImagesUrls()
+            )
+        )
+    }
+
+    override fun onResendPinSms() {
+        requestPinCodeSms()
     }
 }

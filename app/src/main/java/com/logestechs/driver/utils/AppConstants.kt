@@ -99,6 +99,7 @@ enum class IntentExtrasKeys() {
     SINGLE_SCAN_BARCODE_SCANNER_LISTENER,
     PACKAGE_TO_DELIVER,
     CUSTOMER_WITH_PACKAGES_TO_RETURN,
+    CUSTOMER_WITH_BUNDLES_TO_RETURN,
     DRAFT_PICKUP,
     EXTRA_RECEIVED_NOTIFICATION,
     IN_CAR_PACKAGE_STATUS,
@@ -258,4 +259,21 @@ enum class FulfilmentOrderStatus {
 
 enum class VerificationStatus {
     SENT, VERIFIED, NOT_SENT
+}
+
+enum class ProductItemRejectReasonKey(val englishLabel: String, val arabicLabel: String) {
+    DAMAGED("Damaged", "تالف"),
+    WRONG_COLOR("Wrong color", "لون غير مطابق"),
+    WRONG_ITEM("Wrong Item", "عنصر غير مطابق"),
+    WRONG_SKU("Wrong SKU", "SKU غير مطابق"),
+}
+
+enum class FulfillmentItemStatus(val english: String, val arabic: String) {
+    SORTED("Sorted", "تم تصنيفها"),
+    REJECTED("Rejected", "مرفوضة"),
+    UNSORTED("Unsorted", "غير مصنفة"),
+    PICKED("Picked", "محملة"),
+    PACKED("Packed", "مغلفة"),
+    DAMAGED("Damaged", "تالف"),
+    RETURNED("Returned", "مرجعة")
 }
