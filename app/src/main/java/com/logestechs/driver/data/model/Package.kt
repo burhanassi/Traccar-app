@@ -13,7 +13,7 @@ data class Package(
     var status: String? = null,
     var customerStatusType: String? = null,
     var cod: Double? = null,
-    var serviceType: String? = null,
+    var serviceTypeName: String? = null,
     var shipmentType: String? = null,
     var isFragile: Boolean? = null,
     var isHazardousMaterial: Boolean? = null,
