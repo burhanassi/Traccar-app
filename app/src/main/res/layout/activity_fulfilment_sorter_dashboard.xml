@@ -109,7 +109,7 @@
                         android:id="@+id/dash_entry_sort_items_into_bins"
                         layout="@layout/item_dashboard_entry"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
                         app:iconSrc="@{@drawable/ic_sort_items_into_bin}"
                         app:isCountHidden="@{true}"
@@ -168,6 +168,85 @@
                         app:titleText="@{@string/dashboard_track_inventory_items}" />
 
                 </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/button_show_dashboard_sub_entries"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="20dp"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:background="@color/pink_cinderella" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginEnd="6dp"
+                        android:background="@drawable/background_dashboard_expand_button">
+
+                        <TextView
+                            style="@style/LogesTechsLight"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="32dp"
+                            android:layout_marginBottom="1dp"
+                            android:text="@string/dashboard_other_options"
+                            android:textColor="@color/fontTitleOrange"
+                            android:textSize="14sp" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginEnd="8dp"
+                            android:src="@drawable/ic_arrow_down_pink"
+                            tools:ignore="ContentDescription" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:background="@color/pink_cinderella" />
+                </LinearLayout>
+
+                <HorizontalScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:animateLayoutChanges="true"
+                    android:overScrollMode="never">
+
+                    <LinearLayout
+                        android:id="@+id/container_dashboard_sub_entries"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <include
+                            android:id="@+id/dash_sub_entry_sort_on_shelves"
+                            layout="@layout/item_dashboard_sub_entry"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="24dp"
+                            android:layout_marginEnd="10dp"
+                            app:iconSrc="@{@drawable/ic_sort_on_shelve}"
+                            app:titleText="@{@string/dashboard_sort_on_shelves}" />
+                    </LinearLayout>
+                </HorizontalScrollView>
 
                 <View
                     android:layout_width="wrap_content"

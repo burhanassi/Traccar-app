@@ -501,4 +501,9 @@ interface LogesTechsDriverApi {
     suspend fun sendDriverRoute(
         @Body body: DriverRouteRequestBody?
     ): Response<ResponseBody?>?
+
+    @GET("api/handler/shelves/scan")
+    suspend fun scanShelfByBarcode(
+        @Query("barcode") barcode: String?
+    ): Response<ResponseBody>
 }

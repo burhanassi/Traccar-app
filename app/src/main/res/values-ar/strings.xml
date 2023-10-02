@@ -24,6 +24,7 @@
     <string name="dashboard_postponed">مؤجل</string>
     <string name="dashboard_other_options">خيارات اخرى</string>
     <string name="dashboard_mass_cod_reports">تحصيل الزبائن</string>
+    <string name="dashboard_sort_on_shelves">ترتيب في\nسلات التحميل</string>
     <string name="dashboard_sort_bins_into_locations">ترتيب السلات\nفي المواقع</string>
     <string name="dashboard_sort_items_into_bins">ترتيب العناصر\nفي السلات</string>
     <string name="dashboard_sort_items">ترتيب\nالعناصر</string>
@@ -165,6 +166,7 @@
     <string name="please_scan_shipping_plan_barcode">الرجاء مسح باركود طلب التصنيف</string>
     <string name="please_scan_items">الرجاء مسح العناصر</string>
     <string name="please_scan_item_barcode">الرجاء مسح باركود العنصر</string>
+    <string name="please_scan_shelf_barcode">الرجاء مسح باركود سلة التحميل</string>
     <string name="please_insert_barcode">الرجاء إدخال الباركود</string>
     <string name="button_insert">إدخال</string>
     <string name="count">"العدد: "</string>

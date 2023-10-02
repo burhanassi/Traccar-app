@@ -3,6 +3,7 @@ package com.logestechs.driver.ui.dashboard
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ScrollView
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.logestechs.driver.BuildConfig
@@ -16,9 +17,11 @@ import com.logestechs.driver.ui.arrivedShippingPlans.ArrivedShippingPlansActivit
 import com.logestechs.driver.ui.barcodeScanner.FulfilmentSorterBarcodeScannerActivity
 import com.logestechs.driver.ui.barcodeScanner.FulfilmentSorterScanMode
 import com.logestechs.driver.ui.barcodeScanner.ShippingPlanBarcodeScanner
+import com.logestechs.driver.ui.massCodReports.MassCodReportsActivity
 import com.logestechs.driver.ui.newFulfilmentOrders.NewFulfilmentOrdersActivity
 import com.logestechs.driver.ui.pickedFulfilmentOrdersActivity.PickedFulfilmentOrdersActivity
 import com.logestechs.driver.ui.profile.ProfileActivity
+import com.logestechs.driver.ui.sortOnShelveActivity.SortOnShelveActivity
 import com.logestechs.driver.ui.trackInventoryItemsActivity.TrackInventoryItemActivity
 import com.logestechs.driver.utils.*
 import com.yariksoffice.lingver.Lingver
@@ -72,6 +75,8 @@ class FulfilmentSorterDashboardActivity : LogesTechsActivity(), View.OnClickList
         binding.dashEntryNewFulfilmentOrders.root.setOnClickListener(this)
         binding.dashEntryPickedFulfilmentOrders.root.setOnClickListener(this)
         binding.dashEntryTrackInventoryItems.root.setOnClickListener(this)
+        binding.buttonShowDashboardSubEntries.setOnClickListener(this)
+        binding.dashSubEntrySortOnShelves.root.setOnClickListener(this)
     }
 
 
@@ -145,6 +150,24 @@ class FulfilmentSorterDashboardActivity : LogesTechsActivity(), View.OnClickList
 
             R.id.dash_entry_track_inventory_items -> {
                 val mIntent = Intent(this, TrackInventoryItemActivity::class.java)
+                startActivity(mIntent)
+            }
+
+            R.id.button_show_dashboard_sub_entries -> {
+                if (binding.containerDashboardSubEntries.visibility == View.VISIBLE) {
+                    binding.containerDashboardSubEntries.visibility = View.GONE
+                } else {
+                    binding.containerDashboardSubEntries.visibility = View.VISIBLE
+                    binding.scrollView.postDelayed(Runnable {
+                        binding.scrollView.fullScroll(
+                            ScrollView.FOCUS_DOWN
+                        )
+                    }, 250)
+                }
+            }
+
+            R.id.dash_sub_entry_sort_on_shelves -> {
+                val mIntent = Intent(this, SortOnShelveActivity::class.java)
                 startActivity(mIntent)
             }
         }
