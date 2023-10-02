@@ -501,4 +501,16 @@ interface LogesTechsDriverApi {
     suspend fun sendDriverRoute(
         @Body body: DriverRouteRequestBody?
     ): Response<ResponseBody?>?
+
+    @GET("api/driver/checkins")
+    suspend fun getCheckIns(
+        @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
+        @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
+    ): Response<ArrayList<CheckIns>?>?
+
+    @GET("api/driver/hubs/scan")
+    suspend fun scanHub(@Query("barcode") barcode: String): Response<Hub>?
+
+    @POST("api/driver/checkin")
+    suspend fun checkIn(@Body checkIn: CheckIns): Response<ResponseBody>
 }

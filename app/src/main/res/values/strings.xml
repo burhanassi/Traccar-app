@@ -119,6 +119,7 @@
     <string name="title_returned_bundles">Returned Bundles</string>
     <string name="title_brought_packages">Brought Packages</string>
     <string name="title_driver_route">Driver Route</string>
+    <string name="title_check_ins">Check-ins</string>
     <string name="button_deliver_to_sender">Deliver To Sender</string>
     <string name="button_deliver">Deliver</string>
     <string name="title_cod_sum">COD Sum</string>
@@ -165,6 +166,7 @@
     <string name="please_scan_shipping_plan_barcode">Please Scan Shipping Plan Barcode</string>
     <string name="please_scan_items">Please Scan Items</string>
     <string name="please_scan_item_barcode">Please Scan Item Barcode</string>
+    <string name="please_scan_warehouse_barcode">Please Scan Warehouse Barcode</string>
     <string name="please_insert_barcode">Please insert barcode</string>
     <string name="button_insert">Insert</string>
     <string name="count">"Count: "</string>

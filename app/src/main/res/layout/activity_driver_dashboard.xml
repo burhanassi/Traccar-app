@@ -553,6 +553,7 @@
                             android:layout_marginEnd="10dp"
                             app:iconSrc="@{@drawable/ic_returned_package_gray}"
                             app:titleText="@{@string/title_brought_packages}" />
+
                         <include
                             android:id="@+id/dash_sub_entry_driver_route"
                             layout="@layout/item_dashboard_sub_entry"
@@ -561,6 +562,15 @@
                             android:layout_marginEnd="10dp"
                             app:iconSrc="@{@drawable/ic_driver_route}"
                             app:titleText="@{@string/title_driver_route}" />
+
+                        <include
+                            android:id="@+id/dash_sub_entry_check_ins"
+                            layout="@layout/item_dashboard_sub_entry"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="10dp"
+                            app:iconSrc="@{@drawable/ic_check_in}"
+                            app:titleText="@{@string/title_check_ins}" />
                     </LinearLayout>
                 </HorizontalScrollView>
 

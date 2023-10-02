@@ -120,6 +120,7 @@
     <string name="title_returned_bundles">الحزم المرجعة</string>
     <string name="title_brought_packages">طرود الإحضار</string>
     <string name="title_driver_route">المسار</string>
+    <string name="title_check_ins">تسجيلات الوصول</string>
     <string name="button_deliver_to_sender">تسليم إلى المرسل</string>
     <string name="button_deliver">توصيل</string>
     <string name="title_cod_sum">مجموع التحصيلات</string>
@@ -165,6 +166,7 @@
     <string name="please_scan_shipping_plan_barcode">الرجاء مسح باركود طلب التصنيف</string>
     <string name="please_scan_items">الرجاء مسح العناصر</string>
     <string name="please_scan_item_barcode">الرجاء مسح باركود العنصر</string>
+    <string name="please_scan_warehouse_barcode">الرجاء مسح باركود المستودع</string>
     <string name="please_insert_barcode">الرجاء إدخال الباركود</string>
     <string name="button_insert">إدخال</string>
     <string name="count">"العدد: "</string>

@@ -32,6 +32,7 @@ import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.databinding.ActivityDriverDashboardBinding
 import com.logestechs.driver.ui.barcodeScanner.BarcodeScannerActivity
 import com.logestechs.driver.ui.broughtPackages.BroughtPackagesActivity
+import com.logestechs.driver.ui.checkInActivity.CheckInActivity
 import com.logestechs.driver.ui.driverDraftPickupsByStatusViewPager.DriverDraftPickupsByStatusViewPagerActivity
 import com.logestechs.driver.ui.driverPackagesByStatusViewPager.DriverPackagesByStatusViewPagerActivity
 import com.logestechs.driver.ui.driverRouteActivity.DriverRouteActivity
@@ -128,6 +129,7 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
         binding.dashSubEntryMassCodReports.root.setOnClickListener(this)
         binding.dashSubEntryDraftPickups.root.setOnClickListener(this)
         binding.dashSubEntryDriverRoute.root.setOnClickListener(this)
+        binding.dashSubEntryCheckIns.root.setOnClickListener(this)
         binding.containerServiceTypeView.setOnClickListener(this)
         binding.dashEntryWarehousePackages.root.setOnClickListener(this)
     }
@@ -308,6 +310,11 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
 
             R.id.dash_sub_entry_driver_route -> {
                 val mIntent = Intent(this, DriverRouteActivity::class.java)
+                startActivity(mIntent)
+            }
+
+            R.id.dash_sub_entry_check_ins -> {
+                val mIntent = Intent(this, CheckInActivity::class.java)
                 startActivity(mIntent)
             }
 
