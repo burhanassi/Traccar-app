@@ -7,7 +7,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class GetPackageOnShelfResponse(
-    @SerializedName("package")
+    @SerializedName("dataObject")
     var packages: Package? = null,
     var responseCode: Int? = null,
     var data: String? = null
