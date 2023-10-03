@@ -87,12 +87,12 @@ class InCarPackageCellAdapter(
         fun bind(pkg: Package?) {
             binding.itemSenderName.textItem.text = pkg?.getFullSenderName()
             binding.itemSenderAddress.textItem.text = pkg?.originAddress?.toStringAddress()
-            if (mAdapter.companyConfigurations?.isPricingPerServiceTypeEnabled!!) {
+//            if (mAdapter.companyConfigurations?.isPricingPerServiceTypeEnabled!!) {
                 if (pkg?.serviceTypeName != null && pkg?.serviceTypeName!!.isNotEmpty()) {
                     binding.containerServiceType.visibility = View.VISIBLE
                     binding.serviceType.text = pkg?.serviceTypeName
                 }
-            }
+//            }
             binding.itemReceiverName.textItem.text = pkg?.getFullReceiverName()
             binding.itemReceiverAddress.textItem.text = pkg?.destinationAddress?.toStringAddress()
 

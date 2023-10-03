@@ -42,7 +42,9 @@ import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.data.model.PackageItemsToDeliver
 import com.logestechs.driver.data.model.Status
 import com.logestechs.driver.databinding.ActivityPackageDeliveryBinding
+import com.logestechs.driver.ui.serverSelectionActivity.ServerSelectionActivity
 import com.logestechs.driver.ui.singleScanBarcodeScanner.SingleScanBarcodeScanner
+import com.logestechs.driver.ui.verifyPackageDelivery.VerifyPackageDeliveryActivity
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.DeliveryType
 import com.logestechs.driver.utils.Helper
@@ -645,7 +647,13 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     )
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            callDeliverPackage(response.body()?.fileUrl)
+                            val mIntent = Intent(
+                                super.getContext(),
+                                VerifyPackageDeliveryActivity::class.java
+                            )
+                            startActivity(mIntent)
+                            finish()
+//                            callDeliverPackage(response.body()?.fileUrl)
                         }
                     } else {
                         try {
