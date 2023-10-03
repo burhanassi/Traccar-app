@@ -290,6 +290,7 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
                             selectedScanMode = ShelfScanMode.PACKAGE_INTO_SHELF
                             handleSelectedScanMode()
                             shelfId = response.body()!!.id
+//                            binding.titleShelf.text = response.body()!!.destinationCity + " " + getString(R.string.title_shelf)
                         }
                     } else {
                         try {

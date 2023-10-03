@@ -46,6 +46,7 @@
     <string name="button_insert_barcode">إدخال باركود</string>
     <string name="out_of_delivery">الى الوجهة النهائية</string>
     <string name="title_scanned_packages">الطرود المقروءة</string>
+    <string name="title_shelf">Shelf</string>
     <string name="button_done">تم</string>
     <string name="error_phone_permission">الرجاء اعطاء صلاحية الإتصال</string>
     <string name="button_scan_packages_barcodes">مسح كودات الطرود</string>
