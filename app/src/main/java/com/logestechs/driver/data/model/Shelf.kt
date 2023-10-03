@@ -11,5 +11,6 @@ data class Shelf(
     var hubId: Long? = null,
     var barcode: String? = null,
     var barcodeImage: String? = null,
-    var destinationCity: String? = null
+    var destinationCity: String? = null,
+    var cities: List<City>? = null
 ) : Parcelable

@@ -511,5 +511,5 @@ interface LogesTechsDriverApi {
     suspend fun scanPackagesOnShelf(
         @Path("shelfId") shelfId: Long?,
         @Query("barcode") barcode: String?
-    ): Response<ResponseBody>
+    ): Response<GetPackageOnShelfResponse?>?
 }

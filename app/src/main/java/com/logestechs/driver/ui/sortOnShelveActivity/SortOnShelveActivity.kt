@@ -351,7 +351,7 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
-                    if (response.isSuccessful && response.body() != null) {
+                    if (response?.isSuccessful!! && response?.body()!! != null) {
                         withContext(Dispatchers.Main) {
                             selectedScanMode = ShelfScanMode.PACKAGE_INTO_SHELF
                             handleSelectedScanMode()
