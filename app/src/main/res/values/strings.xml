@@ -265,4 +265,5 @@
     <string name="returned_date_label">Returned Date: </string>
     <string name="current_location_label">Current Location: </string>
     <string name="service_type">Service Type</string>
+    <string name="title_manually">Manually</string>
 </resources>

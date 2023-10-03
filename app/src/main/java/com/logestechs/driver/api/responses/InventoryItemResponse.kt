@@ -3,15 +3,17 @@ package com.logestechs.driver.api.responses
 import android.os.Parcelable
 import com.logestechs.driver.data.model.Device
 import com.logestechs.driver.data.model.User
+import com.logestechs.driver.utils.AppLanguages
 import com.logestechs.driver.utils.FulfillmentItemStatus
 import com.logestechs.driver.utils.ProductItemRejectReasonKey
 import kotlinx.android.parcel.Parcelize
+import org.intellij.lang.annotations.Language
 
 @Parcelize
 data class InventoryItemResponse(
     var barcode: String?,
     var expiryDate: String?,
-    var SKU: String?,
+    var sku: String?,
     var customerName: String?,
     var warehouseName: String?,
     var productName: String?,
@@ -30,4 +32,11 @@ data class InventoryItemResponse(
     var status: FulfillmentItemStatus,
     var packageBarcode: String?,
     var toteBarcode: String?
-) : Parcelable
+) : Parcelable {
+    fun getStatusText(selectedLanguage: AppLanguages): String {
+        return when (selectedLanguage) {
+            AppLanguages.ENGLISH -> status.english
+            AppLanguages.ARABIC -> status.arabic
+        }
+    }
+}

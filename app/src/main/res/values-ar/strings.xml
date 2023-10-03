@@ -262,4 +262,5 @@
     <string name="returned_date_label">تاريخ الارجاع: </string>
     <string name="current_location_label">الموقع الحالي: </string>
     <string name="service_type">نوع الخدمة</string>
+    <string name="title_manually">بواسطة المستخدم</string>
 </resources>
