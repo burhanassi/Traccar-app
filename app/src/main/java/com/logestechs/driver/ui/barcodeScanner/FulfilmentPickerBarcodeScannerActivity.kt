@@ -461,7 +461,8 @@ class FulfilmentPickerBarcodeScannerActivity :
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     var response = ApiAdapter.apiClient.packFulfilmentOrderByItem(
-                        fulfilmentOrder?.id!!
+                        fulfilmentOrder?.id!!,
+                        barcode
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
