@@ -114,6 +114,8 @@
     <string name="error_enter_signature">يرجى التوقيع لاثبات تسليم الطرد</string>
     <string name="button_logout">تسجيل الخروج</string>
     <string name="error_camera_and_storage_permissions">الرجاء تزويد التطبيق بصلاحية الوصول الى الكاميرا و التخزين</string>
+    <string name="error_package_not_verified">الرجاء التحقق من الطرد٫ حاول مرة اخرى</string>
+    <string name="error_wrong_package">طرد خاطئ</string>
     <string name="title_delivered_packages">الطرود المسلمة</string>
     <string name="error_no_packages_for_delivery">لا يوجد طرود للتسليم</string>
     <string name="title_returned_packages">الرواجع</string>
@@ -165,6 +167,7 @@
     <string name="please_scan_shipping_plan_barcode">الرجاء مسح باركود طلب التصنيف</string>
     <string name="please_scan_items">الرجاء مسح العناصر</string>
     <string name="please_scan_item_barcode">الرجاء مسح باركود العنصر</string>
+    <string name="please_scan_package_barcode">الرجاء إثبات التسليم من خلال مسح باركود الطرد</string>
     <string name="please_insert_barcode">الرجاء إدخال الباركود</string>
     <string name="button_insert">إدخال</string>
     <string name="count">"العدد: "</string>

@@ -113,6 +113,8 @@
     <string name="error_enter_signature">Please insert a signature</string>
     <string name="button_logout">Logout</string>
     <string name="error_camera_and_storage_permissions">The app needs camera and storage permissions</string>
+    <string name="error_package_not_verified">Needs to verify the package, try again!</string>
+    <string name="error_wrong_package">Wrong Package</string>
     <string name="title_delivered_packages">Delivered Packages</string>
     <string name="error_no_packages_for_delivery">There are no packages for delivery</string>
     <string name="title_returned_packages">Returned Packages</string>
@@ -165,6 +167,7 @@
     <string name="please_scan_shipping_plan_barcode">Please Scan Shipping Plan Barcode</string>
     <string name="please_scan_items">Please Scan Items</string>
     <string name="please_scan_item_barcode">Please Scan Item Barcode</string>
+    <string name="please_scan_package_barcode">Please prove delivery by scanning package barcode</string>
     <string name="please_insert_barcode">Please insert barcode</string>
     <string name="button_insert">Insert</string>
     <string name="count">"Count: "</string>

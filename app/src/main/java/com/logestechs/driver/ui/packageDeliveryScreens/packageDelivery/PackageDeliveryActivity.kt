@@ -42,7 +42,6 @@ import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.data.model.PackageItemsToDeliver
 import com.logestechs.driver.data.model.Status
 import com.logestechs.driver.databinding.ActivityPackageDeliveryBinding
-import com.logestechs.driver.ui.serverSelectionActivity.ServerSelectionActivity
 import com.logestechs.driver.ui.singleScanBarcodeScanner.SingleScanBarcodeScanner
 import com.logestechs.driver.ui.verifyPackageDelivery.VerifyPackageDeliveryActivity
 import com.logestechs.driver.utils.AppConstants
@@ -547,6 +546,20 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 }
             }
 
+            AppConstants.REQUEST_VERIFY_PACKAGE -> {
+                if (resultCode == RESULT_OK) {
+                    val verificationStatus = data?.getBooleanExtra("verificationStatus", false)
+                    if (verificationStatus == true) {
+                        handlePackageDelivery()
+                    } else {
+                        Helper.showErrorMessage(
+                            super.getContext(),
+                            getString(R.string.error_camera_and_storage_permissions)
+                        )
+                    }
+                }
+            }
+
             else -> {}
         }
     }
@@ -647,13 +660,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     )
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            val mIntent = Intent(
-                                super.getContext(),
-                                VerifyPackageDeliveryActivity::class.java
-                            )
-                            startActivity(mIntent)
-                            finish()
-//                            callDeliverPackage(response.body()?.fileUrl)
+                            callDeliverPackage(response.body()?.fileUrl)
                         }
                     } else {
                         try {
@@ -1134,7 +1141,17 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             R.id.button_deliver_package -> {
                 if (validateInput()) {
                     if (!needsPinVerification()) {
-                        handlePackageDelivery()
+                        if (companyConfigurations?.isDriverProveDeliveryByScanBarcode!!) {
+                            val mIntent = Intent(
+                                super.getContext(),
+                                VerifyPackageDeliveryActivity::class.java
+                            )
+                            mIntent.putExtra("barcode", pkg?.barcode)
+                            mIntent.putExtra("invoice", pkg?.invoiceNumber)
+                            startActivityForResult(mIntent, AppConstants.REQUEST_VERIFY_PACKAGE)
+                        } else {
+                            handlePackageDelivery()
+                        }
                     }
                 }
             }

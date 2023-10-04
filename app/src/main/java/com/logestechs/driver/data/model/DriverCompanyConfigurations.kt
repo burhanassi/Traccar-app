@@ -30,5 +30,6 @@ data class DriverCompanyConfigurations(
     var isSupportDeliveringPackageItemsPartially: Boolean? = null,
     var isSupportReturnedBundles: Boolean? = null,
     var isEnableDeliveryVerificationPinCodeForReturnedBundles: Boolean? = null,
-    var isPricingPerServiceTypeEnabled: Boolean? = null
+    var isPricingPerServiceTypeEnabled: Boolean? = null,
+    var isDriverProveDeliveryByScanBarcode: Boolean? = null
 )
