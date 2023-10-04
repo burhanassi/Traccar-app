@@ -10,6 +10,7 @@ import com.logestechs.driver.data.model.ProductItem
 import com.logestechs.driver.databinding.ItemFulfilmentOrderItemCellBinding
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.item_fulfilment_order_item_cell.view.item_card
 
 
 class FulfilmentOrderItemCellAdapter(
@@ -20,6 +21,8 @@ class FulfilmentOrderItemCellAdapter(
 
     private var companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
+
+    private var highlightedPosition: Int? = null
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
@@ -39,6 +42,13 @@ class FulfilmentOrderItemCellAdapter(
         position: Int
     ) {
         val productItem: ProductItem? = productItemsList[position]
+
+        if (position == highlightedPosition) {
+            FulfilmentOrderItemCellViewHolder.itemView.item_card.setBackgroundResource(R.drawable.highlighted_item_background)
+        } else {
+            FulfilmentOrderItemCellViewHolder.itemView.item_card.setBackgroundResource(0)
+        }
+
         FulfilmentOrderItemCellViewHolder.setIsRecyclable(false);
         FulfilmentOrderItemCellViewHolder.bind(productItem)
     }
@@ -52,11 +62,24 @@ class FulfilmentOrderItemCellAdapter(
         notifyItemRemoved(position)
     }
 
+    fun highlightItem(position: Int) {
+        if (position >= 0 && position < productItemsList.size) {
+            val highlightedItem = productItemsList[position]
+            productItemsList.removeAt(position)
+            productItemsList.add(0, highlightedItem)
+            highlightedPosition = 0
+            notifyDataSetChanged()
+        }
+    }
+
     fun scanItem(sku: String?): Int {
         for (index in productItemsList.indices) {
             if (productItemsList[index]?.sku == sku) {
                 return if (productItemsList[index]?.quantity != null && productItemsList[index]!!.quantity!! > 0) {
                     productItemsList[index]?.quantity = productItemsList[index]!!.quantity?.minus(1)
+                    if (productItemsList[index]?.quantity == 0) {
+                        removeItem(index)
+                    }
                     notifyItemChanged(index)
                     index
                 } else {
@@ -68,19 +91,14 @@ class FulfilmentOrderItemCellAdapter(
         return 0
     }
 
-    fun getCount(sku: String?): Int {
+    fun getCount(): Int {
+        var sum = 0
         for (index in productItemsList.indices) {
-            if (productItemsList[index]?.sku == sku) {
-                if (productItemsList[index]?.quantity != null && productItemsList[index]!!.quantity!! != 0) {
-                    return productItemsList[index]?.quantity!!
-                } else {
-                    removeItem(index)
-                    0
-                }
-            }
+            sum += productItemsList[index]?.quantity!!
         }
-        return 0
+        return sum
     }
+
 
     class FulfilmentOrderItemCellViewHolder(
         private var binding: ItemFulfilmentOrderItemCellBinding,

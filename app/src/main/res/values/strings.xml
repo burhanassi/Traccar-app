@@ -157,6 +157,7 @@
     <string name="error_package_is_returned">Caution, this package is returned!</string>
     <string name="error_package_is_failed">Caution, this package is failed!</string>
     <string name="cancel_pickup">Cancel Pickup</string>
+    <string name="pack_without_scan">Pack without scan</string>
     <string name="please_scan_location_barcode">Please Scan Location Barcode</string>
     <string name="please_scan_damaged_location_barcode">Please Scan Damaged Location Barcode</string>
     <string name="please_scan_bin_barcode">Please Scan Bin Barcode</string>

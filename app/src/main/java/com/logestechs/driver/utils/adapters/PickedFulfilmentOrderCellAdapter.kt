@@ -2,8 +2,10 @@ package com.logestechs.driver.utils.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.data.model.FulfilmentOrder
@@ -93,6 +95,23 @@ class PickedFulfilmentOrderCellAdapter(
                 }
             }
 
+            binding.buttonContextMenu.setOnClickListener {
+                val popup = PopupMenu(mAdapter.context, binding.buttonContextMenu)
+                popup.inflate(R.menu.pack_without_scan)
+                popup.setOnMenuItemClickListener { item: MenuItem? ->
+                    if (mAdapter.context != null) {
+                        when (item?.itemId) {
+                            R.id.action_pack_without_scan -> {
+                                mAdapter.listener?.onDirectPackFulfilmentOrder(
+                                    adapterPosition
+                                )
+                            }
+                        }
+                    }
+                    true
+                }
+                popup.show()
+            }
             binding.itemOrderBarcode.buttonCopy.setOnClickListener {
                 Helper.copyTextToClipboard(mAdapter.context, fulfilmentOrder?.barcode)
             }

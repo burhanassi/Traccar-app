@@ -475,11 +475,17 @@ class FulfilmentPickerBarcodeScannerActivity :
                                     body?.sku
                                 )
                             binding.rvScannedBarcodes.smoothScrollToPosition(scrollPosition)
+                            (binding.rvScannedBarcodes.adapter as FulfilmentOrderItemCellAdapter).highlightItem(
+                                scrollPosition
+                            )
                             if ((binding.rvScannedBarcodes.adapter as FulfilmentOrderItemCellAdapter)
-                                    .getCount(body?.sku) == 0
+                                    .getCount() == 0
                             ) {
                                 callPackFulfilmentOrder()
                             }
+                            Helper.showSuccessMessage(
+                                super.getContext(), getString(R.string.success_operation_completed)
+                            )
                         }
                     } else {
                         scannedItemsHashMap.remove(barcode)

@@ -5,4 +5,5 @@ import com.logestechs.driver.data.model.FulfilmentOrder
 interface PickedFulfilmentOrderCardListener {
     fun onPackFulfilmentOrder(fulfilmentOrder: FulfilmentOrder?)
     fun onContinuePickingClicked(fulfilmentOrder: FulfilmentOrder?)
+    fun onDirectPackFulfilmentOrder(index: Int)
 }

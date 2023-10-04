@@ -18,9 +18,9 @@
             bind:cardCornerRadius="10dp">
 
             <LinearLayout
+                android:id="@+id/item_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:animateLayoutChanges="true"
                 android:background="@drawable/background_oval_white"
                 android:elevation="2dp"
