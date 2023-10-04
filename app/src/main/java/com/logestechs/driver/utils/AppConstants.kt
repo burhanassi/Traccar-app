@@ -264,3 +264,20 @@ enum class VerificationStatus {
 enum class FulfillmentOrderPackagingType {
     BY_CUSTOMER, BY_WAREHOUSE
 }
+
+enum class ProductItemRejectReasonKey(val englishLabel: String, val arabicLabel: String) {
+    DAMAGED("Damaged", "تالف"),
+    WRONG_COLOR("Wrong color", "لون غير مطابق"),
+    WRONG_ITEM("Wrong Item", "عنصر غير مطابق"),
+    WRONG_SKU("Wrong SKU", "SKU غير مطابق"),
+}
+
+enum class FulfillmentItemStatus(val english: String, val arabic: String) {
+    SORTED("Sorted", "تم تصنيفها"),
+    REJECTED("Rejected", "مرفوضة"),
+    UNSORTED("Unsorted", "غير مصنفة"),
+    PICKED("Picked", "محملة"),
+    PACKED("Packed", "مغلفة"),
+    DAMAGED("Damaged", "تالف"),
+    RETURNED("Returned", "مرجعة")
+}
