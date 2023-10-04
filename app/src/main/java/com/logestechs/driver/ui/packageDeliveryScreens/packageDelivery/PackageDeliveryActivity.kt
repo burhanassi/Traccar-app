@@ -43,6 +43,7 @@ import com.logestechs.driver.data.model.PackageItemsToDeliver
 import com.logestechs.driver.data.model.Status
 import com.logestechs.driver.databinding.ActivityPackageDeliveryBinding
 import com.logestechs.driver.ui.singleScanBarcodeScanner.SingleScanBarcodeScanner
+import com.logestechs.driver.ui.verifyPackageDelivery.VerifyPackageDeliveryActivity
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.DeliveryType
 import com.logestechs.driver.utils.Helper
@@ -542,6 +543,20 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                             packageId = pkg?.id
                         )
                     )
+                }
+            }
+
+            AppConstants.REQUEST_VERIFY_PACKAGE -> {
+                if (resultCode == RESULT_OK) {
+                    val verificationStatus = data?.getBooleanExtra("verificationStatus", false)
+                    if (verificationStatus == true) {
+                        handlePackageDelivery()
+                    } else {
+                        Helper.showErrorMessage(
+                            super.getContext(),
+                            getString(R.string.error_camera_and_storage_permissions)
+                        )
+                    }
                 }
             }
 
@@ -1126,7 +1141,17 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             R.id.button_deliver_package -> {
                 if (validateInput()) {
                     if (!needsPinVerification()) {
-                        handlePackageDelivery()
+                        if (companyConfigurations?.isDriverProveDeliveryByScanBarcode!!) {
+                            val mIntent = Intent(
+                                super.getContext(),
+                                VerifyPackageDeliveryActivity::class.java
+                            )
+                            mIntent.putExtra("barcode", pkg?.barcode)
+                            mIntent.putExtra("invoice", pkg?.invoiceNumber)
+                            startActivityForResult(mIntent, AppConstants.REQUEST_VERIFY_PACKAGE)
+                        } else {
+                            handlePackageDelivery()
+                        }
                     }
                 }
             }

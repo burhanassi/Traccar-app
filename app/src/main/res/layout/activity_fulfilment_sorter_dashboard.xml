@@ -148,6 +148,26 @@
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginEnd="24dp"
+                    android:clipChildren="false">
+
+                    <include
+                        android:id="@+id/dash_entry_track_inventory_items"
+                        layout="@layout/item_dashboard_entry"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="14dp"
+                        android:layout_weight="1"
+                        app:iconSrc="@{@drawable/ic_track_inventory_items}"
+                        app:isCountHidden="@{true}"
+                        app:titleText="@{@string/dashboard_track_inventory_items}" />
+
+                </LinearLayout>
 
                 <View
                     android:layout_width="wrap_content"

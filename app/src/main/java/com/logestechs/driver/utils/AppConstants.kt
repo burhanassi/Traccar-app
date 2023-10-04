@@ -29,6 +29,7 @@ class AppConstants {
         const val REQUEST_CAMERA_PERMISSION = 5003
         const val REQUEST_LOCATION_PERMISSION = 5004
         const val REQUEST_SCAN_BUNDLE = 5005
+        const val REQUEST_VERIFY_PACKAGE = 5006
 
         //permission codes
         const val PERMISSIONS_REQUEST_PHONE_CALL = 1
