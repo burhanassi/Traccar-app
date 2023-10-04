@@ -83,13 +83,6 @@ class PickedFulfilmentOrderCellAdapter(
             binding.textItemsCount.text = fulfilmentOrder?.numberOfItems?.toString()
             binding.textSkuCount.text = fulfilmentOrder?.items?.size.toString()
 
-//            binding.buttonPack.setOnClickListener {
-//                if(isPicked){
-//                    mAdapter.listener?.onPackFulfilmentOrder(fulfilmentOrder)
-//                }else{
-//                    mAdapter.listener?.onContinuePickingClicked(fulfilmentOrder)
-//                }
-//            }
             binding.buttonPack.setOnClickListener {
                 if (mAdapter.listener != null) {
                     if (isPicked) {

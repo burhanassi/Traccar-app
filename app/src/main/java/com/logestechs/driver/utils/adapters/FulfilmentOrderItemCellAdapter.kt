@@ -68,6 +68,20 @@ class FulfilmentOrderItemCellAdapter(
         return 0
     }
 
+    fun getCount(sku: String?): Int {
+        for (index in productItemsList.indices) {
+            if (productItemsList[index]?.sku == sku) {
+                if (productItemsList[index]?.quantity != null && productItemsList[index]!!.quantity!! != 0) {
+                    return productItemsList[index]?.quantity!!
+                } else {
+                    removeItem(index)
+                    0
+                }
+            }
+        }
+        return 0
+    }
+
     class FulfilmentOrderItemCellViewHolder(
         private var binding: ItemFulfilmentOrderItemCellBinding,
         private var parent: ViewGroup,

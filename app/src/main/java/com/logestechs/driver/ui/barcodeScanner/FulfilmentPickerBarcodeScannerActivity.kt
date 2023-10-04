@@ -23,10 +23,12 @@ import com.logestechs.driver.api.responses.SortItemIntoToteResponse
 import com.logestechs.driver.data.model.*
 import com.logestechs.driver.databinding.ActivityFulfilmentPickerBarcodeScannerBinding
 import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.FulfilmentOrderStatus
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.adapters.FulfilmentOrderItemCellAdapter
+import com.logestechs.driver.utils.adapters.PickedFulfilmentOrderCellAdapter
 import com.logestechs.driver.utils.dialogs.InsertBarcodeDialog
 import com.logestechs.driver.utils.interfaces.InsertBarcodeDialogListener
 import kotlinx.coroutines.Dispatchers
@@ -101,6 +103,7 @@ class FulfilmentPickerBarcodeScannerActivity :
             FulfilmentPickerScanMode.ITEM -> {
                 showScannedItemsContainer()
                 binding.textTitle.text = getString(R.string.please_scan_items)
+                binding.containerDoneButton.visibility = View.GONE
             }
 
             null -> return
@@ -383,17 +386,17 @@ class FulfilmentPickerBarcodeScannerActivity :
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     var response: Response<SortItemIntoToteResponse>? = null
-                    if(fulfilmentOrder?.status == "PARTIALLY_PICKED"){
-                        response = ApiAdapter.apiClient.continuePicking(
+                    response = if (fulfilmentOrder?.status == "PARTIALLY_PICKED") {
+                        ApiAdapter.apiClient.continuePicking(
                             selectedFulfilmentOrder?.id,
                             BarcodeRequestBody(barcode)
                         )
-                    }else{
-                        response = ApiAdapter.apiClient.scanItemIntoTote(
-                        scannedTote?.id,
-                        selectedFulfilmentOrder?.id,
-                        BarcodeRequestBody(barcode)
-                    )
+                    } else {
+                        ApiAdapter.apiClient.scanItemIntoTote(
+                            scannedTote?.id,
+                            selectedFulfilmentOrder?.id,
+                            BarcodeRequestBody(barcode)
+                        )
                     }
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
@@ -458,8 +461,7 @@ class FulfilmentPickerBarcodeScannerActivity :
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     var response = ApiAdapter.apiClient.packFulfilmentOrderByItem(
-                        fulfilmentOrder?.id!!,
-                        barcode
+                        fulfilmentOrder?.id!!
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
@@ -472,6 +474,11 @@ class FulfilmentPickerBarcodeScannerActivity :
                                     body?.sku
                                 )
                             binding.rvScannedBarcodes.smoothScrollToPosition(scrollPosition)
+                            if ((binding.rvScannedBarcodes.adapter as FulfilmentOrderItemCellAdapter)
+                                    .getCount(body?.sku) == 0
+                            ) {
+                                callPackFulfilmentOrder()
+                            }
                         }
                     } else {
                         scannedItemsHashMap.remove(barcode)
@@ -513,6 +520,64 @@ class FulfilmentPickerBarcodeScannerActivity :
                     super.getContext(), getString(R.string.error_check_internet_connection)
                 )
             }
+        }
+    }
+
+    private fun callPackFulfilmentOrder() {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response =
+                        ApiAdapter.apiClient.packFulfilmentOrder(fulfilmentOrder?.id)
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            Helper.showSuccessMessage(
+                                super.getContext(), getString(R.string.success_operation_completed)
+                            )
+//                            currentPageIndex = 1
+//                            (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()
+//                            callGetFulfilmentOrders(FulfilmentOrderStatus.PICKED.name)
+                            onBackPressed()
+                        }
+
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(), jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(), getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
         }
     }
 

@@ -434,8 +434,7 @@ interface LogesTechsDriverApi {
 
     @GET("api/handler/orders/{orderId}/pick-item")
     suspend fun packFulfilmentOrderByItem(
-        @Path("orderId") orderId: Long?,
-        @Query("barcode") barcode: String?
+        @Path("orderId") orderId: Long?
     ): Response<PackFulfilmentOrderByItemResponse?>?
 
     @PUT("api/driver/packages/{packageId}/delivery-attempt")
