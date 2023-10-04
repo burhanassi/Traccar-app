@@ -22,10 +22,12 @@ import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.responses.InventoryItemResponse
 import com.logestechs.driver.databinding.ActivityTrackInventoryItemBinding
 import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.AppLanguages
 import com.logestechs.driver.utils.DateFormats
 import com.logestechs.driver.utils.FulfillmentItemStatus
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsActivity
+import com.yariksoffice.lingver.Lingver
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -33,6 +35,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Suppress("DEPRECATION")
 class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
@@ -194,11 +198,14 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
         binding.containerItemDetails.visibility = View.VISIBLE
         binding.itemBarcode.textItem.text = itemDetails.barcode
         binding.itemName.textItem.text = itemDetails.productName
-        binding.itemSku.textItem.text = itemDetails.SKU
+        binding.itemSku.textItem.text = itemDetails.sku
         binding.warehouseName.textItem.text = itemDetails.warehouseName
         binding.customerName.textItem.text = itemDetails.customerName
-        binding.itemStatus.text = itemDetails.status.english
-
+        if (Lingver.getInstance().getLocale().toString() == AppLanguages.ARABIC.value) {
+            binding.itemStatus.text = itemDetails.getStatusText(AppLanguages.ARABIC)
+        } else {
+            binding.itemStatus.text = itemDetails.getStatusText(AppLanguages.ENGLISH)
+        }
         gradientDrawable.cornerRadius = resources.getDimension(R.dimen.corner_radius)
         when (itemDetails.status) {
             FulfillmentItemStatus.UNSORTED -> {
@@ -223,7 +230,8 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
                 binding.returnedCard.visibility = View.GONE
                 gradientDrawable.setColor(resources.getColor(R.color.red))
                 binding.containerItemStatus.background = gradientDrawable
-                binding.itemAddedMethodRejected.text = itemDetails.shippingPlanBarcode ?: "Manually"
+                binding.itemAddedMethodRejected.text =
+                    itemDetails.shippingPlanBarcode ?: getString(R.string.title_manually)
                 binding.itemRejectedDateRejected.text = ""
                 binding.itemLocationBarcodeRejected.text = itemDetails.locationBarcode ?: "-------"
                 binding.itemRejectedReasonRejected.text = itemDetails.rejectReason ?: "-------"
@@ -242,11 +250,15 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
                 binding.returnedCard.visibility = View.GONE
                 gradientDrawable.setColor(resources.getColor(R.color.green))
                 binding.containerItemStatus.background = gradientDrawable
-                binding.itemAddedMethodSorted.text = itemDetails.shippingPlanBarcode ?: "Manually"
-                binding.itemReceivedDateSorted.text = Helper.formatServerDateLocalized(
-                    itemDetails.createdDate,
-                    DateFormats.DEFAULT_FORMAT
-                )
+                binding.itemAddedMethodSorted.text =
+                    itemDetails.shippingPlanBarcode ?: getString(R.string.title_manually)
+                binding.itemReceivedDateSorted.text =
+                    SimpleDateFormat(DateFormats.DATE_FILTER_FORMAT.value, Locale.US)
+                        .format(
+                            SimpleDateFormat(DateFormats.SERVER_FORMAT.value, Locale.US).parse(
+                                itemDetails.createdDate
+                            )!!
+                        )
                 binding.itemLocationBarcodeSorted.text = itemDetails.locationBarcode ?: "-------"
                 binding.itemBinBarcodeSorted.text = itemDetails.binBarcode ?: "-------"
                 binding.itemExpiryDateSorted.text = Helper.formatServerDateLocalized(
@@ -264,7 +276,8 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
                 binding.returnedCard.visibility = View.GONE
                 gradientDrawable.setColor(resources.getColor(R.color.blue))
                 binding.containerItemStatus.background = gradientDrawable
-                binding.itemAddedMethodPicked.text = itemDetails.shippingPlanBarcode ?: "Manually"
+                binding.itemAddedMethodPicked.text =
+                    itemDetails.shippingPlanBarcode ?: getString(R.string.title_manually)
                 binding.itemReceivedDatePicked.text = Helper.formatServerDateLocalized(
                     itemDetails.createdDate,
                     DateFormats.DEFAULT_FORMAT
@@ -291,7 +304,8 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
                 binding.returnedCard.visibility = View.GONE
                 gradientDrawable.setColor(resources.getColor(R.color.purple))
                 binding.containerItemStatus.background = gradientDrawable
-                binding.itemAddedMethodPacked.text = itemDetails.shippingPlanBarcode ?: "Manually"
+                binding.itemAddedMethodPacked.text =
+                    itemDetails.shippingPlanBarcode ?: getString(R.string.title_manually)
                 binding.itemReceivedDatePacked.text = Helper.formatServerDateLocalized(
                     itemDetails.createdDate,
                     DateFormats.DEFAULT_FORMAT
@@ -321,7 +335,8 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
                 binding.returnedCard.visibility = View.VISIBLE
                 gradientDrawable.setColor(resources.getColor(R.color.orange))
                 binding.containerItemStatus.background = gradientDrawable
-                binding.itemAddedMethodReturned.text = itemDetails.shippingPlanBarcode ?: "Manually"
+                binding.itemAddedMethodReturned.text =
+                    itemDetails.shippingPlanBarcode ?: getString(R.string.title_manually)
                 binding.itemReceivedDateReturned.text = Helper.formatServerDateLocalized(
                     itemDetails.createdDate,
                     DateFormats.DEFAULT_FORMAT
