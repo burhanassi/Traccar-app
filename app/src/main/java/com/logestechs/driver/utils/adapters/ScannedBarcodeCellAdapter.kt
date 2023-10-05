@@ -121,7 +121,7 @@ class ScannedBarcodeViewHolder(
 
             binding.itemReceiverName.textItem.text = pkg.receiverName
             binding.itemBarcode.textItem.text = pkg.barcode
-            binding.itemReceiverCity.textItem.text = pkg.destinationCity
+            binding.itemReceiverCity.textItem.text = pkg.destinationAddress?.city
             if (pkg.invoiceNumber != null) {
                 binding.itemInvoiceNumber.textItem.text = pkg.invoiceNumber
                 binding.itemInvoiceNumber.root.visibility = View.VISIBLE

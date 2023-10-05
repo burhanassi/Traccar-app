@@ -4,6 +4,7 @@ package com.logestechs.driver.ui.sortOnShelveActivity
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.Camera
 import android.media.AudioManager
@@ -18,18 +19,23 @@ import android.view.SurfaceHolder
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
+import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ActivitySortOnShelveBinding
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.adapters.ScannedBarcodeCellAdapter
 import com.logestechs.driver.utils.dialogs.InsertBarcodeDialog
 import com.logestechs.driver.utils.interfaces.InsertBarcodeDialogListener
+import com.logestechs.driver.utils.interfaces.ScannedBarcodeCardListener
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -45,7 +51,7 @@ enum class ShelfScanMode {
 
 @Suppress("DEPRECATION")
 class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
-    InsertBarcodeDialogListener {
+    InsertBarcodeDialogListener, ScannedBarcodeCardListener {
     private lateinit var binding: ActivitySortOnShelveBinding
 
     private var cameraSource: CameraSource? = null
@@ -72,8 +78,27 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
         setContentView(binding.root)
 
         initListeners()
+        initRecycler()
         initUi()
         initialiseDetectorsAndSources()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == AppConstants.REQUEST_SCAN_BUNDLE && resultCode == RESULT_OK) {
+
+            val extras = data?.extras
+            if (extras != null) {
+                val pkg: Package? = extras.getParcelable(IntentExtrasKeys.BUNDLE.name)
+                (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).insertItem(
+                    pkg?.getPickupScannedItem()
+                )
+                Helper.showSuccessMessage(
+                    super.getContext(),
+                    getString(R.string.success_operation_completed)
+                )
+            }
+        }
     }
 
     private fun initListeners() {
@@ -84,6 +109,13 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
 
     private fun initUi() {
         handleSelectedScanMode()
+    }
+
+    private fun initRecycler() {
+        binding.rvScannedBarcodes.apply {
+            layoutManager = LinearLayoutManager(this@SortOnShelveActivity)
+            adapter = ScannedBarcodeCellAdapter(ArrayList(), this@SortOnShelveActivity)
+        }
     }
 
     private fun handleSelectedScanMode() {
@@ -290,7 +322,8 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
                             selectedScanMode = ShelfScanMode.PACKAGE_INTO_SHELF
                             handleSelectedScanMode()
                             shelfId = response.body()!!.id
-//                            binding.titleShelf.text = response.body()!!.destinationCity + " " + getString(R.string.title_shelf)
+                            binding.titleShelf.text =
+                                response.body()!!.destinationCity + " " + getString(R.string.title_shelf)
                         }
                     } else {
                         try {
@@ -351,14 +384,17 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
-                    if (response?.isSuccessful!! && response?.body()!! != null) {
+                    if (response?.body()?.responseCode == 200) {
                         withContext(Dispatchers.Main) {
                             selectedScanMode = ShelfScanMode.PACKAGE_INTO_SHELF
                             handleSelectedScanMode()
+                            (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).insertItem(
+                                response.body()?.packages?.getPickupScannedItem()
+                            )
                         }
                     } else {
                         try {
-                            val jObjError = JSONObject(response.errorBody()!!.string())
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
                             withContext(Dispatchers.Main) {
                                 Helper.showErrorMessage(
                                     super.getContext(),
@@ -447,5 +483,9 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onBarcodeInserted(barcode: String) {
         callScanShelf(barcode)
+    }
+
+    override fun onCancelPickup(position: Int, pkg: Package) {
+        TODO("Not yet implemented")
     }
 }
