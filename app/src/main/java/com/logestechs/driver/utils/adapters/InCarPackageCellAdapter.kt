@@ -142,6 +142,13 @@ class InCarPackageCellAdapter(
                 binding.itemInvoiceNumber.textItem.text = pkg?.invoiceNumber
             }
 
+            if (pkg?.supplierInvoice?.trim().isNullOrEmpty()) {
+                binding.itemSupplierInvoiceNumber.root.visibility = View.GONE
+            } else {
+                binding.itemSupplierInvoiceNumber.root.visibility = View.VISIBLE
+                binding.itemSupplierInvoiceNumber.textItem.text = pkg?.supplierInvoice
+            }
+
             if (pkg?.quantity != null && pkg.quantity != 0) {
                 binding.itemPackageQuantity.root.visibility = View.VISIBLE
                 binding.itemPackageQuantity.textItem.text = pkg.quantity.toString()

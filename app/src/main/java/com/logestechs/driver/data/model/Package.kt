@@ -37,6 +37,7 @@ data class Package(
     var partnerId: Long? = null,
     var isAttachmentExist: Boolean?,
     var packageItemsToDeliverList: List<PackageItemsToDeliver?>?,
+    var supplierInvoice: String? = null,
 
     //products
     var quantity: Int? = null,

@@ -129,6 +129,13 @@ class ScannedBarcodeViewHolder(
                 binding.itemInvoiceNumber.root.visibility = View.GONE
             }
 
+            if (pkg?.supplierInvoice?.trim().isNullOrEmpty()) {
+                binding.itemSupplierInvoiceNumber.root.visibility = View.GONE
+            } else {
+                binding.itemSupplierInvoiceNumber.root.visibility = View.VISIBLE
+                binding.itemSupplierInvoiceNumber.textItem.text = pkg?.supplierInvoice
+            }
+
             if (mAdapter.driverCompanyConfigurations?.isPrintAwbCopiesAsPackageQuantity == true && (pkg.quantity
                     ?: 0) > 1
             ) {
