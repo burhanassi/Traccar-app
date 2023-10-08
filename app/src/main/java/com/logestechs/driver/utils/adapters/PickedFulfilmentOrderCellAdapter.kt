@@ -74,6 +74,7 @@ class PickedFulfilmentOrderCellAdapter(
                 binding.buttonPack.text = context.getString(R.string.button_pack)
             } else {
                 binding.buttonPack.text = context.getString(R.string.button_continue_picking)
+                binding.buttonContextMenu.visibility = View.GONE
             }
             if (fulfilmentOrder?.notes?.trim().isNullOrEmpty()) {
                 binding.itemNotes.root.visibility = View.GONE

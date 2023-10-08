@@ -160,7 +160,7 @@
     <string name="error_package_is_returned">يرجى الانتباه، هذا الطرد راجع!</string>
     <string name="error_package_is_failed">يرجى الانتباه، هذا الطرد عالق!</string>
     <string name="cancel_pickup">إلغاء التحميل</string>
-    <string name="pack_without_scan">تغليف بدون تلقائي</string>
+    <string name="pack_without_scan">تغليف تلقائي</string>
     <string name="please_scan_location_barcode">الرجاء مسح باركود الموقع</string>
     <string name="please_scan_damaged_location_barcode">الرجاء مسح باركود الموقع التالف</string>
     <string name="please_scan_bin_barcode">الرجاء مسح باركود السلة</string>

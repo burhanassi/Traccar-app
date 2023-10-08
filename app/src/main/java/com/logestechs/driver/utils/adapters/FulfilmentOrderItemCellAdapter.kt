@@ -2,6 +2,7 @@ package com.logestechs.driver.utils.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
@@ -111,8 +112,13 @@ class FulfilmentOrderItemCellAdapter(
             binding.textQuantity.text = productItem?.quantity.toString()
             binding.itemProductName.textItem.text = productItem?.productName
             binding.itemProductSku.textItem.text = productItem?.sku
-            binding.itemBinLocation.textItem.text = productItem?.itemBinLocation
-            if(productItem?.productImageUrl != null){
+            if (productItem?.itemBinLocation != null && productItem.itemBinLocation!!.isNotEmpty()) {
+                binding.itemBinLocation.textItem.text = productItem?.itemBinLocation
+            } else {
+                binding.containerItemBinLocation.visibility = View.GONE
+            }
+
+            if (productItem?.productImageUrl != null) {
                 Picasso.get()
                     .load(productItem.productImageUrl)
                     .into(binding.itemImage)

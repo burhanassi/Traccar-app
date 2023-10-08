@@ -70,14 +70,20 @@
                             android:layout_marginTop="8dp"
                             bind:itemSrc="@{@drawable/ic_sku}" />
 
-                        <include
-                            android:id="@+id/item_bin_location"
-                            layout="@layout/item_card_row"
+                        <LinearLayout
+                            android:id="@+id/container_item_bin_location"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="13dp"
-                            bind:itemSrc="@{@drawable/ic_location_pin_gray}" />
+                            android:layout_height="wrap_content">
+
+                            <include
+                                android:id="@+id/item_bin_location"
+                                layout="@layout/item_card_row"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginBottom="13dp"
+                                bind:itemSrc="@{@drawable/ic_location_pin_gray}" />
+                        </LinearLayout>
                     </LinearLayout>
 
                     <LinearLayout
