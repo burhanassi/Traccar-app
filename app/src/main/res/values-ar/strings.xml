@@ -190,6 +190,7 @@
     <string name="title_items_number">عدد العناصر</string>
     <string name="title_skus_number">عدد ال SKUs</string>
     <string name="button_pack">تغليف</string>
+    <string name="button_continue_picking">اكمال التحميل</string>
     <string name="please_scan_tote">الرجاء مسح باركود سلة التحميل</string>
     <string name="items">العناصر</string>
     <string name="scanned_sub_packages_count">%1$s من %2$s</string>
