@@ -91,6 +91,9 @@ class FulfilmentPackerBarcodeScannerActivity :
 
     private fun initUi() {
         binding.textTitle.text = getText(R.string.please_scan_item_barcode)
+        binding.textItemsNumber.text = "Number Of items: " +
+                "${(binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter).getItemCount()} " +
+                "of ${fulfilmentOrder?.totalQuantity}"
     }
 
     private fun initListeners() {
@@ -283,7 +286,8 @@ class FulfilmentPackerBarcodeScannerActivity :
 
                             (binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter)
                                 .insertItem(body)
-
+                            binding.textItemsNumber.text =
+                                "${(binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter).getItemCount()} of ${fulfilmentOrder?.totalQuantity}"
                             if ((binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter)
                                     .getItemCount() == fulfilmentOrder?.totalQuantity
                             ) {
