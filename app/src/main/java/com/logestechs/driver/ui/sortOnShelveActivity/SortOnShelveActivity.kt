@@ -33,6 +33,7 @@ import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.adapters.ScannedBarcodeCellAdapter
+import com.logestechs.driver.utils.adapters.ScannedPackagesOnShelfCellAdapter
 import com.logestechs.driver.utils.dialogs.InsertBarcodeDialog
 import com.logestechs.driver.utils.interfaces.InsertBarcodeDialogListener
 import com.logestechs.driver.utils.interfaces.ScannedBarcodeCardListener
@@ -51,7 +52,7 @@ enum class ShelfScanMode {
 
 @Suppress("DEPRECATION")
 class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
-    InsertBarcodeDialogListener, ScannedBarcodeCardListener {
+    InsertBarcodeDialogListener {
     private lateinit var binding: ActivitySortOnShelveBinding
 
     private var cameraSource: CameraSource? = null
@@ -90,7 +91,7 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
             val extras = data?.extras
             if (extras != null) {
                 val pkg: Package? = extras.getParcelable(IntentExtrasKeys.BUNDLE.name)
-                (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).insertItem(
+                (binding.rvScannedBarcodes.adapter as ScannedPackagesOnShelfCellAdapter).insertItem(
                     pkg?.getPickupScannedItem()
                 )
                 Helper.showSuccessMessage(
@@ -114,7 +115,7 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
     private fun initRecycler() {
         binding.rvScannedBarcodes.apply {
             layoutManager = LinearLayoutManager(this@SortOnShelveActivity)
-            adapter = ScannedBarcodeCellAdapter(ArrayList(), this@SortOnShelveActivity)
+            adapter = ScannedPackagesOnShelfCellAdapter(ArrayList())
         }
     }
 
@@ -388,7 +389,7 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
                         withContext(Dispatchers.Main) {
                             selectedScanMode = ShelfScanMode.PACKAGE_INTO_SHELF
                             handleSelectedScanMode()
-                            (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).insertItem(
+                            (binding.rvScannedBarcodes.adapter as ScannedPackagesOnShelfCellAdapter).insertItem(
                                 response.body()?.packages?.getPickupScannedItem()
                             )
                         }
@@ -483,9 +484,5 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onBarcodeInserted(barcode: String) {
         callScanShelf(barcode)
-    }
-
-    override fun onCancelPickup(position: Int, pkg: Package) {
-        TODO("Not yet implemented")
     }
 }
