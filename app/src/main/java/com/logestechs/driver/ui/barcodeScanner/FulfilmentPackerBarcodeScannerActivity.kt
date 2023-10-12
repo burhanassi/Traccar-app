@@ -5,11 +5,15 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.ToneGenerator
-import android.os.*
+import android.os.Build
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.view.KeyEvent
 import android.view.SurfaceHolder
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
@@ -19,13 +23,18 @@ import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.BarcodeRequestBody
 import com.logestechs.driver.api.responses.SortItemIntoToteResponse
-import com.logestechs.driver.data.model.*
-import com.logestechs.driver.databinding.ActivityFulfilmentPickerBarcodeScannerBinding
+import com.logestechs.driver.data.model.Bin
+import com.logestechs.driver.data.model.Customer
+import com.logestechs.driver.data.model.FulfilmentOrder
+import com.logestechs.driver.data.model.ProductItem
+import com.logestechs.driver.databinding.ActivityFulfilmentPackerBarcodeScannerBinding
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.adapters.FulfilmentOrderItemCellAdapter
+import com.logestechs.driver.utils.adapters.FulfilmentOrderItemToPackCellAdapter
+import com.logestechs.driver.utils.adapters.ShippingPlanCellAdapter
 import com.logestechs.driver.utils.dialogs.InsertBarcodeDialog
 import com.logestechs.driver.utils.interfaces.InsertBarcodeDialogListener
 import kotlinx.coroutines.Dispatchers
@@ -36,15 +45,10 @@ import org.json.JSONObject
 import retrofit2.Response
 import java.io.IOException
 
-enum class FulfilmentPickerScanMode {
-    TOTE,
-    ITEM_INTO_TOTE
-}
-
-class FulfilmentPickerBarcodeScannerActivity :
+class FulfilmentPackerBarcodeScannerActivity :
     LogesTechsActivity(), View.OnClickListener,
     InsertBarcodeDialogListener {
-    private lateinit var binding: ActivityFulfilmentPickerBarcodeScannerBinding
+    private lateinit var binding: ActivityFulfilmentPackerBarcodeScannerBinding
 
     private var barcodeDetector: BarcodeDetector? = null
     private var cameraSource: CameraSource? = null
@@ -60,15 +64,13 @@ class FulfilmentPickerBarcodeScannerActivity :
 
     private var scannedBarcode = ""
 
-    private var selectedScanMode: FulfilmentPickerScanMode? = null
-
     private var scannedTote: Bin? = null
     private var selectedFulfilmentOrder: FulfilmentOrder? = null
 
     private var fulfilmentOrder: FulfilmentOrder? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityFulfilmentPickerBarcodeScannerBinding.inflate(layoutInflater)
+        binding = ActivityFulfilmentPackerBarcodeScannerBinding.inflate(layoutInflater)
         setContentView(binding.root)
         getExtras()
         toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
@@ -76,62 +78,35 @@ class FulfilmentPickerBarcodeScannerActivity :
         initialiseDetectorsAndSources()
         initRecycler()
         initListeners()
-        initUI()
-    }
-
-    private fun initUI() {
-        handleSelectedScanMode()
-    }
-
-    private fun handleSelectedScanMode() {
-        scannedItemsHashMap.clear()
-        when (selectedScanMode) {
-            FulfilmentPickerScanMode.TOTE -> {
-                hideScannedItemsContainer()
-                binding.textTitle.text = getString(R.string.please_scan_tote)
-            }
-
-            FulfilmentPickerScanMode.ITEM_INTO_TOTE -> {
-                showScannedItemsContainer()
-                binding.textTitle.text = getString(R.string.please_scan_items)
-            }
-
-            null -> return
-        }
-    }
-
-    private fun showScannedItemsContainer() {
-        binding.containerScannedItems.visibility = View.VISIBLE
-        binding.containerDoneButton.visibility = View.VISIBLE
-    }
-
-    private fun hideScannedItemsContainer() {
-        binding.containerScannedItems.visibility = View.GONE
-        binding.containerDoneButton.visibility = View.GONE
+        initUi()
     }
 
     private fun getExtras() {
         val extras = intent.extras
         if (extras != null) {
-            selectedScanMode =
-                extras.getSerializable(IntentExtrasKeys.FULFILMENT_PICKER_SCAN_MODE.name) as FulfilmentPickerScanMode
             selectedFulfilmentOrder =
                 extras.getParcelable(IntentExtrasKeys.FULFILMENT_ORDER.name) as? FulfilmentOrder
         }
     }
 
+    private fun initUi() {
+        binding.textTitle.text = getText(R.string.please_scan_item_barcode)
+        binding.textItemsNumber.text = "Number Of items: " +
+                "${(binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter).getItemCount()} " +
+                "of ${fulfilmentOrder?.totalQuantity}"
+    }
+
     private fun initListeners() {
-        binding.buttonDone.setOnClickListener(this)
         binding.buttonInsertBarcode.setOnClickListener(this)
     }
 
     private fun initRecycler() {
         binding.rvScannedBarcodes.apply {
-            layoutManager = LinearLayoutManager(this@FulfilmentPickerBarcodeScannerActivity)
+            layoutManager = LinearLayoutManager(this@FulfilmentPackerBarcodeScannerActivity)
             adapter =
-                FulfilmentOrderItemCellAdapter(
-                    (selectedFulfilmentOrder?.items ?: ArrayList()) as ArrayList<ProductItem?>,
-                    this@FulfilmentPickerBarcodeScannerActivity
+                FulfilmentOrderItemToPackCellAdapter(
+                    ArrayList(),
+                    this@FulfilmentPackerBarcodeScannerActivity
                 )
         }
         binding.textScannedOrder.text = "Order Barcode: ${selectedFulfilmentOrder?.barcode}"
@@ -230,8 +205,8 @@ class FulfilmentPickerBarcodeScannerActivity :
             @SuppressLint("MissingPermission")
             override fun surfaceCreated(holder: SurfaceHolder) {
                 try {
-                    if (Helper.isCameraPermissionNeeded(this@FulfilmentPickerBarcodeScannerActivity)) {
-                        Helper.showAndRequestCameraDialog(this@FulfilmentPickerBarcodeScannerActivity)
+                    if (Helper.isCameraPermissionNeeded(this@FulfilmentPackerBarcodeScannerActivity)) {
+                        Helper.showAndRequestCameraDialog(this@FulfilmentPackerBarcodeScannerActivity)
                     } else {
                         cameraSource?.start(binding.surfaceView.holder)
                     }
@@ -286,123 +261,41 @@ class FulfilmentPickerBarcodeScannerActivity :
     }
 
     private fun executeBarcodeAction(barcode: String?) {
-        when (selectedScanMode) {
-            FulfilmentPickerScanMode.TOTE -> {
-                callGetTote(barcode)
-            }
-
-            FulfilmentPickerScanMode.ITEM_INTO_TOTE -> {
-                callScanItemIntoTote(barcode)
-            }
-
-            null -> return
-        }
+        callPackFulfilmentOrderByItem(barcode)
     }
 
     //APIs
-    private fun callGetTote(barcode: String?) {
+
+    private fun callPackFulfilmentOrderByItem(barcode: String?) {
         this.runOnUiThread {
             showWaitDialog()
         }
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.getTote(
-                        barcode,
-                        selectedFulfilmentOrder?.id
+                    var response = ApiAdapter.apiClient.packFulfilmentOrderByItem(
+                        fulfilmentOrder?.id!!,
+                        barcode
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            selectedScanMode = FulfilmentPickerScanMode.ITEM_INTO_TOTE
-                            scannedTote = response.body()
-                            handleSelectedScanMode()
-                            binding.textScannedTote.text = "Tote Barcode: ${scannedTote?.barcode}"
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                    scannedItemsHashMap.remove(barcode)
-                } catch (e: Exception) {
-                    scannedItemsHashMap.remove(barcode)
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            this.runOnUiThread {
-                hideWaitDialog()
-                Helper.showErrorMessage(
-                    super.getContext(), getString(R.string.error_check_internet_connection)
-                )
-            }
-        }
-    }
-
-    private fun callScanItemIntoTote(barcode: String?) {
-        this.runOnUiThread {
-            showWaitDialog()
-        }
-        if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    var response: Response<SortItemIntoToteResponse>? = null
-                    response = if (fulfilmentOrder?.status == "PARTIALLY_PICKED") {
-                        ApiAdapter.apiClient.continuePicking(
-                            selectedFulfilmentOrder?.id,
-                            BarcodeRequestBody(barcode)
-                        )
-                    } else {
-                        ApiAdapter.apiClient.scanItemIntoTote(
-                            scannedTote?.id,
-                            selectedFulfilmentOrder?.id,
-                            BarcodeRequestBody(barcode)
-                        )
-                    }
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        withContext(Dispatchers.Main) {
                             val body = response.body()
-                            val scrollPosition =
-                                (binding.rvScannedBarcodes.adapter as FulfilmentOrderItemCellAdapter).scanItem(
-                                    body?.sku
-                                )
-                            binding.rvScannedBarcodes.smoothScrollToPosition(scrollPosition)
-                            (binding.rvScannedBarcodes.adapter as FulfilmentOrderItemCellAdapter).highlightItem(
-                                scrollPosition
-                            )
-                            if ((binding.rvScannedBarcodes.adapter as FulfilmentOrderItemCellAdapter)
-                                    .getCount() == 0
+
+                            (binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter)
+                                .insertItem(body)
+                            binding.textItemsNumber.text =
+                                "${(binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter).getItemCount()} of ${fulfilmentOrder?.totalQuantity}"
+                            if ((binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter)
+                                    .getItemCount() == fulfilmentOrder?.totalQuantity
                             ) {
-                                onBackPressed()
+                                callPackFulfilmentOrder()
                             }
+                            Helper.showSuccessMessage(
+                                super.getContext(), getString(R.string.success_operation_completed)
+                            )
                         }
                     } else {
                         scannedItemsHashMap.remove(barcode)
@@ -444,6 +337,64 @@ class FulfilmentPickerBarcodeScannerActivity :
                     super.getContext(), getString(R.string.error_check_internet_connection)
                 )
             }
+        }
+    }
+
+    private fun callPackFulfilmentOrder() {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response =
+                        ApiAdapter.apiClient.packFulfilmentOrder(fulfilmentOrder?.id)
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            Helper.showSuccessMessage(
+                                super.getContext(), getString(R.string.success_operation_completed)
+                            )
+//                            currentPageIndex = 1
+//                            (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()
+//                            callGetFulfilmentOrders(FulfilmentOrderStatus.PICKED.name)
+                            onBackPressed()
+                        }
+
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(), jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(), getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
         }
     }
 

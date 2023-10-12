@@ -164,6 +164,15 @@
                     android:text="@string/button_pack"
                     android:textColor="#fff" />
 
+                <Button
+                    android:id="@+id/button_context_menu"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/ic_context_menu" />
+
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

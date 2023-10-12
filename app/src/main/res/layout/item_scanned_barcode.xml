@@ -56,6 +56,15 @@
                     bind:itemSrc="@{@drawable/ic_invoice_gray}" />
 
                 <include
+                    android:id="@+id/item_supplier_invoice_number"
+                    layout="@layout/item_card_row"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="18dp"
+                    android:layout_marginTop="8dp"
+                    bind:itemSrc="@{@drawable/ic_supplier_invoice}" />
+
+                <include
                     android:id="@+id/item_package_quantity"
                     layout="@layout/item_card_row"
                     android:layout_width="wrap_content"

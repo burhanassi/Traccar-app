@@ -13,7 +13,7 @@ data class Package(
     var status: String? = null,
     var customerStatusType: String? = null,
     var cod: Double? = null,
-    var serviceType: String? = null,
+    var serviceTypeName: String? = null,
     var shipmentType: String? = null,
     var isFragile: Boolean? = null,
     var isHazardousMaterial: Boolean? = null,
@@ -37,6 +37,7 @@ data class Package(
     var partnerId: Long? = null,
     var isAttachmentExist: Boolean?,
     var packageItemsToDeliverList: List<PackageItemsToDeliver?>?,
+    var supplierInvoice: String? = null,
 
     //products
     var quantity: Int? = null,

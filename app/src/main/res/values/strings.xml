@@ -115,6 +115,8 @@
     <string name="error_enter_signature">Please insert a signature</string>
     <string name="button_logout">Logout</string>
     <string name="error_camera_and_storage_permissions">The app needs camera and storage permissions</string>
+    <string name="error_package_not_verified">Needs to verify the package, try again!</string>
+    <string name="error_wrong_package">Wrong Package</string>
     <string name="title_delivered_packages">Delivered Packages</string>
     <string name="error_no_packages_for_delivery">There are no packages for delivery</string>
     <string name="title_returned_packages">Returned Packages</string>
@@ -161,6 +163,7 @@
     <string name="error_package_is_returned">Caution, this package is returned!</string>
     <string name="error_package_is_failed">Caution, this package is failed!</string>
     <string name="cancel_pickup">Cancel Pickup</string>
+    <string name="pack_without_scan">Pack without scan</string>
     <string name="please_scan_location_barcode">Please Scan Location Barcode</string>
     <string name="please_scan_damaged_location_barcode">Please Scan Damaged Location Barcode</string>
     <string name="please_scan_bin_barcode">Please Scan Bin Barcode</string>
@@ -168,6 +171,7 @@
     <string name="please_scan_shipping_plan_barcode">Please Scan Shipping Plan Barcode</string>
     <string name="please_scan_items">Please Scan Items</string>
     <string name="please_scan_item_barcode">Please Scan Item Barcode</string>
+    <string name="please_scan_package_barcode">Please prove delivery by scanning package barcode</string>
     <string name="please_scan_shelf_barcode">Please Scan Shelf Barcode</string>
     <string name="please_insert_barcode">Please insert barcode</string>
     <string name="button_insert">Insert</string>
@@ -268,4 +272,6 @@
     <string name="return_reason_label">Return Reason: </string>
     <string name="returned_date_label">Returned Date: </string>
     <string name="current_location_label">Current Location: </string>
+    <string name="service_type">Service Type</string>
+    <string name="title_manually">Manually</string>
 </resources>

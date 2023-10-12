@@ -78,6 +78,14 @@
                                 app:itemSrc="@{@drawable/ic_location_pin_gray}" />
 
                             <include
+                                android:id="@+id/item_supplier_invoice_number"
+                                layout="@layout/item_card_row"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                app:itemSrc="@{@drawable/ic_supplier_invoice}" />
+
+                            <include
                                 android:id="@+id/item_notes"
                                 layout="@layout/item_card_row"
                                 android:layout_width="wrap_content"

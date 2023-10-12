@@ -59,6 +59,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".ui.barcodeScanner.FulfilmentPackerBarcodeScannerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.verifyPackageDelivery.VerifyPackageDeliveryActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.sortOnShelveActivity.SortOnShelveActivity"
             android:exported="false" />
         <activity

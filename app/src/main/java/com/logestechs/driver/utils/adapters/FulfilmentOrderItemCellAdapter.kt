@@ -2,6 +2,7 @@ package com.logestechs.driver.utils.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
@@ -10,6 +11,7 @@ import com.logestechs.driver.data.model.ProductItem
 import com.logestechs.driver.databinding.ItemFulfilmentOrderItemCellBinding
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.item_fulfilment_order_item_cell.view.item_card
 
 
 class FulfilmentOrderItemCellAdapter(
@@ -20,6 +22,8 @@ class FulfilmentOrderItemCellAdapter(
 
     private var companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
+
+    private var highlightedPosition: Int? = null
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
@@ -39,6 +43,13 @@ class FulfilmentOrderItemCellAdapter(
         position: Int
     ) {
         val productItem: ProductItem? = productItemsList[position]
+
+        if (position == highlightedPosition) {
+            FulfilmentOrderItemCellViewHolder.itemView.item_card.setBackgroundResource(R.drawable.highlighted_item_background)
+        } else {
+            FulfilmentOrderItemCellViewHolder.itemView.item_card.setBackgroundResource(0)
+        }
+
         FulfilmentOrderItemCellViewHolder.setIsRecyclable(false);
         FulfilmentOrderItemCellViewHolder.bind(productItem)
     }
@@ -49,7 +60,23 @@ class FulfilmentOrderItemCellAdapter(
 
     fun removeItem(position: Int) {
         productItemsList.removeAt(position)
+        unHighlightAll()
         notifyItemRemoved(position)
+    }
+
+    fun unHighlightAll() {
+        highlightedPosition = null
+        notifyDataSetChanged()
+    }
+
+    fun highlightItem(position: Int) {
+        if (position >= 0 && position < productItemsList.size) {
+            val highlightedItem = productItemsList[position]
+            productItemsList.removeAt(position)
+            productItemsList.add(0, highlightedItem)
+            highlightedPosition = 0
+            notifyDataSetChanged()
+        }
     }
 
     fun scanItem(sku: String?): Int {
@@ -57,6 +84,9 @@ class FulfilmentOrderItemCellAdapter(
             if (productItemsList[index]?.sku == sku) {
                 return if (productItemsList[index]?.quantity != null && productItemsList[index]!!.quantity!! > 0) {
                     productItemsList[index]?.quantity = productItemsList[index]!!.quantity?.minus(1)
+                    if (productItemsList[index]?.quantity == 0) {
+                        removeItem(index)
+                    }
                     notifyItemChanged(index)
                     index
                 } else {
@@ -67,6 +97,15 @@ class FulfilmentOrderItemCellAdapter(
         }
         return 0
     }
+
+    fun getCount(): Int {
+        var sum = 0
+        for (index in productItemsList.indices) {
+            sum += productItemsList[index]?.quantity!!
+        }
+        return sum
+    }
+
 
     class FulfilmentOrderItemCellViewHolder(
         private var binding: ItemFulfilmentOrderItemCellBinding,
@@ -79,8 +118,19 @@ class FulfilmentOrderItemCellAdapter(
             binding.textQuantity.text = productItem?.quantity.toString()
             binding.itemProductName.textItem.text = productItem?.productName
             binding.itemProductSku.textItem.text = productItem?.sku
-            binding.itemBinLocation.textItem.text = productItem?.itemBinLocation
-            if(productItem?.productImageUrl != null){
+            if (productItem?.itemBinLocation != null && productItem.itemBinLocation!!.isNotEmpty()) {
+                binding.itemBinLocation.textItem.text = productItem?.itemBinLocation
+            } else {
+                binding.containerItemBinLocation.visibility = View.GONE
+            }
+            if (productItem?.expiryDate != null) {
+                binding.itemExpiryDate.textItem.text = productItem?.expiryDate
+            } else {
+                binding.containerItemExpiryDate.visibility = View.GONE
+            }
+
+
+            if (productItem?.productImageUrl != null) {
                 Picasso.get()
                     .load(productItem.productImageUrl)
                     .into(binding.itemImage)

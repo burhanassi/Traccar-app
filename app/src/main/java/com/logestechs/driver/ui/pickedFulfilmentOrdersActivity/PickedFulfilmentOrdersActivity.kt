@@ -15,6 +15,7 @@ import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.FulfilmentOrder
 import com.logestechs.driver.databinding.ActivityPickedFulfilmentOrdersBinding
+import com.logestechs.driver.ui.barcodeScanner.FulfilmentPackerBarcodeScannerActivity
 import com.logestechs.driver.ui.barcodeScanner.FulfilmentPickerBarcodeScannerActivity
 import com.logestechs.driver.ui.barcodeScanner.FulfilmentPickerScanMode
 import com.logestechs.driver.utils.AppConstants
@@ -297,8 +298,13 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
         }
     }
 
-    override fun onPackFulfilmentOrder(index: Int) {
-        callPackFulfilmentOrder(index)
+    override fun onPackFulfilmentOrder(fulfilmentOrder: FulfilmentOrder?) {
+        if (fulfilmentOrder != null) {
+            val intent = Intent(this, FulfilmentPackerBarcodeScannerActivity::class.java)
+
+            intent.putExtra(IntentExtrasKeys.FULFILMENT_ORDER.name, fulfilmentOrder)
+            startActivity(intent)
+        }
     }
 
     override fun onContinuePickingClicked(fulfilmentOrder: FulfilmentOrder?) {
@@ -312,5 +318,9 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
             )
             startActivity(intent)
         }
+    }
+
+    override fun onDirectPackFulfilmentOrder(index: Int) {
+        callPackFulfilmentOrder(index)
     }
 }
