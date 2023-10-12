@@ -71,6 +71,20 @@
                             bind:itemSrc="@{@drawable/ic_sku}" />
 
                         <LinearLayout
+                            android:id="@+id/container_item_expiry_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <include
+                                android:id="@+id/item_expiry_date"
+                                layout="@layout/item_card_row"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                bind:itemSrc="@{@drawable/ic_expiry_date}" />
+                        </LinearLayout>
+
+                        <LinearLayout
                             android:id="@+id/container_item_bin_location"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content">
@@ -84,6 +98,7 @@
                                 android:layout_marginBottom="13dp"
                                 bind:itemSrc="@{@drawable/ic_location_pin_gray}" />
                         </LinearLayout>
+
                     </LinearLayout>
 
                     <LinearLayout

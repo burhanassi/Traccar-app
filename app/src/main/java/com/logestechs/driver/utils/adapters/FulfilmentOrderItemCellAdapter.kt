@@ -60,7 +60,13 @@ class FulfilmentOrderItemCellAdapter(
 
     fun removeItem(position: Int) {
         productItemsList.removeAt(position)
+        unHighlightAll()
         notifyItemRemoved(position)
+    }
+
+    fun unHighlightAll() {
+        highlightedPosition = null
+        notifyDataSetChanged()
     }
 
     fun highlightItem(position: Int) {
@@ -117,6 +123,12 @@ class FulfilmentOrderItemCellAdapter(
             } else {
                 binding.containerItemBinLocation.visibility = View.GONE
             }
+            if (productItem?.expiryDate != null) {
+                binding.itemExpiryDate.textItem.text = productItem?.expiryDate
+            } else {
+                binding.containerItemExpiryDate.visibility = View.GONE
+            }
+
 
             if (productItem?.productImageUrl != null) {
                 Picasso.get()

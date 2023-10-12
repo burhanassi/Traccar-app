@@ -395,6 +395,14 @@ class FulfilmentPickerBarcodeScannerActivity :
                                     body?.sku
                                 )
                             binding.rvScannedBarcodes.smoothScrollToPosition(scrollPosition)
+                            (binding.rvScannedBarcodes.adapter as FulfilmentOrderItemCellAdapter).highlightItem(
+                                scrollPosition
+                            )
+                            if ((binding.rvScannedBarcodes.adapter as FulfilmentOrderItemCellAdapter)
+                                    .getCount() == 0
+                            ) {
+                                onBackPressed()
+                            }
                         }
                     } else {
                         scannedItemsHashMap.remove(barcode)
