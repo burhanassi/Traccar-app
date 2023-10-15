@@ -24,6 +24,7 @@
     <string name="dashboard_other_options">Other Options</string>
     <string name="dashboard_mass_cod_reports">Mass Reports</string>
     <string name="dashboard_sort_on_shelves">Sort On Shelves</string>
+    <string name="dashboard_unload_from_customer">Unload From Customer</string>
     <string name="dashboard_sort_bins_into_locations">Sort Bins Into Locations</string>
     <string name="dashboard_sort_items_into_bins">Sort Items Into Bins</string>
     <string name="dashboard_sort_items">Sort Items</string>
@@ -172,6 +173,7 @@
     <string name="please_scan_items">Please Scan Items</string>
     <string name="please_scan_item_barcode">Please Scan Item Barcode</string>
     <string name="please_scan_package_barcode">Please prove delivery by scanning package barcode</string>
+    <string name="please_scan_package_barcode_unload">Please scan package barcode</string>
     <string name="please_scan_shelf_barcode">Please Scan Shelf Barcode</string>
     <string name="please_insert_barcode">Please insert barcode</string>
     <string name="button_insert">Insert</string>

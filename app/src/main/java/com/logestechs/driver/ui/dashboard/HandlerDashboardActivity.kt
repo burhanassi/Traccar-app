@@ -17,6 +17,7 @@ import com.logestechs.driver.ui.barcodeScanner.BarcodeScannerActivity
 import com.logestechs.driver.ui.driverPackagesByStatusViewPager.DriverPackagesByStatusViewPagerActivity
 import com.logestechs.driver.ui.profile.ProfileActivity
 import com.logestechs.driver.ui.sortOnShelveActivity.SortOnShelveActivity
+import com.logestechs.driver.ui.unloadFromCustomerActivity.UnloadFromCustomerActivity
 import com.logestechs.driver.utils.*
 import com.yariksoffice.lingver.Lingver
 import kotlinx.coroutines.Dispatchers
@@ -67,6 +68,7 @@ class HandlerDashboardActivity : LogesTechsActivity(), View.OnClickListener {
 //        binding.dashEntryAcceptedPackages.root.setOnClickListener(this)
 //        binding.dashEntryScanPackages.root.setOnClickListener(this)
         binding.dashEntrySortOnShelf.root.setOnClickListener(this)
+        binding.dashEntryUnloadFromCustomer.root.setOnClickListener(this)
     }
 
 
@@ -113,6 +115,11 @@ class HandlerDashboardActivity : LogesTechsActivity(), View.OnClickListener {
 
             R.id.dash_entry_sort_on_shelf -> {
                 val mIntent = Intent(this, SortOnShelveActivity::class.java)
+                startActivity(mIntent)
+            }
+
+            R.id.dash_entry_unload_from_customer -> {
+                val mIntent = Intent(this, UnloadFromCustomerActivity::class.java)
                 startActivity(mIntent)
             }
         }
