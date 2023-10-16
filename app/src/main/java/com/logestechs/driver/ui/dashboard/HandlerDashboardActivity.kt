@@ -17,6 +17,7 @@ import com.logestechs.driver.ui.barcodeScanner.BarcodeScannerActivity
 import com.logestechs.driver.ui.driverPackagesByStatusViewPager.DriverPackagesByStatusViewPagerActivity
 import com.logestechs.driver.ui.profile.ProfileActivity
 import com.logestechs.driver.ui.sortOnShelveActivity.SortOnShelveActivity
+import com.logestechs.driver.ui.unloadContainerActivity.UnloadContainerActivity
 import com.logestechs.driver.ui.unloadFromCustomerActivity.UnloadFromCustomerActivity
 import com.logestechs.driver.utils.*
 import com.yariksoffice.lingver.Lingver
@@ -69,6 +70,7 @@ class HandlerDashboardActivity : LogesTechsActivity(), View.OnClickListener {
 //        binding.dashEntryScanPackages.root.setOnClickListener(this)
         binding.dashEntrySortOnShelf.root.setOnClickListener(this)
         binding.dashEntryUnloadFromCustomer.root.setOnClickListener(this)
+        binding.dashEntryUnloadContainer.root.setOnClickListener(this)
     }
 
 
@@ -120,6 +122,11 @@ class HandlerDashboardActivity : LogesTechsActivity(), View.OnClickListener {
 
             R.id.dash_entry_unload_from_customer -> {
                 val mIntent = Intent(this, UnloadFromCustomerActivity::class.java)
+                startActivity(mIntent)
+            }
+
+            R.id.dash_entry_unload_container -> {
+                val mIntent = Intent(this, UnloadContainerActivity::class.java)
                 startActivity(mIntent)
             }
         }

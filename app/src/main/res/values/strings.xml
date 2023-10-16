@@ -25,6 +25,7 @@
     <string name="dashboard_mass_cod_reports">Mass Reports</string>
     <string name="dashboard_sort_on_shelves">Sort On Shelves</string>
     <string name="dashboard_unload_from_customer">Unload From Customer</string>
+    <string name="dashboard_unload_container">Unload Container</string>
     <string name="dashboard_sort_bins_into_locations">Sort Bins Into Locations</string>
     <string name="dashboard_sort_items_into_bins">Sort Items Into Bins</string>
     <string name="dashboard_sort_items">Sort Items</string>
@@ -38,6 +39,7 @@
     <string name="packages_view_pager_delivered">Delivered</string>
     <string name="button_accept">Accept</string>
     <string name="title_package">Package</string>
+    <string name="title_packages">Packages</string>
     <string name="title_reject_customer_packages">Reject Customer Packages</string>
     <string name="title_reject_package">Reject Package</string>
     <string name="message_no_packages">No packages were found \n Please pull the list down to refresh</string>
@@ -175,6 +177,7 @@
     <string name="please_scan_package_barcode">Please prove delivery by scanning package barcode</string>
     <string name="please_scan_package_barcode_unload">Please scan package barcode</string>
     <string name="please_scan_shelf_barcode">Please Scan Shelf Barcode</string>
+    <string name="please_verify_driver">Please Verify Driver</string>
     <string name="please_insert_barcode">Please insert barcode</string>
     <string name="button_insert">Insert</string>
     <string name="count">"Count: "</string>

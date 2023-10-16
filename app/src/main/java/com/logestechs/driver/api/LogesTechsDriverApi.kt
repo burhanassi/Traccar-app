@@ -524,4 +524,21 @@ interface LogesTechsDriverApi {
     suspend fun unloadPackageFromCustomer(
         @Query("barcode") barcode: String?
     ): Response<Package?>?
+
+    @GET("api/handler/drivers/verify")
+    suspend fun verifyDriver(
+        @Query("barcode") barcode: String?
+    ): Response<GetVerfiyDriverResponse?>?
+
+    @GET("api/handler/drivers/{driverId}/packages")
+    suspend fun getInCarPackagesForHandler(
+        @Path("driverId") driverId: Long,
+        @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
+        @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
+    ): Response<ArrayList<Package?>?>
+
+    @PUT("api/handler/packages/scan-to-unload")
+    suspend fun unloadPackageFromContainerToHub(
+        @Query("barcode") barcode: String?
+    ): Response<Package>
 }

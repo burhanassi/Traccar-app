@@ -26,6 +26,7 @@
     <string name="dashboard_mass_cod_reports">تحصيل الزبائن</string>
     <string name="dashboard_sort_on_shelves">ترتيب في\nسلات التحميل</string>
     <string name="dashboard_unload_from_customer">تفريغ من العميل</string>
+    <string name="dashboard_unload_container">تفريغ الحاوية</string>
     <string name="dashboard_sort_bins_into_locations">ترتيب السلات\nفي المواقع</string>
     <string name="dashboard_sort_items_into_bins">ترتيب العناصر\nفي السلات</string>
     <string name="dashboard_sort_items">ترتيب\nالعناصر</string>
@@ -39,6 +40,7 @@
     <string name="packages_view_pager_delivered">تم توصيلها</string>
     <string name="button_accept">موافقة</string>
     <string name="title_package">طرد</string>
+    <string name="title_packages">الطرود</string>
     <string name="title_reject_customer_packages">رفض طرود الزبون</string>
     <string name="title_reject_package">رفض الطرد</string>
     <string name="success_mass_completed">تم توصيل كشف التحصيلات بنجاح </string>
@@ -175,6 +177,7 @@
     <string name="please_scan_package_barcode">الرجاء إثبات التسليم من خلال مسح باركود الطرد</string>
     <string name="please_scan_package_barcode_unload">الرجاء مسح باركود الطرد</string>
     <string name="please_scan_shelf_barcode">الرجاء مسح باركود سلة التحميل</string>
+    <string name="please_verify_driver">الرجاء التحقق من السائق</string>
     <string name="please_insert_barcode">الرجاء إدخال الباركود</string>
     <string name="button_insert">إدخال</string>
     <string name="count">"العدد: "</string>
