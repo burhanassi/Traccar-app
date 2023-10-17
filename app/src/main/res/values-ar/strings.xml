@@ -277,4 +277,6 @@
     <string name="current_location_label">الموقع الحالي: </string>
     <string name="service_type">نوع الخدمة</string>
     <string name="title_manually">بواسطة المستخدم</string>
+    <string name="packaging_type_warehouse">تغليف المستودع</string>
+    <string name="packaging_type_customer">تغليف الزبون</string>
 </resources>

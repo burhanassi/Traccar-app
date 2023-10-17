@@ -279,4 +279,6 @@
     <string name="current_location_label">Current Location: </string>
     <string name="service_type">Service Type</string>
     <string name="title_manually">Manually</string>
+    <string name="packaging_type_warehouse">Warehouse Packaging</string>
+    <string name="packaging_type_customer">Customer Packaging</string>
 </resources>

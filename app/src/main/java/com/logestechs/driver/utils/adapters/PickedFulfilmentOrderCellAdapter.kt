@@ -14,6 +14,10 @@ import com.logestechs.driver.utils.FulfilmentOrderStatus
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.interfaces.PickedFulfilmentOrderCardListener
 
+enum class PackagingType(val value: Int) {
+    BY_WAREHOUSE(R.string.packaging_type_warehouse),
+    BY_CUSTOMER(R.string.packaging_type_customer)
+}
 
 class PickedFulfilmentOrderCellAdapter(
     var fulfilmentOrdersList: ArrayList<FulfilmentOrder?>,
@@ -72,7 +76,17 @@ class PickedFulfilmentOrderCellAdapter(
             binding.itemCustomerName.textItem.text = fulfilmentOrder?.customerName
             if (isPicked) {
                 binding.buttonPack.text = context.getString(R.string.button_pack)
+                binding.containerPackagingType.visibility = View.VISIBLE
+                if (fulfilmentOrder?.packagingType == PackagingType.BY_WAREHOUSE.name) {
+                    binding.itemPackagingType.textItem.text =
+                        mAdapter.context?.getString(PackagingType.BY_WAREHOUSE.value)
+                } else if (fulfilmentOrder?.packagingType == PackagingType.BY_CUSTOMER.name) {
+                    binding.itemPackagingType.textItem.text =
+                        mAdapter.context?.getString(PackagingType.BY_CUSTOMER.value)
+                }
+
             } else {
+                binding.containerPackagingType.visibility = View.GONE
                 binding.buttonPack.text = context.getString(R.string.button_continue_picking)
                 binding.buttonContextMenu.visibility = View.GONE
             }
