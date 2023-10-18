@@ -20,15 +20,22 @@ class ServerSelectionActivity : LogesTechsActivity() {
         binding.etServerIp.setText(SharedPreferenceWrapper.getSelectedServerIp())
 
         binding.buttonDone.setOnClickListener {
-            if (binding.etServerIp.getText().isEmpty()) {
+            var enteredIp = binding.etServerIp.getText().toString()
+
+            if (enteredIp.isEmpty()) {
                 binding.etServerIp.makeInvalid()
             } else {
+                if (!enteredIp.contains(":") && enteredIp.startsWith("192.")) {
+                    enteredIp += ":8080"
+                }
+
                 binding.etServerIp.makeValid()
-                SharedPreferenceWrapper.saveSelectedServerIp(binding.etServerIp.getText())
+                SharedPreferenceWrapper.saveSelectedServerIp(enteredIp)
                 ApiAdapter.recreateApiClient()
                 navigateIntoApp()
             }
         }
+
     }
 
     private fun navigateIntoApp() {
