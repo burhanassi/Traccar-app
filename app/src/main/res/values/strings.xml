@@ -281,4 +281,6 @@
     <string name="title_manually">Manually</string>
     <string name="packaging_type_warehouse">Warehouse Packaging</string>
     <string name="packaging_type_customer">Customer Packaging</string>
+    <string name="text_is_custom_packing">, is custom packing</string>
+    <string name="order_type">Order Type: </string>
 </resources>

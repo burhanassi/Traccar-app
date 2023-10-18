@@ -31,5 +31,5 @@ data class ProductItem(
     var itemBinLocation: String? = null,
     var isCustomPackaging: Boolean? = null,
     var fulfillmentOrderPackagingType: FulfillmentOrderPackagingType? = null,
-    var parcelTypeNameval: String? = null,
+    var parcelTypeName: String? = null,
 ) : Parcelable

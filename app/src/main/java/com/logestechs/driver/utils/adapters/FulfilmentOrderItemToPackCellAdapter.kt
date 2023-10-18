@@ -87,6 +87,18 @@ class FulfilmentOrderItemToPackCellAdapter(
                     .load(productItem.productImageUrl)
                     .into(binding.itemImage)
             }
+            if (productItem?.isCustomPackaging == true && productItem?.parcelTypeName != null) {
+                binding.itemNotes.textItem.text = mAdapter.context?.getString(R.string.order_type) +
+                        productItem?.parcelTypeName + mAdapter.context?.getString(R.string.text_is_custom_packing)
+            } else if (productItem?.isCustomPackaging == true && productItem?.parcelTypeName == null) {
+                binding.itemNotes.textItem.text =
+                    mAdapter.context?.getString(R.string.text_is_custom_packing)
+            } else if (productItem?.isCustomPackaging == false && productItem?.parcelTypeName != null) {
+                binding.itemNotes.textItem.text = mAdapter.context?.getString(R.string.order_type) +
+                        productItem?.parcelTypeName
+            } else {
+                binding.containerNotes.visibility = View.GONE
+            }
         }
     }
 }
