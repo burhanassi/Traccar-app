@@ -565,6 +565,7 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
                                 )
                             }
                         }
+                        scannedItemsHashMap.remove(barcode)
                     }
                 } catch (e: Exception) {
                     scannedItemsHashMap.remove(barcode)

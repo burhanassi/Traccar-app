@@ -110,13 +110,13 @@
                     android:clipChildren="false">
 
                     <include
-                        android:id="@+id/dash_entry_unload_from_customer"
+                        android:id="@+id/dash_entry_unload_container"
                         layout="@layout/item_dashboard_entry"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:iconSrc="@{@drawable/ic_unload_from_customer}"
-                        app:titleText="@{@string/dashboard_unload_from_customer}"
+                        app:iconSrc="@{@drawable/ic_unload_container}"
+                        app:titleText="@{@string/dashboard_unload_container}"
                         app:isCountHidden="@{true}" />
                 </LinearLayout>
 
@@ -129,13 +129,34 @@
                     android:clipChildren="false">
 
                     <include
-                        android:id="@+id/dash_entry_unload_container"
+                        android:id="@+id/dash_entry_find_packages"
                         layout="@layout/item_dashboard_entry"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:iconSrc="@{@drawable/ic_unload_container}"
-                        app:titleText="@{@string/dashboard_unload_container}"
+                        app:iconSrc="@{@drawable/ic_find_packages}"
+                        app:titleText="@{@string/dashboard_find_packages}"
+                        app:isCountHidden="@{true}" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="24dp"
+
+                    android:layout_marginEnd="24dp"
+                    android:clipChildren="false">
+
+                    <include
+                        android:id="@+id/dash_entry_unload_from_customer"
+                        layout="@layout/item_dashboard_entry"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:iconSrc="@{@drawable/ic_unload_from_customer}"
+                        app:titleText="@{@string/dashboard_unload_from_customer}"
                         app:isCountHidden="@{true}" />
                 </LinearLayout>
 

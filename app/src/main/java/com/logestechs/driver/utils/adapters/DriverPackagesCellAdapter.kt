@@ -70,9 +70,11 @@ class DriverPackagesViewHolder(
     private var mAdapter: DriverPackagesCellAdapter
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(pkg: Package?) {
-        binding.itemReceiverName.textItem.text = pkg?.receiverName
+        binding.itemReceiverName.textItem.text =
+            pkg?.receiverName ?: (pkg?.receiverFirstName + " " + pkg?.receiverLastName)
         binding.itemBarcode.textItem.text = pkg?.barcode
-        binding.itemReceiverCity.textItem.text = pkg?.destinationAddress?.city
+        binding.itemReceiverCity.textItem.text =
+            pkg?.destinationAddress?.city ?: pkg?.destinationCity
         binding.itemReceiverPhone.textItem.text = pkg?.receiverPhone
 
         binding.buttonContextMenu.visibility = View.GONE

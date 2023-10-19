@@ -15,6 +15,7 @@ import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.databinding.ActivityHandlerDashboardBinding
 import com.logestechs.driver.ui.barcodeScanner.BarcodeScannerActivity
 import com.logestechs.driver.ui.driverPackagesByStatusViewPager.DriverPackagesByStatusViewPagerActivity
+import com.logestechs.driver.ui.findPackagesActivity.FindPackagesActivity
 import com.logestechs.driver.ui.profile.ProfileActivity
 import com.logestechs.driver.ui.sortOnShelveActivity.SortOnShelveActivity
 import com.logestechs.driver.ui.unloadContainerActivity.UnloadContainerActivity
@@ -71,6 +72,7 @@ class HandlerDashboardActivity : LogesTechsActivity(), View.OnClickListener {
         binding.dashEntrySortOnShelf.root.setOnClickListener(this)
         binding.dashEntryUnloadFromCustomer.root.setOnClickListener(this)
         binding.dashEntryUnloadContainer.root.setOnClickListener(this)
+        binding.dashEntryFindPackages.root.setOnClickListener(this)
     }
 
 
@@ -127,6 +129,11 @@ class HandlerDashboardActivity : LogesTechsActivity(), View.OnClickListener {
 
             R.id.dash_entry_unload_container -> {
                 val mIntent = Intent(this, UnloadContainerActivity::class.java)
+                startActivity(mIntent)
+            }
+
+            R.id.dash_entry_find_packages -> {
+                val mIntent = Intent(this, FindPackagesActivity::class.java)
                 startActivity(mIntent)
             }
         }

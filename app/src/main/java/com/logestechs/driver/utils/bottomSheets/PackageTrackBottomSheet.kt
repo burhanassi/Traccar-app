@@ -1,6 +1,7 @@
 package com.logestechs.driver.utils.bottomSheets
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -23,6 +24,10 @@ import com.logestechs.driver.utils.DateFormats
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 
+interface BottomSheetListener {
+    fun onBottomSheetDismissed()
+}
+
 class PackageTrackBottomSheet(
 ) : BottomSheetDialogFragment(), View.OnClickListener {
     private var _binding: BottomSheetPackageTrackBinding? = null
@@ -32,6 +37,8 @@ class PackageTrackBottomSheet(
     private var companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
+    private var listener: BottomSheetListener? = null
+    var isScan: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NORMAL, R.style.CustomBottomSheetDialogTheme)
@@ -57,6 +64,10 @@ class PackageTrackBottomSheet(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (isScan) {
+            binding.containerTitle.visibility = View.VISIBLE
+            binding.textTitle.text = getString(R.string.swipe_down_to_scan_another_package)
+        }
 
         binding.locationBubble.textBubbleLocation.text = pkg?.destinationAddress?.toStringAddress()
 
@@ -130,6 +141,16 @@ class PackageTrackBottomSheet(
             Helper.copyTextToClipboard(requireActivity(), pkg?.barcode!!)
         }
 
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        listener?.onBottomSheetDismissed()
+    }
+
+    fun setListener(listener: BottomSheetListener) {
+        this.listener = listener
+        isScan = true
     }
 
     //    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

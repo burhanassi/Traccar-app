@@ -58,6 +58,11 @@ class UnloadFromCustomerCellAdapter(
         notifyItemChanged(0)
         notifyItemInserted(0)
     }
+
+    fun update(item: Package?) {
+        clearList()
+        insertItem(item)
+    }
 }
 
 class UnloadFromCustomerViewHolder(

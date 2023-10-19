@@ -530,6 +530,11 @@ interface LogesTechsDriverApi {
         @Query("barcode") barcode: String?
     ): Response<Package?>?
 
+    @GET("api/handler/packages/{barcode}")
+    suspend fun findPackage(
+        @Path("barcode") barcode: String?
+    ): Response<Package?>?
+
     @GET("api/handler/drivers/verify")
     suspend fun verifyDriver(
         @Query("barcode") barcode: String?

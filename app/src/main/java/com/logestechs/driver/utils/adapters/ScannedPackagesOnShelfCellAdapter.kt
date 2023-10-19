@@ -75,7 +75,8 @@ class ScannedPackagesOnShelfViewHolder(
 
             binding.itemReceiverName.textItem.text = pkg.receiverName
             binding.itemBarcode.textItem.text = pkg.barcode
-            binding.itemReceiverCity.textItem.text = pkg.destinationAddress?.city
+            binding.itemReceiverCity.textItem.text =
+                pkg.destinationAddress?.city ?: pkg.destinationCity
             binding.itemReceiverPhone.textItem.text = pkg.receiverPhone
 
         }
