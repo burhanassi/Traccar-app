@@ -16,7 +16,10 @@ import com.logestechs.driver.utils.DateFormats
 import com.logestechs.driver.utils.Helper
 
 
-class NotificationsListAdapter(val list: ArrayList<Notification>) :
+class NotificationsListAdapter(
+    val list: ArrayList<Notification>,
+    private val itemClickListener: OnItemClickListener
+) :
     RecyclerView.Adapter<NotificationsListAdapter.NotificationViewHolder>() {
 
     lateinit var mContext: Context
@@ -27,7 +30,7 @@ class NotificationsListAdapter(val list: ArrayList<Notification>) :
             parent,
             false
         )
-        return NotificationViewHolder(inflater, parent, this)
+        return NotificationViewHolder(inflater, parent, this, itemClickListener)
     }
 
     override fun onBindViewHolder(holder: NotificationViewHolder, position: Int) {
@@ -42,10 +45,15 @@ class NotificationsListAdapter(val list: ArrayList<Notification>) :
         this.notifyDataSetChanged()
     }
 
+    interface OnItemClickListener {
+        fun onItemClick(packageId: Long)
+    }
+
     class NotificationViewHolder(
         var binding: ItemNotificationBinding,
         parent: ViewGroup,
-        mAdapter: NotificationsListAdapter
+        mAdapter: NotificationsListAdapter,
+        private val itemClickListener: OnItemClickListener
     ) :
         RecyclerView.ViewHolder(binding.root) {
         private var mTitleTextView: TextView? = null
@@ -56,6 +64,16 @@ class NotificationsListAdapter(val list: ArrayList<Notification>) :
         init {
             mTitleTextView = itemView.findViewById(R.id.text_title)
             mDateTextView = itemView.findViewById(R.id.text_date)
+
+            itemView.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val notification = mAdapter.list[position]
+                    if (notification.packageID != 0L) {
+                        itemClickListener.onItemClick(notification.packageID)
+                    }
+                }
+            }
 
         }
 
@@ -79,9 +97,7 @@ class NotificationsListAdapter(val list: ArrayList<Notification>) :
                     binding.imageArrow.visibility = View.VISIBLE
                 }
             } else {
-                // If the type is not RECEIVE_MESSAGE, hide the expandable section and remove click listener.
                 hideExpandableSection()
-                binding.root.setOnClickListener(null)
                 binding.imageArrow.visibility = View.GONE
             }
         }

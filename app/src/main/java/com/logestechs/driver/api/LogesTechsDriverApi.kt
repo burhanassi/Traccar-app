@@ -509,6 +509,11 @@ interface LogesTechsDriverApi {
         @Body body: DriverRouteRequestBody?
     ): Response<ResponseBody?>?
 
+    @GET("api/driver/packages/{packageId}")
+    suspend fun trackPackageDriverNotification(
+        @Path("packageId") packageId: Long
+    ): Response<Package>?
+
     @GET("api/handler/shelves/scan")
     suspend fun scanShelfByBarcode(
         @Query("barcode") barcode: String?

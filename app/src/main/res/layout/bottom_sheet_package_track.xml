@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:src="@drawable/ic_collapse_expand"
+            tools:ignore="ContentDescription" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/background_sheet_round_corners"
+            android:clipChildren="false"
+            android:elevation="12dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="155dp"
+                android:background="@drawable/map_placeholder"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/LogesTechsMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:text="تفاصيل الطرد والمتابعة"
+                        android:textColor="@color/fontTrackHint"
+                        android:textSize="14sp" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:id="@+id/button_context_menu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end|bottom"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:src="@drawable/ic_context_menu"
+                        tools:ignore="ContentDescription"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+                <include
+                    android:id="@+id/location_bubble"
+                    layout="@layout/shape_location_bubble"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="11dp"
+                android:layout_marginTop="-13dp"
+                android:layout_marginEnd="11dp"
+                android:background="@drawable/border_location_bubble"
+                android:clipChildren="false"
+                android:elevation="4dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="17.5dp"
+                    android:clipChildren="false"
+                    android:orientation="vertical">
+
+                    <include
+                        layout="@layout/icon_circular_package"
+                        android:layout_width="95dp"
+                        android:layout_height="95dp"
+                        android:layout_marginTop="-21dp" />
+
+                    <View
+                        android:layout_width="2dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_horizontal"
+                        android:background="@color/shipmentTrackVerticalLineGray" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="vertical">
+
+                    <include
+                        android:id="@+id/item_detail_shipment_id"
+                        layout="@layout/item_package_property"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        bind:isCopyVisible="@{true}"
+                        bind:itemSrc="@{@drawable/ic_shipment_details_package_id}" />
+
+                    <include
+                        android:id="@+id/item_detail_receiver_phone"
+                        layout="@layout/item_package_property"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        bind:isCopyVisible="@{true}"
+                        bind:itemSrc="@{@drawable/ic_mobile_gray}" />
+
+                    <include
+                        android:id="@+id/item_detail_sender_name"
+                        layout="@layout/item_package_property"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        bind:isCopyVisible="@{false}"
+                        bind:itemSrc="@{@drawable/ic_sender_gray}" />
+
+
+                    <include
+                        android:id="@+id/item_detail_receiver_name"
+                        layout="@layout/item_package_property"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        bind:isCopyVisible="@{false}"
+                        bind:itemSrc="@{@drawable/ic_receiver_gray}" />
+
+                    <include
+                        android:id="@+id/item_detail_created_date"
+                        layout="@layout/item_package_property"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        bind:isCopyVisible="@{false}"
+                        bind:itemSrc="@{@drawable/ic_shipment_details_date}" />
+
+                    <include
+                        android:id="@+id/item_detail_postponed_date"
+                        layout="@layout/item_package_property"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        bind:isCopyVisible="@{false}"
+                        bind:itemSrc="@{@drawable/ic_postponed_date}" />
+
+                    <LinearLayout
+                        android:id="@+id/item_detail_money_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal"
+                        tools:visibility="visible">
+
+                        <include
+                            android:id="@+id/item_detail_money"
+                            layout="@layout/item_package_property"
+                            android:layout_width="173dp"
+                            android:layout_height="wrap_content"
+                            bind:isCopyVisible="@{false}"
+                            bind:itemSrc="@{@drawable/ic_shipment_details_money}" />
+
+                        <!--                        <TextView-->
+                        <!--                            style="@style/LogesTechsBold"-->
+                        <!--                            android:layout_width="wrap_content"-->
+                        <!--                            android:layout_height="wrap_content"-->
+                        <!--                            android:text="@string/currency"-->
+                        <!--                            android:textSize="14sp" />-->
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/item_detail_cod_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal"
+                        tools:visibility="visible">
+
+                        <include
+                            android:id="@+id/item_detail_cod"
+                            layout="@layout/item_package_property"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            bind:isCopyVisible="@{false}"
+                            bind:itemSrc="@{@drawable/ic_shipment_details_cod}" />
+
+                        <!--                        <TextView-->
+                        <!--                            style="@style/LogesTechsBold"-->
+                        <!--                            android:layout_width="wrap_content"-->
+                        <!--                            android:layout_height="wrap_content"-->
+                        <!--                            android:text="@string/currency"-->
+                        <!--                            android:textSize="14sp" />-->
+                    </LinearLayout>
+
+                    <include
+                        android:id="@+id/item_detail_comment"
+                        layout="@layout/item_package_property"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        bind:isCopyVisible="@{false}"
+                        bind:itemSrc="@{@drawable/ic_shipment_details_comment}" />
+
+                    <include
+                        android:id="@+id/item_package_status"
+                        layout="@layout/item_package_property"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        bind:isCopyVisible="@{false}"
+                        bind:itemSrc="@{@drawable/ic_package_status}" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+</layout>

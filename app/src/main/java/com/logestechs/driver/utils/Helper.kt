@@ -33,6 +33,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.model.LatLng
@@ -55,10 +56,20 @@ import java.text.DecimalFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.*
 
+enum class AppFonts(val value: Int) {
+    ROBOTO_BOLD(R.font.roboto_bold),
+    ROBOTO_MEDIUM(R.font.roboto_medium),
+    ROBOTO_LIGHT(R.font.roboto_light),
+}
 
 class Helper {
     companion object {
         var toast: Toast? = null
+
+        fun getFontStyle(context: Context, font: AppFonts): Typeface? {
+            return ResourcesCompat.getFont(context, font.value)
+        }
+
         fun isInternetAvailable(context: Context?): Boolean {
             var result = false
             if (context != null) {
