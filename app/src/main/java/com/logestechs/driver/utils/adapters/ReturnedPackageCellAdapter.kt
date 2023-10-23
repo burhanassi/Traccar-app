@@ -7,9 +7,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemReturnedPackageCellBinding
+import com.logestechs.driver.utils.AdminPackageStatus
+import com.logestechs.driver.utils.AppLanguages
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.interfaces.ReturnedPackagesCardListener
 import com.logestechs.driver.utils.setThrottleClickListener
+import com.yariksoffice.lingver.Lingver
 
 class ReturnedPackageCellAdapter(
     var packagesList: List<Package?>,
@@ -65,6 +68,11 @@ class ReturnedPackageCellAdapter(
             binding.itemSenderName.textItem.text = pkg?.getFullReceiverName()
             binding.itemSenderAddress.textItem.text = pkg?.destinationAddress?.toStringAddress()
 
+            val statusText = when (Lingver.getInstance().getLocale().toString()) {
+                AppLanguages.ARABIC.value -> pkg?.status?.arabic
+                else -> pkg?.status?.english
+            }
+            binding.itemPackageStatus.textItem.text = statusText
             if (pkg?.invoiceNumber?.isNotEmpty() == true) {
                 binding.itemInvoiceNumber.root.visibility = View.VISIBLE
                 binding.itemInvoiceNumber.textItem.text = pkg.invoiceNumber

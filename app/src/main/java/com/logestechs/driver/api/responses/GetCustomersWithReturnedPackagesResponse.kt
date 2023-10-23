@@ -7,4 +7,5 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class GetCustomersWithReturnedPackagesResponse(
     var customers: ArrayList<Customer?>? = null,
+    val totalRecordsNo: Int? = null,
 ) : Parcelable

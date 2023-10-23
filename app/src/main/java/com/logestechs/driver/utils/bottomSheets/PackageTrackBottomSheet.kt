@@ -131,8 +131,8 @@ class PackageTrackBottomSheet(
             binding.itemDetailComment.root.visibility = View.GONE
         }
 
-        if (pkg?.status != null && pkg?.status!!.isNotEmpty()) {
-            binding.itemPackageStatus.textItem.text = pkg?.status
+        if (pkg?.status != null && pkg?.status!!.name!!.isNotEmpty()) {
+            binding.itemPackageStatus.textItem.text = pkg?.status!!.english
         } else {
             binding.itemPackageStatus.root.visibility = View.GONE
         }

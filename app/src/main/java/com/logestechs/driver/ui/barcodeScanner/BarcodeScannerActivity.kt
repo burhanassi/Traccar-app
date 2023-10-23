@@ -295,14 +295,14 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            if (response.body()?.status == AdminPackageStatus.RETURNED_BY_RECIPIENT.name) {
+                            if (response.body()?.status?.name == AdminPackageStatus.RETURNED_BY_RECIPIENT.name) {
                                 Helper.run {
                                     showErrorMessage(
                                         super.getContext(),
                                         getString(R.string.error_package_is_returned)
                                     )
                                 }
-                            } else if (response.body()?.status == AdminPackageStatus.FAILED.name) {
+                            } else if (response.body()?.status?.name == AdminPackageStatus.FAILED.name) {
                                 Helper.run {
                                     showErrorMessage(
                                         super.getContext(),

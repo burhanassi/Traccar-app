@@ -97,14 +97,18 @@ interface LogesTechsDriverApi {
 
     @GET("api/admin/customers/with-returned")
     suspend fun getCustomersWithReturnedPackages(
-        @Query("type") type: ReturnedPackageStatus?
+        @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
+        @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
+        @Query("type") type: ReturnedPackageStatus?,
+        @Query("isToDeliverToSender") isToDeliverToSender: Boolean?
     ): Response<GetCustomersWithReturnedPackagesResponse?>?
 
     @GET("api/admin/customers/{customerId}/returned-packages")
     suspend fun getCustomerReturnedPackages(
         @Path("customerId") customerId: Long?,
         @Query("barcode") barcode: String?,
-        @Query("type") type: ReturnedPackageStatus?
+        @Query("type") type: ReturnedPackageStatus?,
+        @Query("isToDeliverToSender") isToDeliverToSender: Boolean?
     ): Response<GetCustomerReturnedPackagesResponse?>?
 
     @GET("api/admin/bundles/returned")
