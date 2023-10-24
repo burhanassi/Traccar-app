@@ -617,7 +617,8 @@ class Helper {
             data: Any?,
             isToMultiple: Boolean,
             messageTemplate: String?,
-            partnerName: String? = null
+            partnerName: String? = null,
+            language: String = "ar"
         ): String? {
             val loginResponse = SharedPreferenceWrapper.getLoginResponse()
             val loggedInUser: User? = loginResponse?.user
@@ -669,166 +670,521 @@ class Helper {
             if (!isToMultiple) {
                 if (recipientName != null && recipientName.isNotEmpty()) {
                     template = template?.replace(
-                        SmsTemplateTag.NAME.tag.toRegex(),
+                        SmsTemplateTag.NAME.arabicTag.toRegex(),
+                        recipientName
+                    )
+                    template = template?.replace(
+                        SmsTemplateTag.NAME.englishTag.toRegex(),
                         recipientName
                     )
                 } else {
                     template =
-                        template?.replace(" " + SmsTemplateTag.NAME.tag.toRegex(), "")
+                        template?.replace(" " + SmsTemplateTag.NAME.arabicTag.toRegex(), "")
                     template =
-                        template?.replace(SmsTemplateTag.NAME.tag.toRegex(), "")
+                        template?.replace(SmsTemplateTag.NAME.arabicTag.toRegex(), "")
+                    template =
+                        template?.replace(" " + SmsTemplateTag.NAME.englishTag.toRegex(), "")
+                    template =
+                        template?.replace(SmsTemplateTag.NAME.englishTag.toRegex(), "")
                 }
             } else {
                 template =
-                    template?.replace(" " + SmsTemplateTag.NAME.tag.toRegex(), "")
-                template = template?.replace(SmsTemplateTag.NAME.tag.toRegex(), "")
+                    template?.replace(" " + SmsTemplateTag.NAME.arabicTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.NAME.arabicTag.toRegex(), "")
+                template =
+                    template?.replace(" " + SmsTemplateTag.NAME.englishTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.NAME.englishTag.toRegex(), "")
             }
             if (!isToMultiple) {
                 if (barcode != null && !barcode.isEmpty()) {
                     template = template?.replace(
-                        SmsTemplateTag.barcode.tag.toRegex(),
+                        SmsTemplateTag.barcode.arabicTag.toRegex(),
+                        barcode
+                    )
+                    template = template?.replace(
+                        SmsTemplateTag.barcode.englishTag.toRegex(),
                         barcode
                     )
                 } else {
                     template = template?.replace(
-                        " " + SmsTemplateTag.barcode.tag.toRegex(),
+                        " " + SmsTemplateTag.barcode.arabicTag.toRegex(),
                         ""
                     )
                     template =
-                        template?.replace(SmsTemplateTag.barcode.tag.toRegex(), "")
+                        template?.replace(SmsTemplateTag.barcode.arabicTag.toRegex(), "")
+                    template = template?.replace(
+                        " " + SmsTemplateTag.barcode.englishTag.toRegex(),
+                        ""
+                    )
+                    template =
+                        template?.replace(SmsTemplateTag.barcode.englishTag.toRegex(), "")
                 }
             } else {
                 template =
-                    template?.replace(" " + SmsTemplateTag.barcode.tag.toRegex(), "")
-                template = template?.replace(SmsTemplateTag.barcode.tag.toRegex(), "")
+                    template?.replace(" " + SmsTemplateTag.barcode.arabicTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.barcode.arabicTag.toRegex(), "")
+                template =
+                    template?.replace(" " + SmsTemplateTag.barcode.englishTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.barcode.englishTag.toRegex(), "")
             }
             if (!isToMultiple) {
                 if (businessSenderName != null && !businessSenderName.isEmpty()) {
                     template = template?.replace(
-                        SmsTemplateTag.storeName.tag.toRegex(),
+                        SmsTemplateTag.storeName.arabicTag.toRegex(),
+                        businessSenderName
+                    )
+                    template = template?.replace(
+                        SmsTemplateTag.storeName.englishTag.toRegex(),
                         businessSenderName
                     )
                 } else {
                     template = template?.replace(
-                        " " + SmsTemplateTag.storeName.tag.toRegex(),
+                        " " + SmsTemplateTag.storeName.arabicTag.toRegex(),
                         ""
                     )
                     template =
-                        template?.replace(SmsTemplateTag.storeName.tag.toRegex(), "")
+                        template?.replace(SmsTemplateTag.storeName.arabicTag.toRegex(), "")
+                    template = template?.replace(
+                        " " + SmsTemplateTag.storeName.englishTag.toRegex(),
+                        ""
+                    )
+                    template =
+                        template?.replace(SmsTemplateTag.storeName.englishTag.toRegex(), "")
                 }
             } else {
                 template = template?.replace(
-                    " " + SmsTemplateTag.storeName.tag.toRegex(),
+                    " " + SmsTemplateTag.storeName.arabicTag.toRegex(),
                     ""
                 )
                 template =
-                    template?.replace(SmsTemplateTag.storeName.tag.toRegex(), "")
+                    template?.replace(SmsTemplateTag.storeName.arabicTag.toRegex(), "")
+                template = template?.replace(
+                    " " + SmsTemplateTag.storeName.englishTag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.storeName.englishTag.toRegex(), "")
             }
             if (!isToMultiple) {
                 if (companyDomain != null && companyDomain.isNotEmpty()) {
                     val url = "https://$companyDomain?barcode=$barcode"
                     template = template?.replace(
-                        SmsTemplateTag.shareLocationUrl.tag.toRegex(),
+                        SmsTemplateTag.shareLocationUrl.arabicTag.toRegex(),
+                        url
+                    )
+                    template = template?.replace(
+                        SmsTemplateTag.shareLocationUrl.englishTag.toRegex(),
                         url
                     )
                 } else {
                     template = template?.replace(
-                        " " + SmsTemplateTag.shareLocationUrl.tag.toRegex(),
+                        " " + SmsTemplateTag.shareLocationUrl.arabicTag.toRegex(),
                         ""
                     )
                     template = template?.replace(
-                        SmsTemplateTag.shareLocationUrl.tag.toRegex(),
+                        SmsTemplateTag.shareLocationUrl.arabicTag.toRegex(),
+                        ""
+                    )
+                    template = template?.replace(
+                        " " + SmsTemplateTag.shareLocationUrl.englishTag.toRegex(),
+                        ""
+                    )
+                    template = template?.replace(
+                        SmsTemplateTag.shareLocationUrl.englishTag.toRegex(),
                         ""
                     )
                 }
             } else {
                 template = template?.replace(
-                    " " + SmsTemplateTag.shareLocationUrl.tag.toRegex(),
+                    " " + SmsTemplateTag.shareLocationUrl.arabicTag.toRegex(),
                     ""
                 )
                 template = template?.replace(
-                    SmsTemplateTag.shareLocationUrl.tag.toRegex(),
+                    SmsTemplateTag.shareLocationUrl.arabicTag.toRegex(),
+                    ""
+                )
+                template = template?.replace(
+                    " " + SmsTemplateTag.shareLocationUrl.englishTag.toRegex(),
+                    ""
+                )
+                template = template?.replace(
+                    SmsTemplateTag.shareLocationUrl.englishTag.toRegex(),
                     ""
                 )
             }
             if (driverName != null && driverName.isNotEmpty()) {
                 template = template?.replace(
-                    SmsTemplateTag.driverName.tag.toRegex(),
+                    SmsTemplateTag.driverName.arabicTag.toRegex(),
+                    driverName
+                )
+                template = template?.replace(
+                    SmsTemplateTag.driverName.englishTag.toRegex(),
                     driverName
                 )
             } else {
                 template = template?.replace(
-                    " " + SmsTemplateTag.driverName.tag.toRegex(),
+                    " " + SmsTemplateTag.driverName.arabicTag.toRegex(),
                     ""
                 )
                 template =
-                    template?.replace(SmsTemplateTag.driverName.tag.toRegex(), "")
+                    template?.replace(SmsTemplateTag.driverName.arabicTag.toRegex(), "")
+                template = template?.replace(
+                    " " + SmsTemplateTag.driverName.englishTag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.driverName.englishTag.toRegex(), "")
             }
             if (driverPhone != null && !driverPhone.isEmpty()) {
                 template = template?.replace(
-                    SmsTemplateTag.driverPhone.tag.toRegex(),
+                    SmsTemplateTag.driverPhone.arabicTag.toRegex(),
+                    driverPhone
+                )
+                template = template?.replace(
+                    SmsTemplateTag.driverPhone.englishTag.toRegex(),
                     driverPhone
                 )
             } else {
                 template = template?.replace(
-                    " " + SmsTemplateTag.driverPhone.tag.toRegex(),
+                    " " + SmsTemplateTag.driverPhone.arabicTag.toRegex(),
                     ""
                 )
                 template =
-                    template?.replace(SmsTemplateTag.driverPhone.tag.toRegex(), "")
+                    template?.replace(SmsTemplateTag.driverPhone.arabicTag.toRegex(), "")
+                template = template?.replace(
+                    " " + SmsTemplateTag.driverPhone.englishTag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.driverPhone.englishTag.toRegex(), "")
             }
             if (company != null && !company.isEmpty()) {
                 template =
-                    template?.replace(SmsTemplateTag.company.tag.toRegex(), company)
+                    template?.replace(SmsTemplateTag.company.arabicTag.toRegex(), company)
+                template =
+                    template?.replace(SmsTemplateTag.company.englishTag.toRegex(), company)
             } else {
                 template =
-                    template?.replace(" " + SmsTemplateTag.company.tag.toRegex(), "")
-                template = template?.replace(SmsTemplateTag.company.tag.toRegex(), "")
+                    template?.replace(" " + SmsTemplateTag.company.arabicTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.company.arabicTag.toRegex(), "")
+                template =
+                    template?.replace(" " + SmsTemplateTag.company.englishTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.company.englishTag.toRegex(), "")
             }
             if (cod != null && cod.isNotEmpty()) {
-                template = template?.replace(SmsTemplateTag.cod.tag.toRegex(), cod)
+                template = template?.replace(SmsTemplateTag.cod.arabicTag.toRegex(), cod)
+                template = template?.replace(SmsTemplateTag.cod.englishTag.toRegex(), cod)
             } else {
                 template =
-                    template?.replace(" " + SmsTemplateTag.cod.tag.toRegex(), "")
-                template = template?.replace(SmsTemplateTag.cod.tag.toRegex(), "")
+                    template?.replace(" " + SmsTemplateTag.cod.arabicTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.cod.arabicTag.toRegex(), "")
+                template =
+                    template?.replace(" " + SmsTemplateTag.cod.englishTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.cod.englishTag.toRegex(), "")
             }
             if (postponeDate != null && postponeDate.isNotEmpty()) {
                 template = template?.replace(
-                    SmsTemplateTag.postponeDate.tag.toRegex(),
+                    SmsTemplateTag.postponeDate.arabicTag.toRegex(),
+                    postponeDate
+                )
+                template = template?.replace(
+                    SmsTemplateTag.postponeDate.englishTag.toRegex(),
                     postponeDate
                 )
             } else {
                 template = template?.replace(
-                    " " + SmsTemplateTag.postponeDate.tag.toRegex(),
+                    " " + SmsTemplateTag.postponeDate.arabicTag.toRegex(),
                     ""
                 )
                 template =
-                    template?.replace(SmsTemplateTag.postponeDate.tag.toRegex(), "")
+                    template?.replace(SmsTemplateTag.postponeDate.arabicTag.toRegex(), "")
+                template = template?.replace(
+                    " " + SmsTemplateTag.postponeDate.englishTag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.postponeDate.englishTag.toRegex(), "")
             }
             if (!expectedDeliveryDate.isEmpty()) {
                 template = template?.replace(
-                    SmsTemplateTag.expectedDeliveryDate.tag.toRegex(),
+                    SmsTemplateTag.expectedDeliveryDate.arabicTag.toRegex(),
+                    expectedDeliveryDate
+                )
+                template = template?.replace(
+                    SmsTemplateTag.expectedDeliveryDate.englishTag.toRegex(),
                     expectedDeliveryDate
                 )
             } else {
                 template = template?.replace(
-                    " " + SmsTemplateTag.expectedDeliveryDate.tag.toRegex(),
+                    " " + SmsTemplateTag.expectedDeliveryDate.arabicTag.toRegex(),
                     ""
                 )
                 template = template?.replace(
-                    SmsTemplateTag.expectedDeliveryDate.tag.toRegex(),
+                    SmsTemplateTag.expectedDeliveryDate.arabicTag.toRegex(),
+                    ""
+                )
+                template = template?.replace(
+                    " " + SmsTemplateTag.expectedDeliveryDate.englishTag.toRegex(),
+                    ""
+                )
+                template = template?.replace(
+                    SmsTemplateTag.expectedDeliveryDate.englishTag.toRegex(),
+                    ""
+                )
+            }
+            if (!isToMultiple) {
+                if (barcode != null && !barcode.isEmpty()) {
+                    template = template?.replace(
+                        SmsTemplateTag.barcode.arabicTag.toRegex(),
+                        barcode
+                    )
+                    template = template?.replace(
+                        SmsTemplateTag.barcode.englishTag.toRegex(),
+                        barcode
+                    )
+                } else {
+                    template = template?.replace(
+                        " " + SmsTemplateTag.barcode.arabicTag.toRegex(),
+                        ""
+                    )
+                    template =
+                        template?.replace(SmsTemplateTag.barcode.arabicTag.toRegex(), "")
+                    template = template?.replace(
+                        " " + SmsTemplateTag.barcode.englishTag.toRegex(),
+                        ""
+                    )
+                    template =
+                        template?.replace(SmsTemplateTag.barcode.englishTag.toRegex(), "")
+                }
+            } else {
+                template =
+                    template?.replace(" " + SmsTemplateTag.barcode.arabicTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.barcode.arabicTag.toRegex(), "")
+                template =
+                    template?.replace(" " + SmsTemplateTag.barcode.englishTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.barcode.englishTag.toRegex(), "")
+            }
+            if (!isToMultiple) {
+                if (businessSenderName != null && !businessSenderName.isEmpty()) {
+                    template = template?.replace(
+                        SmsTemplateTag.storeName.arabicTag.toRegex(),
+                        businessSenderName
+                    )
+                    template = template?.replace(
+                        SmsTemplateTag.storeName.englishTag.toRegex(),
+                        businessSenderName
+                    )
+                } else {
+                    template = template?.replace(
+                        " " + SmsTemplateTag.storeName.arabicTag.toRegex(),
+                        ""
+                    )
+                    template =
+                        template?.replace(SmsTemplateTag.storeName.arabicTag.toRegex(), "")
+                    template = template?.replace(
+                        " " + SmsTemplateTag.storeName.englishTag.toRegex(),
+                        ""
+                    )
+                    template =
+                        template?.replace(SmsTemplateTag.storeName.englishTag.toRegex(), "")
+                }
+            } else {
+                template = template?.replace(
+                    " " + SmsTemplateTag.storeName.arabicTag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.storeName.arabicTag.toRegex(), "")
+                template = template?.replace(
+                    " " + SmsTemplateTag.storeName.englishTag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.storeName.englishTag.toRegex(), "")
+            }
+            if (!isToMultiple) {
+                if (companyDomain != null && companyDomain.isNotEmpty()) {
+                    val url = "https://$companyDomain?barcode=$barcode"
+                    template = template?.replace(
+                        SmsTemplateTag.shareLocationUrl.arabicTag.toRegex(),
+                        url
+                    )
+                    template = template?.replace(
+                        SmsTemplateTag.shareLocationUrl.englishTag.toRegex(),
+                        url
+                    )
+                } else {
+                    template = template?.replace(
+                        " " + SmsTemplateTag.shareLocationUrl.arabicTag.toRegex(),
+                        ""
+                    )
+                    template = template?.replace(
+                        SmsTemplateTag.shareLocationUrl.arabicTag.toRegex(),
+                        ""
+                    )
+                    template = template?.replace(
+                        " " + SmsTemplateTag.shareLocationUrl.englishTag.toRegex(),
+                        ""
+                    )
+                    template = template?.replace(
+                        SmsTemplateTag.shareLocationUrl.englishTag.toRegex(),
+                        ""
+                    )
+                }
+            } else {
+                template = template?.replace(
+                    " " + SmsTemplateTag.shareLocationUrl.arabicTag.toRegex(),
+                    ""
+                )
+                template = template?.replace(
+                    SmsTemplateTag.shareLocationUrl.arabicTag.toRegex(),
+                    ""
+                )
+                template = template?.replace(
+                    " " + SmsTemplateTag.shareLocationUrl.englishTag.toRegex(),
+                    ""
+                )
+                template = template?.replace(
+                    SmsTemplateTag.shareLocationUrl.englishTag.toRegex(),
+                    ""
+                )
+            }
+            if (driverName != null && driverName.isNotEmpty()) {
+                template = template?.replace(
+                    SmsTemplateTag.driverName.arabicTag.toRegex(),
+                    driverName
+                )
+                template = template?.replace(
+                    SmsTemplateTag.driverName.englishTag.toRegex(),
+                    driverName
+                )
+            } else {
+                template = template?.replace(
+                    " " + SmsTemplateTag.driverName.arabicTag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.driverName.arabicTag.toRegex(), "")
+                template = template?.replace(
+                    " " + SmsTemplateTag.driverName.englishTag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.driverName.englishTag.toRegex(), "")
+            }
+            if (driverPhone != null && !driverPhone.isEmpty()) {
+                template = template?.replace(
+                    SmsTemplateTag.driverPhone.arabicTag.toRegex(),
+                    driverPhone
+                )
+                template = template?.replace(
+                    SmsTemplateTag.driverPhone.englishTag.toRegex(),
+                    driverPhone
+                )
+            } else {
+                template = template?.replace(
+                    " " + SmsTemplateTag.driverPhone.arabicTag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.driverPhone.arabicTag.toRegex(), "")
+                template = template?.replace(
+                    " " + SmsTemplateTag.driverPhone.englishTag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.driverPhone.englishTag.toRegex(), "")
+            }
+            if (company != null && !company.isEmpty()) {
+                template =
+                    template?.replace(SmsTemplateTag.company.arabicTag.toRegex(), company)
+                template =
+                    template?.replace(SmsTemplateTag.company.englishTag.toRegex(), company)
+            } else {
+                template =
+                    template?.replace(" " + SmsTemplateTag.company.arabicTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.company.arabicTag.toRegex(), "")
+                template =
+                    template?.replace(" " + SmsTemplateTag.company.englishTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.company.englishTag.toRegex(), "")
+            }
+            if (cod != null && cod.isNotEmpty()) {
+                template = template?.replace(SmsTemplateTag.cod.arabicTag.toRegex(), cod)
+                template = template?.replace(SmsTemplateTag.cod.englishTag.toRegex(), cod)
+            } else {
+                template =
+                    template?.replace(" " + SmsTemplateTag.cod.arabicTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.cod.arabicTag.toRegex(), "")
+                template =
+                    template?.replace(" " + SmsTemplateTag.cod.englishTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.cod.englishTag.toRegex(), "")
+            }
+            if (postponeDate != null && postponeDate.isNotEmpty()) {
+                template = template?.replace(
+                    SmsTemplateTag.postponeDate.arabicTag.toRegex(),
+                    postponeDate
+                )
+                template = template?.replace(
+                    SmsTemplateTag.postponeDate.englishTag.toRegex(),
+                    postponeDate
+                )
+            } else {
+                template = template?.replace(
+                    " " + SmsTemplateTag.postponeDate.arabicTag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.postponeDate.arabicTag.toRegex(), "")
+                template = template?.replace(
+                    " " + SmsTemplateTag.postponeDate.englishTag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.postponeDate.englishTag.toRegex(), "")
+            }
+            if (!expectedDeliveryDate.isEmpty()) {
+                template = template?.replace(
+                    SmsTemplateTag.expectedDeliveryDate.arabicTag.toRegex(),
+                    expectedDeliveryDate
+                )
+                template = template?.replace(
+                    SmsTemplateTag.expectedDeliveryDate.englishTag.toRegex(),
+                    expectedDeliveryDate
+                )
+            } else {
+                template = template?.replace(
+                    " " + SmsTemplateTag.expectedDeliveryDate.arabicTag.toRegex(),
+                    ""
+                )
+                template = template?.replace(
+                    SmsTemplateTag.expectedDeliveryDate.arabicTag.toRegex(),
+                    ""
+                )
+                template = template?.replace(
+                    " " + SmsTemplateTag.expectedDeliveryDate.englishTag.toRegex(),
+                    ""
+                )
+                template = template?.replace(
+                    SmsTemplateTag.expectedDeliveryDate.englishTag.toRegex(),
                     ""
                 )
             }
             if (hubName.isNotEmpty()) {
                 template = template?.replace(
-                    SmsTemplateTag.postponeDate.tag.toRegex(),
+                    SmsTemplateTag.postponeDate.arabicTag.toRegex(),
+                    hubName
+                )
+                template = template?.replace(
+                    SmsTemplateTag.postponeDate.englishTag.toRegex(),
                     hubName
                 )
             } else {
                 template =
-                    template?.replace(" " + SmsTemplateTag.hubName.tag.toRegex(), "")
-                template = template?.replace(SmsTemplateTag.hubName.tag.toRegex(), "")
+                    template?.replace(" " + SmsTemplateTag.hubName.arabicTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.hubName.arabicTag.toRegex(), "")
+                template =
+                    template?.replace(" " + SmsTemplateTag.hubName.englishTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.hubName.englishTag.toRegex(), "")
             }
             return template
         }
