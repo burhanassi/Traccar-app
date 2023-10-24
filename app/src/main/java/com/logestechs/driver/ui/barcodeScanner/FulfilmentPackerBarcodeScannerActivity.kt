@@ -91,7 +91,7 @@ class FulfilmentPackerBarcodeScannerActivity :
 
     private fun initUi() {
         binding.textTitle.text = getText(R.string.please_scan_item_barcode)
-        binding.textItemsNumber.text = "Number Of items: " +
+        binding.textItemsNumber.text = getString(R.string.number_of_items) +
                 "${(binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter).getItemCount()} " +
                 "of ${fulfilmentOrder?.totalQuantity}"
     }
@@ -109,7 +109,8 @@ class FulfilmentPackerBarcodeScannerActivity :
                     this@FulfilmentPackerBarcodeScannerActivity
                 )
         }
-        binding.textScannedOrder.text = "Order Barcode: ${selectedFulfilmentOrder?.barcode}"
+        binding.textScannedOrder.text =
+            getString(R.string.order_barcode) + "${selectedFulfilmentOrder?.barcode}"
     }
 
     private fun vibrate() {
