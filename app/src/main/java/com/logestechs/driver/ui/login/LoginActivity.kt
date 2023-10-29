@@ -203,10 +203,11 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
             SharedPreferenceWrapper.saveUUID(uuid)
         }
 
+        var language = Lingver.getInstance().getLocale().toString()
         val loginRequestBody = LoginRequestBody(
             email = binding.etEmail.getText(),
             password = binding.etPassword.getText(),
-            device = Device(uuid, "ANDROID", fcmToken)
+            device = Device(uuid, "ANDROID", fcmToken, language = language)
         )
 
         if (Helper.isLogesTechsDriver() || Helper.isBackendDriver()) {

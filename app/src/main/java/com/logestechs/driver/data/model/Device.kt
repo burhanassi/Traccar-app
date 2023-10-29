@@ -10,7 +10,8 @@ data class Device(
     val uuid: String? = null,
     val operatingSystem: String? = null,
     var notificationToken: String? = null,
-    var id: Long? = null
+    var id: Long? = null,
+    var language: String? = null
 ) : Parcelable {
     constructor(uuid: String, operatingSystem: String) : this(uuid, operatingSystem, null)
 }
