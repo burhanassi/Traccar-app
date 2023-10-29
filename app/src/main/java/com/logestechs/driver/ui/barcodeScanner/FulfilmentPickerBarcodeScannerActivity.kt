@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.os.*
-import android.util.Log
 import android.view.KeyEvent
 import android.view.SurfaceHolder
 import android.view.View
@@ -91,10 +90,12 @@ class FulfilmentPickerBarcodeScannerActivity :
                 hideScannedItemsContainer()
                 binding.textTitle.text = getString(R.string.please_scan_tote)
             }
+
             FulfilmentPickerScanMode.ITEM_INTO_TOTE -> {
                 showScannedItemsContainer()
                 binding.textTitle.text = getString(R.string.please_scan_items)
             }
+
             null -> return
         }
     }
@@ -133,7 +134,8 @@ class FulfilmentPickerBarcodeScannerActivity :
                     this@FulfilmentPickerBarcodeScannerActivity
                 )
         }
-        binding.textScannedOrder.text = "Order Barcode: ${selectedFulfilmentOrder?.barcode}"
+        binding.textScannedOrder.text =
+            getString(R.string.order_barcode) + "${selectedFulfilmentOrder?.barcode}"
     }
 
     private fun vibrate() {
@@ -184,7 +186,6 @@ class FulfilmentPickerBarcodeScannerActivity :
         }
         return false
     }
-
 
     @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(
@@ -290,9 +291,11 @@ class FulfilmentPickerBarcodeScannerActivity :
             FulfilmentPickerScanMode.TOTE -> {
                 callGetTote(barcode)
             }
+
             FulfilmentPickerScanMode.ITEM_INTO_TOTE -> {
                 callScanItemIntoTote(barcode)
             }
+
             null -> return
         }
     }
@@ -317,7 +320,8 @@ class FulfilmentPickerBarcodeScannerActivity :
                             selectedScanMode = FulfilmentPickerScanMode.ITEM_INTO_TOTE
                             scannedTote = response.body()
                             handleSelectedScanMode()
-                            binding.textScannedTote.text = "Tote Barcode: ${scannedTote?.barcode}"
+                            binding.textScannedTote.text =
+                                getString(R.string.tote_barcode) + "${scannedTote?.barcode}"
                         }
                     } else {
                         try {
@@ -370,17 +374,17 @@ class FulfilmentPickerBarcodeScannerActivity :
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     var response: Response<SortItemIntoToteResponse>? = null
-                    if(fulfilmentOrder?.status == "PARTIALLY_PICKED"){
-                        response = ApiAdapter.apiClient.continuePicking(
+                    response = if (fulfilmentOrder?.status == "PARTIALLY_PICKED") {
+                        ApiAdapter.apiClient.continuePicking(
                             selectedFulfilmentOrder?.id,
                             BarcodeRequestBody(barcode)
                         )
-                    }else{
-                        response = ApiAdapter.apiClient.scanItemIntoTote(
-                        scannedTote?.id,
-                        selectedFulfilmentOrder?.id,
-                        BarcodeRequestBody(barcode)
-                    )
+                    } else {
+                        ApiAdapter.apiClient.scanItemIntoTote(
+                            scannedTote?.id,
+                            selectedFulfilmentOrder?.id,
+                            BarcodeRequestBody(barcode)
+                        )
                     }
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
@@ -393,6 +397,14 @@ class FulfilmentPickerBarcodeScannerActivity :
                                     body?.sku
                                 )
                             binding.rvScannedBarcodes.smoothScrollToPosition(scrollPosition)
+                            (binding.rvScannedBarcodes.adapter as FulfilmentOrderItemCellAdapter).highlightItem(
+                                scrollPosition
+                            )
+                            if ((binding.rvScannedBarcodes.adapter as FulfilmentOrderItemCellAdapter)
+                                    .getCount() == 0
+                            ) {
+                                onBackPressed()
+                            }
                         }
                     } else {
                         scannedItemsHashMap.remove(barcode)
@@ -437,12 +449,12 @@ class FulfilmentPickerBarcodeScannerActivity :
         }
     }
 
-
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_done -> {
                 onBackPressed()
             }
+
             R.id.button_insert_barcode -> {
                 InsertBarcodeDialog(this, this).showDialog()
             }

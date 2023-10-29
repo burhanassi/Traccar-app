@@ -14,6 +14,7 @@ import com.logestechs.driver.data.model.Device
 import com.logestechs.driver.databinding.ActivityLoginBinding
 import com.logestechs.driver.ui.dashboard.DriverDashboardActivity
 import com.logestechs.driver.ui.dashboard.FulfilmentSorterDashboardActivity
+import com.logestechs.driver.ui.dashboard.HandlerDashboardActivity
 import com.logestechs.driver.ui.serverSelectionActivity.ServerSelectionActivity
 import com.logestechs.driver.ui.signUp.SignUpActivity
 import com.logestechs.driver.utils.*
@@ -126,6 +127,11 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
     private fun navigateFromLoginToDashboard(loginResponse: LoginResponse?) {
         if (loginResponse?.user?.role == UserRole.STOCKING_AND_PACKING_EMPLOYEE.name) {
             val mIntent = Intent(this, FulfilmentSorterDashboardActivity::class.java)
+            mIntent.putExtra(BundleKeys.IS_LOGIN.name, true);
+            startActivity(mIntent)
+            finish()
+        } else if (loginResponse?.user?.role == UserRole.HANDLER.name) {
+            val mIntent = Intent(this, HandlerDashboardActivity::class.java)
             mIntent.putExtra(BundleKeys.IS_LOGIN.name, true);
             startActivity(mIntent)
             finish()

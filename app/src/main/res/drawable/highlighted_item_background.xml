@@ -1,0 +1,14 @@
+<!-- res/drawable/highlighted_item_background.xml -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- When the item is pressed or highlighted -->
+    <item android:state_pressed="true" android:state_enabled="true">
+        <shape>
+            <solid android:color="#FFF4E8" />
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <solid android:color="#FFF4E8" />
+        </shape>
+    </item>
+</selector>

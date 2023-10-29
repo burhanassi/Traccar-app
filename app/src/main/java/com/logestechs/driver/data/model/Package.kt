@@ -2,6 +2,8 @@ package com.logestechs.driver.data.model
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import com.logestechs.driver.utils.AdminPackageStatus
+import com.logestechs.driver.utils.AppLanguages
 import com.logestechs.driver.utils.BarcodeScanType
 import kotlinx.android.parcel.Parcelize
 
@@ -10,10 +12,10 @@ data class Package(
     //package info
     var id: Long? = null,
     var notes: String? = null,
-    var status: String? = null,
+    var status: AdminPackageStatus? = null,
     var customerStatusType: String? = null,
     var cod: Double? = null,
-    var serviceType: String? = null,
+    var serviceTypeName: String? = null,
     var shipmentType: String? = null,
     var isFragile: Boolean? = null,
     var isHazardousMaterial: Boolean? = null,
@@ -37,6 +39,7 @@ data class Package(
     var partnerId: Long? = null,
     var isAttachmentExist: Boolean?,
     var packageItemsToDeliverList: List<PackageItemsToDeliver?>?,
+    var supplierInvoice: String? = null,
 
     //products
     var quantity: Int? = null,

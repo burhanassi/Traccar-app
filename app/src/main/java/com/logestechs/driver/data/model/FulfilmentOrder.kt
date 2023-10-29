@@ -33,5 +33,6 @@ data class FulfilmentOrder(
     val items: List<ProductItem?>? = null,
     val warehouseName: String? = null,
     val customerName: String? = null,
-    val numberOfItems: Int? = null
+    val numberOfItems: Int? = null,
+    val totalQuantity: Int? = null
 ) : Parcelable

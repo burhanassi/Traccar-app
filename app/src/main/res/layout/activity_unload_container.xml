@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.barcodeScanner.BarcodeScannerActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:animateLayoutChanges="true"
+            android:clipChildren="false"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/container_barcode_scanner"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_weight="0.35"
+                android:background="@android:color/black"
+                android:visibility="visible">
+
+                <SurfaceView
+                    android:id="@+id/surface_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <LinearLayout
+                    android:layout_width="280dp"
+                    android:layout_height="180dp"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        tools:ignore="UselessParent">
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                    </LinearLayout>
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
+
+                        <View
+                            android:layout_width="196dp"
+                            android:layout_height="3dp"
+                            android:layout_gravity="center"
+                            android:background="@color/pink_carnation" />
+
+                    </FrameLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        tools:ignore="UselessParent">
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/container_insert_barcode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:visibility="gone">
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical" />
+
+                    <Button
+                        android:id="@+id/button_insert_barcode"
+                        style="@style/LogesTechsMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="25dp"
+                        android:layout_gravity="end"
+                        android:background="@drawable/background_barcode_scanner_manual_input_button"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:text="@string/button_insert_barcode"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/container_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/background_floating_message"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:id="@+id/text_title"
+                        style="@style/LogesTechsMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textAlignment="center"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"
+                        tools:text="@string/please_verify_driver"
+                        tools:ignore="RtlCompat" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/button_torch"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="end|bottom"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="24dp"
+                    android:src="@drawable/ic_torch_off"
+                    tools:ignore="ContentDescription" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/container_scanned_item"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="-16dp"
+                android:layout_weight="0.65"
+                android:background="@drawable/background_barcode_scanner_bottom_section"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/LogesTechsMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/title_scanned_packages" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_scanned_barcodes"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_weight="1"
+                    android:overScrollMode="never"
+                    tools:listitem="@layout/item_pending_package_customer_cell" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        android:id="@+id/button_done"
+                        style="@style/LogesTechsMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_marginStart="32dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="32dp"
+                        android:background="@drawable/background_logestechs_button"
+                        android:text="@string/button_done"
+                        android:textColor="@color/white" />
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/container_driver_details"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_dashboard_gradient"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/dashboard_header" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/image_view_driver_logo"
+                        android:layout_width="93dp"
+                        android:layout_height="82dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="16dp"
+                        android:background="@color/transparent"
+                        android:src="@drawable/ic_circular_driver"
+                        tools:ignore="ContentDescription" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/text_driver_name"
+                            style="@style/LogesTechsBold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="24sp"
+                            android:textColor="@color/pink_carnation"
+                            tools:text="Majdi Driver" />
+
+                        <TextView
+                            android:id="@+id/text_driver_hub"
+                            style="@style/LogesTechsBold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/fontTitleLight"
+                            tools:text="Majdi Driver" />
+
+                        <include
+                            android:id="@+id/item_driver_car"
+                            layout="@layout/item_card_row"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            bind:isCopyVisible="@{false}"
+                            bind:itemSrc="@{@drawable/ic_car_gray}" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_packages_number"
+                        style="@style/LogesTechsMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginStart="8dp"
+                        android:text="@string/title_packages"
+                        android:textSize="21dp"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical" />
+
+                    <ImageView
+                        android:id="@+id/button_search"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_gravity="center|end"
+                        android:src="@drawable/ic_search_gray"
+                        tools:ignore="ContentDescription" />
+                </LinearLayout>
+
+
+                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                    android:id="@+id/refresh_layout_customers"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_driver_packages"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_weight="1"
+                        android:overScrollMode="never"
+                        tools:listitem="@layout/item_pending_package_customer_cell" />
+                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        android:id="@+id/button_scan_packages"
+                        style="@style/LogesTechsMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_marginStart="32dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="32dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/background_logestechs_button"
+                        android:text="@string/button_scan_packages_barcodes"
+                        android:textColor="@color/white" />
+                </FrameLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+</layout>

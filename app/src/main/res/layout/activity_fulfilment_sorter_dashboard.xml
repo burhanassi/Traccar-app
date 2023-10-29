@@ -109,7 +109,7 @@
                         android:id="@+id/dash_entry_sort_items_into_bins"
                         layout="@layout/item_dashboard_entry"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
                         app:iconSrc="@{@drawable/ic_sort_items_into_bin}"
                         app:isCountHidden="@{true}"

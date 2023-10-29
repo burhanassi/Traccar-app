@@ -65,10 +65,42 @@
                         </LinearLayout>
 
                         <LinearLayout
-                            android:layout_width="85dp"
-                            android:layout_height="70dp"
-                            android:gravity="end"
-                            android:orientation="horizontal"></LinearLayout>
+                            android:id="@+id/container_service_type"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/background_card_semi_circle"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:visibility="invisible">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginStart="12dp"
+                                android:layout_marginTop="6dp"
+                                android:layout_marginBottom="12dp"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    style="@style/LogesTechsLight"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/service_type"
+                                    android:textColor="@color/detailsTextBlack"
+                                    android:textSize="12sp" />
+
+                                <TextView
+                                    android:id="@+id/service_type"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/roboto_bold"
+                                    android:gravity="center"
+                                    android:textColor="@color/fontTrackHint"
+                                    android:textSize="12sp" />
+                            </LinearLayout>
+                        </LinearLayout>
                     </LinearLayout>
 
                     <LinearLayout
@@ -302,6 +334,15 @@
                             android:layout_marginTop="8dp"
                             bind:isCopyVisible="@{true}"
                             bind:itemSrc="@{@drawable/ic_invoice_gray}" />
+
+                        <include
+                            android:id="@+id/item_supplier_invoice_number"
+                            layout="@layout/item_card_row"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            bind:isCopyVisible="@{true}"
+                            bind:itemSrc="@{@drawable/ic_supplier_invoice}" />
 
                         <include
                             android:id="@+id/item_package_quantity"

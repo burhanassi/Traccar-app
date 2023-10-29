@@ -1,6 +1,7 @@
 package com.logestechs.driver.data.model
 
 import android.os.Parcelable
+import com.logestechs.driver.utils.FulfillmentOrderPackagingType
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -27,5 +28,8 @@ data class ProductItem(
     var productImageUrl: String? = null,
     var price: Double? = null,
     var sum: Double? = null,
-    var itemBinLocation: String? = null
+    var itemBinLocation: String? = null,
+    var isCustomPackaging: Boolean? = null,
+    var fulfillmentOrderPackagingType: FulfillmentOrderPackagingType? = null,
+    var parcelTypeName: String? = null,
 ) : Parcelable

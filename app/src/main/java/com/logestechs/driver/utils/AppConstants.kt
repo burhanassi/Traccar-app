@@ -29,6 +29,7 @@ class AppConstants {
         const val REQUEST_CAMERA_PERMISSION = 5003
         const val REQUEST_LOCATION_PERMISSION = 5004
         const val REQUEST_SCAN_BUNDLE = 5005
+        const val REQUEST_VERIFY_PACKAGE = 5006
 
         //permission codes
         const val PERMISSIONS_REQUEST_PHONE_CALL = 1
@@ -41,7 +42,7 @@ class AppConstants {
 }
 
 enum class BundleKeys {
-    NOTIFICATIONS_KEY, UNREAD_NOTIFICATIONS_COUNT, IS_LOGIN, COMPANY_INFO, PACKAGES_KEY, PACKAGES_COUNT
+    NOTIFICATIONS_KEY, UNREAD_NOTIFICATIONS_COUNT, IS_LOGIN, COMPANY_INFO, PACKAGES_KEY, PACKAGES_COUNT, PKG_KEY
 }
 
 enum class AppLanguages(val value: String) {
@@ -174,22 +175,36 @@ enum class DeliveryType {
     PARTIAL
 }
 
-enum class SmsTemplateTag(val tag: String) {
-    NAME("<الاسم>"),
-    barcode("<باركود>"),
-    driverName("<اسم السائق>"),
-    driverPhone("<رقم السائق>"),
-    hubName(
-        "<اسم الفرع>"
-    ),
-    company("<اسم الشركة>"),
-    storeName("<اسم المتجر>"),
-    shareLocationUrl("<رابط مشاركة الموقع>"),
-    postponeDate(
-        "<تاريخ التأجيل>"
-    ),
-    expectedDeliveryDate("<تاريخ التوصيل المتوقع>"), cod("<التحصيل>");
+enum class SmsTemplateTag(val arabicTag: String, val englishTag: String) {
+    NAME("<الاسم>", "<Receiver Name>"),
+    barcode("<باركود>", "<Barcode>"),
+    driverName("<اسم السائق>", "<Driver Name>"),
+    driverPhone("<رقم السائق>", "<Driver Phone>"),
+    hubName("<اسم الفرع>", "<Hub Name>"),
+    company("<اسم الشركة>", "<Company Name>"),
+    storeName("<اسم المتجر>", "<Business Name>"),
+    shareLocationUrl("<رابط مشاركة الموقع>", "<Sharing Location URL>"),
+    postponeDate("<تاريخ التأجيل>", "<Date Postponed>"),
+    expectedDeliveryDate("<تاريخ التوصيل المتوقع>", "<Expected Delivery Date>"),
+    cod("<التحصيل>", "<COD>");
+
+    companion object {
+        fun replaceTags(template: String): String {
+            var replacedTemplate = template
+            for (tag in values()) {
+                val tagRegex = Regex("(${tag.arabicTag})|(${tag.englishTag})")
+                val matchedTag = tagRegex.find(replacedTemplate)
+                if (matchedTag != null) {
+                    val detectedTag = matchedTag.groupValues[1] // Arabic tag is in group 1
+                    val replacedTag = if (detectedTag == tag.arabicTag) tag.name else tag.englishTag
+                    replacedTemplate = replacedTemplate.replace(detectedTag, replacedTag)
+                }
+            }
+            return replacedTemplate
+        }
+    }
 }
+
 
 enum class AdminPackageStatus(
     val english: String,
@@ -259,6 +274,10 @@ enum class FulfilmentOrderStatus {
 
 enum class VerificationStatus {
     SENT, VERIFIED, NOT_SENT
+}
+
+enum class FulfillmentOrderPackagingType {
+    BY_CUSTOMER, BY_WAREHOUSE
 }
 
 enum class ProductItemRejectReasonKey(val englishLabel: String, val arabicLabel: String) {

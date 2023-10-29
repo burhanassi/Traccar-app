@@ -23,6 +23,10 @@
     <string name="dashboard_postponed">Postponed</string>
     <string name="dashboard_other_options">Other Options</string>
     <string name="dashboard_mass_cod_reports">Mass Reports</string>
+    <string name="dashboard_sort_on_shelves">Sort on Shelves</string>
+    <string name="dashboard_unload_from_customer">Unload Packages</string>
+    <string name="dashboard_unload_container">Unload from Driver</string>
+    <string name="dashboard_find_packages">Find Package</string>
     <string name="dashboard_sort_bins_into_locations">Sort Bins Into Locations</string>
     <string name="dashboard_sort_items_into_bins">Sort Items Into Bins</string>
     <string name="dashboard_sort_items">Sort Items</string>
@@ -36,6 +40,7 @@
     <string name="packages_view_pager_delivered">Delivered</string>
     <string name="button_accept">Accept</string>
     <string name="title_package">Package</string>
+    <string name="title_packages">Packages</string>
     <string name="title_reject_customer_packages">Reject Customer Packages</string>
     <string name="title_reject_package">Reject Package</string>
     <string name="message_no_packages">No packages were found \n Please pull the list down to refresh</string>
@@ -44,6 +49,7 @@
     <string name="button_insert_barcode">Insert Barcode</string>
     <string name="out_of_delivery">Out Of Delivery</string>
     <string name="title_scanned_packages">Scanned Packages</string>
+    <string name="title_shelf">Shelf</string>
     <string name="button_done">Done</string>
     <string name="error_phone_permission">The app needs phone permission</string>
     <string name="button_scan_packages_barcodes">Scan Packages Barcodes</string>
@@ -113,6 +119,8 @@
     <string name="error_enter_signature">Please insert a signature</string>
     <string name="button_logout">Logout</string>
     <string name="error_camera_and_storage_permissions">The app needs camera and storage permissions</string>
+    <string name="error_package_not_verified">Needs to verify the package, try again!</string>
+    <string name="error_wrong_package">Wrong Package</string>
     <string name="title_delivered_packages">Delivered Packages</string>
     <string name="error_no_packages_for_delivery">There are no packages for delivery</string>
     <string name="title_returned_packages">Returned Packages</string>
@@ -159,6 +167,7 @@
     <string name="error_package_is_returned">Caution, this package is returned!</string>
     <string name="error_package_is_failed">Caution, this package is failed!</string>
     <string name="cancel_pickup">Cancel Pickup</string>
+    <string name="pack_without_scan">Pack without scan</string>
     <string name="please_scan_location_barcode">Please Scan Location Barcode</string>
     <string name="please_scan_damaged_location_barcode">Please Scan Damaged Location Barcode</string>
     <string name="please_scan_bin_barcode">Please Scan Bin Barcode</string>
@@ -166,6 +175,11 @@
     <string name="please_scan_shipping_plan_barcode">Please Scan Shipping Plan Barcode</string>
     <string name="please_scan_items">Please Scan Items</string>
     <string name="please_scan_item_barcode">Please Scan Item Barcode</string>
+    <string name="please_scan_package_barcode">Please prove delivery by scanning package barcode</string>
+    <string name="please_scan_package_barcode_unload">Please scan package barcode</string>
+    <string name="swipe_down_to_scan_another_package">Swipe down to scan another package</string>
+    <string name="please_scan_shelf_barcode">Please Scan Shelf Barcode</string>
+    <string name="please_verify_driver">Please Verify Driver</string>
     <string name="please_scan_warehouse_barcode">Please Scan Warehouse Barcode</string>
     <string name="please_insert_barcode">Please insert barcode</string>
     <string name="button_insert">Insert</string>
@@ -266,4 +280,13 @@
     <string name="return_reason_label">Return Reason: </string>
     <string name="returned_date_label">Returned Date: </string>
     <string name="current_location_label">Current Location: </string>
+    <string name="service_type">Service Type</string>
+    <string name="title_manually">Manually</string>
+    <string name="packaging_type_warehouse">Warehouse Packaging</string>
+    <string name="packaging_type_customer">Customer Packaging</string>
+    <string name="text_is_custom_packing">, is custom packing</string>
+    <string name="order_type">Order Type: </string>
+    <string name="order_barcode">Order Barcode: </string>
+    <string name="tote_barcode">Tote Barcode: </string>
+    <string name="number_of_items">Number of Items: </string>
 </resources>

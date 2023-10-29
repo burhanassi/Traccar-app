@@ -7,6 +7,7 @@ import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.ReturnedPackageStatus
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -96,14 +97,18 @@ interface LogesTechsDriverApi {
 
     @GET("api/admin/customers/with-returned")
     suspend fun getCustomersWithReturnedPackages(
-        @Query("type") type: ReturnedPackageStatus?
+        @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
+        @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
+        @Query("type") type: ReturnedPackageStatus?,
+        @Query("isToDeliverToSender") isToDeliverToSender: Boolean?
     ): Response<GetCustomersWithReturnedPackagesResponse?>?
 
     @GET("api/admin/customers/{customerId}/returned-packages")
     suspend fun getCustomerReturnedPackages(
         @Path("customerId") customerId: Long?,
         @Query("barcode") barcode: String?,
-        @Query("type") type: ReturnedPackageStatus?
+        @Query("type") type: ReturnedPackageStatus?,
+        @Query("isToDeliverToSender") isToDeliverToSender: Boolean?
     ): Response<GetCustomerReturnedPackagesResponse?>?
 
     @GET("api/admin/bundles/returned")
@@ -435,6 +440,12 @@ interface LogesTechsDriverApi {
         @Query("orderId") orderId: Long?
     ): Response<ResponseBody?>?
 
+    @GET("api/handler/orders/{orderId}/picked-item")
+    suspend fun packFulfilmentOrderByItem(
+        @Path("orderId") orderId: Long?,
+        @Query("barcode") barcode: String?
+    ): Response<ProductItem?>?
+
     @PUT("api/driver/packages/{packageId}/delivery-attempt")
     suspend fun deliveryAttempt(
         @Path("packageId") packageId: Long?,
@@ -513,4 +524,47 @@ interface LogesTechsDriverApi {
 
     @POST("api/driver/checkin")
     suspend fun checkIn(@Body checkIn: CheckIns): Response<ResponseBody>
+
+    @GET("api/driver/packages/{packageId}")
+    suspend fun trackPackageDriverNotification(
+        @Path("packageId") packageId: Long
+    ): Response<Package>?
+
+    @GET("api/handler/shelves/scan")
+    suspend fun scanShelfByBarcode(
+        @Query("barcode") barcode: String?
+    ): Response<Shelf?>
+
+    @GET("api/handler/shelves/{shelfId}/packages/sort")
+    suspend fun scanPackagesOnShelf(
+        @Path("shelfId") shelfId: Long?,
+        @Query("barcode") barcode: String?
+    ): Response<GetPackageOnShelfResponse?>?
+
+    @PUT("api/handler/packages/scan-to-unload")
+    suspend fun unloadPackageFromCustomer(
+        @Query("barcode") barcode: String?
+    ): Response<Package?>?
+
+    @GET("api/handler/packages/{barcode}")
+    suspend fun findPackage(
+        @Path("barcode") barcode: String?
+    ): Response<Package?>?
+
+    @GET("api/handler/drivers/verify")
+    suspend fun verifyDriver(
+        @Query("barcode") barcode: String?
+    ): Response<GetVerfiyDriverResponse?>?
+
+    @GET("api/handler/drivers/{driverId}/packages")
+    suspend fun getInCarPackagesForHandler(
+        @Path("driverId") driverId: Long,
+        @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
+        @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
+    ): Response<ArrayList<Package?>?>
+
+    @PUT("api/handler/packages/scan-to-unload")
+    suspend fun unloadPackageFromContainerToHub(
+        @Query("barcode") barcode: String?
+    ): Response<Package>
 }

@@ -1,14 +1,19 @@
 package com.logestechs.driver.ui.returnedPackages
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.tabs.TabLayout
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.Bundles
 import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
+import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ActivityReturnedPackagesBinding
 import com.logestechs.driver.ui.packageDeliveryScreens.returnedPackageDelivery.ReturnedPackageDeliveryActivity
 import com.logestechs.driver.utils.AppConstants
@@ -17,6 +22,7 @@ import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.ReturnedPackageStatus
 import com.logestechs.driver.utils.SharedPreferenceWrapper
+import com.logestechs.driver.utils.adapters.PickedFulfilmentOrderCellAdapter
 import com.logestechs.driver.utils.adapters.ReturnedBundlesCustomerCellAdapter
 import com.logestechs.driver.utils.adapters.ReturnedPackageCustomerCellAdapter
 import com.logestechs.driver.utils.dialogs.ReturnedStatusFilterDialog
@@ -41,6 +47,16 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
     private var companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
+    private var isDeliverToCustomer: Boolean = true
+
+    //pagination fields
+    private var isLoading = false
+    private var isLastPage = false
+    private var currentPageIndex = 1
+
+    private var returnedPackagesList: ArrayList<Customer?> = ArrayList()
+
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityReturnedPackagesBinding.inflate(layoutInflater)
@@ -51,13 +67,17 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
             binding.textTitle.text = getText(R.string.title_returned_bundles)
             binding.textSelectedStatus.visibility = View.GONE
             binding.buttonStatusFilter.visibility = View.GONE
+            binding.tabLayoutReturned.visibility = View.GONE
+            initRecycler()
+            initListeners()
+        } else {
+            initTapLayout()
         }
-        initRecycler()
-        initListeners()
     }
 
     override fun onResume() {
         super.onResume()
+        currentPageIndex = 1
         if (doesUpdateData) {
             if (companyConfigurations?.isSupportReturnedBundles!!) {
                 callGetCustomersWithReturnedBundles()
@@ -106,14 +126,34 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
             binding.rvCustomers.layoutManager = layoutManager
         } else {
             binding.rvCustomers.adapter = ReturnedPackageCustomerCellAdapter(
-                ArrayList(), super.getContext(), listener = this
+                returnedPackagesList, super.getContext(), listener = this
             )
             binding.rvCustomers.layoutManager = layoutManager
+            binding.rvCustomers.addOnScrollListener(recyclerViewOnScrollListener)
+            (binding.rvCustomers.adapter as ReturnedPackageCustomerCellAdapter).clearList()
         }
     }
 
+    private val recyclerViewOnScrollListener: RecyclerView.OnScrollListener =
+        object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val visibleItemCount: Int = binding.rvCustomers.layoutManager!!.childCount
+                val totalItemCount: Int = binding.rvCustomers.layoutManager!!.itemCount
+                val firstVisibleItemPosition: Int =
+                    (binding.rvCustomers.layoutManager!! as LinearLayoutManager).findFirstVisibleItemPosition()
+
+                if (!isLoading && !isLastPage) {
+                    if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount >= AppConstants.DEFAULT_PAGE_SIZE) {
+                        callGetCustomersWithReturnedPackages()
+                    }
+                }
+            }
+        }
+
     private fun initListeners() {
         binding.refreshLayoutCustomers.setOnRefreshListener {
+            currentPageIndex = 1
             selectedStatus = ReturnedPackageStatus.ALL
             binding.textSelectedStatus.text =
                 "(${Helper.getLocalizedReturnedStatus(super.getContext(), selectedStatus)})"
@@ -127,6 +167,51 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         binding.toolbarMain.buttonBack.setOnClickListener(this)
         binding.toolbarMain.buttonNotifications.setOnClickListener(this)
         binding.buttonStatusFilter.setOnClickListener(this)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun initTapLayout() {
+        val tabLayout: TabLayout = findViewById(R.id.tab_layout_returned)
+
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_returned_by_customer))
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_returned_by_driver))
+
+        tabLayout.tabIconTint = getColorStateList(R.color.tab_text_color_selector)
+
+        initRecycler()
+        initListeners()
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                when (tab.position) {
+                    0 -> {
+                        isDeliverToCustomer = true
+                    }
+
+                    1 -> {
+                        isDeliverToCustomer = false
+                    }
+
+                    else -> null
+                }
+
+                currentPageIndex = 1
+                returnedPackagesList.clear()
+
+                callGetCustomersWithReturnedPackages()
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+                // Handle tab unselection here if needed
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab) {
+                // Handle tab reselection here if needed
+            }
+
+        })
+        tabLayout.getTabAt(0)?.select()
+        callGetCustomersWithReturnedPackages()
     }
 
     private fun handleNoPackagesLabelVisibility(count: Int) {
@@ -155,19 +240,29 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response =
-                        ApiAdapter.apiClient.getCustomersWithReturnedPackages(selectedStatus)
+                        ApiAdapter.apiClient.getCustomersWithReturnedPackages(
+                            page = currentPageIndex,
+                            type = selectedStatus,
+                            isToDeliverToSender = isDeliverToCustomer
+                        )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         val body = response.body()
+                        val totalRound: Int = (body?.totalRecordsNo
+                            ?: 0) / (AppConstants.DEFAULT_PAGE_SIZE * currentPageIndex)
+                        if (totalRound == 0) {
+                            currentPageIndex = 1
+                            isLastPage = true
+                        } else {
+                            currentPageIndex++
+                            isLastPage = false
+                        }
                         withContext(Dispatchers.Main) {
-                            withContext(Dispatchers.Main) {
-                                (binding.rvCustomers.adapter as ReturnedPackageCustomerCellAdapter).update(
-                                    body?.customers as ArrayList<Customer?>
-                                )
-                                handleNoPackagesLabelVisibility(body.customers?.size ?: 0)
-                            }
+                            returnedPackagesList.addAll(body?.customers!!)
+                            binding.rvCustomers.adapter?.notifyDataSetChanged()
+                            handleNoPackagesLabelVisibility(body.customers?.size ?: 0)
                         }
                     } else {
                         try {
@@ -221,7 +316,8 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
                         ApiAdapter.apiClient.getCustomerReturnedPackages(
                             customerId,
                             barcode,
-                            selectedStatus
+                            selectedStatus,
+                            isDeliverToCustomer
                         )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()

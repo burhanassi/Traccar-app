@@ -61,6 +61,12 @@ class ReturnedPackageCustomerCellAdapter(
         notifyItemRangeChanged(index, customersList.size)
     }
 
+    fun clearList() {
+        val size: Int = customersList.size
+        customersList.clear()
+        notifyItemRangeRemoved(0, size)
+    }
+
     class CustomerViewHolder(
         var binding: ItemReturnedPackageCustomerCellBinding,
         private var parent: ViewGroup,

@@ -309,6 +309,15 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             bind:itemSrc="@{@drawable/ic_notes_gray}" />
+
+                        <include
+                            android:id="@+id/item_supplier_invoice_number"
+                            layout="@layout/item_card_row"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            bind:isCopyVisible="@{true}"
+                            bind:itemSrc="@{@drawable/ic_supplier_invoice}" />
                     </LinearLayout>
                 </LinearLayout>
 

@@ -14,6 +14,7 @@ import com.logestechs.driver.databinding.BottomSheetNotificationsBinding
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.BundleKeys
 import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.LogesTechsBottomSheetFragment
 import com.logestechs.driver.utils.adapters.NotificationsListAdapter
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +25,7 @@ import org.json.JSONObject
 
 
 class NotificationsBottomSheet(
-) : LogesTechsBottomSheetFragment() {
+) : LogesTechsBottomSheetFragment(), NotificationsListAdapter.OnItemClickListener {
 
     private var _binding: BottomSheetNotificationsBinding? = null
     private val binding get() = _binding!!
@@ -68,7 +69,7 @@ class NotificationsBottomSheet(
 
         binding.rvNotifications.apply {
             layoutManager = LinearLayoutManager(activity)
-            adapter = NotificationsListAdapter(notificationsList)
+            adapter = NotificationsListAdapter(notificationsList, this@NotificationsBottomSheet)
             addOnScrollListener(recyclerViewOnScrollListener)
         }
 
@@ -174,4 +175,8 @@ class NotificationsBottomSheet(
                 }
             }
         }
+
+    override fun onItemClick(packageId: Long) {
+        (requireActivity() as LogesTechsActivity).trackShipmentNotification(packageId)
+    }
 }
