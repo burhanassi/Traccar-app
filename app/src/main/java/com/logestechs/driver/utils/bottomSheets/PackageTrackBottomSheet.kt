@@ -19,10 +19,12 @@ import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.BottomSheetPackageTrackBinding
 import com.logestechs.driver.utils.AppFonts
+import com.logestechs.driver.utils.AppLanguages
 import com.logestechs.driver.utils.BundleKeys
 import com.logestechs.driver.utils.DateFormats
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.SharedPreferenceWrapper
+import com.yariksoffice.lingver.Lingver
 
 interface BottomSheetListener {
     fun onBottomSheetDismissed()
@@ -132,7 +134,11 @@ class PackageTrackBottomSheet(
         }
 
         if (pkg?.status != null && pkg?.status!!.name!!.isNotEmpty()) {
-            binding.itemPackageStatus.textItem.text = pkg?.status!!.english
+            if (Lingver.getInstance().getLocale().toString() == AppLanguages.ARABIC.value) {
+                binding.itemPackageStatus.textItem.text = pkg?.status!!.arabic
+            } else {
+                binding.itemPackageStatus.textItem.text = pkg?.status!!.english
+            }
         } else {
             binding.itemPackageStatus.root.visibility = View.GONE
         }
