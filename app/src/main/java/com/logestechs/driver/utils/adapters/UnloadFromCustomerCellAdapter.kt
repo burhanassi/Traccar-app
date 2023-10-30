@@ -78,5 +78,6 @@ class UnloadFromCustomerViewHolder(
         binding.itemReceiverCity.textItem.text =
             scannedItem?.destinationAddress?.city ?: scannedItem?.destinationCity
         binding.itemReceiverPhone.textItem.text = scannedItem?.receiverPhone
+        binding.buttonFlag.visibility = ViewGroup.GONE
     }
 }

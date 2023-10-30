@@ -81,28 +81,31 @@ class ScannedPackagesOnShelfViewHolder(
                 pkg.destinationAddress?.city ?: pkg.destinationCity
             binding.itemReceiverPhone.textItem.text = pkg.receiverPhone
 
-            binding.buttonFlag.setOnClickListener {
-                if (isFlagged) {
-                    binding.buttonFlag.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            mAdapter.context!!,
-                            R.drawable.ic_flag_gray
+            if (mAdapter.listener == null) {
+                binding.buttonFlag.visibility = ViewGroup.GONE
+            } else {
+                binding.buttonFlag.setOnClickListener {
+                    if (isFlagged) {
+                        binding.buttonFlag.setImageDrawable(
+                            ContextCompat.getDrawable(
+                                mAdapter.context!!,
+                                R.drawable.ic_flag_gray
+                            )
                         )
-                    )
-                    mAdapter.listener?.onUnFlagPackage(pkg.id!!)
-                    isFlagged = false
-                } else {
-                    binding.buttonFlag.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            mAdapter.context!!,
-                            R.drawable.ic_flag_red
+                        mAdapter.listener?.onUnFlagPackage(pkg.id!!)
+                        isFlagged = false
+                    } else {
+                        binding.buttonFlag.setImageDrawable(
+                            ContextCompat.getDrawable(
+                                mAdapter.context!!,
+                                R.drawable.ic_flag_red
+                            )
                         )
-                    )
-                    mAdapter.listener?.onFlagPackage(pkg.id!!)
-                    isFlagged = true
+                        mAdapter.listener?.onFlagPackage(pkg.id!!)
+                        isFlagged = true
+                    }
                 }
             }
-
         }
     }
 }

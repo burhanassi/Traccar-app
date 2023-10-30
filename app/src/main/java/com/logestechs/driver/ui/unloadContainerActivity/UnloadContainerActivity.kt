@@ -81,8 +81,6 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
 
     private var scannedBarcode = ""
 
-    private var shelfId: Long? = null
-
     private var driverId: Long? = null
 
     private var currentPageIndex = 1
@@ -404,9 +402,6 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
                     }
                     if (response?.isSuccessful!! && response?.body()!! != null) {
                         withContext(Dispatchers.Main) {
-//                            selectedScanMode = UnloadScanMode.PACKAGE
-//                            handleSelectedScanMode()
-//                            shelfId = response.body()!!.id
                             driverId = response.body()!!.id
                             totalRecordsNo = response.body()!!.vehicle?.noOfPkgs!!
                             handleDriverVerified(response.body()!!)

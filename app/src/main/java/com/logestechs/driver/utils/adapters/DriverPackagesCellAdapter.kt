@@ -78,5 +78,6 @@ class DriverPackagesViewHolder(
         binding.itemReceiverPhone.textItem.text = pkg?.receiverPhone
 
         binding.buttonContextMenu.visibility = View.GONE
+        binding.buttonFlag.visibility = View.GONE
     }
 }
