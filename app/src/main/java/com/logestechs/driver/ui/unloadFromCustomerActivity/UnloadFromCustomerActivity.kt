@@ -63,6 +63,7 @@ class UnloadFromCustomerActivity : LogesTechsActivity(), View.OnClickListener,
 
     private var scannedBarcode = ""
 
+    private var scannedPackages: Int = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityUnloadFromCustomerBinding.inflate(layoutInflater)
@@ -307,7 +308,10 @@ class UnloadFromCustomerActivity : LogesTechsActivity(), View.OnClickListener,
                         hideWaitDialog()
                     }
                     if (response?.isSuccessful!! && response?.body()!! != null) {
+                        scannedPackages++
                         withContext(Dispatchers.Main) {
+                            binding.titleScannedPackages.text =
+                                getString(R.string.title_scanned_packages) + " ($scannedPackages)"
                             (binding.rvScannedBarcodes.adapter as UnloadFromCustomerCellAdapter).insertItem(
                                 response.body()
                             )
@@ -372,7 +376,8 @@ class UnloadFromCustomerActivity : LogesTechsActivity(), View.OnClickListener,
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onBarcodeInserted(barcode: String) {
-        TODO("Not yet implemented")
+        callUnloadFromCustomer(barcode)
     }
 }

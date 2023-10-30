@@ -2,19 +2,20 @@ package com.logestechs.driver.utils.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.data.model.ScannedItem
-import com.logestechs.driver.databinding.ItemScannedBarcodeBinding
 import com.logestechs.driver.databinding.ItemScannedPackageOnShelfBinding
 import com.logestechs.driver.utils.BarcodeScanType
 import com.logestechs.driver.utils.SharedPreferenceWrapper
+import com.logestechs.driver.utils.interfaces.ScannedPackagesOnShelfCardListener
 
 class ScannedPackagesOnShelfCellAdapter(
-    var list: ArrayList<ScannedItem?>
+    var list: ArrayList<ScannedItem?>,
+    var listener: ScannedPackagesOnShelfCardListener?
 ) :
     RecyclerView.Adapter<ScannedPackagesOnShelfViewHolder>() {
     var context: Context? = null
@@ -70,6 +71,7 @@ class ScannedPackagesOnShelfViewHolder(
     RecyclerView.ViewHolder(binding.root) {
 
     fun bind(scannedItem: ScannedItem?) {
+        var isFlagged = false
         if (scannedItem?.barcodeScanType == BarcodeScanType.PACKAGE_PICKUP) {
             val pkg = scannedItem.data as Package
 
@@ -78,6 +80,28 @@ class ScannedPackagesOnShelfViewHolder(
             binding.itemReceiverCity.textItem.text =
                 pkg.destinationAddress?.city ?: pkg.destinationCity
             binding.itemReceiverPhone.textItem.text = pkg.receiverPhone
+
+            binding.buttonFlag.setOnClickListener {
+                if (isFlagged) {
+                    binding.buttonFlag.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            mAdapter.context!!,
+                            R.drawable.ic_flag_gray
+                        )
+                    )
+                    mAdapter.listener?.onUnFlagPackage(pkg.id!!)
+                    isFlagged = false
+                } else {
+                    binding.buttonFlag.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            mAdapter.context!!,
+                            R.drawable.ic_flag_red
+                        )
+                    )
+                    mAdapter.listener?.onFlagPackage(pkg.id!!)
+                    isFlagged = true
+                }
+            }
 
         }
     }

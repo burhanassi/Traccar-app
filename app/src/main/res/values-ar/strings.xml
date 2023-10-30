@@ -50,7 +50,7 @@
     <string name="button_insert_barcode">إدخال باركود</string>
     <string name="out_of_delivery">الى الوجهة النهائية</string>
     <string name="title_scanned_packages">الطرود المقروءة</string>
-    <string name="title_shelf">Shelf</string>
+    <string name="title_shelf">مدن الرف</string>
     <string name="button_done">تم</string>
     <string name="error_phone_permission">الرجاء اعطاء صلاحية الإتصال</string>
     <string name="button_scan_packages_barcodes">مسح كودات الطرود</string>
@@ -178,7 +178,7 @@
     <string name="please_scan_package_barcode">الرجاء إثبات التسليم من خلال مسح باركود الطرد</string>
     <string name="please_scan_package_barcode_unload">الرجاء مسح باركود الطرد</string>
     <string name="swipe_down_to_scan_another_package">اسحب للأسفل لمسح طرد آخر</string>
-    <string name="please_scan_shelf_barcode">الرجاء مسح باركود سلة التحميل</string>
+    <string name="please_scan_shelf_barcode">الرجاء مسح باركود الرف</string>
     <string name="please_verify_driver">الرجاء التحقق من السائق</string>
     <string name="please_scan_warehouse_barcode">الرجاء مسح باركود المستودع</string>
     <string name="please_insert_barcode">الرجاء إدخال الباركود</string>

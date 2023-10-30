@@ -60,50 +60,6 @@
                             android:background="@color/pink_carnation" />
 
                     </FrameLayout>
-
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        tools:ignore="UselessParent">
-
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="0dp"
-                            android:layout_weight="1" />
-
-                    </LinearLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/container_insert_barcode"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginStart="10dp"
-                    android:visibility="gone">
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:layout_gravity="center_vertical" />
-
-                    <Button
-                        android:id="@+id/button_insert_barcode"
-                        style="@style/LogesTechsMedium"
-                        android:layout_width="wrap_content"
-                        android:layout_height="25dp"
-                        android:layout_gravity="end"
-                        android:background="@drawable/background_barcode_scanner_manual_input_button"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        android:text="@string/button_insert_barcode"
-                        android:textColor="@color/white"
-                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -141,6 +97,31 @@
                     android:src="@drawable/ic_torch_off"
                     tools:ignore="ContentDescription" />
 
+                <LinearLayout
+                    android:id="@+id/container_insert_barcode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="30dp"
+                    android:orientation="horizontal"
+                    android:layout_gravity="end|bottom"
+                    android:visibility="visible">
+
+                    <Button
+                        android:id="@+id/button_insert_barcode"
+                        style="@style/LogesTechsMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="25dp"
+                        android:layout_gravity="end|bottom"
+                        android:background="@drawable/background_barcode_scanner_manual_input_button"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:text="@string/button_insert_barcode"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+                </LinearLayout>
             </FrameLayout>
 
             <LinearLayout
@@ -159,6 +140,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/title_scanned_packages"
                         style="@style/LogesTechsMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

@@ -381,8 +381,9 @@ class FindPackagesActivity : LogesTechsActivity(), View.OnClickListener,
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onBarcodeInserted(barcode: String) {
-        TODO("Not yet implemented")
+        callFindPackage(barcode)
     }
 
     override fun onBottomSheetDismissed() {

@@ -29,14 +29,17 @@ import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ActivitySortOnShelveBinding
 import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.BundleKeys
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.adapters.ScannedBarcodeCellAdapter
 import com.logestechs.driver.utils.adapters.ScannedPackagesOnShelfCellAdapter
+import com.logestechs.driver.utils.bottomSheets.PackageTrackBottomSheet
 import com.logestechs.driver.utils.dialogs.InsertBarcodeDialog
 import com.logestechs.driver.utils.interfaces.InsertBarcodeDialogListener
 import com.logestechs.driver.utils.interfaces.ScannedBarcodeCardListener
+import com.logestechs.driver.utils.interfaces.ScannedPackagesOnShelfCardListener
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -52,7 +55,7 @@ enum class ShelfScanMode {
 
 @Suppress("DEPRECATION")
 class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
-    InsertBarcodeDialogListener {
+    InsertBarcodeDialogListener, ScannedPackagesOnShelfCardListener {
     private lateinit var binding: ActivitySortOnShelveBinding
 
     private var cameraSource: CameraSource? = null
@@ -72,6 +75,8 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
     private var scannedBarcode = ""
 
     private var shelfId: Long? = null
+
+    private var scannedPackages: Int = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySortOnShelveBinding.inflate(layoutInflater)
@@ -115,12 +120,11 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
     private fun initRecycler() {
         binding.rvScannedBarcodes.apply {
             layoutManager = LinearLayoutManager(this@SortOnShelveActivity)
-            adapter = ScannedPackagesOnShelfCellAdapter(ArrayList())
+            adapter = ScannedPackagesOnShelfCellAdapter(ArrayList(), this@SortOnShelveActivity)
         }
     }
 
     private fun handleSelectedScanMode() {
-        scannedItemsHashMap.clear()
         when (selectedScanMode) {
             ShelfScanMode.SHELF -> {
                 binding.textTitle.text = getText(R.string.please_scan_shelf_barcode)
@@ -209,7 +213,6 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun executeBarcodeAction(barcode: String?) {
-        scannedItemsHashMap.clear()
         when (selectedScanMode) {
             ShelfScanMode.SHELF -> {
                 callScanShelf(barcode)
@@ -324,7 +327,9 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
                             handleSelectedScanMode()
                             shelfId = response.body()!!.id
                             binding.titleShelf.text =
-                                response.body()!!.destinationCity + " " + getString(R.string.title_shelf)
+                                getString(R.string.title_shelf) + ": " + response.body()!!.cities?.joinToString { city ->
+                                    city.name ?: ""
+                                }
                         }
                     } else {
                         try {
@@ -369,6 +374,7 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
         }
     }
 
+    @SuppressLint("ResourceType")
     @RequiresApi(Build.VERSION_CODES.M)
     @OptIn(DelicateCoroutinesApi::class)
     private fun callScanPackageOnShelf(barcode: String?) {
@@ -386,9 +392,12 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
                         hideWaitDialog()
                     }
                     if (response?.body()?.responseCode == 200) {
+                        scannedPackages++
                         withContext(Dispatchers.Main) {
                             selectedScanMode = ShelfScanMode.PACKAGE_INTO_SHELF
                             handleSelectedScanMode()
+                            binding.titleScannedPackages.text =
+                                getString(R.string.title_scanned_packages) + " ($scannedPackages)"
                             (binding.rvScannedBarcodes.adapter as ScannedPackagesOnShelfCellAdapter).insertItem(
                                 response.body()?.packages?.getPickupScannedItem()
                             )
@@ -411,10 +420,80 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
                                 )
                             }
                         }
+                        scannedItemsHashMap.remove(barcode)
                     }
-                    scannedItemsHashMap.remove(barcode)
                 } catch (e: Exception) {
                     scannedItemsHashMap.remove(barcode)
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            this.runOnUiThread {
+                hideWaitDialog()
+                Helper.showErrorMessage(
+                    super.getContext(), getString(R.string.error_check_internet_connection)
+                )
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun callFlagPackage(packageId: Long?, isFlag: Boolean) {
+        this.runOnUiThread {
+            showWaitDialog()
+        }
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = if (isFlag) {
+                        ApiAdapter.apiClient.flagPackageInShelf(
+                            packageId!!
+                        )
+                    } else {
+                        ApiAdapter.apiClient.unFlagPackageInShelf(
+                            packageId!!
+                        )
+                    }
+
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful!! && response?.body()!! != null) {
+                        withContext(Dispatchers.Main) {
+                            Helper.showSuccessMessage(
+                                super.getContext(),
+                                getString(R.string.success_operation_completed)
+                            )
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
                     hideWaitDialog()
                     Helper.logException(e, Throwable().stackTraceToString())
                     withContext(Dispatchers.Main) {
@@ -483,6 +562,16 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onBarcodeInserted(barcode: String) {
-        callScanShelf(barcode)
+        callScanPackageOnShelf(barcode)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onFlagPackage(packageId: Long) {
+        callFlagPackage(packageId, true)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onUnFlagPackage(packageId: Long) {
+        callFlagPackage(packageId, false)
     }
 }

@@ -567,4 +567,10 @@ interface LogesTechsDriverApi {
     suspend fun unloadPackageFromContainerToHub(
         @Query("barcode") barcode: String?
     ): Response<Package>
+
+    @PUT("api/handler/packages/{packageId}/flag")
+    suspend fun flagPackageInShelf(@Path("packageId") packageId: Long): Response<ResponseBody>
+
+    @PUT("api/handler/packages/{packageId}/un-flag")
+    suspend fun unFlagPackageInShelf(@Path("packageId") packageId: Long): Response<ResponseBody>
 }

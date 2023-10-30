@@ -49,7 +49,7 @@
     <string name="button_insert_barcode">Insert Barcode</string>
     <string name="out_of_delivery">Out Of Delivery</string>
     <string name="title_scanned_packages">Scanned Packages</string>
-    <string name="title_shelf">Shelf</string>
+    <string name="title_shelf">Shelf Cities</string>
     <string name="button_done">Done</string>
     <string name="error_phone_permission">The app needs phone permission</string>
     <string name="button_scan_packages_barcodes">Scan Packages Barcodes</string>

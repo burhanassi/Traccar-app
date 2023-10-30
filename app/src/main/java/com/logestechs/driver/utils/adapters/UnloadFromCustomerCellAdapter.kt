@@ -75,7 +75,8 @@ class UnloadFromCustomerViewHolder(
     fun bind(scannedItem: Package?) {
         binding.itemReceiverName.textItem.text = scannedItem?.receiverName
         binding.itemBarcode.textItem.text = scannedItem?.barcode
-        binding.itemReceiverCity.textItem.text = scannedItem?.destinationCity
+        binding.itemReceiverCity.textItem.text =
+            scannedItem?.destinationAddress?.city ?: scannedItem?.destinationCity
         binding.itemReceiverPhone.textItem.text = scannedItem?.receiverPhone
     }
 }

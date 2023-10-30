@@ -92,6 +92,7 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
 
     private var searchWord: String? = null
 
+    private var scannedPackages: Int = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityUnloadContainerBinding.inflate(layoutInflater)
@@ -148,7 +149,7 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
     private fun initRecycler() {
         binding.rvScannedBarcodes.apply {
             layoutManager = LinearLayoutManager(this@UnloadContainerActivity)
-            adapter = ScannedPackagesOnShelfCellAdapter(ArrayList())
+            adapter = ScannedPackagesOnShelfCellAdapter(ArrayList(), null)
         }
 
         binding.rvDriverPackages.apply {
@@ -524,6 +525,7 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
         }
     }
 
+    @SuppressLint("ResourceType")
     @RequiresApi(Build.VERSION_CODES.M)
     @OptIn(DelicateCoroutinesApi::class)
     private fun callUnloadPackageFromContainer(barcode: String?) {
@@ -540,9 +542,12 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
                         hideWaitDialog()
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
+                        scannedPackages++
                         withContext(Dispatchers.Main) {
                             selectedScanMode = UnloadScanMode.PACKAGE
                             handleSelectedScanMode()
+                            binding.titleScannedPackages.text =
+                                getString(R.string.title_scanned_packages) + " ($scannedPackages)"
                             (binding.rvScannedBarcodes.adapter as ScannedPackagesOnShelfCellAdapter).insertItem(
                                 response.body()?.getPickupScannedItem()
                             )
@@ -646,7 +651,7 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onBarcodeInserted(barcode: String) {
-        callVerifyDriver(barcode)
+        callUnloadPackageFromContainer(barcode)
     }
 
     override fun onPackageSearch(keyword: String?) {
