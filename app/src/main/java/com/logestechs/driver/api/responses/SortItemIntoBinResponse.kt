@@ -8,5 +8,5 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class SortItemIntoBinResponse(
     var shippingPlanDetails: ShippingPlanDetails?,
-    var itemDetails: ItemDetails?
+    var itemDetails: List<ItemDetails>?
 ) : Parcelable

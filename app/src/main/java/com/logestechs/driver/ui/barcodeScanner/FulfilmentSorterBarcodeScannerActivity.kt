@@ -664,7 +664,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                         withContext(Dispatchers.Main) {
                             val response = response.body()
                             (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).insertItem(
-                                response?.itemDetails
+                                response?.itemDetails?.get(0)!!
                             )
                             binding.rvScannedBarcodes.smoothScrollToPosition(0)
                             updateShippingPlanCountValues(response?.shippingPlanDetails)
@@ -732,7 +732,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                             withContext(Dispatchers.Main) {
                                 val response = response?.body()
                                 (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).insertItem(
-                                    response?.itemDetails,
+                                    response?.itemDetails?.get(0),
                                     true
                                 )
                                 binding.rvScannedBarcodes.smoothScrollToPosition(0)
@@ -769,7 +769,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                             withContext(Dispatchers.Main) {
                                 val response = response.body()
                                 (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).insertItem(
-                                    response?.itemDetails
+                                    response?.itemDetails?.get(0)
                                 )
                                 binding.rvScannedBarcodes.smoothScrollToPosition(0)
                                 updateShippingPlanCountValues(response?.shippingPlanDetails)
