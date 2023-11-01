@@ -126,6 +126,8 @@
     <string name="title_delivered_packages">الطرود المسلمة</string>
     <string name="error_no_packages_for_delivery">لا يوجد طرود للتسليم</string>
     <string name="title_returned_packages">الرواجع</string>
+    <string name="title_returned_packages_to_customer">الرواجع (للزبون)</string>
+    <string name="title_returned_packages_to_hub">الرواجع (للفرع)</string>
     <string name="title_returned_bundles">الحزم المرجعة</string>
     <string name="title_brought_packages">طرود الإحضار</string>
     <string name="title_driver_route">المسار</string>
