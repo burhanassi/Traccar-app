@@ -109,6 +109,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
             if (companyConfigurations?.isSupportReturnedBundles!!) {
                 callGetCustomersWithReturnedBundles()
             } else {
+                returnedPackagesList.clear()
                 callGetCustomersWithReturnedPackages()
             }
         }
@@ -157,6 +158,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
             selectedStatus = ReturnedPackageStatus.ALL
             binding.textSelectedStatus.text =
                 "(${Helper.getLocalizedReturnedStatus(super.getContext(), selectedStatus)})"
+            returnedPackagesList.clear()
             if (companyConfigurations?.isSupportReturnedBundles!!) {
                 callGetCustomersWithReturnedBundles()
             } else {
@@ -186,10 +188,13 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
                 when (tab.position) {
                     0 -> {
                         isDeliverToCustomer = true
+                        binding.textTitle.text =
+                            getString(R.string.title_returned_packages_to_customer)
                     }
 
                     1 -> {
                         isDeliverToCustomer = false
+                        binding.textTitle.text = getString(R.string.title_returned_packages_to_hub)
                     }
 
                     else -> null
@@ -210,8 +215,8 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
             }
 
         })
+        binding.textTitle.text = getString(R.string.title_returned_packages_to_customer)
         tabLayout.getTabAt(0)?.select()
-        callGetCustomersWithReturnedPackages()
     }
 
     private fun handleNoPackagesLabelVisibility(count: Int) {
@@ -565,6 +570,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         if (companyConfigurations?.isSupportReturnedBundles!!) {
             callGetCustomersWithReturnedBundles()
         } else {
+            returnedPackagesList.clear()
             callGetCustomersWithReturnedPackages()
         }
     }

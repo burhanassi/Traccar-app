@@ -125,6 +125,8 @@
     <string name="title_delivered_packages">Delivered Packages</string>
     <string name="error_no_packages_for_delivery">There are no packages for delivery</string>
     <string name="title_returned_packages">Returned Packages</string>
+    <string name="title_returned_packages_to_customer">Returned Packages (to customer)</string>
+    <string name="title_returned_packages_to_hub">Returned Packages (to hub)</string>
     <string name="title_returned_bundles">Returned Bundles</string>
     <string name="title_brought_packages">Brought Packages</string>
     <string name="title_driver_route">Driver Route</string>
