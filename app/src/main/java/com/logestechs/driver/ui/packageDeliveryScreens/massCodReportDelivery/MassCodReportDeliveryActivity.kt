@@ -438,7 +438,8 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                             callDeliverMassCodReport(
                                 massCodReport?.id, DeliverMassCodReportRequestBody(
                                     response.body()?.fileUrl,
-                                    getPodImagesUrls()
+                                    getPodImagesUrls(),
+                                    binding.etReason.text.toString()
                                 )
                             )
                         }
@@ -526,7 +527,8 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                             callDeliverMassCodReportGroup(
                                 groupMassCodReport?.customerId, DeliverMassCodReportGroupRequestBody(
                                     response.body()!!.fileUrl,
-                                    getPodImagesUrls()
+                                    getPodImagesUrls(),
+                                    binding.etReason.text.toString()
                                 )
                             )
                         }
@@ -930,14 +932,16 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                             callDeliverMassCodReportGroup(
                                 groupMassCodReport?.customerId, DeliverMassCodReportGroupRequestBody(
                                     null,
-                                    getPodImagesUrls()
+                                    getPodImagesUrls(),
+                                    binding.etReason.text.toString()
                                 )
                             )
                         }else {
                             callDeliverMassCodReport(
                                 massCodReport?.id, DeliverMassCodReportRequestBody(
                                     null,
-                                    getPodImagesUrls()
+                                    getPodImagesUrls(),
+                                    binding.etReason.text.toString()
                                 )
                             )
                         }

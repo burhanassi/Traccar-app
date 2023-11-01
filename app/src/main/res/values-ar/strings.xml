@@ -65,6 +65,7 @@
     <string name="change_package_type">تعديل نوع الطرد</string>
     <string name="change_package_cod">تعديل قيمة التحصيل</string>
     <string name="add_note">إضافة ملاحظة</string>
+    <string name="add_note_hint">اكتب ملاحظاتك هنا</string>
     <string name="in_car_status_to_deliver">للتوصيل</string>
     <string name="in_car_status_all">الكل</string>
     <string name="in_car_status_failed">عالق</string>

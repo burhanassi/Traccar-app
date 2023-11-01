@@ -2,5 +2,6 @@ package com.logestechs.driver.api.requests
 
 data class DeliverMassCodReportGroupRequestBody(
     val signatureUrl: String?,
-    val deliveryProofUrlList: List<String?>?
+    val deliveryProofUrlList: List<String?>?,
+    val notes: String? = null
 )
