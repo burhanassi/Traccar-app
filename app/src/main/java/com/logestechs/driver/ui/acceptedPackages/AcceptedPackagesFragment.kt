@@ -251,12 +251,68 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
             )
         }
     }
+
+    private fun callPrintAwb(packageId: Long, isImage: Boolean) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.printPackageAwb(packageId, isImage)
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
     override fun scanForPickup(customer: Customer?) {
         val mIntent = Intent(super.getContext(), BarcodeScannerActivity::class.java)
         mIntent.putExtra(IntentExtrasKeys.CUSTOMER_WITH_PACKAGES_FOR_PICKUP.name, customer)
         startActivity(mIntent)
     }
-    override fun getAcceptedPackages(customer: Customer?){
+
+    override fun getAcceptedPackages(customer: Customer?) {
         callGetAcceptedPackagesByCustomer(customer)
+    }
+
+    override fun printAwb(packageId: Int, isImage: Boolean) {
+//        callPrintAwb(packageId, isImage)
     }
 }
