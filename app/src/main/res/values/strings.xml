@@ -12,10 +12,12 @@
     <string name="hint_password">Password</string>
     <string name="hint_company_name">Company Name</string>
     <string name="dashboard_packages_number">Packages Number</string>
+    <string name="dashboard_packages_number_sprint">Packages Number</string>
     <string name="dashboard_delivered">Delivered</string>
     <string name="dashboard_cod_sum">COD\nSum</string>
     <string name="dashboard_mass_cod_reports_sum">Mass COD Reports Sum</string>
     <string name="dashboard_scan_new_package_barcode">Scan New\nBarcodes</string>
+    <string name="dashboard_scan_new_package_barcode_sprint">Scan New\nBarcodes</string>
     <string name="dashboard_accepted_packages">Accepted\nPackages</string>
     <string name="dashboard_pending_packages">Pending\nPackages</string>
     <string name="dashboard_in_car_packages">In Car\nPackages</string>

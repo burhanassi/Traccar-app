@@ -113,6 +113,21 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
         } else {
             binding.containerLogestechsLogoBottom.visibility = View.GONE
         }
+
+        if (BuildConfig.DEBUG) {
+            if (loginResponse?.user?.companyID == 240.toLong()) {
+                binding.tvPackagesNumber.text = getString(R.string.dashboard_packages_number_sprint)
+                binding.dashEntryScanPackages.titleText =
+                    getString(R.string.dashboard_scan_new_package_barcode_sprint)
+            }
+        } else {
+            if (loginResponse?.user?.companyID == 313.toLong()) {
+                binding.tvPackagesNumber.text = getString(R.string.dashboard_packages_number_sprint)
+                binding.dashEntryScanPackages.titleText =
+                    getString(R.string.dashboard_scan_new_package_barcode_sprint)
+            }
+        }
+
     }
 
     private fun initOnClickListeners() {
