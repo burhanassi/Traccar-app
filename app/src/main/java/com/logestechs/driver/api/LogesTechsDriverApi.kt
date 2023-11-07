@@ -10,6 +10,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
+import java.util.TimeZone
 
 interface LogesTechsDriverApi {
     @POST("api/auth/user/mobile-login")
@@ -576,4 +577,11 @@ interface LogesTechsDriverApi {
 
     @PUT("api/handler/packages/{packageId}/un-flag")
     suspend fun unFlagPackageInShelf(@Path("packageId") packageId: Long): Response<ResponseBody>
+
+    @GET("api/driver/packages/{packageId}/pdf-report")
+    suspend fun printPackageAwb(
+        @Path("packageId") id: Long,
+        @Query("is-image") isImage: Boolean,
+        @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString()
+    ): Response<PrintAwbResponse>
 }
