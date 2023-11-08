@@ -282,7 +282,9 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
                         hideWaitDialog()
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
+                        val pdfData = response.body()
 
+                        printPdfToTscPrinter(pdfData)
                     } else {
                         try {
                             val jObjError = JSONObject(response?.errorBody()!!.string())
