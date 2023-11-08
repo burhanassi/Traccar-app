@@ -91,6 +91,10 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
     private var searchWord: String? = null
 
     private var scannedPackages: Int = 0
+
+    private var driverBarcode: String = ""
+
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityUnloadContainerBinding.inflate(layoutInflater)
@@ -127,11 +131,12 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun initListeners() {
         binding.refreshLayoutCustomers.setOnRefreshListener {
             searchWord = null
             clearList()
-            callGetInCarPackagesUngrouped(driverId!!)
+            callVerifyDriver(driverBarcode!!)
         }
         binding.buttonDone.setOnClickListener(this)
         binding.buttonTorch.setOnClickListener(this)
@@ -175,7 +180,7 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
         }
     }
 
-    private fun handleDriverVerified(data: GetVerfiyDriverResponse) {
+    private fun handleDriverVerified(data: GetVerfiyDriverResponse, search: String? = null) {
         binding.containerBarcodeScanner.visibility = View.GONE
         binding.containerDriverDetails.visibility = View.VISIBLE
 
@@ -184,8 +189,12 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
         binding.itemDriverCar.textItem.text = data.vehicle?.brand
         binding.tvPackagesNumber.text =
             getString(R.string.title_packages) + ": " + data.vehicle?.noOfPkgs.toString()
-
-        callGetInCarPackagesUngrouped(data.id!!)
+        if (search != null) {
+            (binding.rvDriverPackages.adapter as DriverPackagesCellAdapter).clearList()
+        }
+        (binding.rvDriverPackages.adapter as DriverPackagesCellAdapter).update(
+            data.driverPkgs!!
+        )
     }
 
     private fun initialiseDetectorsAndSources() {
@@ -263,6 +272,7 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
     private fun executeBarcodeAction(barcode: String?) {
         when (selectedScanMode) {
             UnloadScanMode.DRIVER -> {
+                driverBarcode = barcode!!
                 callVerifyDriver(barcode)
             }
 
@@ -369,6 +379,7 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
 
     private val recyclerViewOnScrollListener: RecyclerView.OnScrollListener =
         object : RecyclerView.OnScrollListener() {
+            @RequiresApi(Build.VERSION_CODES.M)
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val visibleItemCount: Int = binding.rvDriverPackages.layoutManager!!.childCount
@@ -378,7 +389,7 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
 
                 if (!isLoading && !isLastPage) {
                     if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount >= AppConstants.DEFAULT_PAGE_SIZE) {
-                        callGetInCarPackagesUngrouped(driverId!!)
+                        callVerifyDriver(driverBarcode!!)
                     }
                 }
             }
@@ -387,7 +398,7 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
     //APIs
     @RequiresApi(Build.VERSION_CODES.M)
     @OptIn(DelicateCoroutinesApi::class)
-    private fun callVerifyDriver(barcode: String?) {
+    private fun callVerifyDriver(barcode: String?, search: String? = null) {
         this.runOnUiThread {
             showWaitDialog()
         }
@@ -395,7 +406,9 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response = ApiAdapter.apiClient.verifyDriver(
-                        barcode
+                        barcode,
+                        page = currentPageIndex,
+                        search = search
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
@@ -404,7 +417,19 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
                         withContext(Dispatchers.Main) {
                             driverId = response.body()!!.id
                             totalRecordsNo = response.body()!!.vehicle?.noOfPkgs!!
-                            handleDriverVerified(response.body()!!)
+
+                            val totalRound: Int =
+                                (totalRecordsNo) / (AppConstants.DEFAULT_PAGE_SIZE * currentPageIndex)
+                            if (totalRound == 0) {
+                                currentPageIndex = 1
+                                isLastPage = true
+                            } else {
+                                currentPageIndex++
+                                isLastPage = false
+                            }
+                            withContext(Dispatchers.Main) {
+                                handleDriverVerified(response.body()!!, search)
+                            }
                         }
                     } else {
                         try {
@@ -425,7 +450,9 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
                             }
                         }
                     }
+                    isLoading = false
                 } catch (e: Exception) {
+                    isLoading = false
                     scannedItemsHashMap.remove(barcode)
                     hideWaitDialog()
                     Helper.logException(e, Throwable().stackTraceToString())
@@ -445,78 +472,6 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
                     super.getContext(), getString(R.string.error_check_internet_connection)
                 )
             }
-        }
-    }
-
-    private fun callGetInCarPackagesUngrouped(driverId: Long) {
-        showWaitDialog()
-        if (Helper.isInternetAvailable(super.getContext())) {
-            isLoading = true
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response =
-                        ApiAdapter.apiClient.getInCarPackagesForHandler(
-                            driverId,
-                            page = currentPageIndex
-                        )
-
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        val body = response.body()
-                        val totalRound: Int =
-                            (totalRecordsNo) / (AppConstants.DEFAULT_PAGE_SIZE * currentPageIndex)
-                        if (totalRound == 0) {
-                            currentPageIndex = 1
-                            isLastPage = true
-                        } else {
-                            currentPageIndex++
-                            isLastPage = false
-                        }
-                        withContext(Dispatchers.Main) {
-                            (binding.rvDriverPackages.adapter as DriverPackagesCellAdapter).update(
-                                body!!
-                            )
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                    isLoading = false
-                } catch (e: Exception) {
-                    isLoading = false
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            hideWaitDialog()
-            Helper.showErrorMessage(
-                super.getContext(), getString(R.string.error_check_internet_connection)
-            )
         }
     }
 
@@ -649,9 +604,11 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
         callUnloadPackageFromContainer(barcode)
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onPackageSearch(keyword: String?) {
         searchWord = keyword
-//        getPackagesBySelectedMode()
+        currentPageIndex = 1
+        callVerifyDriver(driverBarcode, searchWord!!)
     }
 
     override fun onStartBarcodeScan() {
