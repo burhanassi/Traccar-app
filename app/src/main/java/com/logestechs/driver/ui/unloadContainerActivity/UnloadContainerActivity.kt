@@ -486,7 +486,8 @@ class UnloadContainerActivity : LogesTechsActivity(), View.OnClickListener,
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response = ApiAdapter.apiClient.unloadPackageFromContainerToHub(
-                        barcode
+                        barcode,
+                        driverId
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()

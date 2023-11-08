@@ -561,7 +561,8 @@ interface LogesTechsDriverApi {
 
     @PUT("api/handler/packages/scan-to-unload")
     suspend fun unloadPackageFromContainerToHub(
-        @Query("barcode") barcode: String?
+        @Query("barcode") barcode: String?,
+        @Query("driverId") driverId: Long?
     ): Response<Package>
 
     @PUT("api/handler/packages/{packageId}/flag")

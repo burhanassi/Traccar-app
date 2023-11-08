@@ -46,6 +46,7 @@
     <string name="title_reject_package">رفض الطرد</string>
     <string name="success_mass_completed">تم توصيل كشف التحصيلات بنجاح </string>
     <string name="message_no_packages">لا يوجد طرود \nالرجاء سحب الشاشة لأسفل لتحديث القائمة</string>
+    <string name="message_no_checkins">لا يوجد تسجيلات وصول \nالرجاء سحب الشاشة لأسفل لتحديث القائمة</string>
     <string name="success_operation_completed">تمت العملية بنجاح</string>
     <string name="button_insert_barcode">إدخال باركود</string>
     <string name="out_of_delivery">الى الوجهة النهائية</string>
@@ -184,6 +185,7 @@
     <string name="please_scan_shelf_barcode">الرجاء مسح باركود الرف</string>
     <string name="please_verify_driver">الرجاء التحقق من السائق</string>
     <string name="please_scan_warehouse_barcode">الرجاء مسح باركود المستودع</string>
+    <string name="please_scan_hub_barcode">الرجاء مسح باركود الفرع</string>
     <string name="please_insert_barcode">الرجاء إدخال الباركود</string>
     <string name="button_insert">إدخال</string>
     <string name="count">"العدد: "</string>
