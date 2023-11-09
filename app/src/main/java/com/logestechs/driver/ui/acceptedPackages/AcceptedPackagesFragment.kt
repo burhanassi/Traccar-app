@@ -354,32 +354,38 @@ class AcceptedPackagesFragment(
                         }) {
                         // All permissions are granted, proceed with Bluetooth operations.
                         tscDll.openport(Helper.Companion.PrinterConst.PRINTER_BLUETOOTH_ADDRESS)
-                        val imageBitmap: Bitmap = Bitmap.createBitmap(
-                            700,
-                            990,
-                            Bitmap.Config.ARGB_8888
-                        ) // Load your image here
-
-                        val publicExternalStorageDir =
-                            context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
-                        val tempImageFile = File(publicExternalStorageDir, "my_image.png")
-
-                        try {
-                            FileOutputStream(tempImageFile).use { outputStream ->
-                                imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-                            }
-                        } catch (e: IOException) {
-                            e.printStackTrace()
-                        }
-
-                        tscDll.sendfile("my_image.png")
-
-                        val buffer = "test Test".toByteArray()
-                        val PrintHeader = byteArrayOf(0xAA.toByte(), 0x55, 2, 0)
-                        PrintHeader[3] = buffer.size.toByte()
-                        tscDll.sendlargebyte(buffer)
-
-                        tempImageFile.delete()
+//                        val imageBitmap: Bitmap = Bitmap.createBitmap(
+//                            700,
+//                            990,
+//                            Bitmap.Config.ARGB_8888
+//                        ) // Load your image here
+//
+//                        val publicExternalStorageDir =
+//                            context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+//                        val tempImageFile = File(publicExternalStorageDir, "my_image.png")
+//
+//                        try {
+//                            FileOutputStream(tempImageFile).use { outputStream ->
+//                                imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+//                            }
+//                        } catch (e: IOException) {
+//                            e.printStackTrace()
+//                        }
+//
+//                        tscDll.sendfile("my_image.png")
+//
+//                        val buffer = "test Test".toByteArray()
+//                        val PrintHeader = byteArrayOf(0xAA.toByte(), 0x55, 2, 0)
+//                        PrintHeader[3] = buffer.size.toByte()
+//                        tscDll.sendlargebyte(buffer)
+//
+//                        tempImageFile.delete()
+                        tscDll.sendcommand("SIZE 3,1\r\n");
+                        tscDll.sendcommand("GAP 0,0\r\n");
+                        tscDll.sendcommand("CLS\r\n");
+                        tscDll.sendcommand("TEXT 100,100,\"3\",0,1,1,\"TEST TEST TEST!!!!\"\r\n");
+                        tscDll.sendcommand("PRINT 1, 1\r\n");
+                        tscDll.closeport(3000);
                     } else {
                         // Request permissions
                         requestPermissions(permissions, REQUEST_BLUETOOTH_PERMISSION)
