@@ -337,22 +337,23 @@ class AcceptedPackagesFragment(
 //                        )
 //                        tscDll.printOnTscPrinter(context, file)
                     // Prepare the image (this is just a placeholder, you should provide the actual image)
-//                    val REQUEST_BLUETOOTH_PERMISSION = 1
-//
-//                    val permissions = arrayOf(
-//                        Manifest.permission.BLUETOOTH,
-//                        Manifest.permission.BLUETOOTH_ADMIN,
-//                        Manifest.permission.BLUETOOTH_SCAN,
-//                        Manifest.permission.BLUETOOTH_CONNECT// Add this permission
-//                    )
-//
-//                    if (permissions.all {
-//                            ContextCompat.checkSelfPermission(
-//                                requireContext(),
-//                                it
-//                            ) == PackageManager.PERMISSION_GRANTED
-//                        }) {
-//                        tscDll.openport(Helper.Companion.PrinterConst.PRINTER_BLUETOOTH_ADDRESS)
+                    val REQUEST_BLUETOOTH_PERMISSION = 1
+
+                    val permissions = arrayOf(
+                        Manifest.permission.BLUETOOTH,
+                        Manifest.permission.BLUETOOTH_ADMIN,
+                        Manifest.permission.BLUETOOTH_SCAN,
+                        Manifest.permission.BLUETOOTH_CONNECT// Add this permission
+                    )
+
+                    if (permissions.all {
+                            ContextCompat.checkSelfPermission(
+                                requireContext(),
+                                it
+                            ) == PackageManager.PERMISSION_GRANTED
+                        }) {
+                        // All permissions are granted, proceed with Bluetooth operations.
+                        tscDll.openport(Helper.Companion.PrinterConst.PRINTER_BLUETOOTH_ADDRESS)
 //                        val imageBitmap: Bitmap = Bitmap.createBitmap(
 //                            700,
 //                            990,
@@ -379,45 +380,12 @@ class AcceptedPackagesFragment(
 //                        tscDll.sendlargebyte(buffer)
 //
 //                        tempImageFile.delete()
-//                        tscDll.sendcommand("SIZE 3,1\r\n");
-//                        tscDll.sendcommand("GAP 0,0\r\n");
-//                        tscDll.sendcommand("CLS\r\n");
-//                        tscDll.sendcommand("TEXT 100,100,\"3\",0,1,1,\"TEST TEST TEST!!!!\"\r\n");
-//                        tscDll.sendcommand("PRINT 1, 1\r\n");
-//                        tscDll.closeport(3000);
-//                    } else {
-//                        // Request permissions
-//                        requestPermissions(permissions, REQUEST_BLUETOOTH_PERMISSION)
-//                    }
-
-                    val REQUEST_BLUETOOTH_PERMISSION = 1
-
-                    val permissions = arrayOf(
-                        Manifest.permission.BLUETOOTH,
-                        Manifest.permission.BLUETOOTH_ADMIN,
-                        Manifest.permission.BLUETOOTH_SCAN,
-                        Manifest.permission.BLUETOOTH_CONNECT
-                    )
-
-                    if (permissions.all {
-                            ContextCompat.checkSelfPermission(
-                                requireContext(),
-                                it
-                            ) == PackageManager.PERMISSION_GRANTED
-                        }) {
-                        tscDll.openport(Helper.Companion.PrinterConst.PRINTER_BLUETOOTH_ADDRESS)
-                        tscDll.sendcommand("SIZE 3,1\r\n")
-                        tscDll.sendcommand("GAP 0,0\r\n")
-                        tscDll.sendcommand("CLS\r\n")
-
-                        // Update the image path to point to the download folder
-                        val imagePath =
-                            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath + "/My.png"
-
-                        tscDll.sendcommand("BITMAP 100,100,\"$imagePath\",0,1,1\r\n")
-
-                        tscDll.sendcommand("PRINT 1, 1\r\n")
-                        tscDll.closeport(3000)
+                        tscDll.sendcommand("SIZE 3,1\r\n");
+                        tscDll.sendcommand("GAP 0,0\r\n");
+                        tscDll.sendcommand("CLS\r\n");
+                        tscDll.sendcommand("TEXT 100,100,\"3\",0,1,1,\"TEST TEST TEST!!!!\"\r\n");
+                        tscDll.sendcommand("PRINT 1, 1\r\n");
+                        tscDll.closeport(3000);
                     } else {
                         // Request permissions
                         requestPermissions(permissions, REQUEST_BLUETOOTH_PERMISSION)
