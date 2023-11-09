@@ -1,13 +1,23 @@
 package com.logestechs.driver.ui.acceptedPackages
 
+import android.Manifest
+import android.app.Activity
+import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -18,7 +28,14 @@ import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.data.model.Village
 import com.logestechs.driver.databinding.FragmentAcceptedPackagesBinding
 import com.logestechs.driver.ui.barcodeScanner.BarcodeScannerActivity
-import com.logestechs.driver.utils.*
+import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.BundleKeys
+import com.logestechs.driver.utils.EnhancedTSCPrinterActivity
+import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.IntentExtrasKeys
+import com.logestechs.driver.utils.LogesTechsApp
+import com.logestechs.driver.utils.LogesTechsFragment
+import com.logestechs.driver.utils.RefreshViewModel
 import com.logestechs.driver.utils.adapters.AcceptedPackageVillageCellAdapter
 import com.logestechs.driver.utils.bottomSheets.AcceptedPackagesBottomSheet
 import com.logestechs.driver.utils.interfaces.AcceptedPackagesCardListener
@@ -28,8 +45,15 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.net.URL
+import java.util.concurrent.Executors
 
-class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListener {
+class AcceptedPackagesFragment(
+    tscPrinterActivity: EnhancedTSCPrinterActivity
+) : LogesTechsFragment(), AcceptedPackagesCardListener {
 
     private var _binding: FragmentAcceptedPackagesBinding? = null
     private val binding get() = _binding!!
@@ -38,6 +62,13 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
 
     private lateinit var parentActivity: AppCompatActivity
     private lateinit var viewModel: RefreshViewModel
+
+    private val tscDll = tscPrinterActivity
+    private var fileName: String? = null
+
+    val executorService = Executors.newCachedThreadPool()
+
+    private var url: URL? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -252,38 +283,108 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
         }
     }
 
-    private fun callPrintAwb(packageId: Long, isImage: Boolean) {
+    private fun callPrintAwb() {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.printPackageAwb(packageId, isImage)
+//                    val response = ApiAdapter.apiClient.printPackageAwb(packageId, isImage)
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        val pdfData = response.body()
+//                    if (response?.isSuccessful == true && response.body() != null) {
+//                        val pdfData = "https://elasticbeanstalk-eu-central-1-640066223797.s3-accelerate.amazonaws.com/1/Logestechs_1699456038684_report.pdf"
+//
+//                        downloadPdfFromUrl(pdfData)
+//
+//                        val request = DownloadManager.Request(Uri.parse(pdfData.toString() + ""))
+//                        request.setTitle(fileName)
+//                        request.setMimeType(Helper.Companion.PrinterConst.PDF_EXTENSION)
+//                        request.allowScanningByMediaScanner()
+//                        request.setAllowedOverMetered(true)
+//                        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+//                        request.setDestinationInExternalPublicDir(
+//                            Environment.DIRECTORY_DOWNLOADS,
+//                            fileName
+//                        )
+//                        val dm =
+//                            requireActivity().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+//                        dm.enqueue(request)
+//
+//                        val file = File(
+//                            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+//                                .toString() + "/" + fileName
+//                        )
+//                        tscDll.printOnTscPrinter(context, file)
+                    // Prepare the image (this is just a placeholder, you should provide the actual image)
+                    val REQUEST_BLUETOOTH_PERMISSION = 1
 
-                        printPdfToTscPrinter(pdfData)
-                    } else {
+                    val permissions = arrayOf(
+                        Manifest.permission.BLUETOOTH,
+                        Manifest.permission.BLUETOOTH_ADMIN,
+                        Manifest.permission.BLUETOOTH_SCAN,
+                        Manifest.permission.BLUETOOTH_CONNECT// Add this permission
+                    )
+
+                    if (permissions.all {
+                            ContextCompat.checkSelfPermission(
+                                requireContext(),
+                                it
+                            ) == PackageManager.PERMISSION_GRANTED
+                        }) {
+                        // All permissions are granted, proceed with Bluetooth operations.
+                        tscDll.openport(Helper.Companion.PrinterConst.PRINTER_BLUETOOTH_ADDRESS)
+                        val imageBitmap: Bitmap = Bitmap.createBitmap(
+                            700,
+                            990,
+                            Bitmap.Config.ARGB_8888
+                        ) // Load your image here
+
+                        val publicExternalStorageDir =
+                            context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+                        val tempImageFile = File(publicExternalStorageDir, "my_image.png")
+
                         try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
+                            FileOutputStream(tempImageFile).use { outputStream ->
+                                imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
                             }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
+                        } catch (e: IOException) {
+                            e.printStackTrace()
                         }
+
+                        tscDll.sendfile("my_image.png")
+
+                        val buffer = "test Test".toByteArray()
+                        val PrintHeader = byteArrayOf(0xAA.toByte(), 0x55, 2, 0)
+                        PrintHeader[3] = buffer.size.toByte()
+                        tscDll.sendlargebyte(buffer)
+
+                        tempImageFile.delete()
+                    } else {
+                        // Request permissions
+                        requestPermissions(permissions, REQUEST_BLUETOOTH_PERMISSION)
                     }
+
+
+//                    } else {
+//                        try {
+//                            val jObjError = JSONObject(response?.errorBody()!!.string())
+//                            withContext(Dispatchers.Main) {
+//                                Helper.showErrorMessage(
+//                                    super.getContext(),
+//                                    jObjError.optString(AppConstants.ERROR_KEY)
+//                                )
+//                            }
+//
+//                        } catch (e: java.lang.Exception) {
+//                            withContext(Dispatchers.Main) {
+//                                Helper.showErrorMessage(
+//                                    super.getContext(),
+//                                    getString(R.string.error_general)
+//                                )
+//                            }
+//                        }
+//                    }
                 } catch (e: Exception) {
                     hideWaitDialog()
                     Helper.logException(e, Throwable().stackTraceToString())
@@ -304,6 +405,40 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
         }
     }
 
+    private fun downloadPdfFromUrl(path: String) {
+        executorService.execute {
+            try {
+                url = URL(path)
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+            }
+            fileName = url?.getPath()
+            fileName = fileName?.substring(fileName!!.lastIndexOf('/') + 1)
+            try {
+                executeDownloadPdf()
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun executeDownloadPdf() {
+        val request = DownloadManager.Request(Uri.parse(url.toString() + ""))
+        request.setTitle(fileName)
+        request.setMimeType(Helper.Companion.PrinterConst.PDF_EXTENSION)
+        request.allowScanningByMediaScanner()
+        request.setAllowedOverMetered(true)
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+        val dm = requireActivity().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        dm.enqueue(request)
+        val file = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                .toString() + "/" + fileName
+        )
+        if (tscDll != null) tscDll.printOnTscPrinter(context, file)
+    }
+
     override fun scanForPickup(customer: Customer?) {
         val mIntent = Intent(super.getContext(), BarcodeScannerActivity::class.java)
         mIntent.putExtra(IntentExtrasKeys.CUSTOMER_WITH_PACKAGES_FOR_PICKUP.name, customer)
@@ -314,7 +449,7 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
         callGetAcceptedPackagesByCustomer(customer)
     }
 
-    override fun printAwb(packageId: Int, isImage: Boolean) {
-//        callPrintAwb(packageId, isImage)
+    override fun printAwb() {
+        callPrintAwb()
     }
 }

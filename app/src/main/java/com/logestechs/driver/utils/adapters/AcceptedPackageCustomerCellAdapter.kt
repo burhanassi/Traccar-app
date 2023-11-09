@@ -164,7 +164,7 @@ class AcceptedPackageCustomerCellAdapter(
                             }
 
                             R.id.action_print -> {
-//                                mAdapter.listener?.printAwb(customer)
+                                mAdapter.listener?.printAwb()
                             }
                         }
                     }
