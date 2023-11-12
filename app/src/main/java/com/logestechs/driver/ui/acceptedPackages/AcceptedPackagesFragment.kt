@@ -1,23 +1,30 @@
 package com.logestechs.driver.ui.acceptedPackages
 
 import android.Manifest
-import android.app.Activity
 import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.drawable.Drawable
+import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.os.ParcelFileDescriptor
 import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -44,10 +51,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.json.JSONObject
 import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
+import java.io.FileNotFoundException
 import java.net.URL
 import java.util.concurrent.Executors
 
@@ -343,7 +351,7 @@ class AcceptedPackagesFragment(
                         Manifest.permission.BLUETOOTH,
                         Manifest.permission.BLUETOOTH_ADMIN,
                         Manifest.permission.BLUETOOTH_SCAN,
-                        Manifest.permission.BLUETOOTH_CONNECT// Add this permission
+                        Manifest.permission.BLUETOOTH_CONNECT // Add this permission
                     )
 
                     if (permissions.all {
@@ -384,8 +392,144 @@ class AcceptedPackagesFragment(
                         tscDll.sendcommand("GAP 0,0\r\n");
                         tscDll.sendcommand("CLS\r\n");
                         tscDll.sendcommand("TEXT 100,100,\"3\",0,1,1,\"TEST TEST TEST!!!!\"\r\n");
-                        tscDll.sendcommand("PRINT 1, 1\r\n");
-                        tscDll.closeport(3000);
+
+                        val downloadsPath =
+                            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                        val imagePath = File(
+                            downloadsPath,
+                            "my_image.png"
+                        ) // Replace with the actual path to your image
+
+                        if (imagePath.exists()) {
+//                        val options = BitmapFactory.Options().apply {
+//                            inPreferredConfig = Bitmap.Config.ARGB_8888
+//                        }
+
+//                            val inputStream = FileInputStream(imagePath)
+//
+//                            val bitmap = BitmapFactory.decodeStream(inputStream, null, options)
+//                            inputStream.close()
+//                            val bitmap = Bitmap.createBitmap(300,400, Bitmap.Config.ARGB_8888)
+//                            val canvas = Canvas(bitmap)
+//                            canvas.drawColor(Color.BLACK)
+//
+//                            val paint = Paint().apply {
+//                                color = Color.WHITE
+//                                textSize = 30f
+//                                textAlign = Paint.Align.CENTER
+//                            }
+//
+//                            val x = 100 / 2f
+//                            val y = 200 / 2f
+//
+//                            canvas.drawText("TEST", x, y, paint)
+
+//                            val options = BitmapFactory.Options()
+//                            options.inSampleSize = 2 // Adjust this value based on your needs
+//                            val myLogo = BitmapFactory.decodeResource(resources, R.drawable.ic_logestechs_logo, options)
+//
+//
+//                            val drawable: Drawable? = ContextCompat.getDrawable(requireContext(), R.drawable.)
+//                            val width = drawable?.intrinsicWidth ?: 0
+//                            val height = drawable?.intrinsicHeight ?: 0
+//
+//                            val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+//                            val canvas = Canvas(bitmap)
+//                            drawable?.setBounds(0, 0, canvas.width, canvas.height)
+//                            drawable?.draw(canvas)
+
+//                            if (bitmap != null) {
+//                            // Perform operations with the loaded bitmap
+//                            tscDll.setup(100, 150, 4, 4, 0, 0, 0)
+//                            tscDll.clearbuffer()
+//
+//                            // Send the bitmap to the printer
+//                            // Note: You might need to adapt this part based on the capabilities of your `tscDll` library.
+//                            tscDll.sendbitmap(0, 20, bitmap)
+//
+//                            tscDll.sendcommand("\r\nPRINT 1\r\n")
+//                            tscDll.closeport(5000)
+
+                            fileName = "my_image.png"
+                            val file = File(
+                                Environment.getExternalStoragePublicDirectory(
+                                    Environment.DIRECTORY_DOWNLOADS
+                                ).toString() + "/" + fileName
+                            )
+                            val filePathString =
+                                "Logestechs_1699456038684_report.pdf"
+                            val pdfFile = File(filePathString)
+                            val bitmaps = ArrayList<Bitmap>()
+
+                            try {
+                                println("Current working directory: ${System.getProperty("user.dir")}")
+
+                                if (!file.exists()) {
+                                    throw FileNotFoundException("File not found: $filePathString")
+                                }
+
+//                                val contentResolver = requireActivity().contentResolver
+//                                val parcelFileDescriptor: ParcelFileDescriptor? =
+//                                    contentResolver.openFileDescriptor(file.toUri(), "r")
+
+                                val imageUrl =
+                                    "https://www.google.com/url?sa=i&url=https%3A%2F%2Fpixabay.com%2Fvectors%2Flink-url-icon-chains-web-internet-1271843%2F&psig=AOvVaw3CCiV_wkxi1rjDB3lcKP3D&ust=1699881370622000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCJCj293FvoIDFQAAAAAdAAAAABAE" // Replace with your actual image URL
+
+                                val client = OkHttpClient()
+                                val request = Request.Builder().url(imageUrl).build()
+
+                                val response = client.newCall(request).execute()
+
+                                if (response.isSuccessful) {
+                                    // Step 2: Convert the Downloaded Image to a Bitmap
+                                    val downloadsDirectory =
+                                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                                    val filePath =
+                                        "my_image.png" // Replace with the actual file name
+                                    val imagePath = File(downloadsDirectory, filePath)
+                                    val drawable: Drawable? =
+                                        ContextCompat.getDrawable(requireContext(), R.drawable.test)
+                                    val originalWidth = drawable?.intrinsicWidth ?: 0
+                                    val originalHeight = drawable?.intrinsicHeight ?: 0
+
+                                    val width = ((originalWidth * 72).toDouble() / 25.4).toInt()
+                                    val height = ((originalHeight * 72).toDouble() / 25.4).toInt()
+                                    val resize_width = 800 // Change this to your desired width
+                                    val resize_height = (resize_width.toDouble() / width) * height
+
+                                    val bitmap = Bitmap.createBitmap(
+                                        resize_width,
+                                        resize_height.toInt(),
+                                        Bitmap.Config.ARGB_8888
+                                    )
+                                    val canvas = Canvas(bitmap)
+                                    drawable?.setBounds(0, 0, canvas.width, canvas.height)
+                                    drawable?.draw(canvas)
+
+                                    // Step 3: Print the Bitmap using TSCDLL
+                                    if (bitmap != null) {
+                                        tscDll.setup(100, 150, 4, 4, 0, 0, 0)
+                                        tscDll.clearbuffer()
+
+                                        // Send the bitmap to the printer
+                                        // Note: You might need to adapt this part based on the capabilities of your `tscDll` library.
+                                        tscDll.sendbitmap(0, 0, bitmap)
+//                                        tscDll.sendcommand("SIZE $resize_width dot, $resize_height dot\r\nCLS\r\n")
+                                        tscDll.sendcommand("\r\nPRINT 1\r\n")
+                                        tscDll.closeport(5000)
+                                    }
+                                }
+                            } catch (var34: Exception) {
+                                var34.printStackTrace()
+                                bitmaps
+                            }
+                        }
+
+//                        tscDll.sendcommand("BITMAP 100,200,0,\"$imagePath\"\r\n")
+
+//                        tscDll.sendcommand("\r\nPRINT 1\r\n")
+//                        tscDll.closeport(5000)
+//                        }
                     } else {
                         // Request permissions
                         requestPermissions(permissions, REQUEST_BLUETOOTH_PERMISSION)
