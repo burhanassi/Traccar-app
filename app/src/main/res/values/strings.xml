@@ -294,4 +294,5 @@
     <string name="order_barcode">Order Barcode: </string>
     <string name="tote_barcode">Tote Barcode: </string>
     <string name="number_of_items">Number of Items: </string>
+    <string name="number_of_somthing"> of </string>
 </resources>
