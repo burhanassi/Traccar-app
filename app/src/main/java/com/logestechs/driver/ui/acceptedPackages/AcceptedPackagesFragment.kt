@@ -38,6 +38,11 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
 
     private lateinit var parentActivity: AppCompatActivity
     private lateinit var viewModel: RefreshViewModel
+
+    private val loginResponse = SharedPreferenceWrapper.getLoginResponse()
+
+    var isSprint: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -68,6 +73,9 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (loginResponse?.user?.companyID == 240.toLong() || loginResponse?.user?.companyID == 313.toLong()) {
+            isSprint = true
+        }
         viewModel = ViewModelProvider(requireActivity()).get(RefreshViewModel::class.java)
         viewModel.dataRefresh.observe(viewLifecycleOwner, Observer { refresh ->
             if (refresh) {
@@ -75,14 +83,25 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
                 initListeners()
                 callGetAcceptedPackages()
                 activityDelegate = activity as ViewPagerCountValuesDelegate
-                binding.textTitle.text = getString(R.string.packages_view_pager_accepted_packages)
+                if (isSprint) {
+                    binding.textTitle.text =
+                        getString(R.string.packages_view_pager_accepted_packages_sprint)
+                } else {
+                    binding.textTitle.text =
+                        getString(R.string.packages_view_pager_accepted_packages)
+                }
             }
         })
         initRecycler()
         initListeners()
         callGetAcceptedPackages()
         activityDelegate = activity as ViewPagerCountValuesDelegate
-        binding.textTitle.text = getString(R.string.packages_view_pager_accepted_packages)
+        if (isSprint) {
+            binding.textTitle.text =
+                getString(R.string.packages_view_pager_accepted_packages_sprint)
+        } else {
+            binding.textTitle.text = getString(R.string.packages_view_pager_accepted_packages)
+        }
     }
 
     override fun onResume() {
@@ -99,7 +118,8 @@ class AcceptedPackagesFragment : LogesTechsFragment(), AcceptedPackagesCardListe
             ArrayList(),
             super.getContext(),
             requireFragmentManager(),
-            this
+            this,
+            isSprint
         )
         binding.rvVillages.layoutManager = layoutManager
     }

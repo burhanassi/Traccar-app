@@ -18,7 +18,8 @@ import com.logestechs.driver.utils.interfaces.InCarPackagesCardListener
 class InCarPackageGroupedCellAdapter(
     var packagesList: ArrayList<GroupedPackages?>,
     var context: Context?,
-    var listener: InCarPackagesCardListener?
+    var listener: InCarPackagesCardListener?,
+    var isSprint: Boolean = false
 ) :
     RecyclerView.Adapter<InCarPackageGroupedCellAdapter.InCarGroupedPackageViewHolder>() {
 
@@ -125,7 +126,8 @@ class InCarPackageGroupedCellAdapter(
                 groupedPackage?.pkgs ?: ArrayList(),
                 mAdapter.context,
                 mAdapter.listener,
-                adapterPosition
+                adapterPosition,
+                mAdapter.isSprint
             )
             binding.rvPackages.layoutManager = layoutManager
             binding.rvPackages.adapter = childItemAdapter

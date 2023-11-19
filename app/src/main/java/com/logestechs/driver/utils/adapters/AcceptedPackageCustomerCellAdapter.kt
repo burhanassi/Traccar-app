@@ -21,6 +21,7 @@ import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.bottomSheets.AcceptedPackagesBottomSheet
 import com.logestechs.driver.utils.interfaces.AcceptedPackagesCardListener
+import kotlin.contracts.contract
 
 
 class AcceptedPackageCustomerCellAdapter(
@@ -28,7 +29,8 @@ class AcceptedPackageCustomerCellAdapter(
     var context: Context?,
     var fragmentManager: FragmentManager,
     var listener: AcceptedPackagesCardListener?,
-    var parentIndex: Int
+    var parentIndex: Int,
+    var isSprint: Boolean = false
 ) :
     RecyclerView.Adapter<AcceptedPackageCustomerCellAdapter.AcceptedPackageCustomerCellViewHolder>() {
 
@@ -167,6 +169,11 @@ class AcceptedPackageCustomerCellAdapter(
                     true
                 }
                 popup.show()
+            }
+
+            if (mAdapter.isSprint) {
+                binding.buttonScanPackagesBarcodes.text =
+                    parent.context.getString(R.string.button_scan_packages_barcodes_sprint)
             }
 
         }

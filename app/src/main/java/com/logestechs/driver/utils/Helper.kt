@@ -529,11 +529,16 @@ class Helper {
 
         fun getLocalizedInCarStatus(
             context: Context?,
-            inCarPackageStatus: InCarPackageStatus
+            inCarPackageStatus: InCarPackageStatus,
+            isSprint: Boolean = false
         ): String {
             when (inCarPackageStatus) {
                 InCarPackageStatus.TO_DELIVER -> {
-                    return context?.getString(R.string.in_car_status_pickup_and_delivery) ?: ""
+                    return if (isSprint) {
+                        context?.getString(R.string.in_car_status_pickup_and_delivery_sprint) ?: ""
+                    } else {
+                        context?.getString(R.string.in_car_status_pickup_and_delivery) ?: ""
+                    }
                 }
                 InCarPackageStatus.ALL -> {
                     return context?.getString(R.string.in_car_status_all) ?: ""
@@ -545,10 +550,18 @@ class Helper {
                     return context?.getString(R.string.in_car_status_cod) ?: ""
                 }
                 InCarPackageStatus.FAILED -> {
-                    return context?.getString(R.string.in_car_status_failed) ?: ""
+                    return if (isSprint) {
+                        context?.getString(R.string.in_car_status_failed_sprint) ?: ""
+                    } else {
+                        context?.getString(R.string.in_car_status_failed) ?: ""
+                    }
                 }
                 InCarPackageStatus.TO_DELIVER_PICKUP -> {
-                    return context?.getString(R.string.in_car_status_pickup) ?: ""
+                    return if (isSprint) {
+                        context?.getString(R.string.in_car_status_pickup_sprint) ?: ""
+                    } else {
+                        context?.getString(R.string.in_car_status_pickup) ?: ""
+                    }
                 }
                 InCarPackageStatus.TO_DELIVER_DELIVERY -> {
                     return context?.getString(R.string.in_car_status_delivery) ?: ""

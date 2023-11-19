@@ -24,7 +24,8 @@ class InCarPackageCellAdapter(
     var context: Context?,
     var listener: InCarPackagesCardListener?,
     var parentIndex: Int?,
-    var isGrouped: Boolean = true
+    var isGrouped: Boolean = true,
+    var isSprint: Boolean = false
 ) :
     RecyclerView.Adapter<InCarPackageCellAdapter.InCarPackageCellViewHolder>(),
     PostponePackageDialogListener,
@@ -309,6 +310,10 @@ class InCarPackageCellAdapter(
                 }
                 if (mAdapter.companyConfigurations?.isDriverCanFailPackageDisabled == true) {
                     popup.menu.findItem(R.id.action_fail_delivery).isVisible = false
+                }
+                if (mAdapter.isSprint) {
+                    popup.menu.findItem(R.id.action_edit_package_type).title =
+                        mAdapter.context!!.getString(R.string.change_package_type_sprint)
                 }
                 popup.show()
             }

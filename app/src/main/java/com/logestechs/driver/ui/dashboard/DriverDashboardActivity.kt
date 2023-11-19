@@ -114,18 +114,40 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
             binding.containerLogestechsLogoBottom.visibility = View.GONE
         }
 
-        if (BuildConfig.DEBUG) {
-            if (loginResponse?.user?.companyID == 240.toLong()) {
-                binding.tvPackagesNumber.text = getString(R.string.dashboard_packages_number_sprint)
-                binding.dashEntryScanPackages.titleText =
-                    getString(R.string.dashboard_scan_new_package_barcode_sprint)
-            }
+
+        if (loginResponse?.user?.companyID == 240.toLong() || loginResponse?.user?.companyID == 313.toLong()) {
+            binding.tvPackagesNumber.text = getString(R.string.dashboard_packages_number_sprint)
+            binding.dashEntryScanPackages.titleText =
+                getString(R.string.dashboard_scan_new_package_barcode_sprint)
+            binding.dashEntryAcceptedPackages.titleText =
+                getString(R.string.dashboard_accepted_packages_sprint)
+            binding.dashEntryPendingPackages.titleText =
+                getString(R.string.dashboard_pending_packages_sprint)
+            binding.dashEntryInCarPackages.titleText =
+                getString(R.string.dashboard_in_car_packages_sprint)
+            binding.dashEntryFailedPackages.titleText = getString(R.string.dashboard_failed_sprint)
+            binding.dashSubEntryMassCodReports.titleText =
+                getString(R.string.dashboard_mass_cod_reports_sprint)
+            binding.dashSubEntryDraftPickups.titleText =
+                getString(R.string.title_draft_pickups_sprint)
+            binding.dashSubEntryReturnedPackages.titleText =
+                getString(R.string.title_returned_packages_sprint)
         } else {
-            if (loginResponse?.user?.companyID == 313.toLong()) {
-                binding.tvPackagesNumber.text = getString(R.string.dashboard_packages_number_sprint)
-                binding.dashEntryScanPackages.titleText =
-                    getString(R.string.dashboard_scan_new_package_barcode_sprint)
-            }
+            binding.dashEntryScanPackages.titleText =
+                getString(R.string.dashboard_scan_new_package_barcode)
+            binding.dashEntryAcceptedPackages.titleText =
+                getString(R.string.dashboard_accepted_packages)
+            binding.dashEntryPendingPackages.titleText =
+                getString(R.string.dashboard_pending_packages)
+            binding.dashEntryPendingPackages.titleText =
+                getString(R.string.dashboard_pending_packages)
+            binding.dashEntryInCarPackages.titleText = getString(R.string.dashboard_in_car_packages)
+            binding.dashEntryFailedPackages.titleText = getString(R.string.dashboard_failed)
+            binding.dashSubEntryMassCodReports.titleText =
+                getString(R.string.dashboard_mass_cod_reports)
+            binding.dashSubEntryDraftPickups.titleText = getString(R.string.title_draft_pickups)
+            binding.dashSubEntryReturnedPackages.titleText =
+                getString(R.string.title_returned_packages)
         }
 
     }
@@ -307,6 +329,7 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
                 val mIntent = Intent(this, BroughtPackagesActivity::class.java)
                 startActivity(mIntent)
             }
+
             R.id.dash_sub_entry_returned_packages -> {
                 val mIntent = Intent(this, ReturnedPackagesActivity::class.java)
                 startActivity(mIntent)
