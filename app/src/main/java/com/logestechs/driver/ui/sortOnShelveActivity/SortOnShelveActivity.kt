@@ -416,7 +416,7 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
                             withContext(Dispatchers.Main) {
                                 Helper.showErrorMessage(
                                     super.getContext(),
-                                    getString(R.string.error_general)
+                                    response?.body()?.data
                                 )
                             }
                         }

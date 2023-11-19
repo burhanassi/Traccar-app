@@ -45,6 +45,11 @@ import org.json.JSONObject
 import retrofit2.Response
 import java.io.IOException
 
+enum class FulfilmentPackerScanMode {
+    TOTE,
+    ITEM_INTO_TOTE
+}
+
 class FulfilmentPackerBarcodeScannerActivity :
     LogesTechsActivity(), View.OnClickListener,
     InsertBarcodeDialogListener {
@@ -67,6 +72,8 @@ class FulfilmentPackerBarcodeScannerActivity :
     private var scannedTote: Bin? = null
     private var selectedFulfilmentOrder: FulfilmentOrder? = null
 
+    private var selectedScanMode: FulfilmentPackerScanMode? = FulfilmentPackerScanMode.TOTE
+
     private var fulfilmentOrder: FulfilmentOrder? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +88,37 @@ class FulfilmentPackerBarcodeScannerActivity :
         initUi()
     }
 
+    private fun handleSelectedScanMode() {
+        scannedItemsHashMap.clear()
+        binding.containerDetails.visibility = View.GONE
+        when (selectedScanMode) {
+            FulfilmentPackerScanMode.TOTE -> {
+                hideScannedItemsContainer()
+                binding.textTitle.text = getString(R.string.please_scan_tote)
+            }
+
+            FulfilmentPackerScanMode.ITEM_INTO_TOTE -> {
+                showScannedItemsContainer()
+                binding.textTitle.text = getString(R.string.please_scan_item_barcode)
+                binding.textItemsNumber.text = getString(R.string.number_of_items) +
+                        "${(binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter).getItemCount()} " + getString(
+                    R.string.number_of_somthing
+                ) + fulfilmentOrder?.totalQuantity
+            }
+
+            null -> return
+            else -> {}
+        }
+    }
+
+    private fun showScannedItemsContainer() {
+        binding.containerDetails.visibility = View.VISIBLE
+    }
+
+    private fun hideScannedItemsContainer() {
+        binding.containerDetails.visibility = View.GONE
+    }
+
     private fun getExtras() {
         val extras = intent.extras
         if (extras != null) {
@@ -90,10 +128,7 @@ class FulfilmentPackerBarcodeScannerActivity :
     }
 
     private fun initUi() {
-        binding.textTitle.text = getText(R.string.please_scan_item_barcode)
-        binding.textItemsNumber.text = getString(R.string.number_of_items) +
-                "${(binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter).getItemCount()} " +
-                "of ${fulfilmentOrder?.totalQuantity}"
+        handleSelectedScanMode()
     }
 
     private fun initListeners() {
@@ -262,7 +297,18 @@ class FulfilmentPackerBarcodeScannerActivity :
     }
 
     private fun executeBarcodeAction(barcode: String?) {
-        callPackFulfilmentOrderByItem(barcode)
+        when (selectedScanMode) {
+            FulfilmentPackerScanMode.TOTE -> {
+                callGetToteToPackItems(barcode)
+            }
+
+            FulfilmentPackerScanMode.ITEM_INTO_TOTE -> {
+                callPackFulfilmentOrderByItem(barcode)
+            }
+
+            null -> return
+            else -> {}
+        }
     }
 
     //APIs
@@ -396,6 +442,66 @@ class FulfilmentPackerBarcodeScannerActivity :
             Helper.showErrorMessage(
                 super.getContext(), getString(R.string.error_check_internet_connection)
             )
+        }
+    }
+
+    private fun callGetToteToPackItems(barcode: String?) {
+        this.runOnUiThread {
+            showWaitDialog()
+        }
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.scanToteToPack(fulfilmentOrder?.id, barcode)
+
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            selectedScanMode = FulfilmentPackerScanMode.ITEM_INTO_TOTE
+                            handleSelectedScanMode()
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                    scannedItemsHashMap.remove(barcode)
+                } catch (e: Exception) {
+                    scannedItemsHashMap.remove(barcode)
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            this.runOnUiThread {
+                hideWaitDialog()
+                Helper.showErrorMessage(
+                    super.getContext(), getString(R.string.error_check_internet_connection)
+                )
+            }
         }
     }
 
