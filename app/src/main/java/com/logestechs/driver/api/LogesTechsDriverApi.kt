@@ -578,10 +578,9 @@ interface LogesTechsDriverApi {
     @PUT("api/handler/packages/{packageId}/un-flag")
     suspend fun unFlagPackageInShelf(@Path("packageId") packageId: Long): Response<ResponseBody>
 
-    @GET("api/driver/packages/{packageId}/pdf-report")
+    @GET("driver/customer/{customerId}/accepted/pdf-report")
     suspend fun printPackageAwb(
-        @Path("packageId") id: Long,
-        @Query("is-image") isImage: Boolean,
-        @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString()
+        @Path("customerId") id: Long,
+        @Query("is-image") isImage: Boolean
     ): Response<PrintAwbResponse>
 }
