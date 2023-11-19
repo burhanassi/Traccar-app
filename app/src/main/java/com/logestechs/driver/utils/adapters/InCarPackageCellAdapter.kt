@@ -35,6 +35,8 @@ class InCarPackageCellAdapter(
     val companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
+    private val loginResponse = SharedPreferenceWrapper.getLoginResponse()
+
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
         i: Int
@@ -51,6 +53,9 @@ class InCarPackageCellAdapter(
                 (viewGroup.width * 0.7).toInt(),
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
+        }
+        if (loginResponse?.user?.companyID == 240.toLong() || loginResponse?.user?.companyID == 313.toLong()) {
+            isSprint = true
         }
         return InCarPackageCellViewHolder(inflater, viewGroup, this)
     }
@@ -328,6 +333,10 @@ class InCarPackageCellAdapter(
 
             binding.itemInvoiceNumber.buttonCopy.setOnClickListener {
                 Helper.copyTextToClipboard(mAdapter.context, pkg?.invoiceNumber)
+            }
+            if (mAdapter.isSprint) {
+                binding.buttonDeliverPackage.text =
+                    mAdapter.context?.getString(R.string.button_deliver_package_sprint)
             }
         }
     }

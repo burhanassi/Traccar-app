@@ -66,6 +66,7 @@
     <string name="button_scan_packages_barcodes_sprint">Scan Packages Barcodes</string>
     <string name="cod">COD</string>
     <string name="button_deliver_package">Deliver Package</string>
+    <string name="button_deliver_package_sprint">Deliver Package</string>
     <string name="button_deliver_mass_cod">Deliver COD</string>
     <string name="action_return_package">Return</string>
     <string name="action_postpone_package">Postpone</string>
