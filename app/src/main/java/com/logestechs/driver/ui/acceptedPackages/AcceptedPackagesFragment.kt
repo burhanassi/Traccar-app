@@ -21,6 +21,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.Customer
@@ -46,6 +49,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.URL
+import java.util.TimeZone
 import java.util.concurrent.Executors
 
 class AcceptedPackagesFragment(
@@ -310,7 +314,10 @@ class AcceptedPackagesFragment(
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.printPackageAwb(customer?.id!!, true)
+                    val timezone = TimeZone.getDefault().id.toString()
+
+                    val response =
+                        ApiAdapter.apiClient.printPackageAwb(customer?.id!!, timezone, true)
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
@@ -365,7 +372,7 @@ class AcceptedPackagesFragment(
             Manifest.permission.BLUETOOTH,
             Manifest.permission.BLUETOOTH_ADMIN,
             Manifest.permission.BLUETOOTH_SCAN,
-            Manifest.permission.BLUETOOTH_CONNECT // Add this permission
+            Manifest.permission.BLUETOOTH_CONNECT
         )
 
         if (permissions.all {
@@ -376,71 +383,54 @@ class AcceptedPackagesFragment(
             }) {
             tscDll.openport(Helper.Companion.PrinterConst.PRINTER_BLUETOOTH_ADDRESS)
 
-            try {
-                val handler = Handler(Looper.getMainLooper())
+            // Use Glide to load the image from the URL
+            Glide.with(requireContext())
+                .asBitmap()
+                .load(imageUrl)
+                .into(object : CustomTarget<Bitmap>() {
+                    override fun onResourceReady(
+                        resource: Bitmap,
+                        transition: Transition<in Bitmap>?
+                    ) {
+                        // Bitmap is ready, perform your resizing and printing logic
+                        val drawable = BitmapDrawable(resources, resource)
 
-                handler.post {
+                        val originalWidth = drawable.intrinsicWidth
+                        val originalHeight = drawable.intrinsicHeight
 
-                    Picasso.get().load(imageUrl)
-                        .into(object : com.squareup.picasso.Target {
-                            override fun onBitmapLoaded(
-                                bitmap: Bitmap?,
-                                from: Picasso.LoadedFrom?
-                            ) {
-                                val drawable = BitmapDrawable(resources, bitmap)
+                        val width = ((originalWidth * 72).toDouble() / 25.4).toInt()
+                        val height = ((originalHeight * 72).toDouble() / 25.4).toInt()
 
-                                val originalWidth = drawable.intrinsicWidth
-                                val originalHeight = drawable.intrinsicHeight
+                        val resize_width = 800 // Change this to your desired width
+                        val resize_height = (resize_width.toDouble() / width) * height
 
-                                val width =
-                                    ((originalWidth * 72).toDouble() / 25.4).toInt()
-                                val height =
-                                    ((originalHeight * 72).toDouble() / 25.4).toInt()
+                        val resizedBitmap = Bitmap.createBitmap(
+                            resize_width,
+                            resize_height.toInt(),
+                            Bitmap.Config.ARGB_8888
+                        )
+                        val canvas = Canvas(resizedBitmap)
+                        drawable.setBounds(0, 0, canvas.width, canvas.height)
+                        drawable.draw(canvas)
 
-                                val resize_width =
-                                    800 // Change this to your desired width
-                                val resize_height =
-                                    (resize_width.toDouble() / width) * height
+                        var desiredPercentageHeight = 0.041
+                        var desiredPercentageTime = 0.9
 
-                                val resizedBitmap = Bitmap.createBitmap(
-                                    resize_width,
-                                    resize_height.toInt(),
-                                    Bitmap.Config.ARGB_8888
-                                )
-                                val canvas = Canvas(resizedBitmap)
-                                drawable.setBounds(
-                                    0,
-                                    0,
-                                    canvas.width,
-                                    canvas.height
-                                )
-                                drawable.draw(canvas)
+                        var newHeight = originalHeight * desiredPercentageHeight
+                        var newTimeOut = originalHeight * desiredPercentageTime
+                        if (resizedBitmap != null) {
+                            tscDll.setup(100, newHeight.toInt(), 4, 4, 0, 0, 0)
+                            tscDll.clearbuffer()
+                            tscDll.sendbitmap(0, 0, resizedBitmap)
+                            tscDll.sendcommand("\r\nPRINT 1\r\n")
+                            tscDll.closeport(newTimeOut.toInt())
+                        }
+                    }
 
-                                if (resizedBitmap != null) {
-                                    tscDll.setup(100, 150, 4, 4, 0, 0, 0)
-                                    tscDll.clearbuffer()
-                                    tscDll.sendbitmap(0, 0, resizedBitmap)
-                                    tscDll.sendcommand("\r\nPRINT 1\r\n")
-                                    tscDll.closeport(5000)
-                                }
-                            }
-
-                            override fun onBitmapFailed(
-                                e: Exception?,
-                                errorDrawable: Drawable?
-                            ) {
-                                // Handle the failure to load the bitmap from the URL
-                            }
-
-                            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
-                                // You can do something here if needed
-                            }
-                        })
-
-                }
-            } catch (var34: Exception) {
-                var34.printStackTrace()
-            }
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                        // Handle case where the Bitmap couldn't be loaded
+                    }
+                })
         } else {
             requestPermissions(permissions, REQUEST_BLUETOOTH_PERMISSION)
         }
