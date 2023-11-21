@@ -62,65 +62,77 @@
             </FrameLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginEnd="10dp"
-                android:orientation="horizontal"
-                android:padding="2dp"
-                android:background="@drawable/background_barcode_scanner_bottom_section">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/text_scanned_order"
-                    style="@style/LogesTechsMedium"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textAlignment="center"
-                    android:textSize="15sp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginEnd="10dp"
-                android:orientation="horizontal"
-                android:padding="2dp"
-                android:background="@drawable/background_barcode_scanner_bottom_section">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/text_items_number"
-                    style="@style/LogesTechsMedium"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textAlignment="center"
-                    android:textSize="15sp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/container_scanned_items"
+                android:id="@+id/container_details"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:layout_marginTop="-16dp"
                 android:layout_weight="0.65"
                 android:background="@drawable/background_barcode_scanner_bottom_section"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_scanned_barcodes"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="horizontal"
+                    android:padding="2dp"
+                    android:background="@drawable/background_barcode_scanner_bottom_section">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_scanned_order"
+                        style="@style/LogesTechsMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textAlignment="center"
+                        android:textSize="15sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="horizontal"
+                    android:padding="2dp"
+                    android:background="@drawable/background_barcode_scanner_bottom_section">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_items_number"
+                        style="@style/LogesTechsMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textAlignment="center"
+                        android:textSize="15sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/container_scanned_items"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_weight="1"
-                    android:overScrollMode="never"
-                    android:paddingBottom="70dp"
-                    tools:listitem="@layout/item_pending_package_customer_cell" />
+                    android:layout_weight="0.65"
+                    android:background="@drawable/background_barcode_scanner_bottom_section"
+                    android:orientation="vertical">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_scanned_barcodes"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_weight="1"
+                        android:overScrollMode="never"
+                        android:paddingBottom="70dp"
+                        tools:listitem="@layout/item_pending_package_customer_cell" />
+                </LinearLayout>
             </LinearLayout>
+
         </LinearLayout>
 
 
@@ -144,10 +156,7 @@
                 android:tint="@android:color/white"
                 app:maxImageSize="35dp"
                 tools:ignore="ContentDescription" />
-
-
         </LinearLayout>
-
     </FrameLayout>
 
 </layout>

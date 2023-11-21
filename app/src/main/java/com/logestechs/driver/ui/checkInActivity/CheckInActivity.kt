@@ -63,7 +63,7 @@ class CheckInActivity : LogesTechsActivity(), View.OnClickListener {
     }
 
     private fun initUi() {
-        binding.textTitle.text = getText(R.string.please_scan_warehouse_barcode)
+        binding.textTitle.text = getText(R.string.please_scan_hub_barcode)
         binding.titleItemDetails.text = getString(R.string.title_check_ins)
     }
 

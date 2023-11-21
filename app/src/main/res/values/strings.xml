@@ -44,6 +44,7 @@
     <string name="title_reject_customer_packages">Reject Customer Packages</string>
     <string name="title_reject_package">Reject Package</string>
     <string name="message_no_packages">No packages were found \n Please pull the list down to refresh</string>
+    <string name="message_no_checkins">No check-ins were found \n Please pull the list down to refresh</string>
     <string name="success_mass_completed">Mass COD Report Has Been Delivered Successfully</string>
     <string name="success_operation_completed">Operation Completed Successfully</string>
     <string name="button_insert_barcode">Insert Barcode</string>
@@ -184,6 +185,7 @@
     <string name="please_scan_shelf_barcode">Please Scan Shelf Barcode</string>
     <string name="please_verify_driver">Please Verify Driver</string>
     <string name="please_scan_warehouse_barcode">Please Scan Warehouse Barcode</string>
+    <string name="please_scan_hub_barcode">Please Scan Hub Barcode</string>
     <string name="please_insert_barcode">Please insert barcode</string>
     <string name="button_insert">Insert</string>
     <string name="count">"Count: "</string>
@@ -293,4 +295,5 @@
     <string name="order_barcode">Order Barcode: </string>
     <string name="tote_barcode">Tote Barcode: </string>
     <string name="number_of_items">Number of Items: </string>
+    <string name="number_of_somthing"> of </string>
 </resources>

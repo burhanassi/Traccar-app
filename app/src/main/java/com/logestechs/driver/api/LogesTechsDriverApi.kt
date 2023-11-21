@@ -392,7 +392,7 @@ interface LogesTechsDriverApi {
     suspend fun sortRejectedItemIntoLocation(
         @Path("locationId") locationId: Long?,
         @Query("itemBarcode") itemBarcode: String
-    ): Response<SortItemIntoBinResponse>?
+    ): Response<SortRejectedItemIntoBinResponse>?
 
     @PUT("api/handler/hub/shipping-items/reject")
     suspend fun rejectItem(
@@ -438,6 +438,12 @@ interface LogesTechsDriverApi {
     @PUT("api/handler/fulfillment-order/pack")
     suspend fun packFulfilmentOrder(
         @Query("orderId") orderId: Long?
+    ): Response<ResponseBody?>?
+
+    @GET("api/handler/order/{orderId}/tote")
+    suspend fun scanToteToPack(
+        @Path("orderId") orderId: Long?,
+        @Query("barcode") barcode: String?
     ): Response<ResponseBody?>?
 
     @GET("api/handler/orders/{orderId}/picked-item")
@@ -553,19 +559,16 @@ interface LogesTechsDriverApi {
 
     @GET("api/handler/drivers/verify")
     suspend fun verifyDriver(
-        @Query("barcode") barcode: String?
-    ): Response<GetVerfiyDriverResponse?>?
-
-    @GET("api/handler/drivers/{driverId}/packages")
-    suspend fun getInCarPackagesForHandler(
-        @Path("driverId") driverId: Long,
+        @Query("barcode") barcode: String?,
         @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
         @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
-    ): Response<ArrayList<Package?>?>
+        @Query("search") search: String? = null,
+    ): Response<GetVerfiyDriverResponse?>?
 
     @PUT("api/handler/packages/scan-to-unload")
     suspend fun unloadPackageFromContainerToHub(
-        @Query("barcode") barcode: String?
+        @Query("barcode") barcode: String?,
+        @Query("driverId") driverId: Long?
     ): Response<Package>
 
     @PUT("api/handler/packages/{packageId}/flag")

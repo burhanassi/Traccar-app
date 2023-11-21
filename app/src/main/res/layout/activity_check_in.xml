@@ -55,7 +55,7 @@
                         android:layout_gravity="center_vertical"
                         android:textColor="@color/white"
                         android:textSize="15sp"
-                        tools:text="@string/please_scan_warehouse_barcode"
+                        tools:text="@string/please_scan_hub_barcode"
                         tools:ignore="RtlCompat" />
                 </LinearLayout>
             </FrameLayout>
@@ -99,7 +99,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:text="@string/message_no_packages"
+                    android:text="@string/message_no_checkins"
                     android:textColor="@color/fontTrackHint"
                     android:textSize="17sp"
                     android:visibility="gone" />
