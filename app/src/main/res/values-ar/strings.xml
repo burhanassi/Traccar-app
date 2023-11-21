@@ -288,7 +288,7 @@
     <string name="title_manually">بواسطة المستخدم</string>
     <string name="packaging_type_warehouse">تغليف المستودع</string>
     <string name="packaging_type_customer">تغليف الزبون</string>
-    <string name="text_is_custom_packing">٫ تغليف مخصص</string>
+    <string name="text_is_custom_packing"> تغليف مخصص</string>
     <string name="order_type">نوع الطرد: </string>
     <string name="order_barcode">باركود الطلب: </string>
     <string name="tote_barcode">باركود سلة التحميل: </string>

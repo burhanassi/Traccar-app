@@ -52,7 +52,6 @@ class FulfilmentOrderItemToPackCellAdapter(
             FulfilmentOrderItemToPackCellViewHolder.itemView.item_card.setBackgroundResource(0)
         }
 
-        FulfilmentOrderItemToPackCellViewHolder.setIsRecyclable(false);
         FulfilmentOrderItemToPackCellViewHolder.bind(productItem)
     }
 
@@ -89,7 +88,7 @@ class FulfilmentOrderItemToPackCellAdapter(
             }
             if (productItem?.isCustomPackaging == true && productItem?.parcelTypeName != null) {
                 binding.itemNotes.textItem.text = mAdapter.context?.getString(R.string.order_type) +
-                        productItem?.parcelTypeName + mAdapter.context?.getString(R.string.text_is_custom_packing)
+                        productItem?.parcelTypeName + "," + mAdapter.context?.getString(R.string.text_is_custom_packing)
             } else if (productItem?.isCustomPackaging == true && productItem?.parcelTypeName == null) {
                 binding.itemNotes.textItem.text =
                     mAdapter.context?.getString(R.string.text_is_custom_packing)
