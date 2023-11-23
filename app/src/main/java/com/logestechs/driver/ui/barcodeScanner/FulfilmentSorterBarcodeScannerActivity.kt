@@ -669,6 +669,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                             binding.rvScannedBarcodes.smoothScrollToPosition(0)
                             updateShippingPlanCountValues(response?.shippingPlanDetails)
                         }
+                        scannedItemsHashMap.remove(barcode)
                     } else {
                         scannedItemsHashMap.remove(barcode)
                         try {
@@ -773,6 +774,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                                 )
                                 binding.rvScannedBarcodes.smoothScrollToPosition(0)
                                 updateShippingPlanCountValues(response?.shippingPlanDetails)
+                                scannedItemsHashMap.remove(barcode)
                             }
                         } else {
                             scannedItemsHashMap.remove(barcode)
