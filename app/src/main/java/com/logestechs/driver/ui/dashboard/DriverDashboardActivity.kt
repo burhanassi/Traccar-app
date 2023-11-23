@@ -125,7 +125,6 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
                 getString(R.string.dashboard_pending_packages_sprint)
             binding.dashEntryInCarPackages.titleText =
                 getString(R.string.dashboard_in_car_packages_sprint)
-            binding.dashEntryFailedPackages.titleText = getString(R.string.dashboard_failed_sprint)
             binding.dashSubEntryMassCodReports.titleText =
                 getString(R.string.dashboard_mass_cod_reports_sprint)
             binding.dashSubEntryDraftPickups.titleText =
@@ -142,7 +141,6 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
             binding.dashEntryPendingPackages.titleText =
                 getString(R.string.dashboard_pending_packages)
             binding.dashEntryInCarPackages.titleText = getString(R.string.dashboard_in_car_packages)
-            binding.dashEntryFailedPackages.titleText = getString(R.string.dashboard_failed)
             binding.dashSubEntryMassCodReports.titleText =
                 getString(R.string.dashboard_mass_cod_reports)
             binding.dashSubEntryDraftPickups.titleText = getString(R.string.title_draft_pickups)
