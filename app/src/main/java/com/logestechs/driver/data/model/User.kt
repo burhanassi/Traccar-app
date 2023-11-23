@@ -9,7 +9,7 @@ data class User(
     val firstName: String? = null,
     val middleName: String? = null,
     val lastName: String? = null,
-    val phone: String? = null,
+    var phone: String? = null,
     val email: String? = null,
 
     @SerializedName("addressId")

@@ -359,12 +359,13 @@
                         app:iconSrc="@{@drawable/ic_scan_barcode_pink}" />
 
                     <include
-                        android:id="@+id/dash_entry_accepted_packages"
+                        android:id="@+id/dash_entry_pending_packages"
                         layout="@layout/item_dashboard_entry"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:iconSrc="@{@drawable/ic_accepted_packages_pink}" />
+                        app:iconSrc="@{@drawable/ic_pending_packages_pink}"
+                        app:titleText="@{@string/dashboard_pending_packages}" />
 
                 </LinearLayout>
 
@@ -377,15 +378,24 @@
                     android:baselineAligned="false"
                     android:clipChildren="false">
 
+<!--                    <include-->
+<!--                        android:id="@+id/dash_entry_pending_packages"-->
+<!--                        layout="@layout/item_dashboard_entry"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginEnd="14dp"-->
+<!--                        android:layout_weight="1"-->
+<!--                        app:iconSrc="@{@drawable/ic_pending_packages_pink}"-->
+<!--                        app:titleText="@{@string/dashboard_pending_packages}" />-->
                     <include
-                        android:id="@+id/dash_entry_pending_packages"
+                        android:id="@+id/dash_entry_accepted_packages"
                         layout="@layout/item_dashboard_entry"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="14dp"
                         android:layout_weight="1"
-                        app:iconSrc="@{@drawable/ic_pending_packages_pink}" />
-
+                        app:iconSrc="@{@drawable/ic_accepted_packages_pink}"
+                        app:titleText="@{@string/dashboard_accepted_packages}" />
                     <include
                         android:id="@+id/dash_entry_in_car_packages"
                         layout="@layout/item_dashboard_entry"
@@ -412,7 +422,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="14dp"
                         android:layout_weight="1"
-                        app:iconSrc="@{@drawable/ic_failed_packages_pink}" />
+                        app:iconSrc="@{@drawable/ic_failed_packages_pink}"
+                        app:titleText="@{@string/dashboard_failed}" />
 
                     <include
                         android:id="@+id/dash_entry_postponed_packages"
@@ -524,20 +535,14 @@
                             app:iconSrc="@{@drawable/ic_mass_cod_reports_gray}" />
 
                         <include
-                            android:id="@+id/dash_sub_entry_draft_pickups"
+                            android:id="@+id/dash_sub_entry_postponed_packages"
                             layout="@layout/item_dashboard_sub_entry"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginEnd="10dp"
-                            app:iconSrc="@{@drawable/ic_draft_pickups}" />
+                            app:iconSrc="@{@drawable/ic_postponed_packages_pink}"
+                            app:titleText="@{@string/dashboard_postponed}" />
 
-                        <include
-                            android:id="@+id/dash_sub_entry_returned_packages"
-                            layout="@layout/item_dashboard_sub_entry"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_marginEnd="10dp"
-                            app:iconSrc="@{@drawable/ic_returned_package_gray}" />
                         <include
                             android:id="@+id/dash_sub_entry_brought_packages"
                             layout="@layout/item_dashboard_sub_entry"
@@ -546,6 +551,35 @@
                             android:layout_marginEnd="10dp"
                             app:iconSrc="@{@drawable/ic_returned_package_gray}"
                             app:titleText="@{@string/title_brought_packages}" />
+
+
+                        <include
+                            android:id="@+id/dash_sub_entry_failed_packages"
+                            layout="@layout/item_dashboard_sub_entry"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="10dp"
+                            app:iconSrc="@{@drawable/ic_failed_packages_pink}"
+                            app:titleText="@{@string/dashboard_failed}" />
+
+                        <include
+                            android:id="@+id/dash_sub_entry_returned_packages"
+                            layout="@layout/item_dashboard_sub_entry"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="10dp"
+                            app:iconSrc="@{@drawable/ic_returned_package_gray}"
+                            app:titleText="@{@string/title_returned_packages}" />
+                        <include
+                            android:id="@+id/dash_sub_entry_draft_pickups"
+                            layout="@layout/item_dashboard_sub_entry"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="10dp"
+                            app:iconSrc="@{@drawable/ic_draft_pickups}"
+                            app:titleText="@{@string/title_draft_pickups}" />
+
+
 
                         <include
                             android:id="@+id/dash_sub_entry_driver_route"
