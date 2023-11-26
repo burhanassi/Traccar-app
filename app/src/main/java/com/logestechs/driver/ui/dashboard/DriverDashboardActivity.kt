@@ -122,14 +122,14 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
         binding.dashEntryAcceptedPackages.root.setOnClickListener(this)
         binding.dashEntryInCarPackages.root.setOnClickListener(this)
         binding.dashEntryScanPackages.root.setOnClickListener(this)
-        binding.dashEntryFailedPackages.root.setOnClickListener(this)
-        binding.dashEntryPostponedPackages.root.setOnClickListener(this)
         binding.dashSubEntryBroughtPackages.root.setOnClickListener(this)
         binding.dashSubEntryReturnedPackages.root.setOnClickListener(this)
         binding.dashSubEntryMassCodReports.root.setOnClickListener(this)
         binding.dashSubEntryDraftPickups.root.setOnClickListener(this)
         binding.dashSubEntryDriverRoute.root.setOnClickListener(this)
         binding.dashSubEntryCheckIns.root.setOnClickListener(this)
+        binding.dashSubEntryFailedPackages.root.setOnClickListener(this)
+        binding.dashSubEntryPostponedPackages.root.setOnClickListener(this)
         binding.containerServiceTypeView.setOnClickListener(this)
         binding.dashEntryWarehousePackages.root.setOnClickListener(this)
     }
@@ -139,8 +139,6 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
         binding.dashEntryAcceptedPackages.textCount.text = data?.acceptedPackagesCount.toString()
         binding.dashEntryInCarPackages.textCount.text = data?.inCarPackagesCount.toString()
         binding.dashEntryPendingPackages.textCount.text = data?.pendingPackagesCount.toString()
-        binding.dashEntryPostponedPackages.textCount.text = data?.postponedPackagesCount.toString()
-        binding.dashEntryFailedPackages.textCount.text = data?.failedPackagesCount.toString()
         binding.dashEntryScanPackages.textCount.visibility = View.GONE
 
         binding.textInCarPackagesCount.text = data?.inCarPackagesCount.toString()
@@ -268,7 +266,7 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
                 startActivity(mIntent)
             }
 
-            R.id.dash_entry_postponed_packages -> {
+            R.id.dash_sub_entry_postponed_packages -> {
                 val mIntent = Intent(this, DriverPackagesByStatusViewPagerActivity::class.java)
                 mIntent.putExtra(IntentExtrasKeys.SELECTED_PACKAGES_TAB.name, 2)
                 mIntent.putExtra(
@@ -278,7 +276,7 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
                 startActivity(mIntent)
             }
 
-            R.id.dash_entry_failed_packages -> {
+            R.id.dash_sub_entry_failed_packages -> {
                 val mIntent = Intent(this, DriverPackagesByStatusViewPagerActivity::class.java)
                 mIntent.putExtra(IntentExtrasKeys.SELECTED_PACKAGES_TAB.name, 2)
                 mIntent.putExtra(

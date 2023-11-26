@@ -583,4 +583,9 @@ interface LogesTechsDriverApi {
         @Query("timezone") timezone: String,
         @Query("is-image") isImage: Boolean
     ): Response<PrintAwbResponse>
+
+    @PUT("api/driver/modify-profile")
+    suspend fun changeProfile(
+        @Body body: ModifyProfileRequestBody
+    ): Response<ResponseBody?>?
 }
