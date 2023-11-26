@@ -164,10 +164,6 @@ class AcceptedPackageCustomerCellAdapter(
                             R.id.action_show_packages -> {
                                 mAdapter.listener?.getAcceptedPackages(customer)
                             }
-
-                            R.id.action_print -> {
-                                mAdapter.listener?.printAwb(customer)
-                            }
                         }
                     }
                     true

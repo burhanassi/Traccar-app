@@ -101,7 +101,7 @@ class ScannedPackagesOnShelfViewHolder(
                                 R.drawable.ic_flag_red
                             )
                         )
-                        mAdapter.listener?.onShowPackageNoteDialog(pkg)
+                        mAdapter.listener?.onFlagPackage(pkg.id!!)
                         isFlagged = true
                     }
                 }

@@ -196,7 +196,4 @@ dependencies {
     //ZoomImages
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 
-    //TSCPrinter
-    implementation files('libs/tscsdk.jar')
-
 }

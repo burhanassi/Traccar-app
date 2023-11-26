@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
-import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,8 +24,7 @@ class AddPackageNoteDialog(
     var context: Context,
     var listener: AddPackageNoteDialogListener?,
     var pkg: Package?,
-    var loadedImagesList: ArrayList<LoadedImage>,
-    var isFromHandler: Boolean = false
+    var loadedImagesList: ArrayList<LoadedImage>
 ) : RadioGroupListListener, ThumbnailsListListener {
 
     lateinit var binding: DialogAddPackageNoteBinding
@@ -84,12 +82,6 @@ class AddPackageNoteDialog(
             clearFocus()
         }
 
-        if (isFromHandler) {
-            binding.rvThumbnails.visibility = View.INVISIBLE
-            binding.buttonCaptureImage.visibility = View.GONE
-            binding.buttonLoadImage.visibility = View.GONE
-            binding.buttonCancel.visibility = View.INVISIBLE
-        }
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.setCanceledOnTouchOutside(false)
         alertDialog.show()

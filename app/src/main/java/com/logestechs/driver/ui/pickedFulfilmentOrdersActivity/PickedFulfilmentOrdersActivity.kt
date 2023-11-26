@@ -58,7 +58,7 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
         tabLayout.tabTextColors = getColorStateList(R.color.tab_text_color_selector)
 
         initRecycler()
-        initListeners()
+        initListeners(status)
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
 
             override fun onTabSelected(tab: TabLayout.Tab) {
@@ -92,12 +92,12 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
         tabLayout.getTabAt(0)?.select()
         callGetFulfilmentOrders(FulfilmentOrderStatus.PICKED.name)
     }
-//    override fun onResume() {
-//        super.onResume()
-//        currentPageIndex = 1
-//        (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()
-//        callGetFulfilmentOrders(status)
-//    }
+    override fun onResume() {
+        super.onResume()
+        currentPageIndex = 1
+        (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()
+        callGetFulfilmentOrders(status)
+    }
 
     private fun initRecycler() {
         val layoutManager = LinearLayoutManager(
@@ -112,7 +112,7 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
 
     }
 
-    private fun initListeners() {
+    private fun initListeners(status: String?) {
         binding.refreshLayoutCustomers.setOnRefreshListener {
             currentPageIndex = 1
             (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()

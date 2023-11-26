@@ -4,8 +4,6 @@
     <string name="error_check_internet_connection">Please connect to the internet</string>
     <string name="login_hello">Hello!</string>
     <string name="login_please_login">Please Login</string>
-    <string name="valid_password_rules">Password must contain 6 letters and numbers at least</string>
-    <string name="passwords_must_match">Passwords must match</string>
     <string name="button_login">Login</string>
     <string name="text_logestechs">LOGESTECHS</string>
     <string name="power_beyond_cargo">POWER BEYOND CARGO</string>
@@ -259,12 +257,6 @@
     <string name="in_car_status_pickup_and_delivery_sprint">Pickup and Delivery</string>
     <string name="enter_verification_code">Enter Verification Code</string>
     <string name="verification_code">Verification Code</string>
-    <string name="change_phone_number">Change mobile number</string>
-    <string name="new_phone_number">New mobile number</string>
-    <string name="change_password">Change Password</string>
-    <string name="old_password">Old password</string>
-    <string name="new_password">New password</string>
-    <string name="repeat_new_password">Repeated password</string>
     <string name="verify">Verify</string>
     <string name="error_insert_verification_code">Please insert verification code</string>
     <string name="error_verification_code_must_be_four_digits">Verification code must consist of 4 digits</string>
@@ -289,7 +281,6 @@
     <string name="picked_fulfillment">Picked Fulfillment Orders</string>
     <string name="partially_picked_fulfillment">Partially Picked Fulfillment Orders</string>
     <string name="action_show_packages">Show Packages</string>
-    <string name="action_print">Print</string>
     <string name="pickup_packages">Pickup Packages</string>
     <string name="item_price">Price</string>
     <string name="returned_status_partially_delivered">Partially Delivered</string>
@@ -317,7 +308,7 @@
     <string name="title_manually">Manually</string>
     <string name="packaging_type_warehouse">Warehouse Packaging</string>
     <string name="packaging_type_customer">Customer Packaging</string>
-    <string name="text_is_custom_packing"> is custom packing</string>
+    <string name="text_is_custom_packing">, is custom packing</string>
     <string name="order_type">Order Type: </string>
     <string name="order_barcode">Order Barcode: </string>
     <string name="tote_barcode">Tote Barcode: </string>

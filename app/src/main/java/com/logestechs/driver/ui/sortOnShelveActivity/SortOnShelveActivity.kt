@@ -3,40 +3,29 @@
 package com.logestechs.driver.ui.sortOnShelveActivity
 
 import android.annotation.SuppressLint
-import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.hardware.Camera
 import android.media.AudioManager
 import android.media.ToneGenerator
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import android.provider.MediaStore
 import android.view.KeyEvent
 import android.view.SurfaceHolder
 import android.view.View
-import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
-import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
-import com.logestechs.driver.api.requests.AddNoteRequestBody
-import com.logestechs.driver.api.requests.DeleteImageRequestBody
-import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ActivitySortOnShelveBinding
 import com.logestechs.driver.utils.AppConstants
@@ -46,11 +35,8 @@ import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.adapters.ScannedBarcodeCellAdapter
 import com.logestechs.driver.utils.adapters.ScannedPackagesOnShelfCellAdapter
-import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
 import com.logestechs.driver.utils.bottomSheets.PackageTrackBottomSheet
-import com.logestechs.driver.utils.dialogs.AddPackageNoteDialog
 import com.logestechs.driver.utils.dialogs.InsertBarcodeDialog
-import com.logestechs.driver.utils.interfaces.AddPackageNoteDialogListener
 import com.logestechs.driver.utils.interfaces.InsertBarcodeDialogListener
 import com.logestechs.driver.utils.interfaces.ScannedBarcodeCardListener
 import com.logestechs.driver.utils.interfaces.ScannedPackagesOnShelfCardListener
@@ -59,17 +45,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
-import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 enum class ShelfScanMode {
     SHELF,
@@ -78,7 +55,7 @@ enum class ShelfScanMode {
 
 @Suppress("DEPRECATION")
 class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
-    InsertBarcodeDialogListener, ScannedPackagesOnShelfCardListener, AddPackageNoteDialogListener {
+    InsertBarcodeDialogListener, ScannedPackagesOnShelfCardListener {
     private lateinit var binding: ActivitySortOnShelveBinding
 
     private var cameraSource: CameraSource? = null
@@ -100,10 +77,6 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
     private var shelfId: Long? = null
 
     private var scannedPackages: Int = 0
-
-    var addPackageNoteDialog: AddPackageNoteDialog? = null
-    var loadedImagesList: java.util.ArrayList<LoadedImage> = java.util.ArrayList()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySortOnShelveBinding.inflate(layoutInflater)
@@ -542,66 +515,6 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
         }
     }
 
-    private fun callAddPackageNote(packageId: Long?, body: AddNoteRequestBody?) {
-        showWaitDialog()
-        if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response = ApiAdapter.apiClient.addPackageNote(
-                        packageId,
-                        body
-                    )
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        withContext(Dispatchers.Main) {
-                            Helper.showSuccessMessage(
-                                super.getContext(),
-                                getString(R.string.success_operation_completed)
-                            )
-//                            activityDelegate?.updateCountValues()
-//                            getPackagesBySelectedMode()
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            hideWaitDialog()
-            Helper.showErrorMessage(
-                super.getContext(), getString(R.string.error_check_internet_connection)
-            )
-        }
-    }
-
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_done -> {
@@ -653,30 +566,12 @@ class SortOnShelveActivity : LogesTechsActivity(), View.OnClickListener,
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    override fun onUnFlagPackage(packageId: Long) {
-        callFlagPackage(packageId, false)
-    }
-
-    override fun onShowPackageNoteDialog(pkg: Package?) {
-        loadedImagesList.clear()
-        addPackageNoteDialog = AddPackageNoteDialog(this, this, pkg, loadedImagesList, true)
-        addPackageNoteDialog?.showDialog()
+    override fun onFlagPackage(packageId: Long) {
+        callFlagPackage(packageId, true)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    override fun onPackageNoteAdded(body: AddNoteRequestBody?) {
-        callAddPackageNote(body?.packageId, body)
-        callFlagPackage(body?.packageId, true)
-    }
-
-    override fun onCaptureImage() {
-    }
-
-    override fun onLoadImage() {
-
-    }
-
-    override fun onDeleteImage(position: Int) {
-
+    override fun onUnFlagPackage(packageId: Long) {
+        callFlagPackage(packageId, false)
     }
 }

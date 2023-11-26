@@ -333,7 +333,6 @@ class FulfilmentPackerBarcodeScannerActivity :
 
                             (binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter)
                                 .insertItem(body)
-                            binding.rvScannedBarcodes.smoothScrollToPosition(0)
                             binding.textItemsNumber.text =
                                 "${(binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter).getItemCount()} of ${fulfilmentOrder?.totalQuantity}"
                             if ((binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter)
