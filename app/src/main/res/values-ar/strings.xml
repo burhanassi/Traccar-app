@@ -5,6 +5,8 @@
     <string name="error_check_internet_connection">الرجاء التحقق من الاتصال بالانترنت</string>
     <string name="login_hello">مرحبا!</string>
     <string name="login_please_login">الرجاء تسجيل دخول السائق</string>
+    <string name="valid_password_rules">يجب أن تتألف كلمة المرور من 6 أحرف على الأقل</string>
+    <string name="passwords_must_match">كلمات المرور غير متطابقة</string>
     <string name="button_login">دخول</string>
     <string name="text_logestechs">LOGESTECHS</string>
     <string name="power_beyond_cargo">POWER BEYOND CARGO</string>
@@ -236,6 +238,12 @@
     <string name="in_car_status_pickup_and_delivery">جلب و توصيل</string>
     <string name="enter_verification_code">أدخل رمز التحقق</string>
     <string name="verification_code">رمز التحقق</string>
+    <string name="change_phone_number">تغيير رقم الموبايل</string>
+    <string name="new_phone_number">رقم الموبايل الجديد</string>
+    <string name="change_password">تغيير كلمة المرور</string>
+    <string name="old_password">كلمة المرور القديمة</string>
+    <string name="new_password">كلمة المرور الجديدة</string>
+    <string name="repeat_new_password">اعادة كلمة المرور</string>
     <string name="verify">تحقق</string>
     <string name="error_insert_verification_code">الرجاء إدخال رمز التحقق</string>
     <string name="error_verification_code_must_be_four_digits">رقم التحقق يجب ان يتكوّن من 4 ارقام</string>
