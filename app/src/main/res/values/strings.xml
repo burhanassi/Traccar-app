@@ -262,6 +262,7 @@
     <string name="picked_fulfillment">Picked Fulfillment Orders</string>
     <string name="partially_picked_fulfillment">Partially Picked Fulfillment Orders</string>
     <string name="action_show_packages">Show Packages</string>
+    <string name="action_print">Print</string>
     <string name="pickup_packages">Pickup Packages</string>
     <string name="item_price">Price</string>
     <string name="returned_status_partially_delivered">Partially Delivered</string>
@@ -289,7 +290,7 @@
     <string name="title_manually">Manually</string>
     <string name="packaging_type_warehouse">Warehouse Packaging</string>
     <string name="packaging_type_customer">Customer Packaging</string>
-    <string name="text_is_custom_packing">, is custom packing</string>
+    <string name="text_is_custom_packing"> is custom packing</string>
     <string name="order_type">Order Type: </string>
     <string name="order_barcode">Order Barcode: </string>
     <string name="tote_barcode">Tote Barcode: </string>

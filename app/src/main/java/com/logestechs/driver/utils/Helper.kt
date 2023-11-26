@@ -1679,5 +1679,10 @@ class Helper {
             }
             return path
         }
+
+        object PrinterConst {
+            const val PRINTER_BLUETOOTH_ADDRESS = "34:81:F4:D3:AF:DB"
+            const val PDF_EXTENSION = "applcation/pdf"
+        }
     }
 }

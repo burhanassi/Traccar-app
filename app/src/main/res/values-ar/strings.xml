@@ -260,6 +260,7 @@
     <string name="picked_fulfillment">طلبات محملة في السلات</string>
     <string name="partially_picked_fulfillment">طلبات محملة جزئيا</string>
     <string name="action_show_packages">عرض الطرود</string>
+    <string name="action_print">طباعة</string>
     <string name="pickup_packages">الطرود المراد تحميلها</string>
     <string name="item_price">السعر</string>
     <string name="returned_status_partially_delivered">تم توصليها بشكل جزئي</string>
@@ -287,7 +288,7 @@
     <string name="title_manually">بواسطة المستخدم</string>
     <string name="packaging_type_warehouse">تغليف المستودع</string>
     <string name="packaging_type_customer">تغليف الزبون</string>
-    <string name="text_is_custom_packing">٫ تغليف مخصص</string>
+    <string name="text_is_custom_packing"> تغليف مخصص</string>
     <string name="order_type">نوع الطرد: </string>
     <string name="order_barcode">باركود الطلب: </string>
     <string name="tote_barcode">باركود سلة التحميل: </string>
