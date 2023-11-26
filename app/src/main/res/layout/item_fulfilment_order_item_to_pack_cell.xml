@@ -78,13 +78,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
+                            android:layout_marginBottom="8dp"
                             bind:itemSrc="@{@drawable/ic_barcode_gray}" />
 
                         <LinearLayout
                             android:id="@+id/container_notes"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="13dp"
+                            android:layout_marginBottom="8dp"
                             android:orientation="vertical">
 
                             <include
@@ -92,7 +93,6 @@
                                 layout="@layout/item_card_row"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
                                 bind:itemSrc="@{@drawable/ic_notes_gray}" />
 
                         </LinearLayout>
