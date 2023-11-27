@@ -198,5 +198,4 @@ dependencies {
 
     //TSCPrinter
     implementation files('libs/tscsdk.jar')
-
 }

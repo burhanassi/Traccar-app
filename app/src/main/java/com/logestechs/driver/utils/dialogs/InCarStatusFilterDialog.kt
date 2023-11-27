@@ -16,7 +16,8 @@ import com.logestechs.driver.utils.interfaces.InCarStatusFilterDialogListener
 class InCarStatusFilterDialog(
     var context: Context,
     var listener: InCarStatusFilterDialogListener,
-    var selectedStatus: InCarPackageStatus
+    var selectedStatus: InCarPackageStatus,
+    var isSprint: Boolean = false
 ) {
 
     lateinit var binding: DialogInCarStatusFilterBinding
@@ -94,6 +95,15 @@ class InCarStatusFilterDialog(
         binding.buttonDone.setOnClickListener {
             alertDialog.dismiss()
             listener.onStatusChanged(selectedStatus)
+        }
+
+        if (isSprint) {
+            binding.selectorToDeliver.textView.text =
+                getStringForFragment(R.string.in_car_status_pickup_and_delivery_sprint)
+            binding.selectorPickup.textView.text =
+                getStringForFragment(R.string.in_car_status_pickup_sprint)
+            binding.selectorFailed.textView.text =
+                getStringForFragment(R.string.in_car_status_failed_sprint)
         }
 
         handleSelection()

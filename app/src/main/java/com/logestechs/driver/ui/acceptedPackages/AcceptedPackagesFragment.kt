@@ -38,6 +38,7 @@ import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsApp
 import com.logestechs.driver.utils.LogesTechsFragment
 import com.logestechs.driver.utils.RefreshViewModel
+import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.AcceptedPackageVillageCellAdapter
 import com.logestechs.driver.utils.bottomSheets.AcceptedPackagesBottomSheet
 import com.logestechs.driver.utils.interfaces.AcceptedPackagesCardListener
@@ -70,6 +71,11 @@ class AcceptedPackagesFragment(
     val executorService = Executors.newCachedThreadPool()
 
     private var url: URL? = null
+
+    private val loginResponse = SharedPreferenceWrapper.getLoginResponse()
+
+    var isSprint: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -102,6 +108,9 @@ class AcceptedPackagesFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (loginResponse?.user?.companyID == 240.toLong() || loginResponse?.user?.companyID == 313.toLong()) {
+            isSprint = true
+        }
         viewModel = ViewModelProvider(requireActivity()).get(RefreshViewModel::class.java)
         viewModel.dataRefresh.observe(viewLifecycleOwner, Observer { refresh ->
             if (refresh) {
@@ -109,14 +118,25 @@ class AcceptedPackagesFragment(
                 initListeners()
                 callGetAcceptedPackages()
                 activityDelegate = activity as ViewPagerCountValuesDelegate
-                binding.textTitle.text = getString(R.string.packages_view_pager_accepted_packages)
+                if (isSprint) {
+                    binding.textTitle.text =
+                        getString(R.string.packages_view_pager_accepted_packages_sprint)
+                } else {
+                    binding.textTitle.text =
+                        getString(R.string.packages_view_pager_accepted_packages)
+                }
             }
         })
         initRecycler()
         initListeners()
         callGetAcceptedPackages()
         activityDelegate = activity as ViewPagerCountValuesDelegate
-        binding.textTitle.text = getString(R.string.packages_view_pager_accepted_packages)
+        if (isSprint) {
+            binding.textTitle.text =
+                getString(R.string.packages_view_pager_accepted_packages_sprint)
+        } else {
+            binding.textTitle.text = getString(R.string.packages_view_pager_accepted_packages)
+        }
     }
 
     override fun onResume() {
@@ -134,7 +154,8 @@ class AcceptedPackagesFragment(
             ArrayList(),
             super.getContext(),
             requireFragmentManager(),
-            this
+            this,
+            isSprint
         )
         binding.rvVillages.layoutManager = layoutManager
     }

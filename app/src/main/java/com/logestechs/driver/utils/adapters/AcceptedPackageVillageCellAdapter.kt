@@ -20,7 +20,8 @@ class AcceptedPackageVillageCellAdapter(
     var villagesList: ArrayList<Village?>,
     var context: Context?,
     var fragmentManager: FragmentManager,
-    var listener: AcceptedPackagesCardListener
+    var listener: AcceptedPackagesCardListener,
+    var isSprint: Boolean = false
 ) :
     RecyclerView.Adapter<AcceptedPackageVillageCellAdapter.AcceptedPackageVillageViewHolder>() {
 
@@ -97,7 +98,8 @@ class AcceptedPackageVillageCellAdapter(
                 mAdapter.context,
                 mAdapter.fragmentManager,
                 mAdapter.listener,
-                adapterPosition
+                adapterPosition,
+                mAdapter.isSprint
             )
             binding.rvPackages.layoutManager = layoutManager
             binding.rvPackages.adapter = childItemAdapter
