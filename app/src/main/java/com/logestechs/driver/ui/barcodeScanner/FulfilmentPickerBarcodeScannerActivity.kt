@@ -406,6 +406,7 @@ class FulfilmentPickerBarcodeScannerActivity :
                                 onBackPressed()
                             }
                         }
+                        scannedItemsHashMap.remove(barcode)
                     } else {
                         scannedItemsHashMap.remove(barcode)
                         try {

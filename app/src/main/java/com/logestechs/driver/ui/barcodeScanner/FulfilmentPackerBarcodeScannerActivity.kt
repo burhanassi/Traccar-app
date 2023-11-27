@@ -344,6 +344,7 @@ class FulfilmentPackerBarcodeScannerActivity :
                                 super.getContext(), getString(R.string.success_operation_completed)
                             )
                         }
+                        scannedItemsHashMap.remove(barcode)
                     } else {
                         scannedItemsHashMap.remove(barcode)
                         try {
@@ -407,7 +408,6 @@ class FulfilmentPackerBarcodeScannerActivity :
 //                            callGetFulfilmentOrders(FulfilmentOrderStatus.PICKED.name)
                             onBackPressed()
                         }
-
                     } else {
                         try {
                             val jObjError = JSONObject(response?.errorBody()!!.string())
