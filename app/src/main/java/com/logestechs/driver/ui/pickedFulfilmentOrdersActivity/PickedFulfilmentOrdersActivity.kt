@@ -44,6 +44,8 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
     private var fulfilmentOrdersList: ArrayList<FulfilmentOrder?> = ArrayList()
     private var status: String? = FulfilmentOrderStatus.PICKED.name
 
+    private var isOnCreateCalled = false
+
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,13 +93,18 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
 
         tabLayout.getTabAt(0)?.select()
         callGetFulfilmentOrders(FulfilmentOrderStatus.PICKED.name)
+        isOnCreateCalled = true
     }
-//    override fun onResume() {
-//        super.onResume()
-//        currentPageIndex = 1
-//        (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()
-//        callGetFulfilmentOrders(status)
-//    }
+    override fun onResume() {
+        super.onResume()
+
+        if (!isOnCreateCalled) {
+            currentPageIndex = 1
+            (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()
+            callGetFulfilmentOrders(status)
+        }
+        isOnCreateCalled = false
+    }
 
     private fun initRecycler() {
         val layoutManager = LinearLayoutManager(
