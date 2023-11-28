@@ -613,13 +613,23 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
                                     )
                                 }
                             } else {
-                                callDeliverMassReturnedPackagesToSender(
-                                    DeliverMassReturnedPackagesToSenderRequestBody(
-                                        customer?.massReturnedPackagesReportBarcode,
-                                        response.body()?.fileUrl,
-                                        getPodImagesUrls()
+                                if (companyConfigurations?.isEnablePinCodeForMassCodReportsAndMassReturnedPackages!!) {
+                                    requestPinCodeSms()
+                                    DeliveryCodeVerificationDialog(
+                                        super.getContext(),
+                                        this@ReturnedPackageDeliveryActivity,
+                                        isBundle = false,
+                                        massReturned = customer?.massReturnedPackagesReportBarcode
+                                    ).showDialog()
+                                } else {
+                                    callDeliverMassReturnedPackagesToSender(
+                                        DeliverMassReturnedPackagesToSenderRequestBody(
+                                            customer?.massReturnedPackagesReportBarcode,
+                                            response.body()?.fileUrl,
+                                            getPodImagesUrls()
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
                     } else {
@@ -1069,9 +1079,11 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.requestPinCodeSmsForBundles(
-                        bundles?.id
-                    )
+                    val response = if (isBundleDelivery) {
+                        ApiAdapter.apiClient.requestPinCodeSmsForBundles(bundles?.id)
+                    } else {
+                        ApiAdapter.apiClient.requestPinCodeSmsForReturned(customer?.massReturnedPackagesReportBarcode)
+                    }
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
@@ -1140,13 +1152,23 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
                                     bundles = bundles
                                 ).showDialog()
                             } else {
-                                callDeliverMassReturnedPackagesToSender(
-                                    DeliverMassReturnedPackagesToSenderRequestBody(
-                                        customer?.massReturnedPackagesReportBarcode,
-                                        null,
-                                        getPodImagesUrls()
+                                if (companyConfigurations?.isEnablePinCodeForMassCodReportsAndMassReturnedPackages!!) {
+                                    requestPinCodeSms()
+                                    DeliveryCodeVerificationDialog(
+                                        super.getContext(),
+                                        this,
+                                        isBundle = false,
+                                        massReturned = customer?.massReturnedPackagesReportBarcode
+                                    ).showDialog()
+                                } else {
+                                    callDeliverMassReturnedPackagesToSender(
+                                        DeliverMassReturnedPackagesToSenderRequestBody(
+                                            customer?.massReturnedPackagesReportBarcode,
+                                            null,
+                                            getPodImagesUrls()
+                                        )
                                     )
-                                )
+                                }
                             }
                         } else {
                             callDeliverReturnedPackageToSender(

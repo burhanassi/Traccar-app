@@ -5,11 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemReturnedPackageCellBinding
 import com.logestechs.driver.utils.AdminPackageStatus
 import com.logestechs.driver.utils.AppLanguages
 import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.interfaces.ReturnedPackagesCardListener
 import com.logestechs.driver.utils.setThrottleClickListener
 import com.yariksoffice.lingver.Lingver
@@ -21,6 +23,9 @@ class ReturnedPackageCellAdapter(
     var parentIndex: Int
 ) :
     RecyclerView.Adapter<ReturnedPackageCellAdapter.ReturnedPackageViewHolder>() {
+
+    private var companyConfigurations: DriverCompanyConfigurations? =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
@@ -67,6 +72,10 @@ class ReturnedPackageCellAdapter(
             binding.itemPackageBarcode.textItem.text = pkg?.barcode
             binding.itemSenderName.textItem.text = pkg?.getFullReceiverName()
             binding.itemSenderAddress.textItem.text = pkg?.destinationAddress?.toStringAddress()
+
+            if (mAdapter.companyConfigurations?.isEnablePinCodeForMassCodReportsAndMassReturnedPackages!!) {
+                binding.buttonsContainer.visibility = View.GONE
+            }
 
             val statusText = when (Lingver.getInstance().getLocale().toString()) {
                 AppLanguages.ARABIC.value -> pkg?.status?.arabic

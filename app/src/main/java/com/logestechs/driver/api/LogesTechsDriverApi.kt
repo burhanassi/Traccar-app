@@ -496,6 +496,16 @@ interface LogesTechsDriverApi {
         @Path("bundleId") bundleId: Long?
     ): Response<ResponseBody?>?
 
+    @POST("api/driver/mass-cod-package/{massPkgId}/pin-code")
+    suspend fun requestPinCodeSmsForMassCod(
+        @Path("massPkgId") massPkgId: Long?
+    ): Response<ResponseBody?>?
+
+    @POST("api/driver/mass-returned/{massPkgBarcode}/pin-code")
+    suspend fun requestPinCodeSmsForReturned(
+        @Path("massPkgBarcode") massPkgBarcode: String?
+    ): Response<ResponseBody?>?
+
     @PUT("api/driver/packages/{packageId}/pin-code")
     suspend fun verifyDeliveryPin(
         @Path("packageId") packageId: Long?,
@@ -505,6 +515,18 @@ interface LogesTechsDriverApi {
     @PUT("api/driver/bundles/{bundleId}/pin-code")
     suspend fun verifyDeliveryPinForBundles(
         @Path("bundleId") bundleId: Long?,
+        @Query("pinCode") pinCode: String?
+    ): Response<ResponseBody?>?
+
+    @PUT("api/driver/mass-cod-package/{massPkgId}/pin-code")
+    suspend fun verifyDeliveryPinForMassCod(
+        @Path("massPkgId") massPkgId: Long?,
+        @Query("pinCode") pinCode: String?
+    ): Response<ResponseBody?>?
+
+    @PUT("api/driver/mass-returned/{massPkgBarcode}/pin-code")
+    suspend fun verifyDeliveryPinForReturned(
+        @Path("massPkgBarcode") massPkgBarcode: String?,
         @Query("pinCode") pinCode: String?
     ): Response<ResponseBody?>?
 
