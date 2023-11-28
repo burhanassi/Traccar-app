@@ -296,6 +296,8 @@
     <string name="asn_barcode_label">طلب التوريد: </string>
     <string name="added_method_label">طريقة الاضافة: </string>
     <string name="reject_date_label">تاريخ الرفض: </string>
+    <string name="created_date_label">تاريخ الحركة: </string>
+    <string name="note_label">ملاحظة: </string>
     <string name="rejected_reason_label">سبب الرفض: </string>
     <string name="expiry_date_label">تاريخ الانتهاء: </string>
     <string name="location_barcode_label">باركود الموقع: </string>
@@ -311,6 +313,7 @@
     <string name="return_reason_label">سبب الارجاع: </string>
     <string name="returned_date_label">تاريخ الارجاع: </string>
     <string name="current_location_label">الموقع الحالي: </string>
+    <string name="previous_statuses_label">الحالات السابقة: </string>
     <string name="service_type">نوع الخدمة</string>
     <string name="title_manually">بواسطة المستخدم</string>
     <string name="packaging_type_warehouse">تغليف المستودع</string>

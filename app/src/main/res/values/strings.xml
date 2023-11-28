@@ -298,6 +298,8 @@
     <string name="asn_barcode_label">ASN Barcode: </string>
     <string name="added_method_label">Added Method: </string>
     <string name="reject_date_label">Reject Date: </string>
+    <string name="created_date_label">Status Date: </string>
+    <string name="note_label">Note: </string>
     <string name="rejected_reason_label">Reject Reason: </string>
     <string name="expiry_date_label">Expiry Date: </string>
     <string name="location_barcode_label">Location Barcode: </string>
@@ -313,6 +315,7 @@
     <string name="return_reason_label">Return Reason: </string>
     <string name="returned_date_label">Returned Date: </string>
     <string name="current_location_label">Current Location: </string>
+    <string name="previous_statuses_label">Previous Statuses: </string>
     <string name="service_type">Service Type</string>
     <string name="title_manually">Manually</string>
     <string name="packaging_type_warehouse">Warehouse Packaging</string>

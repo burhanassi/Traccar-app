@@ -13,6 +13,7 @@ import android.os.VibratorManager
 import android.view.SurfaceHolder
 import android.view.View
 import androidx.annotation.RequiresApi
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
@@ -27,6 +28,9 @@ import com.logestechs.driver.utils.DateFormats
 import com.logestechs.driver.utils.FulfillmentItemStatus
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.adapters.InCarPackageCellAdapter
+import com.logestechs.driver.utils.adapters.PreviousStatusesCellAdapter
+import com.logestechs.driver.utils.customViews.PeekingLinearLayoutManager
 import com.yariksoffice.lingver.Lingver
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -201,6 +205,27 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
         binding.itemSku.textItem.text = itemDetails.sku
         binding.warehouseName.textItem.text = itemDetails.warehouseName
         binding.customerName.textItem.text = itemDetails.customerName
+
+        if (itemDetails.itemTrackingStatus.isNotEmpty()) {
+            val layoutManager = PeekingLinearLayoutManager(
+                binding.rvPreviousStatuses
+                    .context,
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+
+            layoutManager.initialPrefetchItemCount = itemDetails.itemTrackingStatus.size
+
+            val childItemAdapter = PreviousStatusesCellAdapter(
+                itemDetails.itemTrackingStatus,
+                getContext()
+            )
+            binding.rvPreviousStatuses.layoutManager = layoutManager
+            binding.rvPreviousStatuses.adapter = childItemAdapter
+        } else {
+            binding.previousStatusesCard.visibility = View.GONE
+        }
+
         if (Lingver.getInstance().getLocale().toString() == AppLanguages.ARABIC.value) {
             binding.itemStatus.text = itemDetails.getStatusText(AppLanguages.ARABIC)
         } else {
