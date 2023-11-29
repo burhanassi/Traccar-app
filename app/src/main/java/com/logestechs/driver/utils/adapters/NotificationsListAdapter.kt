@@ -90,15 +90,26 @@ class NotificationsListAdapter(
                     DateFormats.NOTIFICATION_LIST_ITEM_FORMAT
                 )
             }"
-            if (notification.type == "RECEIVE_MESSAGE") {
-                handleCardExpansion(adapterPosition)
-                binding.root.setOnClickListener {
-                    onCardClick(adapterPosition)
-                    binding.imageArrow.visibility = View.VISIBLE
+
+            when (notification.type) {
+                "RECEIVE_MESSAGE" -> {
+                    handleCardExpansion(adapterPosition)
+                    binding.root.setOnClickListener {
+                        onCardClick(adapterPosition)
+                        binding.imageArrow.visibility = View.VISIBLE
+                    }
                 }
-            } else {
-                hideExpandableSection()
-                binding.imageArrow.visibility = View.GONE
+                "FULFILLMENT_ORDER" -> {
+                    handleCardExpansion(adapterPosition)
+                    binding.root.setOnClickListener {
+                        onCardClick(adapterPosition)
+                        binding.imageArrow.visibility = View.VISIBLE
+                    }
+                }
+                else -> {
+                    hideExpandableSection()
+                    binding.imageArrow.visibility = View.GONE
+                }
             }
         }
 
@@ -129,13 +140,18 @@ class NotificationsListAdapter(
                 )
             )
 
-            // Show the message title and body views when the card is expanded
-            binding.textSenderMessage.text = "${itemView.context.getString(R.string.sender_message)} ${notification.senderName ?: ""}"
-            binding.textTitleMessage.text = "${itemView.context.getString(R.string.title_message)} ${notification.title}"
-            binding.textBodyMessage.text = "${notification.body}"
-            binding.textSenderMessage.visibility = View.VISIBLE
-            binding.textTitleMessage.visibility = View.VISIBLE
-            binding.textBodyMessage.visibility = View.VISIBLE
+            if (notification.type == "RECEIVE_MESSAGE") {
+                binding.textSenderMessage.text = "${itemView.context.getString(R.string.sender_message)} ${notification.senderName ?: ""}"
+                binding.textTitleMessage.text = "${itemView.context.getString(R.string.title_message)} ${notification.title}"
+                binding.textBodyMessage.text = "${notification.body}"
+                binding.textSenderMessage.visibility = View.VISIBLE
+                binding.textTitleMessage.visibility = View.VISIBLE
+                binding.textBodyMessage.visibility = View.VISIBLE
+            } else if (notification.type == "FULFILLMENT_ORDER") {
+                binding.textBodyMessage.text = "${notification.body}"
+                binding.textBodyMessage.visibility = View.VISIBLE
+            }
+
         }
 
         private fun hideExpandableSection() {
@@ -147,7 +163,6 @@ class NotificationsListAdapter(
                 )
             )
 
-            // Hide the message title and body views when the card is collapsed
             binding.textSenderMessage.visibility = View.GONE
             binding.textTitleMessage.visibility = View.GONE
             binding.textBodyMessage.visibility = View.GONE
