@@ -69,7 +69,7 @@ class NotificationsBottomSheet(
 
         binding.rvNotifications.apply {
             layoutManager = LinearLayoutManager(activity)
-            adapter = NotificationsListAdapter(notificationsList, this@NotificationsBottomSheet)
+            adapter = NotificationsListAdapter(notificationsList, this@NotificationsBottomSheet, requireContext())
             addOnScrollListener(recyclerViewOnScrollListener)
         }
 
@@ -176,7 +176,10 @@ class NotificationsBottomSheet(
             }
         }
 
-    override fun onItemClick(packageId: Long) {
+
+
+    override fun onItemClick(packageId: Long, notificationId: Long) {
+        (requireActivity() as LogesTechsActivity).setNotificationRead(notificationId)
         (requireActivity() as LogesTechsActivity).trackShipmentNotification(packageId)
     }
 }

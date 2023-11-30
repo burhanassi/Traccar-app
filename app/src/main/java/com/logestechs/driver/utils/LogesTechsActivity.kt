@@ -21,6 +21,7 @@ import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.Address
 import com.logestechs.driver.databinding.DialogConfirmActionBinding
+import com.logestechs.driver.utils.adapters.NotificationsListAdapter
 import com.logestechs.driver.utils.bottomSheets.NotificationsBottomSheet
 import com.logestechs.driver.utils.bottomSheets.PackageTrackBottomSheet
 import com.logestechs.driver.utils.customViews.WaitDialog
@@ -392,4 +393,58 @@ abstract class LogesTechsActivity : AppCompatActivity() {
         }
     }
 
+    fun setNotificationRead(notificationId: Long) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(this)) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.setNotificationRead(notificationId)
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response!!.isSuccessful && response.body() != null) {
+
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    this@LogesTechsActivity,
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    this@LogesTechsActivity,
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(this@LogesTechsActivity, e.message)
+                        } else {
+                            Helper.showErrorMessage(
+                                this@LogesTechsActivity,
+                                e.stackTraceToString()
+                            )
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                this, getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
 }

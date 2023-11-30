@@ -14,11 +14,13 @@ import com.logestechs.driver.data.model.Notification
 import com.logestechs.driver.databinding.ItemNotificationBinding
 import com.logestechs.driver.utils.DateFormats
 import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.LogesTechsActivity
 
 
 class NotificationsListAdapter(
     val list: ArrayList<Notification>,
-    private val itemClickListener: OnItemClickListener
+    private val itemClickListener: OnItemClickListener,
+    private val context: Context
 ) :
     RecyclerView.Adapter<NotificationsListAdapter.NotificationViewHolder>() {
 
@@ -46,7 +48,7 @@ class NotificationsListAdapter(
     }
 
     interface OnItemClickListener {
-        fun onItemClick(packageId: Long)
+        fun onItemClick(packageId: Long, notificationId: Long)
     }
 
     class NotificationViewHolder(
@@ -70,7 +72,7 @@ class NotificationsListAdapter(
                 if (position != RecyclerView.NO_POSITION) {
                     val notification = mAdapter.list[position]
                     if (notification.packageID != 0L) {
-                        itemClickListener.onItemClick(notification.packageID)
+                        itemClickListener.onItemClick(notification.packageID, notification.id)
                     }
                 }
             }
@@ -108,6 +110,9 @@ class NotificationsListAdapter(
                 }
                 else -> {
                     hideExpandableSection()
+                    binding.root.setOnClickListener {
+                        (mAdapter.context as? LogesTechsActivity)?.setNotificationRead(mAdapter.list[adapterPosition].id)
+                    }
                     binding.imageArrow.visibility = View.GONE
                 }
             }
@@ -120,6 +125,7 @@ class NotificationsListAdapter(
             } else {
                 mAdapter.list[position]?.isExpanded = true
                 showExpandableSection(mAdapter.list[position])
+                (mAdapter.context as? LogesTechsActivity)?.setNotificationRead(mAdapter.list[position].id)
             }
         }
 
