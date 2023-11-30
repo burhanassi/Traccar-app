@@ -378,6 +378,7 @@ interface LogesTechsDriverApi {
     suspend fun sortItemIntoBin(
         @Path("binId") binId: Long?,
         @Query("shippingPlanId") shippingPlanId: Long?,
+        @Query("quantity") quantity: Int?,
         @Body body: BarcodeRequestBody?
     ): Response<SortItemIntoBinResponse>?
 
@@ -385,6 +386,7 @@ interface LogesTechsDriverApi {
     suspend fun sortItemIntoLocation(
         @Path("locationId") locationId: Long?,
         @Query("shippingPlanId") shippingPlanId: Long?,
+        @Query("quantity") quantity: Int?,
         @Body body: BarcodeRequestBody?
     ): Response<SortItemIntoBinResponse>?
 

@@ -113,7 +113,9 @@
     <string name="button_cancel">Cancel</string>
     <string name="button_search">Search</string>
     <string name="title_insert_search_word">Please insert search word</string>
+    <string name="title_insert_item_quantity">Please insert item quantity</string>
     <string name="hint_search_word">Search Word</string>
+    <string name="hint_quantity">Quantity</string>
     <string name="title_sign_below">Please sign below</string>
     <string name="button_add_image">Add Image</string>
     <string name="text_full_delivery">Full Delivery</string>
