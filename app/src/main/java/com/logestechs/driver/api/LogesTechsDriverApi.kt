@@ -299,6 +299,8 @@ interface LogesTechsDriverApi {
         @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
     ): Response<GetNotificationsResponse>?
 
+    @PUT("api/users/notifications/set-as-read")
+    suspend fun setAllNotificationAsRead(): Response<ResponseBody>?
     @PUT("api/users/notifications/{notificationId}/set-as-read")
     suspend fun setNotificationRead(
         @Path("notificationId") notificationId: Long?

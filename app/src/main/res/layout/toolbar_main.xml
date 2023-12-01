@@ -69,15 +69,36 @@
                     android:padding="6dp"
                     android:src="@drawable/ic_toolbar_scan"
                     tools:ignore="ContentDescription" />
-
-                <ImageView
-                    android:id="@+id/button_notifications"
+                <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:padding="6dp"
-                    android:src="@drawable/ic_toolbar_notification"
-                    tools:ignore="ContentDescription" />
+                    android:animateLayoutChanges="true"
+                    android:layoutDirection="ltr">
+
+                    <ImageView
+                        android:id="@+id/button_notifications"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="fitEnd"
+                        android:src="@drawable/ic_toolbar_notification"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:id="@+id/notification_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:background="@drawable/background_dashboard_item_count"
+                        android:fontFamily="@font/roboto_bold"
+                        android:gravity="center"
+                        android:paddingStart="9dp"
+                        android:paddingEnd="9dp"
+                        android:text="0"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        tools:ignore="SmallSp" />
+                </FrameLayout>
             </LinearLayout>
         </LinearLayout>
 

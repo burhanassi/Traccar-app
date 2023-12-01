@@ -65,6 +65,8 @@ class ArrivedShippingPlansActivity : LogesTechsActivity(),
 
         binding.toolbarMain.buttonNotifications.setOnClickListener(this)
         binding.toolbarMain.buttonBack.setOnClickListener(this)
+
+        binding.toolbarMain.notificationCount.text = SharedPreferenceWrapper.getNotificationsCount()
     }
 
     private fun handleNoPackagesLabelVisibility(isEmpty: Boolean) {

@@ -169,6 +169,8 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         binding.toolbarMain.buttonBack.setOnClickListener(this)
         binding.toolbarMain.buttonNotifications.setOnClickListener(this)
         binding.buttonStatusFilter.setOnClickListener(this)
+
+        binding.toolbarMain.notificationCount.text = SharedPreferenceWrapper.getNotificationsCount()
     }
 
     @RequiresApi(Build.VERSION_CODES.M)

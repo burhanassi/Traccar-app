@@ -17,6 +17,7 @@ import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.LogesTechsBottomSheetFragment
 import com.logestechs.driver.utils.adapters.NotificationsListAdapter
+import com.logestechs.driver.utils.interfaces.NotificationBottomSheetListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -25,7 +26,7 @@ import org.json.JSONObject
 
 
 class NotificationsBottomSheet(
-) : LogesTechsBottomSheetFragment(), NotificationsListAdapter.OnItemClickListener {
+) : LogesTechsBottomSheetFragment(), NotificationsListAdapter.OnItemClickListener, NotificationBottomSheetListener {
 
     private var _binding: BottomSheetNotificationsBinding? = null
     private val binding get() = _binding!!
@@ -35,7 +36,7 @@ class NotificationsBottomSheet(
     //pagination fields
     private var isLoading = false
     private var isLastPage = false
-    private var currentPageIndex = 2
+    private var currentPageIndex = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,11 +70,15 @@ class NotificationsBottomSheet(
 
         binding.rvNotifications.apply {
             layoutManager = LinearLayoutManager(activity)
-            adapter = NotificationsListAdapter(notificationsList, this@NotificationsBottomSheet, requireContext())
+            adapter = NotificationsListAdapter(notificationsList, this@NotificationsBottomSheet, requireContext(), this@NotificationsBottomSheet)
             addOnScrollListener(recyclerViewOnScrollListener)
         }
 
         binding.textUnreadNotificationsCount.text = unreadNotificationsCount.toString()
+
+        binding.buttonMarkAllAsRead.setOnClickListener {
+            setAllNotificationAsRead(this)
+        }
     }
 
     override fun onDestroyView() {
@@ -96,90 +101,209 @@ class NotificationsBottomSheet(
                     }
                 }
             }
-
-            fun getNotifications() {
-                showWaitDialog()
-                if (Helper.isInternetAvailable(requireContext())) {
-                    isLoading = true
-                    GlobalScope.launch(Dispatchers.IO) {
-                        try {
-                            val response = ApiAdapter.apiClient.getNotifications(
-                                AppConstants.DEFAULT_PAGE_SIZE,
-                                currentPageIndex
-                            )
-                            withContext(Dispatchers.Main) {
-                                hideWaitDialog()
-                            }
-                            // Check if response was successful.
-                            if (response!!.isSuccessful && response.body() != null) {
-                                val data = response.body()!!
-
-                                val totalRound: Int =
-                                    data.totalRecordsNo / (AppConstants.DEFAULT_PAGE_SIZE * currentPageIndex)
-                                if (totalRound == 0) {
-                                    currentPageIndex = 1
-                                    isLastPage = true
-                                } else {
-                                    currentPageIndex++
-                                    isLastPage = false
-                                }
-
-                                withContext(Dispatchers.Main) {
-                                    (binding.rvNotifications.adapter as NotificationsListAdapter).update(
-                                        data.notificationsList
-                                    )
-                                }
-                            } else {
-                                try {
-                                    val jObjError = JSONObject(response.errorBody()!!.string())
-                                    withContext(Dispatchers.Main) {
-                                        Helper.showErrorMessage(
-                                            requireContext(),
-                                            jObjError.optString(AppConstants.ERROR_KEY)
-                                        )
-                                    }
-
-                                } catch (e: java.lang.Exception) {
-                                    withContext(Dispatchers.Main) {
-                                        Helper.showErrorMessage(
-                                            requireContext(),
-                                            getString(R.string.error_general)
-                                        )
-                                    }
-                                }
-                            }
-                            isLoading = false
-                        } catch (e: Exception) {
-                            withContext(Dispatchers.Main) {
-                                hideWaitDialog()
-                            }
-                            Helper.logException(e, Throwable().stackTraceToString())
-                            withContext(Dispatchers.Main) {
-                                if (e.message != null && e.message!!.isNotEmpty()) {
-                                    Helper.showErrorMessage(requireContext(), e.message)
-                                } else {
-                                    Helper.showErrorMessage(
-                                        requireContext(),
-                                        e.stackTraceToString()
-                                    )
-                                }
-                            }
-                            isLoading = false
-                        }
-                    }
-                } else {
-                    hideWaitDialog()
-                    Helper.showErrorMessage(
-                        requireContext(), getString(R.string.error_check_internet_connection)
-                    )
-                }
-            }
         }
 
+    fun getNotifications() {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(requireContext())) {
+            isLoading = true
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.getNotifications(
+                        AppConstants.DEFAULT_PAGE_SIZE,
+                        currentPageIndex
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    // Check if response was successful.
+                    if (response!!.isSuccessful && response.body() != null) {
+                        val data = response.body()!!
+
+                        val totalRound: Int =
+                            data.totalRecordsNo / (AppConstants.DEFAULT_PAGE_SIZE * currentPageIndex)
+                        if (totalRound == 0) {
+                            currentPageIndex = 1
+                            isLastPage = true
+                        } else {
+                            currentPageIndex++
+                            isLastPage = false
+                        }
+
+                        withContext(Dispatchers.Main) {
+                            binding.textUnreadNotificationsCount.text = data.unReadUserNotificationsNo.toString()
+                            (binding.rvNotifications.adapter as NotificationsListAdapter).update(
+                                data.notificationsList
+                            )
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    requireContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    requireContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                    isLoading = false
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(requireContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(
+                                requireContext(),
+                                e.stackTraceToString()
+                            )
+                        }
+                    }
+                    isLoading = false
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                requireContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
+    private fun setAllNotificationAsRead(listener: NotificationBottomSheetListener) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(context)) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.setAllNotificationAsRead()
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response!!.isSuccessful && response.body() != null) {
+                        listener.onRefresh()
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    context,
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    context,
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(context, e.message)
+                        } else {
+                            Helper.showErrorMessage(context, e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                context, getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
 
 
+    private fun setNotificationRead(notificationId: Long) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(context)) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.setNotificationRead(notificationId)
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response!!.isSuccessful && response.body() != null) {
+
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    context,
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    context,
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(context, e.message)
+                        } else {
+                            Helper.showErrorMessage(
+                                context,
+                                e.stackTraceToString()
+                            )
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                context, getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
     override fun onItemClick(packageId: Long, notificationId: Long) {
-        (requireActivity() as LogesTechsActivity).setNotificationRead(notificationId)
+        setNotificationRead(notificationId)
         (requireActivity() as LogesTechsActivity).trackShipmentNotification(packageId)
+    }
+
+    override fun onRefresh() {
+        requireActivity().runOnUiThread {
+            (binding.rvNotifications.adapter as NotificationsListAdapter).clear()
+            currentPageIndex = 1
+            isLastPage = false
+            getNotifications()
+        }
+    }
+
+    override fun onSetNotificationAsRead(notificationId: Long) {
+        setNotificationRead(notificationId)
     }
 }

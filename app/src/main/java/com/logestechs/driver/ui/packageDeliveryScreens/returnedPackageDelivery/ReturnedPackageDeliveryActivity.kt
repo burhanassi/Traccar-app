@@ -229,6 +229,8 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
         binding.buttonDeliverPackage.setOnClickListener(this)
         binding.buttonCaptureImage.setOnClickListener(this)
         binding.buttonLoadImage.setOnClickListener(this)
+
+        binding.toolbarMain.notificationCount.text = SharedPreferenceWrapper.getNotificationsCount()
     }
 
     private fun getExtras() {

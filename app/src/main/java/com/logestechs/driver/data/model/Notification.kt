@@ -19,7 +19,7 @@ data class Notification(
     val body: String,
     val titleArabic: String,
     val bodyArabic: String,
-    val isRead: Boolean,
+    var isRead: Boolean,
     val type: String,
     val isDeleted: Boolean,
     val createdDate: String,

@@ -17,6 +17,7 @@ import com.logestechs.driver.utils.InCarPackageStatus
 import com.logestechs.driver.utils.ItemTouchHelperCallback
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.PackageType
+import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.DriverRoutePackagesCellAdapter
 import com.logestechs.driver.utils.interfaces.OnStartDragListener
 import kotlinx.coroutines.Dispatchers
@@ -115,6 +116,7 @@ class DriverRouteActivity : LogesTechsActivity(),
             }
             callGetInCarPackagesUngrouped()
         }
+        binding.toolbarMain.notificationCount.text = SharedPreferenceWrapper.getNotificationsCount()
     }
 
     override fun hideWaitDialog() {
