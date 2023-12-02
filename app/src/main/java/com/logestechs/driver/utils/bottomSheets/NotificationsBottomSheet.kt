@@ -245,7 +245,8 @@ class NotificationsBottomSheet(
                         hideWaitDialog()
                     }
                     if (response!!.isSuccessful && response.body() != null) {
-
+                        unreadNotificationsCount--
+                        binding.textUnreadNotificationsCount.text = unreadNotificationsCount.toString()
                     } else {
                         try {
                             val jObjError = JSONObject(response.errorBody()!!.string())
