@@ -138,7 +138,9 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
         binding.toolbarMain.buttonBack.setOnClickListener(this)
         binding.toolbarMain.buttonNotifications.setOnClickListener(this)
 
-        binding.toolbarMain.notificationCount.text = SharedPreferenceWrapper.getNotificationsCount()
+        if (SharedPreferenceWrapper.getNotificationsCount() == "0") {
+            binding.toolbarMain.notificationCount.visibility = View.GONE
+        }
     }
 
     private fun handleNoPackagesLabelVisibility(count: Int) {

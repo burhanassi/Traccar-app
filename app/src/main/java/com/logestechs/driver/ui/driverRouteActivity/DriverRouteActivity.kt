@@ -116,7 +116,9 @@ class DriverRouteActivity : LogesTechsActivity(),
             }
             callGetInCarPackagesUngrouped()
         }
-        binding.toolbarMain.notificationCount.text = SharedPreferenceWrapper.getNotificationsCount()
+        if (SharedPreferenceWrapper.getNotificationsCount() == "0") {
+            binding.toolbarMain.notificationCount.visibility = View.GONE
+        }
     }
 
     override fun hideWaitDialog() {

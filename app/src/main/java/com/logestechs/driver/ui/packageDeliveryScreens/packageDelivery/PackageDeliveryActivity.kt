@@ -304,7 +304,9 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         binding.buttonLoadImage.setOnClickListener(this)
         binding.buttonContextMenu.setOnClickListener(this)
 
-        binding.toolbarMain.notificationCount.text = SharedPreferenceWrapper.getNotificationsCount()
+        if (SharedPreferenceWrapper.getNotificationsCount() == "0") {
+            binding.toolbarMain.notificationCount.visibility = View.GONE
+        }
     }
 
     private fun checkChosen() {

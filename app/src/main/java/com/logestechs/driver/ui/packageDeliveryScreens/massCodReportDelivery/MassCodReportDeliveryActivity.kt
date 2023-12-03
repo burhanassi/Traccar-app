@@ -176,7 +176,9 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
         binding.buttonCaptureImage.setOnClickListener(this)
         binding.buttonLoadImage.setOnClickListener(this)
 
-        binding.toolbarMain.notificationCount.text = SharedPreferenceWrapper.getNotificationsCount()
+        if (SharedPreferenceWrapper.getNotificationsCount() == "0") {
+            binding.toolbarMain.notificationCount.visibility = View.GONE
+        }
     }
 
     private fun getExtras() {

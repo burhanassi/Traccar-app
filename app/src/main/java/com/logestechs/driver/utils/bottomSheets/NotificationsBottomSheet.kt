@@ -246,7 +246,9 @@ class NotificationsBottomSheet(
                     }
                     if (response!!.isSuccessful && response.body() != null) {
                         unreadNotificationsCount--
-                        binding.textUnreadNotificationsCount.text = unreadNotificationsCount.toString()
+                        if (unreadNotificationsCount >= 0) {
+                            binding.textUnreadNotificationsCount.text = unreadNotificationsCount.toString()
+                        }
                     } else {
                         try {
                             val jObjError = JSONObject(response.errorBody()!!.string())
