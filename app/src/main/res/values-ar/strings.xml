@@ -115,7 +115,9 @@
     <string name="button_cancel">إلغاء</string>
     <string name="button_search">بحث</string>
     <string name="title_insert_search_word">الرجاء ادخال كلمة البحث</string>
+    <string name="title_insert_item_quantity">الرجاء ادخال الكمية المطلوبة</string>
     <string name="hint_search_word">كلمة البحث</string>
+    <string name="hint_quantity">الكمية</string>
     <string name="title_sign_below">الرجاء التوقيع في المكان المخصص ادناه</string>
     <string name="button_add_image">إضافة صورة</string>
     <string name="text_full_delivery">توصيل كامل</string>

@@ -32,5 +32,6 @@ data class DriverCompanyConfigurations(
     var isEnableDeliveryVerificationPinCodeForReturnedBundles: Boolean? = null,
     var isPricingPerServiceTypeEnabled: Boolean? = null,
     var isDriverProveDeliveryByScanBarcode: Boolean? = null,
-    var isEnablePinCodeForMassCodReportsAndMassReturnedPackages: Boolean? = null
+    var isEnablePinCodeForMassCodReportsAndMassReturnedPackages: Boolean? = null,
+    var isSortAndPickFulfillmentItemsByScanningProductBarcode: Boolean? = null
 )
