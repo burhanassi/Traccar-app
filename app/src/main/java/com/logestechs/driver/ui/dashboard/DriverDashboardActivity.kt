@@ -88,6 +88,7 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
             recreate()
         } else {
             callGetDashboardInfo()
+            getNotificationsFirstTime()
         }
     }
 
@@ -626,6 +627,51 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
             } catch (e: Exception) {
                 Helper.logException(e, Throwable().stackTraceToString())
             }
+        }
+    }
+
+    private fun getNotificationsFirstTime() {
+        if (Helper.isInternetAvailable(this)) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.getNotifications()
+                    if (response!!.isSuccessful && response.body() != null) {
+                        val data = response.body()!!
+                        SharedPreferenceWrapper.saveNotificationsCount(data.unReadUserNotificationsNo.toString())
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            Helper.showErrorMessage(
+                this, getString(R.string.error_check_internet_connection)
+            )
         }
     }
 }

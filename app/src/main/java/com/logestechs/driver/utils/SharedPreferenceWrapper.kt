@@ -122,6 +122,15 @@ class SharedPreferenceWrapper {
         fun getSelectedServerIp(): String {
             return prefs.pull(SharedPrefsKeys.SELECTED_SERVER_IP.value, "")
         }
+
+        //Notifications Count
+        fun saveNotificationsCount(notificationsCount: String) {
+            prefs.push(SharedPrefsKeys.NOTIFICATIONS_COUNT.value, notificationsCount)
+        }
+
+        fun getNotificationsCount(): String {
+            return prefs.pull(SharedPrefsKeys.NOTIFICATIONS_COUNT.value, "")
+        }
     }
 }
 
@@ -133,5 +142,6 @@ private enum class SharedPrefsKeys(val value: String) {
     LAST_SYNC_LOCATION_KEY("last_sync_location_key"),
     WORK_LOG_ID_KEY("work_log_key_id"),
     IS_WHATSAPP_BUSINESS("is_whatsapp_business"),
-    SELECTED_SERVER_IP("selected_server_ip")
+    SELECTED_SERVER_IP("selected_server_ip"),
+    NOTIFICATIONS_COUNT("notifications_count")
 }

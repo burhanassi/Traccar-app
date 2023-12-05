@@ -167,6 +167,10 @@ class WarehousePackagesByStatusViewPagerActivity : LogesTechsActivity(), View.On
     private fun initListeners() {
         binding.toolbarMain.buttonBack.setOnClickListener(this)
         binding.toolbarMain.buttonNotifications.setOnClickListener(this)
+
+        if (SharedPreferenceWrapper.getNotificationsCount() == "0") {
+            binding.toolbarMain.notificationCount.visibility = View.GONE
+        }
     }
 
     private fun makeTabSelected(

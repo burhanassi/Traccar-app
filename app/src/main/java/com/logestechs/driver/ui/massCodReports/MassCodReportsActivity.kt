@@ -78,6 +78,10 @@ class MassCodReportsActivity : LogesTechsActivity(),
         binding.toolbarMain.buttonNotifications.setOnClickListener(this)
         binding.toolbarMain.buttonBack.setOnClickListener(this)
         binding.buttonViewMode.setOnClickListener(this)
+
+        if (SharedPreferenceWrapper.getNotificationsCount() == "0") {
+            binding.toolbarMain.notificationCount.visibility = View.GONE
+        }
     }
 
     private fun getMassCodReportsBySelectedMode() {

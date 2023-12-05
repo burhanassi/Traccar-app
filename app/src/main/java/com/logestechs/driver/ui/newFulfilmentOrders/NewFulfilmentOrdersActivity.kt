@@ -68,6 +68,10 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
 
         binding.toolbarMain.buttonNotifications.setOnClickListener(this)
         binding.toolbarMain.buttonBack.setOnClickListener(this)
+
+        if (SharedPreferenceWrapper.getNotificationsCount() == "0") {
+            binding.toolbarMain.notificationCount.visibility = View.GONE
+        }
     }
 
     private fun handleNoPackagesLabelVisibility(isEmpty: Boolean) {
