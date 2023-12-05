@@ -44,6 +44,11 @@ class NewFulfilmentOrderCellAdapter(
         return fulfilmentOrdersList.size
     }
 
+    fun clearSelectedItems() {
+        selectedItems?.clear()
+        notifyDataSetChanged()
+    }
+
     fun removeItem(position: Int) {
         notifyItemRemoved(position)
     }

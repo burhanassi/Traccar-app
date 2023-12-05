@@ -71,6 +71,8 @@ class FulfilmentPickerMultiPickingBarcodeScannerActivity :
     private var scannedTotes: ArrayList<Bin?>? = null
 
     private var selectedOrderBarcode: String? = null
+    private var orderIds: List<Long?>? = null
+    private var fulfilmentOrderItemsToShow: ArrayList<FulfilmentOrder?>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFulfilmentPickerMultiPickBarcodeScannerBinding.inflate(layoutInflater)
@@ -92,13 +94,12 @@ class FulfilmentPickerMultiPickingBarcodeScannerActivity :
         scannedItemsHashMap.clear()
         when (selectedScanMode) {
             FulfilmentPickerScanMode.TOTE -> {
-                hideScannedItemsContainer()
-                binding.textTitle.text = getString(R.string.please_scan_tote)
+
             }
 
             FulfilmentPickerScanMode.ORDER_INTO_TOTE -> {
                 hideScannedItemsContainer()
-                binding.textTitle.text = getString(R.string.please_scan_orders)
+                binding.textTitle.text = getString(R.string.please_scan_tote)
             }
 
             FulfilmentPickerScanMode.ITEM_INTO_TOTE -> {
@@ -114,6 +115,9 @@ class FulfilmentPickerMultiPickingBarcodeScannerActivity :
         binding.containerScannedItems.visibility = View.VISIBLE
         binding.containerDoneButton.visibility = View.VISIBLE
         binding.containerSurfaceView.visibility = View.VISIBLE
+        binding.containerTitle.visibility = View.GONE
+        binding.rvScannedItems.visibility = View.VISIBLE
+        binding.rvScannedOrders.visibility = View.GONE
     }
 
     private fun hideScannedItemsContainer() {
@@ -126,16 +130,18 @@ class FulfilmentPickerMultiPickingBarcodeScannerActivity :
         binding.containerSurfaceView.visibility = View.GONE
         binding.containerDoneButton.visibility = View.GONE
         binding.buttonInsertBarcode.visibility = View.GONE
+        binding.rvScannedItems.visibility = View.GONE
+        binding.rvScannedOrders.visibility = View.VISIBLE
         binding.containerScannedItems.visibility = View.VISIBLE
     }
 
     private fun getExtras() {
         val extras = intent.extras
         if (extras != null) {
-//            selectedScanMode =
-//                extras.getSerializable(IntentExtrasKeys.FULFILMENT_PICKER_SCAN_MODE.name) as FulfilmentPickerScanMode
             selectedFulfilmentOrders =
                 extras.getSerializable(IntentExtrasKeys.FULFILMENT_ORDERS.name) as? ArrayList<FulfilmentOrder?>?
+            orderIds = selectedFulfilmentOrders?.map { it?.id }
+            fulfilmentOrderItemsToShow = selectedFulfilmentOrders
         }
     }
 
@@ -145,7 +151,7 @@ class FulfilmentPickerMultiPickingBarcodeScannerActivity :
     }
 
     private fun initRecycler() {
-        binding.rvScannedBarcodes.apply {
+        binding.rvScannedOrders.apply {
             layoutManager = LinearLayoutManager(this@FulfilmentPickerMultiPickingBarcodeScannerActivity)
             adapter =
                 FulfilmentOrderCellAdapter(
@@ -153,6 +159,19 @@ class FulfilmentPickerMultiPickingBarcodeScannerActivity :
                     this@FulfilmentPickerMultiPickingBarcodeScannerActivity,
                     this@FulfilmentPickerMultiPickingBarcodeScannerActivity
                 )
+        }
+
+        binding.rvScannedItems.apply {
+            layoutManager = LinearLayoutManager(this@FulfilmentPickerMultiPickingBarcodeScannerActivity)
+
+            val allProductItems = selectedFulfilmentOrders
+                ?.flatMap { it?.items.orEmpty() }
+                ?: emptyList()
+
+            adapter = FulfilmentOrderItemCellAdapter(
+                allProductItems as ArrayList<ProductItem?>,
+                this@FulfilmentPickerMultiPickingBarcodeScannerActivity
+            )
         }
 
     }
@@ -308,7 +327,7 @@ class FulfilmentPickerMultiPickingBarcodeScannerActivity :
     private fun executeBarcodeAction(barcode: String?) {
         when (selectedScanMode) {
             FulfilmentPickerScanMode.TOTE -> {
-                callScanOrderIntoTote(barcode)
+
             }
 
             FulfilmentPickerScanMode.ORDER_INTO_TOTE -> {
@@ -324,83 +343,6 @@ class FulfilmentPickerMultiPickingBarcodeScannerActivity :
     }
 
     //APIs
-    private fun callGetTote(barcode: String?) {
-        this.runOnUiThread {
-            showWaitDialog()
-        }
-        if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response = ApiAdapter.apiClient.getTote(
-                        barcode,
-                        selectedFulfilmentOrder?.id
-                    )
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        withContext(Dispatchers.Main) {
-//                            scanCount++
-                            if (scannedTotes == null) {
-                                scannedTotes = ArrayList()
-                            }
-                            if (selectedFulfilmentOrders?.size == 0) {
-                                selectedScanMode = FulfilmentPickerScanMode.ORDER_INTO_TOTE
-                                scannedTote = response.body()
-                                scannedTotes?.add(scannedTote)
-                                scanCount = 0
-                            } else {
-                                selectedScanMode = null
-                                scannedTote = response.body()
-                                scannedTotes?.add(scannedTote)
-                            }
-                            (binding.rvScannedBarcodes.adapter as FulfilmentOrderCellAdapter).removeOrder(
-                                selectedFulfilmentOrder?.barcode!!
-                            )
-                            handleSelectedScanMode()
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                    scannedItemsHashMap.remove(barcode)
-                } catch (e: Exception) {
-                    scannedItemsHashMap.remove(barcode)
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            this.runOnUiThread {
-                hideWaitDialog()
-                Helper.showErrorMessage(
-                    super.getContext(), getString(R.string.error_check_internet_connection)
-                )
-            }
-        }
-    }
 
     private fun callScanItemIntoTote(barcode: String?) {
         this.runOnUiThread {
@@ -409,19 +351,10 @@ class FulfilmentPickerMultiPickingBarcodeScannerActivity :
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    var response: Response<SortItemIntoToteResponse>? = null
-                    response = if (fulfilmentOrder?.status == "PARTIALLY_PICKED") {
-                        ApiAdapter.apiClient.continuePicking(
-                            selectedFulfilmentOrder?.id,
-                            BarcodeRequestBody(barcode)
-                        )
-                    } else {
-                        ApiAdapter.apiClient.scanItemIntoTote(
-                            scannedTote?.id,
-                            selectedFulfilmentOrder?.id,
-                            BarcodeRequestBody(barcode)
-                        )
-                    }
+                    val response = ApiAdapter.apiClient.scanItemsIntoTote(
+                        orderIds!!,
+                        BarcodeRequestBody(barcode)
+                    )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
@@ -429,14 +362,14 @@ class FulfilmentPickerMultiPickingBarcodeScannerActivity :
                         withContext(Dispatchers.Main) {
                             val body = response.body()
                             val scrollPosition =
-                                (binding.rvScannedBarcodes.adapter as FulfilmentOrderItemCellAdapter).scanItem(
+                                (binding.rvScannedItems.adapter as FulfilmentOrderItemCellAdapter).scanItem(
                                     body?.sku
                                 )
-                            binding.rvScannedBarcodes.smoothScrollToPosition(scrollPosition)
-                            (binding.rvScannedBarcodes.adapter as FulfilmentOrderItemCellAdapter).highlightItem(
+                            binding.rvScannedItems.smoothScrollToPosition(scrollPosition)
+                            (binding.rvScannedItems.adapter as FulfilmentOrderItemCellAdapter).highlightItem(
                                 scrollPosition
                             )
-                            if ((binding.rvScannedBarcodes.adapter as FulfilmentOrderItemCellAdapter)
+                            if ((binding.rvScannedItems.adapter as FulfilmentOrderItemCellAdapter)
                                     .getCount() == 0
                             ) {
                                 onBackPressed()
@@ -494,19 +427,23 @@ class FulfilmentPickerMultiPickingBarcodeScannerActivity :
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response = ApiAdapter.apiClient.scanOrderIntoTote(
-                        barcode,
-                        selectedFulfilmentOrders?.get(scanCount)?.id
+                        selectedFulfilmentOrders?.get(scanCount)?.id,
+                        barcode
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            scanCount++
-                            if (scanCount == selectedFulfilmentOrders?.size) {
+                            if (selectedFulfilmentOrders?.size == 1) {
                                 selectedScanMode = FulfilmentPickerScanMode.ITEM_INTO_TOTE
                                 scanCount = 0
+                            } else {
+                                selectedScanMode = null
                             }
+                            (binding.rvScannedOrders.adapter as FulfilmentOrderCellAdapter).removeOrder(
+                                selectedFulfilmentOrder?.barcode!!
+                            )
                             handleSelectedScanMode()
                         }
                         scannedItemsHashMap.remove(barcode)
@@ -573,7 +510,7 @@ class FulfilmentPickerMultiPickingBarcodeScannerActivity :
     }
 
     override fun onScanToteForOrder(fulfilmentOrder: FulfilmentOrder) {
-        selectedScanMode = FulfilmentPickerScanMode.TOTE
+        selectedScanMode = FulfilmentPickerScanMode.ORDER_INTO_TOTE
         selectedFulfilmentOrder = fulfilmentOrder
         handleSelectedScanMode()
     }

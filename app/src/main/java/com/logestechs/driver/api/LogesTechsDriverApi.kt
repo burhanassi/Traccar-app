@@ -436,10 +436,16 @@ interface LogesTechsDriverApi {
         @Body body: BarcodeRequestBody?
     ): Response<SortItemIntoToteResponse>?
 
-    @PUT("api/handler/tote/{toteBarcode}/order/{orderId}/sort")
+    @PUT("api/handler/order-items/pick")
+    suspend fun scanItemsIntoTote(
+        @Query("orderIds") orderIds: List<Long?>,
+        @Body body: BarcodeRequestBody?
+    ): Response<SortItemIntoToteResponse>?
+
+    @PUT("api/handler/tote/order/{orderId}/sort")
     suspend fun scanOrderIntoTote(
-        @Path("toteBarcode") toteBarcode: String?,
-        @Path("orderId") orderId: Long?
+        @Path("orderId") orderId: Long?,
+        @Query("barcode") barcode: String?
     ): Response<ResponseBody>?
 
     @PUT("api/handler/hub/order-items/continue-picking")

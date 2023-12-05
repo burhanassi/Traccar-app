@@ -71,6 +71,7 @@
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/container_title"
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
                     android:gravity="center_vertical"
@@ -90,7 +91,17 @@
 
                 </LinearLayout>
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_scanned_barcodes"
+                    android:id="@+id/rv_scanned_orders"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_weight="1"
+                    android:overScrollMode="never"
+                    android:paddingBottom="140dp"
+                    tools:listitem="@layout/item_pending_package_customer_cell" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_scanned_items"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginTop="8dp"

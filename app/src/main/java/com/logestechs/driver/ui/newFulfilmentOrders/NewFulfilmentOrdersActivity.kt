@@ -48,6 +48,12 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
         super.onResume()
         currentPageIndex = 1
         (binding.rvFulfilmentOrders.adapter as NewFulfilmentOrderCellAdapter).clearList()
+        binding.buttonMultiPickContainer.visibility = View.GONE
+        (binding.rvFulfilmentOrders.adapter as NewFulfilmentOrderCellAdapter).isMultiPicking =
+            false
+        (binding.rvFulfilmentOrders.adapter as NewFulfilmentOrderCellAdapter).clearSelectedItems()
+
+        binding.rvFulfilmentOrders.adapter?.notifyDataSetChanged()
         callGetFulfilmentOrders()
     }
 
@@ -217,10 +223,6 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
             R.id.button_multi_pick -> {
                 val selectedItems = (binding.rvFulfilmentOrders.adapter as NewFulfilmentOrderCellAdapter).getSelectedItems()
                 val mIntent = Intent(this, FulfilmentPickerMultiPickingBarcodeScannerActivity::class.java)
-//                mIntent.putExtra(
-//                    IntentExtrasKeys.FULFILMENT_PICKER_SCAN_MODE.name,
-//                    FulfilmentPickerScanMode.TOTE
-//                )
                 mIntent.putExtra(
                     IntentExtrasKeys.FULFILMENT_ORDERS.name,
                     selectedItems
