@@ -146,6 +146,14 @@
                 android:value="" />
         </activity>
         <activity
+            android:name=".ui.barcodeScanner.FulfilmentPickerMultiPickingBarcodeScannerActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".ui.pickedFulfilmentOrdersActivity.PickedFulfilmentOrdersActivity"
             android:exported="false"
             android:theme="@style/AppTheme">

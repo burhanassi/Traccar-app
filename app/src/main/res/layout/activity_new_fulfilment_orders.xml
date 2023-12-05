@@ -15,6 +15,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="35dp"
+            android:gravity="center_vertical"
             android:background="@color/peach_orange_tab_pager_bar">
 
             <TextView
@@ -30,43 +31,80 @@
                 android:textColor="@color/fontTrackHint"
                 android:textSize="14sp" />
 
+            <ImageView
+                android:id="@+id/button_view_mode"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_multi_picking"
+                tools:ignore="ContentDescription" />
+
         </LinearLayout>
 
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/beige_bridal_heath">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/text_no_packages_found"
-                style="@style/LogesTechsMedium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:text="@string/message_no_fulfilment_orders"
-                android:textColor="@color/fontTrackHint"
-                android:textSize="17sp"
-                android:visibility="gone" />
-
-            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/refresh_layout_customers"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@color/beige_bridal_heath">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_fulfilment_orders"
+                <TextView
+                    android:id="@+id/text_no_packages_found"
+                    style="@style/LogesTechsMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="@string/message_no_fulfilment_orders"
+                    android:textColor="@color/fontTrackHint"
+                    android:textSize="17sp"
+                    android:visibility="gone" />
+
+                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                    android:id="@+id/refresh_layout_customers"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clipToPadding="false"
-                    android:overScrollMode="never"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="80dp"
-                    android:scrollbars="vertical"
-                    tools:listitem="@layout/item_new_fulfilment_order" />
-            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-        </FrameLayout>
+                    android:layout_height="match_parent">
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_fulfilment_orders"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clipToPadding="false"
+                        android:overScrollMode="never"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="80dp"
+                        android:scrollbars="vertical"
+                        tools:listitem="@layout/item_new_fulfilment_order" />
+                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            </FrameLayout>
+            <LinearLayout
+                android:id="@+id/button_multi_pick_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:gravity="center"
+                android:background="@color/beige_bridal_heath"
+                android:visibility="gone">
+
+                <Button
+                    android:id="@+id/button_multi_pick"
+                    style="@style/LogesTechsMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="4dp"
+                    android:background="@drawable/background_logestechs_button"
+                    android:minWidth="115dp"
+                    android:text="@string/button_multi_pick"
+                    android:textColor="#fff" />
+
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 
 </layout>

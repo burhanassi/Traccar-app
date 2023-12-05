@@ -64,6 +64,7 @@
     <string name="title_scanned_packages_sprint">Scanned Packages</string>
     <string name="title_shelf">Shelf Cities</string>
     <string name="button_done">Done</string>
+    <string name="button_scan_tote">Scan Tote</string>
     <string name="error_phone_permission">The app needs phone permission</string>
     <string name="button_scan_packages_barcodes">Scan Packages Barcodes</string>
     <string name="button_scan_packages_barcodes_sprint">Scan Packages Barcodes</string>
@@ -197,6 +198,7 @@
     <string name="bin_location_assigned_successfully">Bin Location was Assigned Successfully</string>
     <string name="please_scan_shipping_plan_barcode">Please Scan Shipping Plan Barcode</string>
     <string name="please_scan_items">Please Scan Items</string>
+    <string name="please_scan_orders">Please Scan Orders</string>
     <string name="please_scan_item_barcode">Please Scan Item Barcode</string>
     <string name="please_scan_package_barcode">Please prove delivery by scanning package barcode</string>
     <string name="please_scan_package_barcode_unload">Please scan package barcode</string>
@@ -218,11 +220,13 @@
     <string name="dashboard_new_fulfilment_orders">New Fulfillment Orders</string>
     <string name="dashboard_track_inventory_items">Track Inventory Items</string>
     <string name="title_new_fulfilment_orders">New Fulfillment Orders</string>
+    <string name="title_fulfilment_orders">Fulfillment Orders</string>
     <string name="title_tracking_inventory_item">Track Inventory Item</string>
     <string name="dashboard_picked_fulfilment_orders">Picked Fulfillment Orders</string>
     <string name="title_picked_fulfilment_orders">Picked Fulfillment Orders</string>
     <string name="message_no_fulfilment_orders">No fulfilment orders were found \n Please pull the list down to refresh</string>
     <string name="button_pick">Pick</string>
+    <string name="button_multi_pick">Multi Pick</string>
     <string name="title_items_number">Items Number</string>
     <string name="title_skus_number">SKUs Number</string>
     <string name="button_pack">Pack</string>
