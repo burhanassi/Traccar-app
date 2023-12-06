@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName
 import com.logestechs.driver.utils.AdminPackageStatus
 import com.logestechs.driver.utils.AppLanguages
 import com.logestechs.driver.utils.BarcodeScanType
+import com.logestechs.driver.utils.IntegrationSource
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -103,8 +104,8 @@ data class Package(
     var isShippingPlan: Boolean? = null,
     var subBundles: List<Package?>? = null,
     var verificationStatus: String? = null,
-    var originalBusinessSenderName: String? = null
-
+    var originalBusinessSenderName: String? = null,
+    var integrationSource: IntegrationSource? = null
 ) : Parcelable {
     fun getFullSenderName(): String {
         return if (senderMiddleName?.trim().isNullOrEmpty()) {

@@ -48,6 +48,7 @@ import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.DeliveryType
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.Helper.Companion.format
+import com.logestechs.driver.utils.IntegrationSource
 import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.PackageType
@@ -243,7 +244,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             } else if (checkedId == R.id.radio_button_partial_delivery) {
                 binding.containerPartialDeliveryNote.visibility = View.VISIBLE
                 selectedDeliveryType = DeliveryType.PARTIAL
-                if (companyConfigurations?.isSupportDeliveringPackageItemsPartially!! && items != null) {
+                if ((companyConfigurations?.isSupportDeliveringPackageItemsPartially!! && items != null) ||
+                    (pkg?.integrationSource == IntegrationSource.FULFILLMENT)) {
                     binding.tvNoteTitle.text = getString(R.string.title_partial_delivery_items_flow)
                     val checkBoxContainer = findViewById<LinearLayout>(R.id.check_box_container)
                     val itemPriceLabel = getString(R.string.item_price)
@@ -388,7 +390,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             }
         }
 
-        if (companyConfigurations?.isSupportDeliveringPackageItemsPartially == true && items != null) {
+        if ((companyConfigurations?.isSupportDeliveringPackageItemsPartially == true && items != null) ||
+            (pkg?.integrationSource == IntegrationSource.FULFILLMENT)) {
             var deliveredItemFound = false
             for (item in items ?: emptyList()) {
                 if (item?.status == Status.DELIVERED) {

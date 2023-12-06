@@ -243,7 +243,9 @@ enum class AdminPackageStatus(
     BROUGHT("Brought", "تم إحضارها")
 }
 
-
+enum class IntegrationSource {
+    FULFILLMENT
+}
 enum class UserRole {
     DISPATCHER, DRIVER, CLERK, CUSTOMER_CARE, HANDLER, STOCKING_AND_PACKING_EMPLOYEE
 }
