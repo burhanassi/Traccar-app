@@ -617,7 +617,8 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
                                     )
                                 }
                             } else {
-                                if (companyConfigurations?.isEnablePinCodeForMassCodReportsAndMassReturnedPackages!!) {
+                                if (companyConfigurations?.isEnablePinCodeForMassCodReportsAndMassReturnedPackages!! &&
+                                    customer?.massReturnedPackagesReportBarcode != null) {
                                     requestPinCodeSms()
                                     DeliveryCodeVerificationDialog(
                                         super.getContext(),
@@ -1156,7 +1157,8 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
                                     bundles = bundles
                                 ).showDialog()
                             } else {
-                                if (companyConfigurations?.isEnablePinCodeForMassCodReportsAndMassReturnedPackages!!) {
+                                if (companyConfigurations?.isEnablePinCodeForMassCodReportsAndMassReturnedPackages!! &&
+                                    customer?.massReturnedPackagesReportBarcode != null) {
                                     requestPinCodeSms()
                                     DeliveryCodeVerificationDialog(
                                         super.getContext(),
@@ -1236,13 +1238,24 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
     }
 
     override fun onPackageVerified() {
-        callDeliverReturnedBundlesToSender(
-            DeliverMassReturnedPackagesToSenderRequestBody(
-                bundles?.barcode,
-                null,
-                getPodImagesUrls()
+        if (isBundleDelivery) {
+            callDeliverReturnedBundlesToSender(
+                DeliverMassReturnedPackagesToSenderRequestBody(
+                    bundles?.barcode,
+                    null,
+                    getPodImagesUrls()
+                )
             )
-        )
+        } else {
+            callDeliverMassReturnedPackagesToSender(
+                DeliverMassReturnedPackagesToSenderRequestBody(
+                    customer?.massReturnedPackagesReportBarcode,
+                    null,
+                    getPodImagesUrls()
+                )
+            )
+        }
+
     }
 
     override fun onResendPinSms() {
