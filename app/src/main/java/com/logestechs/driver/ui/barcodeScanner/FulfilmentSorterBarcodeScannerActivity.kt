@@ -367,21 +367,24 @@ class FulfilmentSorterBarcodeScannerActivity :
             }
 
             FulfilmentSorterScanMode.ITEM_INTO_BIN -> {
-//                if (!companyConfigurations?.isSortAndPickFulfillmentItemsByScanningProductBarcode!!) {
-//                    if (isBinScan) {
-//                        callSortItemIntoBin(barcode)
-//                    } else {
-//
-//                        callSortItemIntoLocation(barcode)
-//                    }
-//                } else {
-                    vibrate()
-                runOnUiThread {
-                    ItemQuantityDialog(this@FulfilmentSorterBarcodeScannerActivity, this@FulfilmentSorterBarcodeScannerActivity, barcode!!).showDialog()
-                    scannedItemsHashMap.remove(barcode)
-                }
+                if (!companyConfigurations?.isSortAndPickFulfillmentItemsByScanningProductBarcode!!) {
+                    if (isBinScan) {
+                        callSortItemIntoBin(barcode)
+                    } else {
 
-//                }
+                        callSortItemIntoLocation(barcode)
+                    }
+                } else {
+                    vibrate()
+                    runOnUiThread {
+                        ItemQuantityDialog(
+                            this@FulfilmentSorterBarcodeScannerActivity,
+                            this@FulfilmentSorterBarcodeScannerActivity,
+                            barcode!!
+                        ).showDialog()
+                        scannedItemsHashMap.remove(barcode)
+                    }
+                }
             }
 
             FulfilmentSorterScanMode.SHIPPING_PLAN -> {
