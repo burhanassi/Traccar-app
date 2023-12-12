@@ -244,7 +244,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             } else if (checkedId == R.id.radio_button_partial_delivery) {
                 binding.containerPartialDeliveryNote.visibility = View.VISIBLE
                 selectedDeliveryType = DeliveryType.PARTIAL
-                if ((!companyConfigurations?.isSupportDeliveringPackageItemsPartially!! && items != null) ||
+                if ((companyConfigurations?.isSupportDeliveringPackageItemsPartially!! && items != null) ||
                     (pkg?.integrationSource == IntegrationSource.FULFILLMENT)) {
                     binding.tvNoteTitle.text = getString(R.string.title_partial_delivery_items_flow)
                     val checkBoxContainer = findViewById<LinearLayout>(R.id.check_box_container)
@@ -390,7 +390,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             }
         }
 
-        if ((companyConfigurations?.isSupportDeliveringPackageItemsPartially == false && items != null) ||
+        if ((companyConfigurations?.isSupportDeliveringPackageItemsPartially == true && items != null) ||
             (pkg?.integrationSource == IntegrationSource.FULFILLMENT)) {
             var deliveredItemFound = false
             for (item in items ?: emptyList()) {
