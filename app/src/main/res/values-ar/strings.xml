@@ -191,6 +191,7 @@
     <string name="is_whatsapp_business">استخدام Whatsapp Business</string>
     <string name="error_install_whatsapp">الرجاء التأكد من وجود تطبيق Whatsapp</string>
     <string name="error_package_is_returned">يرجى الانتباه، هذا الطرد راجع!</string>
+    <string name="error_scan_all_items">يرجى مسح جميع العناصر!</string>
     <string name="error_package_is_failed">يرجى الانتباه، هذا الطرد عالق!</string>
     <string name="cancel_pickup">إلغاء التحميل</string>
     <string name="pack_without_scan">تغليف تلقائي</string>

@@ -18,7 +18,6 @@ import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.Detector.Detections
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
-import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.Customer
@@ -65,6 +64,10 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
     private val loginResponse = SharedPreferenceWrapper.getLoginResponse()
     var isSprint: Boolean = false
 
+    private var totalQuantityNeeded: Int = 0
+
+    private var isBackButtonEnabled: Boolean = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBarcodeScannerBinding.inflate(layoutInflater)
@@ -98,6 +101,16 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
         }
     }
 
+    override fun onBackPressed() {
+        if (isBackButtonEnabled) {
+            super.onBackPressed()
+        } else {
+            Helper.showErrorMessage(
+                super.getContext(),
+                getString(R.string.error_scan_all_items)
+            )
+        }
+    }
     private fun initUi() {
         if (loginResponse?.user?.companyID == 240.toLong() || loginResponse?.user?.companyID == 313.toLong()) {
             binding.titleScannedPackages.text = getString(R.string.title_scanned_packages_sprint)
@@ -343,6 +356,17 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                                     response.body()?.getPickupScannedItem(),
                                     !barcode.contains(":")
                                 )
+                                if (!barcode.contains(":")) {
+                                    totalQuantityNeeded += response.body()?.quantity ?: 0
+                                    binding.buttonDone.background = getDrawable(R.drawable.background_oval_gray)
+                                    binding.buttonDone.setTextColor(resources.getColor(R.color.floating_message_background))
+                                    isBackButtonEnabled = false
+                                }
+                                if(totalQuantityNeeded == (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).getScannedSubPackagesCount()) {
+                                    binding.buttonDone.background = getDrawable(R.drawable.background_logestechs_button)
+                                    binding.buttonDone.setTextColor(resources.getColor(R.color.white))
+                                    isBackButtonEnabled = true
+                                }
                             } else {
                                 (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).insertItem(
                                     response.body()?.getPickupScannedItem()
