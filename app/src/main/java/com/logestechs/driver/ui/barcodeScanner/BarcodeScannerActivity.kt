@@ -68,6 +68,7 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
 
     private var isBackButtonEnabled: Boolean = true
     private var isJustOneParentPackage: Boolean = true
+    private var parentBarcode: String = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBarcodeScannerBinding.inflate(layoutInflater)
@@ -184,8 +185,8 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                 if (driverCompanyConfigurations?.isScanAllPackageAwbCopiesByDriver == true ) {
                     if (!scannedBarcode.contains(":") && isJustOneParentPackage) {
                         callPickupPackage(scannedBarcode)
-                        isJustOneParentPackage = false
-                    } else if (scannedBarcode.contains(":") && (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).getScannedSubPackagesCount() != 0) {
+                    } else if (scannedBarcode.contains(":") &&
+                        scannedBarcode.contains(parentBarcode)) {
                         callPickupPackage(scannedBarcode)
                     } else {
                         Helper.showErrorMessage(
@@ -299,8 +300,8 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
             if (driverCompanyConfigurations?.isScanAllPackageAwbCopiesByDriver == true ) {
                 if (!barcode.contains(":") && isJustOneParentPackage) {
                     callPickupPackage(barcode)
-                    isJustOneParentPackage = false
-                } else if (barcode.contains(":") && (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).getScannedSubPackagesCount() != 0) {
+                } else if (barcode.contains(":") &&
+                    barcode.contains(parentBarcode)) {
                     callPickupPackage(barcode)
                 } else {
                     Helper.showErrorMessage(
@@ -390,6 +391,8 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                                         binding.buttonDone.background = getDrawable(R.drawable.background_oval_gray)
                                         binding.buttonDone.setTextColor(resources.getColor(R.color.floating_message_background))
                                         isBackButtonEnabled = false
+                                        isJustOneParentPackage = false
+                                        parentBarcode = barcode
                                     }
                                     if(totalQuantityNeeded == (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).getScannedSubPackagesCount()) {
                                         binding.buttonDone.background = getDrawable(R.drawable.background_logestechs_button)
@@ -406,6 +409,8 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                             handleScannedItemsCount()
                         }
                     } else {
+                        isJustOneParentPackage = true
+                        parentBarcode = ""
                         scannedItemsHashMap.remove(barcode)
                         try {
                             val jObjError = JSONObject(response?.errorBody()!!.string())
@@ -426,6 +431,8 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                         }
                     }
                 } catch (e: Exception) {
+                    isJustOneParentPackage = true
+                    parentBarcode = ""
                     hideWaitDialog()
                     scannedItemsHashMap.remove(barcode)
                     Helper.logException(e, Throwable().stackTraceToString())
@@ -622,7 +629,9 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                 if (!barcode.contains(":") && isJustOneParentPackage) {
                     callPickupPackage(barcode)
                     isJustOneParentPackage = false
-                } else if (barcode.contains(":") && (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).getScannedSubPackagesCount() != 0) {
+                    parentBarcode = barcode
+                } else if (barcode.contains(":") &&
+                    barcode.contains(parentBarcode)) {
                     callPickupPackage(barcode)
                 } else {
                     Helper.showErrorMessage(
