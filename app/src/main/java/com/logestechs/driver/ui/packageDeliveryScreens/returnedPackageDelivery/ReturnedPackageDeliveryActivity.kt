@@ -229,6 +229,10 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
         binding.buttonDeliverPackage.setOnClickListener(this)
         binding.buttonCaptureImage.setOnClickListener(this)
         binding.buttonLoadImage.setOnClickListener(this)
+
+        if (SharedPreferenceWrapper.getNotificationsCount() == "0") {
+            binding.toolbarMain.notificationCount.visibility = View.GONE
+        }
     }
 
     private fun getExtras() {
@@ -613,13 +617,24 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
                                     )
                                 }
                             } else {
-                                callDeliverMassReturnedPackagesToSender(
-                                    DeliverMassReturnedPackagesToSenderRequestBody(
-                                        customer?.massReturnedPackagesReportBarcode,
-                                        response.body()?.fileUrl,
-                                        getPodImagesUrls()
+                                if (companyConfigurations?.isEnablePinCodeForMassCodReportsAndMassReturnedPackages!! &&
+                                    customer?.massReturnedPackagesReportBarcode != null) {
+                                    requestPinCodeSms()
+                                    DeliveryCodeVerificationDialog(
+                                        super.getContext(),
+                                        this@ReturnedPackageDeliveryActivity,
+                                        isBundle = false,
+                                        massReturned = customer?.massReturnedPackagesReportBarcode
+                                    ).showDialog()
+                                } else {
+                                    callDeliverMassReturnedPackagesToSender(
+                                        DeliverMassReturnedPackagesToSenderRequestBody(
+                                            customer?.massReturnedPackagesReportBarcode,
+                                            response.body()?.fileUrl,
+                                            getPodImagesUrls()
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
                     } else {
@@ -1069,9 +1084,11 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.requestPinCodeSmsForBundles(
-                        bundles?.id
-                    )
+                    val response = if (isBundleDelivery) {
+                        ApiAdapter.apiClient.requestPinCodeSmsForBundles(bundles?.id)
+                    } else {
+                        ApiAdapter.apiClient.requestPinCodeSmsForReturned(customer?.massReturnedPackagesReportBarcode)
+                    }
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
@@ -1140,13 +1157,24 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
                                     bundles = bundles
                                 ).showDialog()
                             } else {
-                                callDeliverMassReturnedPackagesToSender(
-                                    DeliverMassReturnedPackagesToSenderRequestBody(
-                                        customer?.massReturnedPackagesReportBarcode,
-                                        null,
-                                        getPodImagesUrls()
+                                if (companyConfigurations?.isEnablePinCodeForMassCodReportsAndMassReturnedPackages!! &&
+                                    customer?.massReturnedPackagesReportBarcode != null) {
+                                    requestPinCodeSms()
+                                    DeliveryCodeVerificationDialog(
+                                        super.getContext(),
+                                        this,
+                                        isBundle = false,
+                                        massReturned = customer?.massReturnedPackagesReportBarcode
+                                    ).showDialog()
+                                } else {
+                                    callDeliverMassReturnedPackagesToSender(
+                                        DeliverMassReturnedPackagesToSenderRequestBody(
+                                            customer?.massReturnedPackagesReportBarcode,
+                                            null,
+                                            getPodImagesUrls()
+                                        )
                                     )
-                                )
+                                }
                             }
                         } else {
                             callDeliverReturnedPackageToSender(
@@ -1210,13 +1238,24 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
     }
 
     override fun onPackageVerified() {
-        callDeliverReturnedBundlesToSender(
-            DeliverMassReturnedPackagesToSenderRequestBody(
-                bundles?.barcode,
-                null,
-                getPodImagesUrls()
+        if (isBundleDelivery) {
+            callDeliverReturnedBundlesToSender(
+                DeliverMassReturnedPackagesToSenderRequestBody(
+                    bundles?.barcode,
+                    null,
+                    getPodImagesUrls()
+                )
             )
-        )
+        } else {
+            callDeliverMassReturnedPackagesToSender(
+                DeliverMassReturnedPackagesToSenderRequestBody(
+                    customer?.massReturnedPackagesReportBarcode,
+                    null,
+                    getPodImagesUrls()
+                )
+            )
+        }
+
     }
 
     override fun onResendPinSms() {

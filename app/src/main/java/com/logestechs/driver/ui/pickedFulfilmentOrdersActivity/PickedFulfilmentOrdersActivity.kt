@@ -23,6 +23,7 @@ import com.logestechs.driver.utils.FulfilmentOrderStatus
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.NewFulfilmentOrderCellAdapter
 import com.logestechs.driver.utils.adapters.PickedFulfilmentOrderCellAdapter
 import com.logestechs.driver.utils.interfaces.PickedFulfilmentOrderCardListener
@@ -44,6 +45,8 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
     private var fulfilmentOrdersList: ArrayList<FulfilmentOrder?> = ArrayList()
     private var status: String? = FulfilmentOrderStatus.PICKED.name
 
+    private var isOnCreateCalled = false
+
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +61,7 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
         tabLayout.tabTextColors = getColorStateList(R.color.tab_text_color_selector)
 
         initRecycler()
-        initListeners(status)
+        initListeners()
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
 
             override fun onTabSelected(tab: TabLayout.Tab) {
@@ -91,12 +94,17 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
 
         tabLayout.getTabAt(0)?.select()
         callGetFulfilmentOrders(FulfilmentOrderStatus.PICKED.name)
+        isOnCreateCalled = true
     }
     override fun onResume() {
         super.onResume()
-        currentPageIndex = 1
-        (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()
-        callGetFulfilmentOrders(status)
+
+        if (!isOnCreateCalled) {
+            currentPageIndex = 1
+            (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()
+            callGetFulfilmentOrders(status)
+        }
+        isOnCreateCalled = false
     }
 
     private fun initRecycler() {
@@ -112,7 +120,7 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
 
     }
 
-    private fun initListeners(status: String?) {
+    private fun initListeners() {
         binding.refreshLayoutCustomers.setOnRefreshListener {
             currentPageIndex = 1
             (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()
@@ -121,6 +129,10 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
 
         binding.toolbarMain.buttonNotifications.setOnClickListener(this)
         binding.toolbarMain.buttonBack.setOnClickListener(this)
+
+        if (SharedPreferenceWrapper.getNotificationsCount() == "0") {
+            binding.toolbarMain.notificationCount.visibility = View.GONE
+        }
     }
 
     private fun handleNoPackagesLabelVisibility(isEmpty: Boolean) {

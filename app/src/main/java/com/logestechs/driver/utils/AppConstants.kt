@@ -110,6 +110,7 @@ enum class IntentExtrasKeys() {
     FULFILMENT_SORTER_SCAN_MODE,
     FULFILMENT_PICKER_SCAN_MODE,
     FULFILMENT_ORDER,
+    FULFILMENT_ORDERS,
     BUNDLE,
     DRIVER_PACKAGES_LOCATIONS
 }
@@ -242,7 +243,9 @@ enum class AdminPackageStatus(
     BROUGHT("Brought", "تم إحضارها")
 }
 
-
+enum class IntegrationSource {
+    FULFILLMENT
+}
 enum class UserRole {
     DISPATCHER, DRIVER, CLERK, CUSTOMER_CARE, HANDLER, STOCKING_AND_PACKING_EMPLOYEE
 }

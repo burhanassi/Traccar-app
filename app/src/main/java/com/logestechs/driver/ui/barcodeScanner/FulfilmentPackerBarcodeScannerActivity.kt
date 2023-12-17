@@ -39,6 +39,7 @@ import com.logestechs.driver.utils.dialogs.InsertBarcodeDialog
 import com.logestechs.driver.utils.interfaces.InsertBarcodeDialogListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -327,41 +328,43 @@ class FulfilmentPackerBarcodeScannerActivity :
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        withContext(Dispatchers.Main) {
-                            val body = response.body()
-
-                            (binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter)
-                                .insertItem(body)
-                            binding.rvScannedBarcodes.smoothScrollToPosition(0)
-                            binding.textItemsNumber.text =
-                                "${(binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter).getItemCount()} of ${fulfilmentOrder?.totalQuantity}"
-                            if ((binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter)
-                                    .getItemCount() == fulfilmentOrder?.totalQuantity
-                            ) {
-                                callPackFulfilmentOrder()
-                            }
-                            Helper.showSuccessMessage(
-                                super.getContext(), getString(R.string.success_operation_completed)
-                            )
-                        }
-                    } else {
-                        scannedItemsHashMap.remove(barcode)
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                    if ((binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter).getItemCount() < fulfilmentOrder?.totalQuantity!!) {
+                        if (response?.isSuccessful == true && response.body() != null) {
                             withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                val body = response.body()
+
+                                (binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter)
+                                    .insertItem(body)
+                                binding.textItemsNumber.text =
+                                    "${(binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter).getItemCount()} of ${fulfilmentOrder?.totalQuantity}"
+                                if ((binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter)
+                                        .getItemCount() == fulfilmentOrder?.totalQuantity
+                                ) {
+                                    callPackFulfilmentOrder()
+                                }
+                                Helper.showSuccessMessage(
+                                    super.getContext(), getString(R.string.success_operation_completed)
                                 )
                             }
+                            scannedItemsHashMap.remove(barcode)
+                        } else {
+                            scannedItemsHashMap.remove(barcode)
+                            try {
+                                val jObjError = JSONObject(response?.errorBody()!!.string())
+                                withContext(Dispatchers.Main) {
+                                    Helper.showErrorMessage(
+                                        super.getContext(),
+                                        jObjError.optString(AppConstants.ERROR_KEY)
+                                    )
+                                }
 
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
+                            } catch (e: java.lang.Exception) {
+                                withContext(Dispatchers.Main) {
+                                    Helper.showErrorMessage(
+                                        super.getContext(),
+                                        getString(R.string.error_general)
+                                    )
+                                }
                             }
                         }
                     }
@@ -408,7 +411,6 @@ class FulfilmentPackerBarcodeScannerActivity :
 //                            callGetFulfilmentOrders(FulfilmentOrderStatus.PICKED.name)
                             onBackPressed()
                         }
-
                     } else {
                         try {
                             val jObjError = JSONObject(response?.errorBody()!!.string())

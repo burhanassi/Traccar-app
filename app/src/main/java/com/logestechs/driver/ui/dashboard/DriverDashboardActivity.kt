@@ -88,6 +88,7 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
             recreate()
         } else {
             callGetDashboardInfo()
+            getNotificationsFirstTime()
         }
     }
 
@@ -113,6 +114,41 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
         } else {
             binding.containerLogestechsLogoBottom.visibility = View.GONE
         }
+
+
+        if (loginResponse?.user?.companyID == 240.toLong() || loginResponse?.user?.companyID == 313.toLong()) {
+            binding.tvPackagesNumber.text = getString(R.string.dashboard_packages_number_sprint)
+            binding.dashEntryScanPackages.titleText =
+                getString(R.string.dashboard_scan_new_package_barcode_sprint)
+            binding.dashEntryAcceptedPackages.titleText =
+                getString(R.string.dashboard_accepted_packages_sprint)
+            binding.dashEntryPendingPackages.titleText =
+                getString(R.string.dashboard_pending_packages_sprint)
+            binding.dashEntryInCarPackages.titleText =
+                getString(R.string.dashboard_in_car_packages_sprint)
+            binding.dashSubEntryMassCodReports.titleText =
+                getString(R.string.dashboard_mass_cod_reports_sprint)
+            binding.dashSubEntryDraftPickups.titleText =
+                getString(R.string.title_draft_pickups_sprint)
+            binding.dashSubEntryReturnedPackages.titleText =
+                getString(R.string.title_returned_packages_sprint)
+        } else {
+            binding.dashEntryScanPackages.titleText =
+                getString(R.string.dashboard_scan_new_package_barcode)
+            binding.dashEntryAcceptedPackages.titleText =
+                getString(R.string.dashboard_accepted_packages)
+            binding.dashEntryPendingPackages.titleText =
+                getString(R.string.dashboard_pending_packages)
+            binding.dashEntryPendingPackages.titleText =
+                getString(R.string.dashboard_pending_packages)
+            binding.dashEntryInCarPackages.titleText = getString(R.string.dashboard_in_car_packages)
+            binding.dashSubEntryMassCodReports.titleText =
+                getString(R.string.dashboard_mass_cod_reports)
+            binding.dashSubEntryDraftPickups.titleText = getString(R.string.title_draft_pickups)
+            binding.dashSubEntryReturnedPackages.titleText =
+                getString(R.string.title_returned_packages)
+        }
+
     }
 
     private fun initOnClickListeners() {
@@ -122,14 +158,14 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
         binding.dashEntryAcceptedPackages.root.setOnClickListener(this)
         binding.dashEntryInCarPackages.root.setOnClickListener(this)
         binding.dashEntryScanPackages.root.setOnClickListener(this)
-        binding.dashEntryFailedPackages.root.setOnClickListener(this)
-        binding.dashEntryPostponedPackages.root.setOnClickListener(this)
         binding.dashSubEntryBroughtPackages.root.setOnClickListener(this)
         binding.dashSubEntryReturnedPackages.root.setOnClickListener(this)
         binding.dashSubEntryMassCodReports.root.setOnClickListener(this)
         binding.dashSubEntryDraftPickups.root.setOnClickListener(this)
         binding.dashSubEntryDriverRoute.root.setOnClickListener(this)
         binding.dashSubEntryCheckIns.root.setOnClickListener(this)
+        binding.dashSubEntryFailedPackages.root.setOnClickListener(this)
+        binding.dashSubEntryPostponedPackages.root.setOnClickListener(this)
         binding.containerServiceTypeView.setOnClickListener(this)
         binding.dashEntryWarehousePackages.root.setOnClickListener(this)
     }
@@ -139,8 +175,6 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
         binding.dashEntryAcceptedPackages.textCount.text = data?.acceptedPackagesCount.toString()
         binding.dashEntryInCarPackages.textCount.text = data?.inCarPackagesCount.toString()
         binding.dashEntryPendingPackages.textCount.text = data?.pendingPackagesCount.toString()
-        binding.dashEntryPostponedPackages.textCount.text = data?.postponedPackagesCount.toString()
-        binding.dashEntryFailedPackages.textCount.text = data?.failedPackagesCount.toString()
         binding.dashEntryScanPackages.textCount.visibility = View.GONE
 
         binding.textInCarPackagesCount.text = data?.inCarPackagesCount.toString()
@@ -268,7 +302,7 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
                 startActivity(mIntent)
             }
 
-            R.id.dash_entry_postponed_packages -> {
+            R.id.dash_sub_entry_postponed_packages -> {
                 val mIntent = Intent(this, DriverPackagesByStatusViewPagerActivity::class.java)
                 mIntent.putExtra(IntentExtrasKeys.SELECTED_PACKAGES_TAB.name, 2)
                 mIntent.putExtra(
@@ -278,7 +312,7 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
                 startActivity(mIntent)
             }
 
-            R.id.dash_entry_failed_packages -> {
+            R.id.dash_sub_entry_failed_packages -> {
                 val mIntent = Intent(this, DriverPackagesByStatusViewPagerActivity::class.java)
                 mIntent.putExtra(IntentExtrasKeys.SELECTED_PACKAGES_TAB.name, 2)
                 mIntent.putExtra(
@@ -292,6 +326,7 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
                 val mIntent = Intent(this, BroughtPackagesActivity::class.java)
                 startActivity(mIntent)
             }
+
             R.id.dash_sub_entry_returned_packages -> {
                 val mIntent = Intent(this, ReturnedPackagesActivity::class.java)
                 startActivity(mIntent)
@@ -592,6 +627,51 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
             } catch (e: Exception) {
                 Helper.logException(e, Throwable().stackTraceToString())
             }
+        }
+    }
+
+    private fun getNotificationsFirstTime() {
+        if (Helper.isInternetAvailable(this)) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.getNotifications()
+                    if (response!!.isSuccessful && response.body() != null) {
+                        val data = response.body()!!
+                        SharedPreferenceWrapper.saveNotificationsCount(data.unReadUserNotificationsNo.toString())
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            Helper.showErrorMessage(
+                this, getString(R.string.error_check_internet_connection)
+            )
         }
     }
 }

@@ -24,7 +24,8 @@ class InCarPackageCellAdapter(
     var context: Context?,
     var listener: InCarPackagesCardListener?,
     var parentIndex: Int?,
-    var isGrouped: Boolean = true
+    var isGrouped: Boolean = true,
+    var isSprint: Boolean = false
 ) :
     RecyclerView.Adapter<InCarPackageCellAdapter.InCarPackageCellViewHolder>(),
     PostponePackageDialogListener,
@@ -33,6 +34,8 @@ class InCarPackageCellAdapter(
 
     val companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
+
+    private val loginResponse = SharedPreferenceWrapper.getLoginResponse()
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
@@ -50,6 +53,9 @@ class InCarPackageCellAdapter(
                 (viewGroup.width * 0.7).toInt(),
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
+        }
+        if (loginResponse?.user?.companyID == 240.toLong() || loginResponse?.user?.companyID == 313.toLong()) {
+            isSprint = true
         }
         return InCarPackageCellViewHolder(inflater, viewGroup, this)
     }
@@ -310,6 +316,10 @@ class InCarPackageCellAdapter(
                 if (mAdapter.companyConfigurations?.isDriverCanFailPackageDisabled == true) {
                     popup.menu.findItem(R.id.action_fail_delivery).isVisible = false
                 }
+                if (mAdapter.isSprint) {
+                    popup.menu.findItem(R.id.action_edit_package_type).title =
+                        mAdapter.context!!.getString(R.string.change_package_type_sprint)
+                }
                 popup.show()
             }
 
@@ -323,6 +333,10 @@ class InCarPackageCellAdapter(
 
             binding.itemInvoiceNumber.buttonCopy.setOnClickListener {
                 Helper.copyTextToClipboard(mAdapter.context, pkg?.invoiceNumber)
+            }
+            if (mAdapter.isSprint) {
+                binding.buttonDeliverPackage.text =
+                    mAdapter.context?.getString(R.string.button_deliver_package_sprint)
             }
         }
     }

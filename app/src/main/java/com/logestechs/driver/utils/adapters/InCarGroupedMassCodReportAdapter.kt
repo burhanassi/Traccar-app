@@ -9,9 +9,11 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
+import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.GroupedMassCodReports
 import com.logestechs.driver.databinding.ItemMassCodReportGroupBinding
 import com.logestechs.driver.utils.MassCodReportsViewMode
+import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.customViews.PeekingLinearLayoutManager
 import com.logestechs.driver.utils.interfaces.MassCodReportCardListener
 import com.logestechs.driver.utils.setThrottleClickListener
@@ -24,6 +26,8 @@ class InCarGroupedMassCodReportAdapter(
 ) : RecyclerView.Adapter<InCarGroupedMassCodReportAdapter.InCarGroupedMassCodReportViewHolder>() {
 
     private var selectedViewMode: MassCodReportsViewMode? = null
+    private var companyConfigurations: DriverCompanyConfigurations? =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
     override fun onCreateViewHolder(
         viewGroup: ViewGroup, i: Int
     ): InCarGroupedMassCodReportViewHolder {
@@ -77,10 +81,14 @@ class InCarGroupedMassCodReportAdapter(
                 )
             }
 
-            if (groupedPackage?.isExpanded == true) {
+            if (mAdapter.companyConfigurations?.isEnablePinCodeForMassCodReportsAndMassReturnedPackages!!) {
                 binding.buttonsContainer.visibility = View.GONE
             } else {
-                binding.buttonsContainer.visibility = View.VISIBLE
+                if (groupedPackage?.isExpanded == true) {
+                    binding.buttonsContainer.visibility = View.GONE
+                } else {
+                    binding.buttonsContainer.visibility = View.VISIBLE
+                }
             }
 
             binding.itemTitle.textItem.text = groupedPackage?.customerName
@@ -123,7 +131,9 @@ class InCarGroupedMassCodReportAdapter(
             if (groupedPackage.isExpanded == true) {
                 binding.rvPackages.visibility = View.VISIBLE
                 binding.containerOvalCount.background = null
-                binding.buttonsContainer.visibility = View.GONE
+                if (!mAdapter.companyConfigurations?.isEnablePinCodeForMassCodReportsAndMassReturnedPackages!!) {
+                    binding.buttonsContainer.visibility = View.GONE
+                }
                 if (mAdapter.context != null) {
                     binding.imageArrow.setImageDrawable(
                         ContextCompat.getDrawable(
@@ -136,7 +146,9 @@ class InCarGroupedMassCodReportAdapter(
                 binding.containerOvalCount.background = ContextCompat.getDrawable(
                     mAdapter.context!!, R.drawable.background_card_semi_circle
                 )
-                binding.buttonsContainer.visibility = View.VISIBLE
+                if (!mAdapter.companyConfigurations?.isEnablePinCodeForMassCodReportsAndMassReturnedPackages!!) {
+                    binding.buttonsContainer.visibility = View.VISIBLE
+                }
                 if (mAdapter.context != null) {
                     binding.imageArrow.setImageDrawable(
                         ContextCompat.getDrawable(

@@ -299,6 +299,13 @@ interface LogesTechsDriverApi {
         @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
     ): Response<GetNotificationsResponse>?
 
+    @PUT("api/users/notifications/set-as-read")
+    suspend fun setAllNotificationAsRead(): Response<ResponseBody>?
+    @PUT("api/users/notifications/{notificationId}/set-as-read")
+    suspend fun setNotificationRead(
+        @Path("notificationId") notificationId: Long?
+    ): Response<ResponseBody>?
+
     @POST("api/geo-services/tracking")
     suspend fun updateDriverLocation(@Body body: UpdateLocationRequestBody?): Response<ResponseBody?>?
 
@@ -378,6 +385,7 @@ interface LogesTechsDriverApi {
     suspend fun sortItemIntoBin(
         @Path("binId") binId: Long?,
         @Query("shippingPlanId") shippingPlanId: Long?,
+        @Query("quantity") quantity: Int?,
         @Body body: BarcodeRequestBody?
     ): Response<SortItemIntoBinResponse>?
 
@@ -385,6 +393,7 @@ interface LogesTechsDriverApi {
     suspend fun sortItemIntoLocation(
         @Path("locationId") locationId: Long?,
         @Query("shippingPlanId") shippingPlanId: Long?,
+        @Query("quantity") quantity: Int?,
         @Body body: BarcodeRequestBody?
     ): Response<SortItemIntoBinResponse>?
 
@@ -428,6 +437,18 @@ interface LogesTechsDriverApi {
         @Query("orderId") orderId: Long?,
         @Body body: BarcodeRequestBody?
     ): Response<SortItemIntoToteResponse>?
+
+    @PUT("api/handler/order-items/pick")
+    suspend fun scanItemsIntoTote(
+        @Query("orderIds") orderIds: List<Long?>,
+        @Body body: BarcodeRequestBody?
+    ): Response<SortItemIntoToteResponse>?
+
+    @PUT("api/handler/tote/order/{orderId}/sort")
+    suspend fun scanOrderIntoTote(
+        @Path("orderId") orderId: Long?,
+        @Query("barcode") barcode: String?
+    ): Response<ResponseBody>?
 
     @PUT("api/handler/hub/order-items/continue-picking")
     suspend fun continuePicking(
@@ -496,6 +517,16 @@ interface LogesTechsDriverApi {
         @Path("bundleId") bundleId: Long?
     ): Response<ResponseBody?>?
 
+    @POST("api/driver/mass-cod-package/{massPkgId}/pin-code")
+    suspend fun requestPinCodeSmsForMassCod(
+        @Path("massPkgId") massPkgId: Long?
+    ): Response<ResponseBody?>?
+
+    @POST("api/driver/mass-returned/{massPkgBarcode}/pin-code")
+    suspend fun requestPinCodeSmsForReturned(
+        @Path("massPkgBarcode") massPkgBarcode: String?
+    ): Response<ResponseBody?>?
+
     @PUT("api/driver/packages/{packageId}/pin-code")
     suspend fun verifyDeliveryPin(
         @Path("packageId") packageId: Long?,
@@ -505,6 +536,18 @@ interface LogesTechsDriverApi {
     @PUT("api/driver/bundles/{bundleId}/pin-code")
     suspend fun verifyDeliveryPinForBundles(
         @Path("bundleId") bundleId: Long?,
+        @Query("pinCode") pinCode: String?
+    ): Response<ResponseBody?>?
+
+    @PUT("api/driver/mass-cod-package/{massPkgId}/pin-code")
+    suspend fun verifyDeliveryPinForMassCod(
+        @Path("massPkgId") massPkgId: Long?,
+        @Query("pinCode") pinCode: String?
+    ): Response<ResponseBody?>?
+
+    @PUT("api/driver/mass-returned/{massPkgBarcode}/pin-code")
+    suspend fun verifyDeliveryPinForReturned(
+        @Path("massPkgBarcode") massPkgBarcode: String?,
         @Query("pinCode") pinCode: String?
     ): Response<ResponseBody?>?
 
@@ -583,4 +626,9 @@ interface LogesTechsDriverApi {
         @Query("timezone") timezone: String,
         @Query("is-image") isImage: Boolean
     ): Response<PrintAwbResponse>
+
+    @PUT("api/driver/modify-profile")
+    suspend fun changeProfile(
+        @Body body: ModifyProfileRequestBody
+    ): Response<ResponseBody?>?
 }

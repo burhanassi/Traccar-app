@@ -21,10 +21,12 @@ import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.Address
 import com.logestechs.driver.databinding.DialogConfirmActionBinding
+import com.logestechs.driver.utils.adapters.NotificationsListAdapter
 import com.logestechs.driver.utils.bottomSheets.NotificationsBottomSheet
 import com.logestechs.driver.utils.bottomSheets.PackageTrackBottomSheet
 import com.logestechs.driver.utils.customViews.WaitDialog
 import com.logestechs.driver.utils.interfaces.ConfirmationDialogActionListener
+import com.logestechs.driver.utils.interfaces.NotificationBottomSheetListener
 import com.yariksoffice.lingver.Lingver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -285,8 +287,9 @@ abstract class LogesTechsActivity : AppCompatActivity() {
 
                         bundle.putInt(
                             BundleKeys.UNREAD_NOTIFICATIONS_COUNT.toString(),
-                            data.totalRecordsNo
+                            data.unReadUserNotificationsNo
                         )
+                        SharedPreferenceWrapper.saveNotificationsCount(data.unReadUserNotificationsNo.toString())
                         bottomSheet.arguments = bundle
                         bottomSheet.show(supportFragmentManager, "exampleBottomSheet")
 
@@ -391,5 +394,4 @@ abstract class LogesTechsActivity : AppCompatActivity() {
             )
         }
     }
-
 }

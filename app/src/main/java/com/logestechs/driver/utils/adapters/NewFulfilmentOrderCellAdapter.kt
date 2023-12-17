@@ -14,9 +14,11 @@ class NewFulfilmentOrderCellAdapter(
     var fulfilmentOrdersList: ArrayList<FulfilmentOrder?>,
     var context: Context?,
     var listener: NewFulfilmentOrderCardListener?,
+    var isMultiPicking: Boolean = false
 ) :
     RecyclerView.Adapter<NewFulfilmentOrderCellAdapter.NewFulfilmentOrderViewHolder>() {
 
+    private var selectedItems: ArrayList<FulfilmentOrder?>? = null
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
         i: Int
@@ -42,6 +44,11 @@ class NewFulfilmentOrderCellAdapter(
         return fulfilmentOrdersList.size
     }
 
+    fun clearSelectedItems() {
+        selectedItems?.clear()
+        notifyDataSetChanged()
+    }
+
     fun removeItem(position: Int) {
         notifyItemRemoved(position)
     }
@@ -52,12 +59,38 @@ class NewFulfilmentOrderCellAdapter(
         notifyItemRangeRemoved(0, size)
     }
 
+    fun getSelectedItems(): ArrayList<FulfilmentOrder?>? {
+        return selectedItems
+    }
     class NewFulfilmentOrderViewHolder(
         private var binding: ItemNewFulfilmentOrderBinding,
         private var parent: ViewGroup,
         private var mAdapter: NewFulfilmentOrderCellAdapter
     ) :
         RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.checkbox.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val isChecked = binding.checkbox.isChecked
+                    handleCheckboxClick(position, isChecked)
+                }
+            }
+        }
+
+        private fun handleCheckboxClick(position: Int, isChecked: Boolean) {
+            val fulfilmentOrder: FulfilmentOrder? = mAdapter.fulfilmentOrdersList[position]
+
+            if (isChecked) {
+                if (mAdapter.selectedItems == null) {
+                    mAdapter.selectedItems = ArrayList()
+                }
+                mAdapter.selectedItems?.add(fulfilmentOrder)
+            } else {
+                mAdapter.selectedItems?.remove(fulfilmentOrder)
+            }
+        }
+
         fun bind(fulfilmentOrder: FulfilmentOrder?) {
             binding.itemOrderBarcode.textItem.text = fulfilmentOrder?.barcode
             binding.itemCustomerAddress.textItem.text =
@@ -80,6 +113,14 @@ class NewFulfilmentOrderCellAdapter(
 
             binding.itemOrderBarcode.buttonCopy.setOnClickListener {
                 Helper.copyTextToClipboard(mAdapter.context, fulfilmentOrder?.barcode)
+            }
+
+            binding.checkbox.isChecked = mAdapter.selectedItems?.contains(fulfilmentOrder) == true
+
+            if (mAdapter.isMultiPicking) {
+                binding.containerCheckBox.visibility = View.VISIBLE
+            } else {
+                binding.containerCheckBox.visibility = View.GONE
             }
         }
     }

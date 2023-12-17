@@ -69,14 +69,14 @@ class ScannedShippingPlanItemCellAdapter(
         notifyItemRangeRemoved(0, size)
     }
 
-    fun insertItem(item: ItemDetails?, rejectedItems: Boolean? = null) {
+    fun insertItem(items: List<ItemDetails>?, rejectedItems: Boolean? = null) {
         if (rejectedItems == true) {
             isRejectedItems = true
         }
-        if (item != null && !list.contains(item)) {
-            list.add(0, item)
-            notifyItemChanged(0)
-            notifyItemInserted(0)
+        if (!items.isNullOrEmpty()) {
+            list.addAll(0, items)
+            notifyItemRangeChanged(0, items.size)
+            notifyItemRangeInserted(0, items.size)
         }
     }
 

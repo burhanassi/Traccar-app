@@ -15,7 +15,8 @@ import com.logestechs.driver.utils.interfaces.InCarViewModeDialogListener
 class InCarViewModeDialog(
     var context: Context,
     var delegate: InCarViewModeDialogListener,
-    var selectedViewMode: InCarPackagesViewMode
+    var selectedViewMode: InCarPackagesViewMode,
+    var isSprint: Boolean = false
 ) {
 
     lateinit var binding: DialogInCarViewModeBinding
@@ -73,6 +74,10 @@ class InCarViewModeDialog(
             delegate.onViewModeChanged(selectedViewMode)
         }
 
+        if (isSprint) {
+            binding.selectorPackages.textView.text =
+                getStringForFragment(R.string.view_mode_packages_sprint)
+        }
         handleSelection()
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.setCanceledOnTouchOutside(false)

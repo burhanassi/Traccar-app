@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.Bundles
+import com.logestechs.driver.data.model.MassCodReport
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.DialogDeliveryCodeVerificationBinding
 import com.logestechs.driver.utils.AppConstants
@@ -29,7 +30,9 @@ class DeliveryCodeVerificationDialog(
     var listener: VerificationCodeDialogListener?,
     var pkg: Package? = null,
     var isBundle: Boolean? = false,
-    var bundles: Bundles? = null
+    var bundles: Bundles? = null,
+    var massCodReport: MassCodReport? = null,
+    var massReturned: String? = null
 ) {
 
     lateinit var binding: DialogDeliveryCodeVerificationBinding
@@ -87,6 +90,10 @@ class DeliveryCodeVerificationDialog(
                 try {
                     val response = if (isBundle == true) {
                         ApiAdapter.apiClient.verifyDeliveryPinForBundles(bundles?.id, pinCode)
+                    } else if (massCodReport != null) {
+                        ApiAdapter.apiClient.verifyDeliveryPinForMassCod(massCodReport!!.id, pinCode)
+                    } else if (massReturned != null){
+                        ApiAdapter.apiClient.verifyDeliveryPinForReturned(massReturned!!, pinCode)
                     } else {
                         ApiAdapter.apiClient.verifyDeliveryPin(packageId, pinCode)
                     }

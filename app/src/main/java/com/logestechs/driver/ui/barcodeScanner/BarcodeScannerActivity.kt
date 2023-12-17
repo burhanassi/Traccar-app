@@ -62,11 +62,15 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
 
     private var flashmode: Boolean = false
 
+    private val loginResponse = SharedPreferenceWrapper.getLoginResponse()
+    var isSprint: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBarcodeScannerBinding.inflate(layoutInflater)
         setContentView(binding.root)
         toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+        initUi()
         handleOutOfDelivery()
         initialiseDetectorsAndSources()
         initRecycler()
@@ -91,6 +95,14 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                     getString(R.string.success_operation_completed)
                 )
             }
+        }
+    }
+
+    private fun initUi() {
+        if (loginResponse?.user?.companyID == 240.toLong() || loginResponse?.user?.companyID == 313.toLong()) {
+            binding.titleScannedPackages.text = getString(R.string.title_scanned_packages_sprint)
+        } else {
+            binding.titleScannedPackages.text = getString(R.string.title_scanned_packages)
         }
     }
 

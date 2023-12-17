@@ -3,6 +3,7 @@ package com.logestechs.driver.ui.newFulfilmentOrders
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -11,9 +12,11 @@ import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.FulfilmentOrder
 import com.logestechs.driver.databinding.ActivityNewFulfilmentOrdersBinding
 import com.logestechs.driver.ui.barcodeScanner.FulfilmentPickerBarcodeScannerActivity
+import com.logestechs.driver.ui.barcodeScanner.FulfilmentPickerMultiPickingBarcodeScannerActivity
 import com.logestechs.driver.ui.barcodeScanner.FulfilmentPickerScanMode
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.NewFulfilmentOrderCellAdapter
+import com.logestechs.driver.utils.dialogs.InCarViewModeDialog
 import com.logestechs.driver.utils.interfaces.NewFulfilmentOrderCardListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -32,7 +35,7 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
 
     private var fulfilmentOrdersList: ArrayList<FulfilmentOrder?> = ArrayList()
 
-
+    var isMultiPicking: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNewFulfilmentOrdersBinding.inflate(layoutInflater)
@@ -45,6 +48,12 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
         super.onResume()
         currentPageIndex = 1
         (binding.rvFulfilmentOrders.adapter as NewFulfilmentOrderCellAdapter).clearList()
+        binding.buttonMultiPickContainer.visibility = View.GONE
+        (binding.rvFulfilmentOrders.adapter as NewFulfilmentOrderCellAdapter).isMultiPicking =
+            false
+        (binding.rvFulfilmentOrders.adapter as NewFulfilmentOrderCellAdapter).clearSelectedItems()
+
+        binding.rvFulfilmentOrders.adapter?.notifyDataSetChanged()
         callGetFulfilmentOrders()
     }
 
@@ -68,6 +77,12 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
 
         binding.toolbarMain.buttonNotifications.setOnClickListener(this)
         binding.toolbarMain.buttonBack.setOnClickListener(this)
+
+        if (SharedPreferenceWrapper.getNotificationsCount() == "0") {
+            binding.toolbarMain.notificationCount.visibility = View.GONE
+        }
+        binding.buttonViewMode.setOnClickListener(this)
+        binding.buttonMultiPick.setOnClickListener(this)
     }
 
     private fun handleNoPackagesLabelVisibility(isEmpty: Boolean) {
@@ -179,6 +194,7 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_back -> {
@@ -187,6 +203,31 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
 
             R.id.button_notifications -> {
                 super.getNotifications()
+            }
+
+            R.id.button_view_mode -> {
+                isMultiPicking = !isMultiPicking
+                if (isMultiPicking) {
+                    binding.buttonMultiPickContainer.visibility = View.VISIBLE
+                    (binding.rvFulfilmentOrders.adapter as NewFulfilmentOrderCellAdapter).isMultiPicking =
+                        isMultiPicking
+                    binding.rvFulfilmentOrders.adapter?.notifyDataSetChanged()
+                } else {
+                    binding.buttonMultiPickContainer.visibility = View.GONE
+                    (binding.rvFulfilmentOrders.adapter as NewFulfilmentOrderCellAdapter).isMultiPicking =
+                        isMultiPicking
+                    binding.rvFulfilmentOrders.adapter?.notifyDataSetChanged()
+                }
+            }
+
+            R.id.button_multi_pick -> {
+                val selectedItems = (binding.rvFulfilmentOrders.adapter as NewFulfilmentOrderCellAdapter).getSelectedItems()
+                val mIntent = Intent(this, FulfilmentPickerMultiPickingBarcodeScannerActivity::class.java)
+                mIntent.putExtra(
+                    IntentExtrasKeys.FULFILMENT_ORDERS.name,
+                    selectedItems
+                )
+                startActivity(mIntent)
             }
         }
     }

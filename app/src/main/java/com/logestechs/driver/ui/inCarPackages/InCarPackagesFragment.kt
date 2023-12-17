@@ -114,6 +114,7 @@ class InCarPackagesFragment(
     private var activityDelegate: ViewPagerCountValuesDelegate? = null
     private var searchWord: String? = null
 
+    private val loginResponse = SharedPreferenceWrapper.getLoginResponse()
     private val companyConfigurations =
         SharedPreferenceWrapper.getDriverCompanySettings()
 
@@ -135,6 +136,8 @@ class InCarPackagesFragment(
     var failDeliveryDialog: FailDeliveryDialog? = null
 
     var packageIdToUpload: Long? = null
+
+    var isSprint: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -167,12 +170,19 @@ class InCarPackagesFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (loginResponse?.user?.companyID == 240.toLong() || loginResponse?.user?.companyID == 313.toLong()) {
+            isSprint = true
+            binding.textTitle.text = getString(R.string.packages_view_pager_in_car_packages_sprint)
+            binding.textSelectedStatus.text =
+                "(${Helper.getLocalizedInCarStatus(super.getContext(), selectedStatus, true)})"
+        } else {
+            binding.textTitle.text = getString(R.string.packages_view_pager_in_car_packages)
+            binding.textSelectedStatus.text =
+                "(${Helper.getLocalizedInCarStatus(super.getContext(), selectedStatus)})"
+        }
         initRecycler()
         initListeners()
         activityDelegate = activity as ViewPagerCountValuesDelegate
-        binding.textTitle.text = getString(R.string.packages_view_pager_in_car_packages)
-        binding.textSelectedStatus.text =
-            "(${Helper.getLocalizedInCarStatus(super.getContext(), selectedStatus)})"
     }
 
     private fun initRecycler() {
@@ -182,7 +192,8 @@ class InCarPackagesFragment(
         binding.rvPackages.adapter = InCarPackageGroupedCellAdapter(
             ArrayList(),
             super.getContext(),
-            this
+            this,
+            isSprint
         )
         binding.rvPackages.layoutManager = layoutManager
     }
@@ -192,8 +203,13 @@ class InCarPackagesFragment(
             searchWord = null
             selectedStatus = InCarPackageStatus.TO_DELIVER
             selectedPackageType = PackageType.ALL
-            binding.textSelectedStatus.text =
-                "(${Helper.getLocalizedInCarStatus(super.getContext(), selectedStatus)})"
+            if (loginResponse?.user?.companyID == 240.toLong() || loginResponse?.user?.companyID == 313.toLong()) {
+                binding.textSelectedStatus.text =
+                    "(${Helper.getLocalizedInCarStatus(super.getContext(), selectedStatus, true)})"
+            } else {
+                binding.textSelectedStatus.text =
+                    "(${Helper.getLocalizedInCarStatus(super.getContext(), selectedStatus)})"
+            }
             getPackagesBySelectedMode()
         }
 
@@ -300,7 +316,8 @@ class InCarPackagesFragment(
                 binding.rvPackages.adapter = InCarPackageGroupedCellAdapter(
                     ArrayList(),
                     super.getContext(),
-                    this
+                    this,
+                    isSprint
                 )
                 binding.rvPackages.layoutManager = layoutManager
             }
@@ -315,7 +332,8 @@ class InCarPackagesFragment(
                     super.getContext(),
                     this,
                     null,
-                    isGrouped = false
+                    isGrouped = false,
+                    isSprint
                 )
                 binding.rvPackages.layoutManager = layoutManager
             }
@@ -1032,11 +1050,16 @@ class InCarPackagesFragment(
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_status_filter -> {
-                InCarStatusFilterDialog(requireContext(), this, selectedStatus).showDialog()
+                InCarStatusFilterDialog(
+                    requireContext(),
+                    this,
+                    selectedStatus,
+                    isSprint
+                ).showDialog()
             }
 
             R.id.button_view_mode -> {
-                InCarViewModeDialog(requireContext(), this, selectedViewMode).showDialog()
+                InCarViewModeDialog(requireContext(), this, selectedViewMode, isSprint).showDialog()
             }
 
             R.id.button_search -> {
@@ -1446,8 +1469,13 @@ class InCarPackagesFragment(
 
     override fun onStatusChanged(selectedStatus: InCarPackageStatus) {
         this.selectedStatus = selectedStatus
-        binding.textSelectedStatus.text =
-            "(${Helper.getLocalizedInCarStatus(super.getContext(), selectedStatus)})"
+        if (loginResponse?.user?.companyID == 240.toLong() || loginResponse?.user?.companyID == 313.toLong()) {
+            binding.textSelectedStatus.text =
+                "(${Helper.getLocalizedInCarStatus(super.getContext(), selectedStatus, true)})"
+        } else {
+            binding.textSelectedStatus.text =
+                "(${Helper.getLocalizedInCarStatus(super.getContext(), selectedStatus)})"
+        }
         getPackagesBySelectedMode()
     }
 
