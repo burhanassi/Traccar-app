@@ -80,6 +80,8 @@ class FulfilmentSorterBarcodeScannerActivity :
     private var isReject: Boolean = false
     private var flagLocation: Boolean = false
 
+    private var isBarcodeScanningAllowed = true
+
     private var companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -349,6 +351,9 @@ class FulfilmentSorterBarcodeScannerActivity :
     }
 
     private fun executeBarcodeAction(barcode: String?) {
+        if (!isBarcodeScanningAllowed) {
+            return
+        }
         when (selectedScanMode) {
             FulfilmentSorterScanMode.LOCATION -> {
                 callGetWarehouseLocation(barcode)
@@ -367,21 +372,25 @@ class FulfilmentSorterBarcodeScannerActivity :
             }
 
             FulfilmentSorterScanMode.ITEM_INTO_BIN -> {
-//                if (!companyConfigurations?.isSortAndPickFulfillmentItemsByScanningProductBarcode!!) {
-//                    if (isBinScan) {
-//                        callSortItemIntoBin(barcode)
-//                    } else {
-//
-//                        callSortItemIntoLocation(barcode)
-//                    }
-//                } else {
+                if (!companyConfigurations?.isSortAndPickFulfillmentItemsByScanningProductBarcode!!) {
+                    if (isBinScan) {
+                        callSortItemIntoBin(barcode)
+                    } else {
+
+                        callSortItemIntoLocation(barcode)
+                    }
+                } else {
+                    stopBarcodeScanning()
                     vibrate()
-                runOnUiThread {
-                    ItemQuantityDialog(this@FulfilmentSorterBarcodeScannerActivity, this@FulfilmentSorterBarcodeScannerActivity, barcode!!).showDialog()
+                    runOnUiThread {
+                        ItemQuantityDialog(
+                            this@FulfilmentSorterBarcodeScannerActivity,
+                            this@FulfilmentSorterBarcodeScannerActivity,
+                            barcode!!
+                        ).showDialog()
+                    }
                     scannedItemsHashMap.remove(barcode)
                 }
-
-//                }
             }
 
             FulfilmentSorterScanMode.SHIPPING_PLAN -> {
@@ -393,6 +402,19 @@ class FulfilmentSorterBarcodeScannerActivity :
         }
     }
 
+    private fun toggleBarcodeScanning(allowScanning: Boolean) {
+        isBarcodeScanningAllowed = allowScanning
+    }
+
+    private fun stopBarcodeScanning() {
+        toggleBarcodeScanning(false)
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun resumeBarcodeScanning() {
+        toggleBarcodeScanning(true)
+        cameraSource?.start(binding.surfaceView.holder)
+    }
     //APIs
     private fun callGetWarehouseLocation(barcode: String?) {
         this.runOnUiThread {
@@ -1032,5 +1054,10 @@ class FulfilmentSorterBarcodeScannerActivity :
         } else {
             callSortItemIntoLocation(barcode, quantity)
         }
+        resumeBarcodeScanning()
+    }
+
+    override fun onDismiss() {
+        resumeBarcodeScanning()
     }
 }

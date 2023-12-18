@@ -37,7 +37,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', 'base_url', '\"https://apis-customer.logestechs.com/\"'
+            buildConfigField 'String', 'base_url', '\"https://apisv5.logestechs.com/\"'
             manifestPlaceholders = [crashlyticsCollectionEnabled: "true"]
             signingConfig signingConfigs.release
         }
@@ -45,7 +45,7 @@ android {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', 'base_url', '\"http://pal-ship.com:8080/saas/\"'
+            buildConfigField 'String', 'base_url', '\"http://pal-ship.com:8080/\"'
 //            buildConfigField 'String', 'base_url', '\"http://192.168.1.8:8080/\"'
             manifestPlaceholders = [crashlyticsCollectionEnabled: "false"]
         }

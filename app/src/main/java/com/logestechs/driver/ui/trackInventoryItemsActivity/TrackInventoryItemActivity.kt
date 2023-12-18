@@ -257,7 +257,7 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
                 binding.containerItemStatus.background = gradientDrawable
                 binding.itemAddedMethodRejected.text =
                     itemDetails.shippingPlanBarcode ?: getString(R.string.title_manually)
-                binding.itemRejectedDateRejected.text = ""
+                binding.itemRejectedDateRejected.visibility = View.GONE
                 binding.itemLocationBarcodeRejected.text = itemDetails.locationBarcode ?: "-------"
                 binding.itemRejectedReasonRejected.text = itemDetails.rejectReason ?: "-------"
                 binding.itemExpiryDateRejected.text = Helper.formatServerDateLocalized(
@@ -379,8 +379,8 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
                 binding.itemPackedByReturned.text = itemDetails.packedUser ?: "-------"
                 binding.itemPackageNumberBarcodeReturned.text =
                     itemDetails.packageBarcode ?: "-------"
-                binding.itemReturnedDateReturned.text = ""
-                binding.itemReturnReasonReturned.text = ""
+                binding.itemReturnedDateReturned.visibility = View.GONE
+                binding.itemReturnReasonReturned.visibility = View.GONE
                 binding.itemCurrentLocationReturned.text = itemDetails.locationBarcode ?: "-------"
             }
 

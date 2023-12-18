@@ -28,6 +28,8 @@ class ScannedBarcodeCellAdapter(
     val driverCompanyConfigurations =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
+    var totalQuantityScanned: Int = 0
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScannedBarcodeViewHolder {
         context = parent.context
 
@@ -94,6 +96,7 @@ class ScannedBarcodeCellAdapter(
                     return
                 } else {
                     (list[index]?.data as Package).scannedSubPackagesCount += 1
+                    totalQuantityScanned += 1
                 }
                 notifyItemChanged(index)
                 return
@@ -101,10 +104,15 @@ class ScannedBarcodeCellAdapter(
         }
         if (!isParent) {
             (scannedItem?.data as Package).scannedSubPackagesCount += 1
+            totalQuantityScanned += 1
         }
         list.add(0, scannedItem)
         notifyItemChanged(0)
         notifyItemInserted(0)
+    }
+
+    fun getScannedSubPackagesCount(): Int {
+        return totalQuantityScanned
     }
 }
 

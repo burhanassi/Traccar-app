@@ -191,6 +191,7 @@
     <string name="is_whatsapp_business">Use Whatsapp Business</string>
     <string name="error_install_whatsapp">Please make sure that Whatsapp is installed</string>
     <string name="error_package_is_returned">Caution, this package is returned!</string>
+    <string name="error_scan_all_items">Caution, please scan all items!</string>
     <string name="error_package_is_failed">Caution, this package is failed!</string>
     <string name="cancel_pickup">Cancel Pickup</string>
     <string name="pack_without_scan">Pack without scan</string>
