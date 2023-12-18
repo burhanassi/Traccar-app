@@ -32,6 +32,7 @@ class ItemQuantityDialog(
 
         binding.buttonCancel.setOnClickListener {
             alertDialog.dismiss()
+            listener.onDismiss()
         }
 
         binding.buttonDone.setOnClickListener {

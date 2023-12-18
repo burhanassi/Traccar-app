@@ -37,7 +37,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', 'base_url', '\"https://apis-customer.logestechs.com/\"'
+            buildConfigField 'String', 'base_url', '\"https://apisv5.logestechs.com/\"'
             manifestPlaceholders = [crashlyticsCollectionEnabled: "true"]
             signingConfig signingConfigs.release
         }
