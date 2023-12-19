@@ -372,7 +372,7 @@ class FulfilmentSorterBarcodeScannerActivity :
             }
 
             FulfilmentSorterScanMode.ITEM_INTO_BIN -> {
-                if (!companyConfigurations?.isSortAndPickFulfillmentItemsByScanningProductBarcode!!) {
+                if (!companyConfigurations?.isSortAndPickFulfillmentItemsByScanningProductBarcode!! || isReject) {
                     if (isBinScan) {
                         callSortItemIntoBin(barcode)
                     } else {
