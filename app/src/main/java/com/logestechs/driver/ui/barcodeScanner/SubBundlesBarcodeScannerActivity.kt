@@ -69,7 +69,11 @@ class SubBundlesBarcodeScannerActivity : LogesTechsActivity(), View.OnClickListe
         binding = ActivitySubBundlesBarcodeScannerBinding.inflate(layoutInflater)
         setContentView(binding.root)
         toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
-        initialiseDetectorsAndSources()
+        if (SharedPreferenceWrapper.getScanWay() == "built-in") {
+            // Use built-in scanner, it goes for dispatchKeyEvent
+        } else {
+            initialiseDetectorsAndSources()
+        }
         initRecycler()
         initListeners()
     }
@@ -125,41 +129,48 @@ class SubBundlesBarcodeScannerActivity : LogesTechsActivity(), View.OnClickListe
     }
 
     override fun dispatchKeyEvent(e: KeyEvent): Boolean {
-        if (e.keyCode == KeyEvent.KEYCODE_BACK) {
-            onBackPressed()
-            return true
-        }
-        val action = e.action
-        val keyCode = e.keyCode
-        val character = e.unicodeChar.toChar()
-
-        if (action == KeyEvent.ACTION_DOWN &&
-            keyCode != KeyEvent.KEYCODE_ENTER &&
-            character != '\t' &&
-            character != '\n' &&
-            character != '\u0000'
-        ) {
-            val pressedKey = character
-            scannedBarcode += pressedKey
-        }
-        if (action == KeyEvent.ACTION_DOWN &&
-            (keyCode == KeyEvent.KEYCODE_ENTER || character == '\t' || character == '\n' || character == '\u0000')
-        ) {
-            if (!scannedItemsHashMap.containsKey(scannedBarcode)) {
-                scannedItemsHashMap[scannedBarcode] = scannedBarcode
-                if (!(binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).makePackageSelected(
-                        scannedBarcode
-                    )
-                ) {
-                    Helper.showErrorMessage(this, getString(R.string.error_package_not_found))
-                    Executors.newSingleThreadScheduledExecutor().schedule({
-                        scannedItemsHashMap.remove(scannedBarcode)
-                    }, 2, TimeUnit.SECONDS)
-                }
+        if (SharedPreferenceWrapper.getScanWay() == "built-in") {
+            if (e.characters != null && e.characters.isNotEmpty()) {
+                handleDetectedBarcode(e.characters)
             }
-            scannedBarcode = ""
+            return super.dispatchKeyEvent(e)
+        } else {
+            if (e.keyCode == KeyEvent.KEYCODE_BACK) {
+                onBackPressed()
+                return true
+            }
+            val action = e.action
+            val keyCode = e.keyCode
+            val character = e.unicodeChar.toChar()
+
+            if (action == KeyEvent.ACTION_DOWN &&
+                keyCode != KeyEvent.KEYCODE_ENTER &&
+                character != '\t' &&
+                character != '\n' &&
+                character != '\u0000'
+            ) {
+                val pressedKey = character
+                scannedBarcode += pressedKey
+            }
+            if (action == KeyEvent.ACTION_DOWN &&
+                (keyCode == KeyEvent.KEYCODE_ENTER || character == '\t' || character == '\n' || character == '\u0000')
+            ) {
+                if (!scannedItemsHashMap.containsKey(scannedBarcode)) {
+                    scannedItemsHashMap[scannedBarcode] = scannedBarcode
+                    if (!(binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).makePackageSelected(
+                            scannedBarcode
+                        )
+                    ) {
+                        Helper.showErrorMessage(this, getString(R.string.error_package_not_found))
+                        Executors.newSingleThreadScheduledExecutor().schedule({
+                            scannedItemsHashMap.remove(scannedBarcode)
+                        }, 2, TimeUnit.SECONDS)
+                    }
+                }
+                scannedBarcode = ""
+            }
+            return false
         }
-        return false
     }
 
 

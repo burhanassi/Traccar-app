@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.view.KeyEvent
 import android.view.SurfaceHolder
 import android.view.View
 import androidx.annotation.RequiresApi
@@ -28,7 +29,7 @@ import com.logestechs.driver.utils.DateFormats
 import com.logestechs.driver.utils.FulfillmentItemStatus
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsActivity
-import com.logestechs.driver.utils.adapters.InCarPackageCellAdapter
+import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.PreviousStatusesCellAdapter
 import com.logestechs.driver.utils.customViews.PeekingLinearLayoutManager
 import com.yariksoffice.lingver.Lingver
@@ -63,7 +64,11 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
         setContentView(binding.root)
 
         initUi()
-        initialiseDetectorsAndSources()
+        if (SharedPreferenceWrapper.getScanWay() == "built-in") {
+            // Use built-in scanner, it goes for dispatchKeyEvent
+        } else {
+            initialiseDetectorsAndSources()
+        }
     }
 
     private fun initUi() {
@@ -130,6 +135,14 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
                 }
             }
         })
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        if (event.characters != null && event.characters.isNotEmpty()) {
+            handleDetectedBarcode(event.characters)
+        }
+        return super.dispatchKeyEvent(event)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -281,7 +294,7 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
                     SimpleDateFormat(DateFormats.DATE_FILTER_FORMAT.value, Locale.US)
                         .format(
                             SimpleDateFormat(DateFormats.SERVER_FORMAT.value, Locale.US).parse(
-                                itemDetails.createdDate
+                                itemDetails.createdDate!!
                             )!!
                         )
                 binding.itemLocationBarcodeSorted.text = itemDetails.locationBarcode ?: "-------"

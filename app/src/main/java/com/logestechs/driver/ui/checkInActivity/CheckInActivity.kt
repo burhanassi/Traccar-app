@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.view.KeyEvent
 import android.view.SurfaceHolder
 import android.view.View
 import androidx.annotation.RequiresApi
@@ -23,6 +24,7 @@ import com.logestechs.driver.databinding.ActivityCheckInBinding
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.CheckInsCellAdapter
 import com.logestechs.driver.utils.adapters.DriverRoutePackagesCellAdapter
 import com.logestechs.driver.utils.interfaces.ViewPagerCountValuesDelegate
@@ -58,7 +60,12 @@ class CheckInActivity : LogesTechsActivity(), View.OnClickListener {
         callGetCheckIns()
         initUi()
         initListener()
-        initialiseDetectorsAndSources()
+        initUi()
+        if (SharedPreferenceWrapper.getScanWay() == "built-in") {
+            // Use built-in scanner, it goes for dispatchKeyEvent
+        } else {
+            initialiseDetectorsAndSources()
+        }
         initRecycler()
     }
 
@@ -83,6 +90,14 @@ class CheckInActivity : LogesTechsActivity(), View.OnClickListener {
         }
 
         binding.buttonDone.setOnClickListener(this)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        if (event.characters != null && event.characters.isNotEmpty()) {
+            handleDetectedBarcode(event.characters)
+        }
+        return super.dispatchKeyEvent(event)
     }
 
     private fun initialiseDetectorsAndSources() {
