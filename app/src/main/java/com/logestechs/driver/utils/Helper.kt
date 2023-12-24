@@ -280,6 +280,10 @@ class Helper {
                 } else if (number.length == 12) {
                     number = "+$number"
                     number
+                } else if (number.length == 13) {
+                    number = number.drop(4)
+                    number = "+972$number"
+                    number
                 } else {
                     number
                 }
