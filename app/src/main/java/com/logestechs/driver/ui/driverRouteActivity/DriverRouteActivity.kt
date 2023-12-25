@@ -17,6 +17,7 @@ import com.logestechs.driver.utils.InCarPackageStatus
 import com.logestechs.driver.utils.ItemTouchHelperCallback
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.PackageType
+import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.DriverRoutePackagesCellAdapter
 import com.logestechs.driver.utils.interfaces.OnStartDragListener
 import kotlinx.coroutines.Dispatchers
@@ -114,6 +115,9 @@ class DriverRouteActivity : LogesTechsActivity(),
                 binding.rvPackages.layoutManager = layoutManager
             }
             callGetInCarPackagesUngrouped()
+        }
+        if (SharedPreferenceWrapper.getNotificationsCount() == "0") {
+            binding.toolbarMain.notificationCount.visibility = View.GONE
         }
     }
 

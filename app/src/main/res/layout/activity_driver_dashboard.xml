@@ -394,8 +394,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="14dp"
                         android:layout_weight="1"
-                        app:iconSrc="@{@drawable/ic_pending_packages_pink}" />
-
+                        app:iconSrc="@{@drawable/ic_accepted_packages_pink}"
+                        app:titleText="@{@string/dashboard_accepted_packages}" />
                     <include
                         android:id="@+id/dash_entry_in_car_packages"
                         layout="@layout/item_dashboard_entry"
@@ -403,35 +403,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         app:iconSrc="@{@drawable/ic_in_car_packages_pink}" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginEnd="24dp"
-                    android:baselineAligned="false"
-                    android:clipChildren="false">
-
-                    <include
-                        android:id="@+id/dash_entry_failed_packages"
-                        layout="@layout/item_dashboard_entry"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="14dp"
-                        android:layout_weight="1"
-                        app:iconSrc="@{@drawable/ic_failed_packages_pink}" />
-
-                    <include
-                        android:id="@+id/dash_entry_postponed_packages"
-                        layout="@layout/item_dashboard_entry"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:iconSrc="@{@drawable/ic_postponed_packages_pink}"
-                        app:titleText="@{@string/dashboard_postponed}" />
 
                 </LinearLayout>
 
@@ -558,7 +529,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginEnd="10dp"
-                            app:iconSrc="@{@drawable/ic_failed_packages_pink}" />
+                            app:iconSrc="@{@drawable/ic_failed_packages_pink}"
+                            app:titleText="@{@string/dashboard_failed}" />
 
                         <include
                             android:id="@+id/dash_sub_entry_returned_packages"
@@ -566,7 +538,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginEnd="10dp"
-                            app:iconSrc="@{@drawable/ic_returned_package_gray}" />
+                            app:iconSrc="@{@drawable/ic_returned_package_gray}"
+                            app:titleText="@{@string/title_returned_packages}" />
                         <include
                             android:id="@+id/dash_sub_entry_draft_pickups"
                             layout="@layout/item_dashboard_sub_entry"

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.barcodeScanner.FulfilmentPickerBarcodeScannerActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:animateLayoutChanges="true"
+            android:clipChildren="false"
+            android:orientation="vertical"
+            android:background="@drawable/background_barcode_scanner_bottom_section">
+
+            <FrameLayout
+                android:id="@+id/container_surface_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_weight="0.35"
+                android:background="@android:color/black"
+                android:visibility="visible">
+
+                <SurfaceView
+                    android:id="@+id/surface_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <View
+                    android:layout_width="196dp"
+                    android:layout_height="3dp"
+                    android:layout_gravity="center"
+                    android:background="@color/pink_carnation" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/background_floating_message"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_title"
+                        style="@style/LogesTechsMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"
+                        tools:text="Please scan barcode" />
+
+                </LinearLayout>
+            </FrameLayout>
+            <LinearLayout
+                android:id="@+id/container_scanned_items"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.65"
+                android:background="@drawable/background_barcode_scanner_bottom_section"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/container_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:gravity="center_vertical"
+                    android:background="@color/peach_orange_tab_pager_bar">
+
+                    <TextView
+                        style="@style/LogesTechsBold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_weight="1"
+                        android:text="@string/title_fulfilment_orders"
+                        android:textColor="@color/fontTrackHint"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_scanned_orders"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_weight="1"
+                    android:overScrollMode="never"
+                    android:paddingBottom="140dp"
+                    tools:listitem="@layout/item_pending_package_customer_cell" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_scanned_items"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_weight="1"
+                    android:overScrollMode="never"
+                    android:paddingBottom="140dp"
+                    tools:listitem="@layout/item_pending_package_customer_cell" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:orientation="vertical">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button_insert_barcode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="#FCA429"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_keyboard_white"
+                android:tint="@android:color/white"
+                app:maxImageSize="35dp"
+                tools:ignore="ContentDescription" />
+
+            <FrameLayout
+                android:id="@+id/container_done_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/peach_orange">
+
+                <Button
+                    android:id="@+id/button_done"
+                    style="@style/LogesTechsMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/background_logestechs_button"
+                    android:text="@string/button_done"
+                    android:textColor="@color/white" />
+
+            </FrameLayout>
+        </LinearLayout>
+
+    </FrameLayout>
+
+</layout>

@@ -34,7 +34,9 @@ import com.logestechs.driver.databinding.ActivityMassCodReportDeliveryBinding
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.Helper.Companion.format
 import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
+import com.logestechs.driver.utils.dialogs.DeliveryCodeVerificationDialog
 import com.logestechs.driver.utils.interfaces.ThumbnailsListListener
+import com.logestechs.driver.utils.interfaces.VerificationCodeDialogListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -53,7 +55,7 @@ import java.util.*
 
 
 class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener,
-    ThumbnailsListListener {
+    ThumbnailsListListener, VerificationCodeDialogListener {
     private lateinit var binding: ActivityMassCodReportDeliveryBinding
 
     private var path: String? = null
@@ -173,6 +175,10 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
         binding.buttonDeliverPackage.setOnClickListener(this)
         binding.buttonCaptureImage.setOnClickListener(this)
         binding.buttonLoadImage.setOnClickListener(this)
+
+        if (SharedPreferenceWrapper.getNotificationsCount() == "0") {
+            binding.toolbarMain.notificationCount.visibility = View.GONE
+        }
     }
 
     private fun getExtras() {
@@ -435,13 +441,18 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                     )
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            callDeliverMassCodReport(
-                                massCodReport?.id, DeliverMassCodReportRequestBody(
-                                    response.body()?.fileUrl,
-                                    getPodImagesUrls(),
-                                    binding.etReason.text.toString()
+                            if (companyConfigurations?.isEnablePinCodeForMassCodReportsAndMassReturnedPackages!!) {
+                                requestPinCodeSms()
+                                DeliveryCodeVerificationDialog(super.getContext(), this@MassCodReportDeliveryActivity, massCodReport = massCodReport).showDialog()
+                            } else {
+                                callDeliverMassCodReport(
+                                    massCodReport?.id, DeliverMassCodReportRequestBody(
+                                        response.body()?.fileUrl,
+                                        getPodImagesUrls(),
+                                        binding.etReason.text.toString()
+                                    )
                                 )
-                            )
+                            }
                         }
                     } else {
                         hideWaitDialog()
@@ -915,6 +926,59 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
         }
     }
 
+    private fun requestPinCodeSms() {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.requestPinCodeSmsForMassCod(
+                        massCodReport?.id
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_clear_signature -> {
@@ -937,13 +1001,18 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                                 )
                             )
                         }else {
-                            callDeliverMassCodReport(
-                                massCodReport?.id, DeliverMassCodReportRequestBody(
-                                    null,
-                                    getPodImagesUrls(),
-                                    binding.etReason.text.toString()
+                            if (companyConfigurations?.isEnablePinCodeForMassCodReportsAndMassReturnedPackages!!) {
+                                requestPinCodeSms()
+                                DeliveryCodeVerificationDialog(super.getContext(), this, massCodReport = massCodReport).showDialog()
+                            } else {
+                                callDeliverMassCodReport(
+                                    massCodReport?.id, DeliverMassCodReportRequestBody(
+                                        null,
+                                        getPodImagesUrls(),
+                                        binding.etReason.text.toString()
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
                 } else {
@@ -995,5 +1064,19 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
 
     override fun onDeleteImage(position: Int) {
         callDeletePodImage(position)
+    }
+
+    override fun onPackageVerified() {
+        callDeliverMassCodReport(
+            massCodReport?.id, DeliverMassCodReportRequestBody(
+                null,
+                getPodImagesUrls(),
+                binding.etReason.text.toString()
+            )
+        )
+    }
+
+    override fun onResendPinSms() {
+        requestPinCodeSms()
     }
 }

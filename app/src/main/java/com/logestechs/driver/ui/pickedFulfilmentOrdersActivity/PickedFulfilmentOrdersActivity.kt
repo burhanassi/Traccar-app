@@ -3,6 +3,7 @@ package com.logestechs.driver.ui.pickedFulfilmentOrdersActivity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
+import com.logestechs.driver.api.requests.PrintPickListRequestBody
 import com.logestechs.driver.data.model.FulfilmentOrder
 import com.logestechs.driver.databinding.ActivityPickedFulfilmentOrdersBinding
 import com.logestechs.driver.ui.barcodeScanner.FulfilmentPackerBarcodeScannerActivity
@@ -23,6 +25,7 @@ import com.logestechs.driver.utils.FulfilmentOrderStatus
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.NewFulfilmentOrderCellAdapter
 import com.logestechs.driver.utils.adapters.PickedFulfilmentOrderCellAdapter
 import com.logestechs.driver.utils.interfaces.PickedFulfilmentOrderCardListener
@@ -31,6 +34,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.util.TimeZone
 
 class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrderCardListener,
     View.OnClickListener {
@@ -43,6 +47,8 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
 
     private var fulfilmentOrdersList: ArrayList<FulfilmentOrder?> = ArrayList()
     private var status: String? = FulfilmentOrderStatus.PICKED.name
+
+    private var isOnCreateCalled = false
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,13 +97,18 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
 
         tabLayout.getTabAt(0)?.select()
         callGetFulfilmentOrders(FulfilmentOrderStatus.PICKED.name)
+        isOnCreateCalled = true
     }
-//    override fun onResume() {
-//        super.onResume()
-//        currentPageIndex = 1
-//        (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()
-//        callGetFulfilmentOrders(status)
-//    }
+    override fun onResume() {
+        super.onResume()
+
+        if (!isOnCreateCalled) {
+            currentPageIndex = 1
+            (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()
+            callGetFulfilmentOrders(status)
+        }
+        isOnCreateCalled = false
+    }
 
     private fun initRecycler() {
         val layoutManager = LinearLayoutManager(
@@ -121,6 +132,10 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
 
         binding.toolbarMain.buttonNotifications.setOnClickListener(this)
         binding.toolbarMain.buttonBack.setOnClickListener(this)
+
+        if (SharedPreferenceWrapper.getNotificationsCount() == "0") {
+            binding.toolbarMain.notificationCount.visibility = View.GONE
+        }
     }
 
     private fun handleNoPackagesLabelVisibility(isEmpty: Boolean) {
@@ -286,6 +301,64 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
         }
     }
 
+    private fun callPrintPickList(index: Int) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val timezone = TimeZone.getDefault().id.toString()
+
+                    val response =
+                        ApiAdapter.apiClient.printPickList(
+                            PrintPickListRequestBody(listOf(fulfilmentOrdersList[index]?.id ?: 0)),
+                            timezone
+                        )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        val data = response.body()!!
+                        withContext(Dispatchers.Main) {
+                            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(data.url))
+                            startActivity(browserIntent)
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(), jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(), getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_back -> {
@@ -322,5 +395,9 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
 
     override fun onDirectPackFulfilmentOrder(index: Int) {
         callPackFulfilmentOrder(index)
+    }
+
+    override fun onPrintPickList(index: Int) {
+        callPrintPickList(index)
     }
 }

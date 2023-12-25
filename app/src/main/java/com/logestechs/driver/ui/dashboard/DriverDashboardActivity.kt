@@ -88,6 +88,7 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
             recreate()
         } else {
             callGetDashboardInfo()
+            getNotificationsFirstTime()
         }
     }
 
@@ -125,7 +126,6 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
                 getString(R.string.dashboard_pending_packages_sprint)
             binding.dashEntryInCarPackages.titleText =
                 getString(R.string.dashboard_in_car_packages_sprint)
-            binding.dashEntryFailedPackages.titleText = getString(R.string.dashboard_failed_sprint)
             binding.dashSubEntryMassCodReports.titleText =
                 getString(R.string.dashboard_mass_cod_reports_sprint)
             binding.dashSubEntryDraftPickups.titleText =
@@ -142,7 +142,6 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
             binding.dashEntryPendingPackages.titleText =
                 getString(R.string.dashboard_pending_packages)
             binding.dashEntryInCarPackages.titleText = getString(R.string.dashboard_in_car_packages)
-            binding.dashEntryFailedPackages.titleText = getString(R.string.dashboard_failed)
             binding.dashSubEntryMassCodReports.titleText =
                 getString(R.string.dashboard_mass_cod_reports)
             binding.dashSubEntryDraftPickups.titleText = getString(R.string.title_draft_pickups)
@@ -628,6 +627,51 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
             } catch (e: Exception) {
                 Helper.logException(e, Throwable().stackTraceToString())
             }
+        }
+    }
+
+    private fun getNotificationsFirstTime() {
+        if (Helper.isInternetAvailable(this)) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.getNotifications()
+                    if (response!!.isSuccessful && response.body() != null) {
+                        val data = response.body()!!
+                        SharedPreferenceWrapper.saveNotificationsCount(data.unReadUserNotificationsNo.toString())
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            Helper.showErrorMessage(
+                this, getString(R.string.error_check_internet_connection)
+            )
         }
     }
 }

@@ -65,6 +65,7 @@
     <string name="title_scanned_packages_sprint">الشحنات المقروءة</string>
     <string name="title_shelf">مدن الرف</string>
     <string name="button_done">تم</string>
+    <string name="button_scan_tote">مسح سلة التحميل</string>
     <string name="error_phone_permission">الرجاء اعطاء صلاحية الإتصال</string>
     <string name="button_scan_packages_barcodes">مسح كودات الطرود</string>
     <string name="button_scan_packages_barcodes_sprint">مسح اكواد الشحنات</string>
@@ -114,7 +115,9 @@
     <string name="button_cancel">إلغاء</string>
     <string name="button_search">بحث</string>
     <string name="title_insert_search_word">الرجاء ادخال كلمة البحث</string>
+    <string name="title_insert_item_quantity">الرجاء ادخال الكمية المطلوبة</string>
     <string name="hint_search_word">كلمة البحث</string>
+    <string name="hint_quantity">الكمية</string>
     <string name="title_sign_below">الرجاء التوقيع في المكان المخصص ادناه</string>
     <string name="button_add_image">إضافة صورة</string>
     <string name="text_full_delivery">توصيل كامل</string>
@@ -188,6 +191,7 @@
     <string name="is_whatsapp_business">استخدام Whatsapp Business</string>
     <string name="error_install_whatsapp">الرجاء التأكد من وجود تطبيق Whatsapp</string>
     <string name="error_package_is_returned">يرجى الانتباه، هذا الطرد راجع!</string>
+    <string name="error_scan_all_items">يرجى مسح جميع العناصر!</string>
     <string name="error_package_is_failed">يرجى الانتباه، هذا الطرد عالق!</string>
     <string name="cancel_pickup">إلغاء التحميل</string>
     <string name="pack_without_scan">تغليف تلقائي</string>
@@ -197,6 +201,7 @@
     <string name="bin_location_assigned_successfully">تم تعيين موقع السلة بنجاح</string>
     <string name="please_scan_shipping_plan_barcode">الرجاء مسح باركود طلب التصنيف</string>
     <string name="please_scan_items">الرجاء مسح العناصر</string>
+    <string name="please_scan_orders">الرجاء مسح الطلبات</string>
     <string name="please_scan_item_barcode">الرجاء مسح باركود العنصر</string>
     <string name="please_scan_package_barcode">الرجاء إثبات التسليم من خلال مسح باركود الطرد</string>
     <string name="please_scan_package_barcode_unload">الرجاء مسح باركود الطرد</string>
@@ -218,11 +223,13 @@
     <string name="dashboard_new_fulfilment_orders">الطلبات المصنفة\nالجديدة</string>
     <string name="dashboard_track_inventory_items">تتبع العناصر</string>
     <string name="title_new_fulfilment_orders">الطلبات المصنفة الجديدة</string>
+    <string name="title_fulfilment_orders">الطلبات المصنفة</string>
     <string name="title_tracking_inventory_item">تتبع العناصر</string>
     <string name="dashboard_picked_fulfilment_orders">الطلبات المصنفة\nفي سلات التحميل</string>
     <string name="title_picked_fulfilment_orders">الطلبات المصنفة في سلات التحميل</string>
     <string name="message_no_fulfilment_orders">لا يوجد طلبات مصنفة \nالرجاء سحب الشاشة لأسفل لتحديث القائمة</string>
     <string name="button_pick">تحميل في السلة</string>
+    <string name="button_multi_pick">تجميع عدة طلبات</string>
     <string name="title_items_number">عدد العناصر</string>
     <string name="title_skus_number">عدد ال SKUs</string>
     <string name="button_pack">تغليف</string>
@@ -296,6 +303,8 @@
     <string name="asn_barcode_label">طلب التوريد: </string>
     <string name="added_method_label">طريقة الاضافة: </string>
     <string name="reject_date_label">تاريخ الرفض: </string>
+    <string name="created_date_label">تاريخ الحركة: </string>
+    <string name="note_label">ملاحظة: </string>
     <string name="rejected_reason_label">سبب الرفض: </string>
     <string name="expiry_date_label">تاريخ الانتهاء: </string>
     <string name="location_barcode_label">باركود الموقع: </string>
@@ -311,11 +320,12 @@
     <string name="return_reason_label">سبب الارجاع: </string>
     <string name="returned_date_label">تاريخ الارجاع: </string>
     <string name="current_location_label">الموقع الحالي: </string>
+    <string name="previous_statuses_label">الحالات السابقة: </string>
     <string name="service_type">نوع الخدمة</string>
     <string name="title_manually">بواسطة المستخدم</string>
     <string name="packaging_type_warehouse">تغليف المستودع</string>
     <string name="packaging_type_customer">تغليف الزبون</string>
-    <string name="text_is_custom_packing"> تغليف مخصص</string>
+    <string name="text_is_custom_packing">٫ تغليف مخصص</string>
     <string name="order_type">نوع الطرد: </string>
     <string name="order_barcode">باركود الطلب: </string>
     <string name="tote_barcode">باركود سلة التحميل: </string>

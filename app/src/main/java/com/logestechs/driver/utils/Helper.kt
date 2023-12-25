@@ -55,6 +55,8 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.*
+import android.os.Handler
+import android.os.Looper
 
 enum class AppFonts(val value: Int) {
     ROBOTO_BOLD(R.font.roboto_bold),
@@ -128,13 +130,18 @@ class Helper {
                 val layout: View = layoutInflater.inflate(R.layout.custom_toast_fail, null)
                 val text = layout.findViewById<TextView>(R.id.text)
                 text.text = message
-                toast = Toast(context)
-                toast?.setGravity(Gravity.TOP, 0, 70)
-                toast?.duration = Toast.LENGTH_LONG
-                toast?.view = layout
-                toast?.show()
+
+                Handler(Looper.getMainLooper()).post {
+                    toast = Toast(context)
+                    toast?.setGravity(Gravity.TOP, 0, 70)
+                    toast?.duration = Toast.LENGTH_LONG
+                    toast?.view = layout
+                    toast?.show()
+                }
             }
         }
+
+
 
         @SuppressLint("InflateParams")
         fun showSuccessMessage(context: Context?, message: String?) {
@@ -272,6 +279,10 @@ class Helper {
                     number
                 } else if (number.length == 12) {
                     number = "+$number"
+                    number
+                } else if (number.length == 13) {
+                    number = number.drop(4)
+                    number = "+972$number"
                     number
                 } else {
                     number

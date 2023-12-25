@@ -27,7 +27,10 @@ import com.logestechs.driver.databinding.ActivityFulfilmentSorterBarcodeScannerB
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.ScannedShippingPlanItemCellAdapter
 import com.logestechs.driver.utils.dialogs.InsertBarcodeDialog
+import com.logestechs.driver.utils.dialogs.ItemQuantityDialog
+import com.logestechs.driver.utils.dialogs.SearchPackagesDialog
 import com.logestechs.driver.utils.interfaces.InsertBarcodeDialogListener
+import com.logestechs.driver.utils.interfaces.ItemQuantityDialogListener
 import com.logestechs.driver.utils.interfaces.ScannedShippingPlanItemCardListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -48,7 +51,8 @@ enum class FulfilmentSorterScanMode {
 
 class FulfilmentSorterBarcodeScannerActivity :
     LogesTechsActivity(), View.OnClickListener,
-    InsertBarcodeDialogListener, ScannedShippingPlanItemCardListener, SetTimeSpent.DataListener {
+    InsertBarcodeDialogListener, ScannedShippingPlanItemCardListener, SetTimeSpent.DataListener
+    , ItemQuantityDialogListener {
     private lateinit var binding: ActivityFulfilmentSorterBarcodeScannerBinding
 
     private var barcodeDetector: BarcodeDetector? = null
@@ -75,7 +79,11 @@ class FulfilmentSorterBarcodeScannerActivity :
     private var rejectedItems: Int? = null
     private var isReject: Boolean = false
     private var flagLocation: Boolean = false
-//    private var idsListWrapper: MutableList<Long>? = null
+
+    private var isBarcodeScanningAllowed = true
+
+    private var companyConfigurations: DriverCompanyConfigurations? =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFulfilmentSorterBarcodeScannerBinding.inflate(layoutInflater)
@@ -343,6 +351,9 @@ class FulfilmentSorterBarcodeScannerActivity :
     }
 
     private fun executeBarcodeAction(barcode: String?) {
+        if (!isBarcodeScanningAllowed) {
+            return
+        }
         when (selectedScanMode) {
             FulfilmentSorterScanMode.LOCATION -> {
                 callGetWarehouseLocation(barcode)
@@ -361,10 +372,24 @@ class FulfilmentSorterBarcodeScannerActivity :
             }
 
             FulfilmentSorterScanMode.ITEM_INTO_BIN -> {
-                if (isBinScan) {
-                    callSortItemIntoBin(barcode)
+                if (!companyConfigurations?.isSortAndPickFulfillmentItemsByScanningProductBarcode!! || isReject) {
+                    if (isBinScan) {
+                        callSortItemIntoBin(barcode)
+                    } else {
+
+                        callSortItemIntoLocation(barcode)
+                    }
                 } else {
-                    callSortItemIntoLocation(barcode)
+                    stopBarcodeScanning()
+                    vibrate()
+                    runOnUiThread {
+                        ItemQuantityDialog(
+                            this@FulfilmentSorterBarcodeScannerActivity,
+                            this@FulfilmentSorterBarcodeScannerActivity,
+                            barcode!!
+                        ).showDialog()
+                    }
+                    scannedItemsHashMap.remove(barcode)
                 }
             }
 
@@ -377,6 +402,19 @@ class FulfilmentSorterBarcodeScannerActivity :
         }
     }
 
+    private fun toggleBarcodeScanning(allowScanning: Boolean) {
+        isBarcodeScanningAllowed = allowScanning
+    }
+
+    private fun stopBarcodeScanning() {
+        toggleBarcodeScanning(false)
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun resumeBarcodeScanning() {
+        toggleBarcodeScanning(true)
+        cameraSource?.start(binding.surfaceView.holder)
+    }
     //APIs
     private fun callGetWarehouseLocation(barcode: String?) {
         this.runOnUiThread {
@@ -645,7 +683,7 @@ class FulfilmentSorterBarcodeScannerActivity :
         }
     }
 
-    private fun callSortItemIntoBin(barcode: String?) {
+    private fun callSortItemIntoBin(barcode: String?, quantity: Int? = null) {
         this.runOnUiThread {
             showWaitDialog()
         }
@@ -655,6 +693,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                     val response = ApiAdapter.apiClient.sortItemIntoBin(
                         scannedBin?.id,
                         scannedShippingPlan?.id,
+                        quantity,
                         BarcodeRequestBody(barcode)
                     )
                     withContext(Dispatchers.Main) {
@@ -664,7 +703,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                         withContext(Dispatchers.Main) {
                             val response = response.body()
                             (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).insertItem(
-                                response?.itemDetails?.get(0)!!
+                                response?.itemDetails
                             )
                             binding.rvScannedBarcodes.smoothScrollToPosition(0)
                             updateShippingPlanCountValues(response?.shippingPlanDetails)
@@ -713,7 +752,7 @@ class FulfilmentSorterBarcodeScannerActivity :
         }
     }
 
-    private fun callSortItemIntoLocation(barcode: String?) {
+    private fun callSortItemIntoLocation(barcode: String?, quantity: Int? = null) {
         this.runOnUiThread {
             showWaitDialog()
         }
@@ -733,7 +772,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                             withContext(Dispatchers.Main) {
                                 val response = response?.body()
                                 (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).insertItem(
-                                    response?.itemDetails,
+                                    response?.itemDetails?.let { listOf(it) } ?: emptyList(),
                                     true
                                 )
                                 binding.rvScannedBarcodes.smoothScrollToPosition(0)
@@ -761,6 +800,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                         var response = ApiAdapter.apiClient.sortItemIntoLocation(
                             scannedWarehouseLocation?.id,
                             scannedShippingPlan?.id,
+                            quantity,
                             BarcodeRequestBody(itemBarcode = barcode)
                         )
                         if (response?.isSuccessful == true && response.body() != null) {
@@ -770,7 +810,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                             withContext(Dispatchers.Main) {
                                 val response = response.body()
                                 (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).insertItem(
-                                    response?.itemDetails?.get(0)
+                                    response?.itemDetails
                                 )
                                 binding.rvScannedBarcodes.smoothScrollToPosition(0)
                                 updateShippingPlanCountValues(response?.shippingPlanDetails)
@@ -1006,5 +1046,18 @@ class FulfilmentSorterBarcodeScannerActivity :
     override fun onDataReceived(data: Double?) {
         hours = data
         callSetTimeSpent(hours)
+    }
+
+    override fun onQuantityInserted(quantity: Int, barcode: String) {
+        if (isBinScan) {
+            callSortItemIntoBin(barcode, quantity)
+        } else {
+            callSortItemIntoLocation(barcode, quantity)
+        }
+        resumeBarcodeScanning()
+    }
+
+    override fun onDismiss() {
+        resumeBarcodeScanning()
     }
 }

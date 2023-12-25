@@ -1,6 +1,10 @@
 package com.logestechs.driver.ui.acceptedPackages
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -24,6 +28,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.example.tscdll.TSCActivity
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.Customer
@@ -38,6 +43,7 @@ import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsApp
 import com.logestechs.driver.utils.LogesTechsFragment
 import com.logestechs.driver.utils.RefreshViewModel
+import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.AcceptedPackageVillageCellAdapter
 import com.logestechs.driver.utils.bottomSheets.AcceptedPackagesBottomSheet
 import com.logestechs.driver.utils.interfaces.AcceptedPackagesCardListener
@@ -45,12 +51,15 @@ import com.logestechs.driver.utils.interfaces.ViewPagerCountValuesDelegate
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.URL
 import java.util.TimeZone
 import java.util.concurrent.Executors
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class AcceptedPackagesFragment(
     tscPrinterActivity: EnhancedTSCPrinterActivity
@@ -64,17 +73,17 @@ class AcceptedPackagesFragment(
     private lateinit var parentActivity: AppCompatActivity
     private lateinit var viewModel: RefreshViewModel
 
-    private val loginResponse = SharedPreferenceWrapper.getLoginResponse()
-
-    var isSprint: Boolean = false
-
-
-    private val tscDll = tscPrinterActivity
+    private val tscDll = TSCActivity()
     private var fileName: String? = null
 
     val executorService = Executors.newCachedThreadPool()
 
     private var url: URL? = null
+
+    private val loginResponse = SharedPreferenceWrapper.getLoginResponse()
+
+    var isSprint: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -316,34 +325,41 @@ class AcceptedPackagesFragment(
                 try {
                     val timezone = TimeZone.getDefault().id.toString()
 
-                    val response =
-                        ApiAdapter.apiClient.printPackageAwb(customer?.id!!, timezone, true)
-                    withContext(Dispatchers.Main) {
+                    val selectedDevice = chooseBluetoothDevice()
+
+                    if (selectedDevice != null) {
+                        val response = ApiAdapter.apiClient.printPackageAwb(
+                            customer?.id!!,
+                            timezone,
+                            true
+                        )
                         hideWaitDialog()
-                    }
 
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        val imageUrl = response?.body()!!.url
+                        if (response?.isSuccessful == true && response.body() != null) {
+                            val imageUrl = response?.body()!!.url
 
-                        connectAndPrintOnTSC(imageUrl!!)
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
+                            connectAndPrintOnTSC(imageUrl!!, selectedDevice)
+                        } else {
+                            try {
+                                val jObjError = JSONObject(response?.errorBody()!!.string())
+                                withContext(Dispatchers.Main) {
+                                    Helper.showErrorMessage(
+                                        super.getContext(),
+                                        jObjError.optString(AppConstants.ERROR_KEY)
+                                    )
+                                }
 
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
+                            } catch (e: java.lang.Exception) {
+                                withContext(Dispatchers.Main) {
+                                    Helper.showErrorMessage(
+                                        super.getContext(),
+                                        getString(R.string.error_general)
+                                    )
+                                }
                             }
                         }
+                    } else {
+                        hideWaitDialog()
                     }
                 } catch (e: Exception) {
                     hideWaitDialog()
@@ -365,7 +381,35 @@ class AcceptedPackagesFragment(
         }
     }
 
-    private fun connectAndPrintOnTSC(imageUrl: String) {
+    @SuppressLint("MissingPermission")
+    private suspend fun chooseBluetoothDevice(): BluetoothDevice? {
+        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        val pairedDevices = bluetoothAdapter?.bondedDevices
+
+        return withContext(Dispatchers.Main) {
+            val deviceList = pairedDevices?.map { it.name }?.toTypedArray()
+            val selectedDevice = async(Dispatchers.Main) {
+                val result = suspendCoroutine<BluetoothDevice?> { continuation ->
+                    AlertDialog.Builder(super.getContext())
+                        .setTitle("Choose Bluetooth Device")
+                        .setItems(deviceList) { dialog, which ->
+                            val selectedDevice = pairedDevices?.elementAt(which)
+                            continuation.resume(selectedDevice)
+                            dialog.dismiss()
+                        }
+                        .setNegativeButton("Cancel") { dialog, _ ->
+                            continuation.resume(null)
+                            dialog.dismiss()
+                        }
+                        .create()
+                        .show()
+                }
+                result
+            }
+            selectedDevice.await()
+        }
+    }
+    private fun connectAndPrintOnTSC(imageUrl: String, selectedDevice: BluetoothDevice) {
         val REQUEST_BLUETOOTH_PERMISSION = 1
 
         val permissions = arrayOf(
@@ -381,7 +425,7 @@ class AcceptedPackagesFragment(
                     it
                 ) == PackageManager.PERMISSION_GRANTED
             }) {
-            tscDll.openport(Helper.Companion.PrinterConst.PRINTER_BLUETOOTH_ADDRESS)
+            tscDll.openport(selectedDevice.address)
 
             // Use Glide to load the image from the URL
             Glide.with(requireContext())

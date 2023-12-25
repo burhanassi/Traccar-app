@@ -38,7 +38,8 @@ import java.io.IOException
 
 enum class FulfilmentPickerScanMode {
     TOTE,
-    ITEM_INTO_TOTE
+    ITEM_INTO_TOTE,
+    ORDER_INTO_TOTE
 }
 
 class FulfilmentPickerBarcodeScannerActivity :
@@ -96,6 +97,10 @@ class FulfilmentPickerBarcodeScannerActivity :
                 binding.textTitle.text = getString(R.string.please_scan_items)
             }
 
+            FulfilmentPickerScanMode.ORDER_INTO_TOTE -> {
+
+            }
+
             null -> return
         }
     }
@@ -136,6 +141,8 @@ class FulfilmentPickerBarcodeScannerActivity :
         }
         binding.textScannedOrder.text =
             getString(R.string.order_barcode) + "${selectedFulfilmentOrder?.barcode}"
+        binding.textScannedTote.text =
+            getString(R.string.tote_barcode) + "${selectedFulfilmentOrder?.totBarcode}"
     }
 
     private fun vibrate() {
@@ -296,6 +303,10 @@ class FulfilmentPickerBarcodeScannerActivity :
                 callScanItemIntoTote(barcode)
             }
 
+            FulfilmentPickerScanMode.ORDER_INTO_TOTE -> {
+
+            }
+
             null -> return
         }
     }
@@ -406,6 +417,7 @@ class FulfilmentPickerBarcodeScannerActivity :
                                 onBackPressed()
                             }
                         }
+                        scannedItemsHashMap.remove(barcode)
                     } else {
                         scannedItemsHashMap.remove(barcode)
                         try {
