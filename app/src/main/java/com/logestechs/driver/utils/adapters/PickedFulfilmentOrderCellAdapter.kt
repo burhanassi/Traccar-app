@@ -124,7 +124,7 @@ class PickedFulfilmentOrderCellAdapter(
                             }
 
                             R.id.action_print -> {
-                                mAdapter.listener?.onDirectPackFulfilmentOrder(adapterPosition)
+                                mAdapter.listener?.onPrintPickList(adapterPosition)
                             }
                         }
                     }
