@@ -6,4 +6,5 @@ interface PickedFulfilmentOrderCardListener {
     fun onPackFulfilmentOrder(fulfilmentOrder: FulfilmentOrder?)
     fun onContinuePickingClicked(fulfilmentOrder: FulfilmentOrder?)
     fun onDirectPackFulfilmentOrder(index: Int)
+    fun onPrintPickList(index: Int)
 }

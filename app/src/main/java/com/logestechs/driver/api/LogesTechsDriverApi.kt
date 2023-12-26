@@ -631,4 +631,10 @@ interface LogesTechsDriverApi {
     suspend fun changeProfile(
         @Body body: ModifyProfileRequestBody
     ): Response<ResponseBody?>?
+
+    @POST("api/handler/orders/items/list/pdf")
+    suspend fun printPickList(
+        @Body body: PrintPickListRequestBody,
+        @Query("timezone") timezone: String
+    ): Response<PrintAwbResponse?>?
 }

@@ -64,8 +64,6 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
     View.OnClickListener {
     private lateinit var binding: ActivityBroughtPackagesBinding
 
-    private var doesUpdateData = true
-    private var enableUpdateData = false
     var selectedStatus: InCarPackageStatus = InCarPackageStatus.TO_DELIVER
 
     private val companyConfigurations =
@@ -89,22 +87,9 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
 
     override fun onResume() {
         super.onResume()
-        if (doesUpdateData) {
-//            callGetInCarPackagesGrouped()
-        } else {
-            doesUpdateData = true
-        }
+        callGetInCarPackagesGrouped()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        if (enableUpdateData) {
-            doesUpdateData = true
-            enableUpdateData = false
-        } else {
-            doesUpdateData = false
-        }
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
