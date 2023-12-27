@@ -1,7 +1,6 @@
 package com.logestechs.driver.utils.adapters
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -11,25 +10,23 @@ import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.api.requests.RejectItemRequestBody
 import com.logestechs.driver.data.model.ItemDetails
+import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.databinding.ItemScannedProductItemBinding
 import com.logestechs.driver.utils.dialogs.RejectItemDialog
 import com.logestechs.driver.utils.interfaces.RejectItemDialogListener
 import com.logestechs.driver.utils.interfaces.ScannedShippingPlanItemCardListener
-import com.logestechs.driver.data.model.ProductItem
 
 
 class ScannedShippingPlanItemCellAdapter(
     var list: ArrayList<ItemDetails?>,
     var listener: ScannedShippingPlanItemCardListener?,
-    var rejectItemDialogListener: RejectItemDialogListener?,
-    var productItem: ProductItem?
+    var loadedImagesList: ArrayList<LoadedImage>
 ) :
-    RecyclerView.Adapter<ScannedShippingPlanItemCellAdapter.ScannedShippingPlanItemViewHolder>(),
-    RejectItemDialogListener{
+    RecyclerView.Adapter<ScannedShippingPlanItemCellAdapter.ScannedShippingPlanItemViewHolder>() {
 
     var context: Context? = null
     var isRejectedItems: Boolean? = null
-    private fun removeItemByBarcode(barcode: String?) {
+    fun removeItemByBarcode(barcode: String?) {
         val position = list.indexOfFirst { it?.barcode == barcode }
         if (position >= 0) {
             deleteItem(position)
@@ -61,6 +58,7 @@ class ScannedShippingPlanItemCellAdapter(
     fun deleteItem(position: Int) {
         list.removeAt(position)
         notifyItemRemoved(position)
+        notifyDataSetChanged()
     }
 
     fun clearList() {
@@ -85,12 +83,6 @@ class ScannedShippingPlanItemCellAdapter(
         return list[index!!]
     }
 
-    override fun onItemRejected(rejectItemRequestBody: RejectItemRequestBody) {
-        val barcode = rejectItemRequestBody.barcode
-        removeItemByBarcode(barcode)
-        listener?.rejectItem(rejectItemRequestBody)
-    }
-
     class ScannedShippingPlanItemViewHolder(
         private val binding: ItemScannedProductItemBinding,
         private var parent: ViewGroup,
@@ -113,11 +105,7 @@ class ScannedShippingPlanItemCellAdapter(
                     if (mAdapter.context != null) {
                         when (item?.itemId) {
                             R.id.action_reject_item -> {
-                                RejectItemDialog(
-                                    mAdapter.context!!,
-                                    mAdapter,
-                                    itemDetails?.barcode
-                                ).showDialog()
+                                mAdapter.listener?.onShowRejectItemDialog(itemDetails?.barcode!!)
                             }
                         }
                     }

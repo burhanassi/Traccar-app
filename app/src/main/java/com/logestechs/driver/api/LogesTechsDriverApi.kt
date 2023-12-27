@@ -228,6 +228,13 @@ interface LogesTechsDriverApi {
     ): Response<UploadImageResponse?>?
 
     @Multipart
+    @POST("api/handler/item/image/upload")
+    suspend fun uploadPodImageForRejectedItem(
+        @Query("barcode") barcode: String,
+        @Part file: MultipartBody.Part?
+    ): Response<UploadImageResponse?>?
+
+    @Multipart
     @POST("api/driver/mass-returned-packages/delivery-proof/upload-multipart")
     suspend fun uploadMassReturnedPackagesPod(
         @Query("customerId") customerId: Long,
