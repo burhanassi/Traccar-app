@@ -416,8 +416,10 @@ class FulfilmentPickerBarcodeScannerActivity :
                             ) {
                                 onBackPressed()
                             }
+                            if (response.body()!!.barcode != barcode) {
+                                scannedItemsHashMap.remove(barcode)
+                            }
                         }
-                        scannedItemsHashMap.remove(barcode)
                     } else {
                         scannedItemsHashMap.remove(barcode)
                         try {

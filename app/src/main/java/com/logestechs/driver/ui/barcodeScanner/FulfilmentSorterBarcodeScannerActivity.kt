@@ -79,6 +79,7 @@ class FulfilmentSorterBarcodeScannerActivity :
     private var rejectedItems: Int? = null
     private var isReject: Boolean = false
     private var flagLocation: Boolean = false
+    private var productBarcodes: List<String>? = null
 
     private var isBarcodeScanningAllowed = true
 
@@ -380,16 +381,25 @@ class FulfilmentSorterBarcodeScannerActivity :
                         callSortItemIntoLocation(barcode)
                     }
                 } else {
-                    stopBarcodeScanning()
-                    vibrate()
-                    runOnUiThread {
-                        ItemQuantityDialog(
-                            this@FulfilmentSorterBarcodeScannerActivity,
-                            this@FulfilmentSorterBarcodeScannerActivity,
-                            barcode!!
-                        ).showDialog()
+                    if (productBarcodes?.contains(barcode) == true) {
+                        scannedItemsHashMap.remove(barcode)
+                        stopBarcodeScanning()
+                        vibrate()
+                        runOnUiThread {
+                            ItemQuantityDialog(
+                                this@FulfilmentSorterBarcodeScannerActivity,
+                                this@FulfilmentSorterBarcodeScannerActivity,
+                                barcode!!
+                            ).showDialog()
+                        }
+                    } else {
+                        if (isBinScan) {
+                            callSortItemIntoBin(barcode)
+                        } else {
+
+                            callSortItemIntoLocation(barcode)
+                        }
                     }
-                    scannedItemsHashMap.remove(barcode)
                 }
             }
 
@@ -573,6 +583,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
+                            productBarcodes = response.body()!!.productBarcodes
                             selectedScanMode = FulfilmentSorterScanMode.BIN
                             scannedShippingPlan = response.body()
                             scannedShippingPlan?.groupShippingPlanDetails()
@@ -708,7 +719,6 @@ class FulfilmentSorterBarcodeScannerActivity :
                             binding.rvScannedBarcodes.smoothScrollToPosition(0)
                             updateShippingPlanCountValues(response?.shippingPlanDetails)
                         }
-                        scannedItemsHashMap.remove(barcode)
                     } else {
                         scannedItemsHashMap.remove(barcode)
                         try {
@@ -814,7 +824,6 @@ class FulfilmentSorterBarcodeScannerActivity :
                                 )
                                 binding.rvScannedBarcodes.smoothScrollToPosition(0)
                                 updateShippingPlanCountValues(response?.shippingPlanDetails)
-                                scannedItemsHashMap.remove(barcode)
                             }
                         } else {
                             scannedItemsHashMap.remove(barcode)
