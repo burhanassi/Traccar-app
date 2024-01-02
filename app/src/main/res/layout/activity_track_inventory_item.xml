@@ -105,7 +105,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="10dp"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         android:orientation="vertical">
 
                         <androidx.cardview.widget.CardView
@@ -143,63 +143,53 @@
                                         bind:itemSrc="@{@drawable/ic_item_sku}" />
                                 </LinearLayout>
 
-                                <LinearLayout
+                                <GridLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginBottom="10dp"
-                                    android:baselineAligned="false"
-                                    android:orientation="horizontal">
+                                    android:columnCount="2"
+                                    android:orientation="horizontal"
+                                    android:rowCount="2">
 
-                                    <LinearLayout
-                                        android:layout_width="wrap_content"
+                                    <include
+                                        android:id="@+id/item_barcode"
+                                        layout="@layout/item_card_row"
+                                        android:layout_width="150dp"
                                         android:layout_height="wrap_content"
+                                        android:layout_columnSpan="1"
                                         android:layout_marginStart="18dp"
-                                        android:layout_marginEnd="8dp"
-                                        android:layout_weight="1"
-                                        android:orientation="vertical">
+                                        android:layout_marginTop="8dp"
+                                        bind:itemSrc="@{@drawable/ic_item_barcode}" />
 
-                                        <include
-                                            android:id="@+id/item_barcode"
-                                            layout="@layout/item_card_row"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_marginTop="8dp"
-                                            bind:itemSrc="@{@drawable/ic_item_barcode}" />
-
-                                        <include
-                                            android:id="@+id/customer_name"
-                                            layout="@layout/item_card_row"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_marginTop="8dp"
-                                            bind:itemSrc="@{@drawable/ic_customer_name}" />
-                                    </LinearLayout>
-
-                                    <LinearLayout
-                                        android:layout_width="wrap_content"
+                                    <include
+                                        android:id="@+id/item_name"
+                                        layout="@layout/item_card_row"
+                                        android:layout_width="150dp"
                                         android:layout_height="wrap_content"
+                                        android:layout_columnSpan="1"
+                                        android:layout_marginTop="8dp"
+                                        bind:itemSrc="@{@drawable/ic_item}" />
+
+                                    <include
+                                        android:id="@+id/customer_name"
+                                        layout="@layout/item_card_row"
+                                        android:layout_width="150dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_columnSpan="1"
                                         android:layout_marginStart="18dp"
-                                        android:layout_marginEnd="8dp"
-                                        android:layout_weight="1"
-                                        android:orientation="vertical">
+                                        android:layout_marginTop="8dp"
+                                        bind:itemSrc="@{@drawable/ic_customer_name}" />
 
-                                        <include
-                                            android:id="@+id/item_name"
-                                            layout="@layout/item_card_row"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_marginTop="8dp"
-                                            bind:itemSrc="@{@drawable/ic_item}" />
+                                    <include
+                                        android:id="@+id/warehouse_name"
+                                        layout="@layout/item_card_row"
+                                        android:layout_width="150dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_columnSpan="1"
+                                        android:layout_marginTop="8dp"
+                                        bind:itemSrc="@{@drawable/ic_item_warehouse}" />
 
-                                        <include
-                                            android:id="@+id/warehouse_name"
-                                            layout="@layout/item_card_row"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_marginTop="8dp"
-                                            bind:itemSrc="@{@drawable/ic_item_warehouse}" />
-                                    </LinearLayout>
-                                </LinearLayout>
+                                </GridLayout>
 
                                 <LinearLayout
                                     android:id="@+id/container_item_status"
