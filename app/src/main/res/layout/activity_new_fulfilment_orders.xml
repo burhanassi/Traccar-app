@@ -99,6 +99,7 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="4dp"
                     android:background="@drawable/background_logestechs_button"
+                    android:textAllCaps="false"
                     android:minWidth="115dp"
                     android:text="@string/button_multi_pick"
                     android:textColor="#fff" />

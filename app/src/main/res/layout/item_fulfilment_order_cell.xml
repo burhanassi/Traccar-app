@@ -66,6 +66,7 @@
                             android:layout_height="24dp"
                             android:layout_gravity="end"
                             android:background="@drawable/background_logestechs_button"
+                            android:textAllCaps="false"
                             android:paddingStart="8dp"
                             android:paddingEnd="8dp"
                             android:text="@string/button_scan_tote"
