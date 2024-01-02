@@ -165,6 +165,10 @@ class FulfilmentSorterBarcodeScannerActivity :
                     binding.buttonNewBin.text = getString(R.string.button_new_location)
                     binding.itemsCounts.visibility = View.GONE
                     binding.textRejectedItems.visibility = View.VISIBLE
+
+                    val fragment = SetTimeSpent()
+                    fragment.isCancelable = false
+                    fragment.show(supportFragmentManager, "SetTimeSpentDialog")
                 } else if (isReject || !isBinScan) {
                     binding.buttonNewBin.text = getString(R.string.button_new_location)
                 }
