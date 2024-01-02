@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemAcceptedPackagesBinding
+import com.logestechs.driver.utils.PackageType
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.interfaces.PackagesListCardListener
 
@@ -61,14 +62,14 @@ class PackagesListAdapter(
             binding.textTitle.text =  packages.getFullReceiverName()
             binding.textAddress.text =  packages.destinationAddress?.city
 
-            if(driverCompanyConfigurations?.isDriverPickupAcceptedPackages!!){
-                binding.buttonPickup?.setOnClickListener {
-                    mAdapter.listener?.onPickupPackage(packages.barcode!!)
+            if(driverCompanyConfigurations?.isDriverPickupAcceptedPackages!! || packages.shipmentType == PackageType.BRING.name){
+                binding.buttonPickup.setOnClickListener {
+                    mAdapter.listener.onPickupPackage(packages.barcode!!)
                 }
             }else {
                 binding.buttonPickup.visibility = View.GONE
             }
-            binding.buttonAddNote?.setOnClickListener {
+            binding.buttonAddNote.setOnClickListener {
                 mAdapter.listener.onShowPackageNoteDialog(packages)
             }
         }
