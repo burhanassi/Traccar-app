@@ -644,4 +644,9 @@ interface LogesTechsDriverApi {
         @Body body: PrintPickListRequestBody,
         @Query("timezone") timezone: String
     ): Response<PrintAwbResponse?>?
+
+    @GET("handler/product/sub-bundle")
+    suspend fun getSubBundlesProduct (
+        @Query("productId") productId: Long
+    ): Response<ArrayList<SubBundle?>>?
 }
