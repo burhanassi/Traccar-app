@@ -199,7 +199,7 @@
     <string name="please_scan_damaged_location_barcode">Please Scan Damaged Location Barcode</string>
     <string name="please_scan_bin_barcode">Please Scan Bin Barcode</string>
     <string name="bin_location_assigned_successfully">Bin Location was Assigned Successfully</string>
-    <string name="please_scan_shipping_plan_barcode">Please Scan Shipping Plan Barcode</string>
+    <string name="please_scan_shipping_plan_barcode">Please Scan ASN Barcode</string>
     <string name="please_scan_items">Please Scan Items</string>
     <string name="please_scan_orders">Please Scan Orders</string>
     <string name="please_scan_item_barcode">Please Scan Item Barcode</string>

@@ -257,8 +257,21 @@ class InCarPackageCellAdapter(
                 } else {
                     binding.imageViewReceiverLocation.visibility = View.GONE
                 }
+                if (Helper.getCompanyCurrency() == AppCurrency.SAR.value &&
+                    pkg.destinationAddress!!.nationalAddress != null &&
+                    pkg.destinationAddress!!.nationalAddress?.isNotEmpty()!!) {
+                    binding.imageViewReceiverLocationKsa.visibility = View.VISIBLE
+                    binding.imageViewReceiverLocationKsa.setOnClickListener {
+                        if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                            (mAdapter.context as LogesTechsActivity).showLocationInGoogleMaps(pkg.destinationAddress)
+                        }
+                    }
+                } else {
+                    binding.imageViewReceiverLocationKsa.visibility = View.GONE
+                }
             } else {
                 binding.imageViewReceiverLocation.visibility = View.GONE
+                binding.imageViewReceiverLocationKsa.visibility = View.GONE
             }
 
             binding.buttonContextMenu.setOnClickListener {
