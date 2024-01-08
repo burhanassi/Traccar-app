@@ -32,4 +32,6 @@ data class ProductItem(
     var isCustomPackaging: Boolean? = null,
     var fulfillmentOrderPackagingType: FulfillmentOrderPackagingType? = null,
     var parcelTypeName: String? = null,
+    var isBundle: Boolean? = null,
+    var isExpanded: Boolean? = null
 ) : Parcelable

@@ -136,6 +136,7 @@
                     android:minWidth="115dp"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
+                    android:textAllCaps="false"
                     android:text="@string/button_scan_packages_barcodes"
                     android:textColor="#fff" />
 

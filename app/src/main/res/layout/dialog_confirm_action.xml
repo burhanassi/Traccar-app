@@ -43,6 +43,7 @@
                     android:layout_height="28dp"
                     android:layout_gravity="center"
                     android:background="@drawable/background_dialog_button"
+                    android:textAllCaps="false"
                     android:text="@string/button_confirm"
                     android:textColor="#fff" />
 
@@ -53,6 +54,7 @@
                     android:layout_height="28dp"
                     android:layout_gravity="center"
                     android:background="@android:color/transparent"
+                    android:textAllCaps="false"
                     android:text="@string/button_cancel"
                     android:textColor="@color/fontTitleBlack" />
 

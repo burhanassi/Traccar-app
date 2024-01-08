@@ -147,6 +147,7 @@
                     android:layout_height="45dp"
                     android:layout_margin="16dp"
                     android:background="@drawable/background_logestechs_button"
+                    android:textAllCaps="false"
                     android:text="@string/button_done"
                     android:textColor="@color/white" />
 
