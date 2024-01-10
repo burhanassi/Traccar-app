@@ -465,7 +465,8 @@ interface LogesTechsDriverApi {
 
     @PUT("handler/fulfillment-order/pack")
     suspend fun packFulfilmentOrder(
-        @Query("orderId") orderId: Long?
+        @Query("orderId") orderId: Long?,
+        @Query("isPackedOrderWithoutScanningItems") isPackedOrderWithoutScanningItems: Boolean = true
     ): Response<ResponseBody?>?
 
     @GET("handler/order/{orderId}/tote")
