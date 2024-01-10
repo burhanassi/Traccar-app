@@ -123,6 +123,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="31dp"
                 android:background="@drawable/background_logestechs_button"
+                android:textAllCaps="false"
                 android:text="@string/done"
                 android:textColor="#fff" />
 
@@ -135,6 +136,7 @@
                 android:layout_marginTop="25dp"
                 android:layout_marginBottom="28dp"
                 android:background="@drawable/background_signup_exit_button"
+                android:textAllCaps="false"
                 android:text="@string/button_exit"
                 android:textColor="@color/fontTitleOrange" />
         </LinearLayout>

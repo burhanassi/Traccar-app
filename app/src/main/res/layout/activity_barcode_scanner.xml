@@ -125,6 +125,7 @@
                         android:paddingStart="16dp"
                         android:paddingEnd="16dp"
                         android:text="@string/button_insert_barcode"
+                        android:textAllCaps="false"
                         android:textColor="@color/white"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -204,6 +205,7 @@
                     android:layout_marginEnd="32dp"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/background_logestechs_button"
+                    android:textAllCaps="false"
                     android:text="@string/button_done"
                     android:textColor="@color/white" />
             </FrameLayout>

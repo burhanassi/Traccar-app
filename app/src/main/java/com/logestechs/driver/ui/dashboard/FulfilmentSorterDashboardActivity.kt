@@ -3,7 +3,6 @@ package com.logestechs.driver.ui.dashboard
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.ScrollView
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.logestechs.driver.BuildConfig
@@ -17,11 +16,9 @@ import com.logestechs.driver.ui.arrivedShippingPlans.ArrivedShippingPlansActivit
 import com.logestechs.driver.ui.barcodeScanner.FulfilmentSorterBarcodeScannerActivity
 import com.logestechs.driver.ui.barcodeScanner.FulfilmentSorterScanMode
 import com.logestechs.driver.ui.barcodeScanner.ShippingPlanBarcodeScanner
-import com.logestechs.driver.ui.massCodReports.MassCodReportsActivity
 import com.logestechs.driver.ui.newFulfilmentOrders.NewFulfilmentOrdersActivity
 import com.logestechs.driver.ui.pickedFulfilmentOrdersActivity.PickedFulfilmentOrdersActivity
 import com.logestechs.driver.ui.profile.ProfileActivity
-import com.logestechs.driver.ui.sortOnShelveActivity.SortOnShelveActivity
 import com.logestechs.driver.ui.trackInventoryItemsActivity.TrackInventoryItemActivity
 import com.logestechs.driver.utils.*
 import com.yariksoffice.lingver.Lingver
@@ -44,6 +41,7 @@ class FulfilmentSorterDashboardActivity : LogesTechsActivity(), View.OnClickList
         super.onCreate(savedInstanceState)
         binding = ActivityFulfilmentSorterDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        Helper.handleScanWay(this)
         initData()
         initOnClickListeners()
         handleNotificationToken()

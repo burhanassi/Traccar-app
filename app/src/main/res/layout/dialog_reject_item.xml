@@ -61,70 +61,190 @@
                         android:layout_height="24dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
+                        android:textAllCaps="false"
                         android:background="@drawable/ic_close_white" />
                 </LinearLayout>
-                <TextView
-                    style="@style/LogesTechsBold"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/title_reject_item"
-                    android:textColor="@color/fontTrackHint"
-                    android:textSize="18sp" />
 
-                <TextView
-                    style="@style/LogesTechsLight"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="4dp"
-                    android:text="@string/title_please_select_reason"
-                    android:textColor="@color/fontTrackHint"
-                    android:textSize="15sp" />
-
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_reasons"
+                <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:clipToPadding="false"
-                    android:overScrollMode="never"
-                    android:paddingStart="16dp"
-                    android:paddingTop="4dp"
-                    android:paddingEnd="16dp"
-                    android:scrollbars="vertical"
-                    tools:listitem="@layout/item_radio_group_list" />
+                    android:layout_height="match_parent"
+                    android:scrollbarFadeDuration="0"
+                    android:scrollbars="vertical">
 
-                <EditText
-                    android:id="@+id/et_reason"
-                    style="@style/LogesTechsBold"
-                    android:layout_width="match_parent"
-                    android:layout_height="100dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="6dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/background_card_shape_white"
-                    android:gravity="top"
-                    android:inputType="textFilter"
-                    android:padding="10dp"
-                    android:saveEnabled="false"
-                    android:textColor="@color/fontTitleBlack"
-                    android:textSize="14sp"
-                    tools:text="ملاحظات" />
+                    <LinearLayout
+                        android:id="@+id/container_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/button_done"
-                    style="@style/LogesTechsMedium"
-                    android:layout_width="150dp"
-                    android:layout_height="35dp"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/background_logestechs_button"
-                    android:text="@string/button_done"
-                    android:textColor="#fff" />
+                        <TextView
+                            style="@style/LogesTechsBold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/title_reject_item"
+                            android:textColor="@color/fontTrackHint"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            style="@style/LogesTechsLight"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/title_please_select_reason"
+                            android:textColor="@color/fontTrackHint"
+                            android:textSize="15sp" />
+
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_reasons"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:clipToPadding="false"
+                            android:overScrollMode="never"
+                            android:paddingStart="16dp"
+                            android:paddingTop="4dp"
+                            android:paddingEnd="16dp"
+                            android:scrollbars="vertical"
+                            tools:listitem="@layout/item_radio_group_list" />
+
+                        <EditText
+                            android:id="@+id/et_reason"
+                            style="@style/LogesTechsBold"
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="6dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginBottom="16dp"
+                            android:background="@drawable/background_card_shape_white"
+                            android:gravity="top"
+                            android:inputType="textFilter"
+                            android:padding="10dp"
+                            android:saveEnabled="false"
+                            android:textColor="@color/fontTitleBlack"
+                            android:textSize="14sp"
+                            tools:text="ملاحظات" />
+
+                        <LinearLayout
+                            android:id="@+id/container_pod_controls"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:animateLayoutChanges="true"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginEnd="16dp"
+                                android:baselineAligned="false"
+                                android:orientation="horizontal">
+
+                                <LinearLayout
+                                    android:id="@+id/button_capture_image"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="8dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/background_add_pod_container">
+
+                                    <ImageView
+                                        android:layout_width="40dp"
+                                        android:layout_height="40dp"
+                                        android:layout_gravity="center_vertical"
+                                        android:layout_marginStart="8dp"
+                                        android:layout_marginTop="5dp"
+                                        android:layout_marginBottom="5dp"
+                                        android:src="@drawable/ic_capture_image"
+                                        tools:ignore="ContentDescription" />
+
+                                    <TextView
+                                        style="@style/LogesTechsMedium"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_vertical"
+                                        android:layout_marginStart="12dp"
+                                        android:layout_marginEnd="8dp"
+                                        android:text="@string/button_capture_image"
+                                        android:textColor="@color/fontTrackHint"
+                                        android:textSize="15sp" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/button_load_image"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/background_add_pod_container">
+
+                                    <ImageView
+                                        android:layout_width="40dp"
+                                        android:layout_height="40dp"
+                                        android:layout_gravity="center_vertical"
+                                        android:layout_marginStart="8dp"
+                                        android:layout_marginTop="5dp"
+                                        android:layout_marginBottom="5dp"
+                                        android:src="@drawable/ic_load_image"
+                                        tools:ignore="ContentDescription" />
+
+                                    <TextView
+                                        style="@style/LogesTechsMedium"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_vertical"
+                                        android:layout_marginStart="12dp"
+                                        android:layout_marginEnd="8dp"
+                                        android:text="@string/button_load_image"
+                                        android:textColor="@color/fontTrackHint"
+                                        android:textSize="15sp" />
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/container_thumbnails"
+                                android:layout_width="match_parent"
+                                android:layout_height="90dp"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginEnd="16dp"
+                                android:background="@drawable/background_add_pod_container"
+                                android:orientation="horizontal"
+                                android:visibility="gone">
+
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/rv_thumbnails"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginTop="10dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginBottom="10dp"
+                                    android:background="#FFF5E7"
+                                    tools:listitem="@layout/item_thumbnail" />
+
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <Button
+                            android:id="@+id/button_done"
+                            style="@style/LogesTechsMedium"
+                            android:layout_width="150dp"
+                            android:layout_height="35dp"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginBottom="16dp"
+                            android:background="@drawable/background_logestechs_button"
+                            android:textAllCaps="false"
+                            android:text="@string/button_done"
+                            android:textColor="#fff" />
+                    </LinearLayout>
+                </androidx.core.widget.NestedScrollView>
+
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>

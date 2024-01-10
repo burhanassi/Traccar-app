@@ -57,6 +57,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.os.Handler
 import android.os.Looper
+import androidx.appcompat.app.AlertDialog
 
 enum class AppFonts(val value: Int) {
     ROBOTO_BOLD(R.font.roboto_bold),
@@ -1702,6 +1703,37 @@ class Helper {
                 path.add(LatLng(lat * 1e-5, lng * 1e-5))
             }
             return path
+        }
+
+        fun isBuiltInScannerAvailable(): Boolean {
+            val manufacturer = Build.MANUFACTURER
+            return manufacturer.equals("Honeywell", ignoreCase = true)
+        }
+
+        fun handleScanWay(context: Context) {
+            if (isBuiltInScannerAvailable()) {
+                if (SharedPreferenceWrapper.getScanWay() == "") {
+                    val scanOptions = arrayOf("Built-in Scanner", "Camera")
+
+                    AlertDialog.Builder(context)
+                        .setTitle("Choose Scan Way")
+                        .setItems(scanOptions) { _, which ->
+                            when (which) {
+                                0 -> {
+                                    SharedPreferenceWrapper.saveScanWay("built-in")
+                                }
+                                1 -> {
+                                    // Handle the camera scanner logic here
+                                    SharedPreferenceWrapper.saveScanWay("camera")
+                                }
+                            }
+                        }
+                        .setCancelable(false)
+                        .show()
+                }
+            } else {
+                SharedPreferenceWrapper.saveScanWay("camera")
+            }
         }
 
         object PrinterConst {

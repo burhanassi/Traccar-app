@@ -34,6 +34,7 @@ import com.logestechs.driver.utils.BundleKeys
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.UnloadFromCustomerCellAdapter
 import com.logestechs.driver.utils.bottomSheets.BottomSheetListener
 import com.logestechs.driver.utils.bottomSheets.PackageTrackBottomSheet
@@ -74,7 +75,11 @@ class FindPackagesActivity : LogesTechsActivity(), View.OnClickListener,
 
         initListeners()
         initRecycler()
-        initialiseDetectorsAndSources()
+        if (SharedPreferenceWrapper.getScanWay() == "built-in") {
+            // Use built-in scanner, it goes for dispatchKeyEvent
+        } else {
+            initialiseDetectorsAndSources()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -130,33 +135,40 @@ class FindPackagesActivity : LogesTechsActivity(), View.OnClickListener,
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun dispatchKeyEvent(e: KeyEvent): Boolean {
-        if (e.keyCode == KeyEvent.KEYCODE_BACK) {
-            onBackPressed()
-            return true
-        }
-        val action = e.action
-        val keyCode = e.keyCode
-        val character = e.unicodeChar.toChar()
-
-        if (action == KeyEvent.ACTION_DOWN &&
-            keyCode != KeyEvent.KEYCODE_ENTER &&
-            character != '\t' &&
-            character != '\n' &&
-            character != '\u0000'
-        ) {
-            val pressedKey = character
-            scannedBarcode += pressedKey
-        }
-        if (action == KeyEvent.ACTION_DOWN &&
-            (keyCode == KeyEvent.KEYCODE_ENTER || character == '\t' || character == '\n' || character == '\u0000')
-        ) {
-            if (!scannedItemsHashMap.containsKey(scannedBarcode)) {
-                scannedItemsHashMap[scannedBarcode] = scannedBarcode
-                executeBarcodeAction(scannedBarcode)
+        if (SharedPreferenceWrapper.getScanWay() == "built-in") {
+            if (e.characters != null && e.characters.isNotEmpty()) {
+                handleDetectedBarcode(e.characters)
             }
-            scannedBarcode = ""
+            return super.dispatchKeyEvent(e)
+        } else {
+            if (e.keyCode == KeyEvent.KEYCODE_BACK) {
+                onBackPressed()
+                return true
+            }
+            val action = e.action
+            val keyCode = e.keyCode
+            val character = e.unicodeChar.toChar()
+
+            if (action == KeyEvent.ACTION_DOWN &&
+                keyCode != KeyEvent.KEYCODE_ENTER &&
+                character != '\t' &&
+                character != '\n' &&
+                character != '\u0000'
+            ) {
+                val pressedKey = character
+                scannedBarcode += pressedKey
+            }
+            if (action == KeyEvent.ACTION_DOWN &&
+                (keyCode == KeyEvent.KEYCODE_ENTER || character == '\t' || character == '\n' || character == '\u0000')
+            ) {
+                if (!scannedItemsHashMap.containsKey(scannedBarcode)) {
+                    scannedItemsHashMap[scannedBarcode] = scannedBarcode
+                    executeBarcodeAction(scannedBarcode)
+                }
+                scannedBarcode = ""
+            }
+            return false
         }
-        return false
     }
 
     @SuppressLint("MissingPermission")

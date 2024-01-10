@@ -40,6 +40,7 @@ class HandlerDashboardActivity : LogesTechsActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityHandlerDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        Helper.handleScanWay(this)
         initData()
         initOnClickListeners()
         handleNotificationToken()

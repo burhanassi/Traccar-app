@@ -76,6 +76,7 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        Helper.handleScanWay(this)
         initData()
         initOnClickListeners()
         handleNotificationToken()

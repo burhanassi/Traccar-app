@@ -131,6 +131,15 @@ class SharedPreferenceWrapper {
         fun getNotificationsCount(): String {
             return prefs.pull(SharedPrefsKeys.NOTIFICATIONS_COUNT.value, "")
         }
+
+        //Scan Way
+        fun saveScanWay(scanWay: String) {
+            prefs.push(SharedPrefsKeys.SCAN_WAY.value, scanWay)
+        }
+
+        fun getScanWay(): String {
+            return prefs.pull(SharedPrefsKeys.SCAN_WAY.value, "")
+        }
     }
 }
 
@@ -143,5 +152,6 @@ private enum class SharedPrefsKeys(val value: String) {
     WORK_LOG_ID_KEY("work_log_key_id"),
     IS_WHATSAPP_BUSINESS("is_whatsapp_business"),
     SELECTED_SERVER_IP("selected_server_ip"),
-    NOTIFICATIONS_COUNT("notifications_count")
+    NOTIFICATIONS_COUNT("notifications_count"),
+    SCAN_WAY("scan_way")
 }

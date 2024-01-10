@@ -26,8 +26,8 @@ data class Address(
     val regionID: Long? = null,
     val id: Long? = null,
     var longitude: Double? = null,
-    var latitude: Double? = null
-
+    var latitude: Double? = null,
+    var nationalAddress: String? = null
 ) : Parcelable {
     override fun toString(): String {
         return "$village - $city - $region"
