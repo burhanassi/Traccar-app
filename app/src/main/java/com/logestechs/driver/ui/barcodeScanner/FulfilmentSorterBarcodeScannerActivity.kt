@@ -166,6 +166,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                     binding.itemsCounts.visibility = View.GONE
                     binding.textRejectedItems.visibility = View.VISIBLE
 
+                    stopBarcodeScanning()
                     val fragment = SetTimeSpent()
                     fragment.isCancelable = false
                     fragment.show(supportFragmentManager, "SetTimeSpentDialog")
