@@ -390,7 +390,7 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                                 }
 
                             } else if (driverCompanyConfigurations?.isPrintAwbCopiesAsPackageQuantity == true && (response.body()?.quantity
-                                    ?: 0) > 1
+                                    ?: 0) > 1 && ( response.body()?.isShippingPlan == false || response.body()?.isShippingPlan == null)
                             ) {
                                 (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).insertSubPackage(
                                     response.body()?.getPickupScannedItem(),
@@ -486,6 +486,9 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                                 position
                             )
                             scannedItemsHashMap.remove(pkg?.barcode)
+                            binding.buttonDone.background = getDrawable(R.drawable.background_logestechs_button)
+                            binding.buttonDone.setTextColor(resources.getColor(R.color.white))
+                            isBackButtonEnabled = true
                             handleScannedItemsCount()
                         }
                     } else {

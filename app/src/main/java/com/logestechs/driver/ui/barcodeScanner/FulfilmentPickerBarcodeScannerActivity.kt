@@ -146,8 +146,14 @@ class FulfilmentPickerBarcodeScannerActivity :
         }
         binding.textScannedOrder.text =
             getString(R.string.order_barcode) + "${selectedFulfilmentOrder?.barcode}"
-        binding.textScannedTote.text =
-            getString(R.string.tote_barcode) + "${selectedFulfilmentOrder?.totBarcode}"
+        if (selectedFulfilmentOrder?.totBarcode != null &&
+            selectedFulfilmentOrder?.totBarcode!!.isNotEmpty()) {
+            binding.textScannedTote.text =
+                getString(R.string.tote_barcode) + "${selectedFulfilmentOrder?.totBarcode}"
+        } else {
+            binding.containerToteBarcode.visibility = View.GONE
+        }
+
     }
 
     private fun vibrate() {
@@ -428,8 +434,10 @@ class FulfilmentPickerBarcodeScannerActivity :
                             ) {
                                 onBackPressed()
                             }
+                            if (response.body()!!.barcode != barcode) {
+                                scannedItemsHashMap.remove(barcode)
+                            }
                         }
-                        scannedItemsHashMap.remove(barcode)
                     } else {
                         scannedItemsHashMap.remove(barcode)
                         try {

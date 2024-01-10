@@ -1,44 +1,60 @@
 package com.logestechs.driver.ui.barcodeScanner
 
 import android.annotation.SuppressLint
+import android.content.ClipData
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.media.AudioManager
 import android.media.ToneGenerator
+import android.net.Uri
 import android.os.*
+import android.provider.MediaStore
 import android.util.Log
 import android.view.KeyEvent
 import android.view.SurfaceHolder
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
+import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.BarcodeRequestBody
 import com.logestechs.driver.api.requests.RejectItemRequestBody
-import com.logestechs.driver.api.requests.RejectedRequestBody
-import com.logestechs.driver.api.responses.SortItemIntoBinResponse
 import com.logestechs.driver.data.model.*
 import com.logestechs.driver.databinding.ActivityFulfilmentSorterBarcodeScannerBinding
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.ScannedShippingPlanItemCellAdapter
+import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
 import com.logestechs.driver.utils.dialogs.InsertBarcodeDialog
 import com.logestechs.driver.utils.dialogs.ItemQuantityDialog
-import com.logestechs.driver.utils.dialogs.SearchPackagesDialog
+import com.logestechs.driver.utils.dialogs.RejectItemDialog
 import com.logestechs.driver.utils.interfaces.InsertBarcodeDialogListener
 import com.logestechs.driver.utils.interfaces.ItemQuantityDialogListener
+import com.logestechs.driver.utils.interfaces.RejectItemDialogListener
 import com.logestechs.driver.utils.interfaces.ScannedShippingPlanItemCardListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
-import retrofit2.Response
+import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 enum class FulfilmentSorterScanMode {
@@ -52,7 +68,7 @@ enum class FulfilmentSorterScanMode {
 class FulfilmentSorterBarcodeScannerActivity :
     LogesTechsActivity(), View.OnClickListener,
     InsertBarcodeDialogListener, ScannedShippingPlanItemCardListener, SetTimeSpent.DataListener
-    , ItemQuantityDialogListener {
+    , ItemQuantityDialogListener, RejectItemDialogListener {
     private lateinit var binding: ActivityFulfilmentSorterBarcodeScannerBinding
 
     private var barcodeDetector: BarcodeDetector? = null
@@ -79,6 +95,15 @@ class FulfilmentSorterBarcodeScannerActivity :
     private var rejectedItems: Int? = null
     private var isReject: Boolean = false
     private var flagLocation: Boolean = false
+    private var productBarcodes: List<String>? = null
+
+    var loadedImagesList: java.util.ArrayList<LoadedImage> = java.util.ArrayList()
+    private var isCameraAction = false
+    var mCurrentPhotoPath: String? = null
+    var selectedPodImageUri: Uri? = null
+    var rejectItemDialog: RejectItemDialog? = null
+
+    var rejectItemDialogListener: RejectItemDialogListener? = null
 
     private var isBarcodeScanningAllowed = true
 
@@ -144,6 +169,11 @@ class FulfilmentSorterBarcodeScannerActivity :
                     binding.buttonNewBin.text = getString(R.string.button_new_location)
                     binding.itemsCounts.visibility = View.GONE
                     binding.textRejectedItems.visibility = View.VISIBLE
+
+                    stopBarcodeScanning()
+                    val fragment = SetTimeSpent()
+                    fragment.isCancelable = false
+                    fragment.show(supportFragmentManager, "SetTimeSpentDialog")
                 } else if (isReject || !isBinScan) {
                     binding.buttonNewBin.text = getString(R.string.button_new_location)
                 }
@@ -199,8 +229,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                 ScannedShippingPlanItemCellAdapter(
                     list = ArrayList(),
                     listener = this@FulfilmentSorterBarcodeScannerActivity,
-                    rejectItemDialogListener = null, // provide the appropriate value or null for 'rejectItemDialogListener'
-                    productItem = null // provide the appropriate value or null for 'pkg'
+                    loadedImagesList
                 )
         }
     }
@@ -391,16 +420,25 @@ class FulfilmentSorterBarcodeScannerActivity :
                         callSortItemIntoLocation(barcode)
                     }
                 } else {
-                    stopBarcodeScanning()
-                    vibrate()
-                    runOnUiThread {
-                        ItemQuantityDialog(
-                            this@FulfilmentSorterBarcodeScannerActivity,
-                            this@FulfilmentSorterBarcodeScannerActivity,
-                            barcode!!
-                        ).showDialog()
+                    if (productBarcodes?.contains(barcode) == true) {
+                        scannedItemsHashMap.remove(barcode)
+                        stopBarcodeScanning()
+                        vibrate()
+                        runOnUiThread {
+                            ItemQuantityDialog(
+                                this@FulfilmentSorterBarcodeScannerActivity,
+                                this@FulfilmentSorterBarcodeScannerActivity,
+                                barcode!!
+                            ).showDialog()
+                        }
+                    } else {
+                        if (isBinScan) {
+                            callSortItemIntoBin(barcode)
+                        } else {
+
+                            callSortItemIntoLocation(barcode)
+                        }
                     }
-                    scannedItemsHashMap.remove(barcode)
                 }
             }
 
@@ -584,6 +622,7 @@ class FulfilmentSorterBarcodeScannerActivity :
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
+                            productBarcodes = response.body()!!.productBarcodes
                             selectedScanMode = FulfilmentSorterScanMode.BIN
                             scannedShippingPlan = response.body()
                             scannedShippingPlan?.groupShippingPlanDetails()
@@ -719,7 +758,6 @@ class FulfilmentSorterBarcodeScannerActivity :
                             binding.rvScannedBarcodes.smoothScrollToPosition(0)
                             updateShippingPlanCountValues(response?.shippingPlanDetails)
                         }
-                        scannedItemsHashMap.remove(barcode)
                     } else {
                         scannedItemsHashMap.remove(barcode)
                         try {
@@ -825,7 +863,6 @@ class FulfilmentSorterBarcodeScannerActivity :
                                 )
                                 binding.rvScannedBarcodes.smoothScrollToPosition(0)
                                 updateShippingPlanCountValues(response?.shippingPlanDetails)
-                                scannedItemsHashMap.remove(barcode)
                             }
                         } else {
                             scannedItemsHashMap.remove(barcode)
@@ -897,6 +934,9 @@ class FulfilmentSorterBarcodeScannerActivity :
                             Helper.showSuccessMessage(
                                 super.getContext(),
                                 getString(R.string.success_operation_completed)
+                            )
+                            (binding.rvScannedBarcodes.adapter as ScannedShippingPlanItemCellAdapter).removeItemByBarcode(
+                                rejectItemRequestBody?.barcode
                             )
                             updateShippingPlanCountValues(response.body()?.shippingPlanDetails)
                         }
@@ -1001,6 +1041,203 @@ class FulfilmentSorterBarcodeScannerActivity :
         }
     }
 
+    private fun callUploadPodImage(loadedImage: LoadedImage?) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val file: File = File(
+                        Helper.getRealPathFromURI(
+                            super.getContext(),
+                            loadedImage?.imageUri!!
+                        ) ?: ""
+                    )
+                    val bitmap: Bitmap = MediaStore.Images.Media
+                        .getBitmap(super.getContext()?.contentResolver, Uri.fromFile(file))
+
+                    val bytes = ByteArrayOutputStream()
+                    bitmap.compress(
+                        Bitmap.CompressFormat.JPEG,
+                        AppConstants.IMAGE_FULL_QUALITY,
+                        bytes
+                    )
+
+                    val reqFile: RequestBody =
+                        bytes.toByteArray().toRequestBody("image/jpeg".toMediaTypeOrNull())
+
+                    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale("en")).format(Date())
+                    val imageFileName = "JPEG_" + timeStamp + "_"
+
+                    val body: MultipartBody.Part = MultipartBody.Part.createFormData(
+                        "file",
+                        "$imageFileName.jpeg", reqFile
+                    )
+
+                    val response = ApiAdapter.apiClient.uploadPodImageForRejectedItem(
+                        rejectItemDialog?.barcode!!,
+                        body
+                    )
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            hideWaitDialog()
+                            loadedImagesList[loadedImagesList.size - 1].imageUrl =
+                                response.body()?.fileUrl
+                            (rejectItemDialog?.binding?.rvThumbnails?.adapter as ThumbnailsAdapter).updateItem(
+                                loadedImagesList.size - 1
+                            )
+                            rejectItemDialog?.binding?.containerThumbnails?.visibility =
+                                View.VISIBLE
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
+    private fun openCamera(): String? {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (takePictureIntent.resolveActivity(this@FulfilmentSorterBarcodeScannerActivity.packageManager!!) != null) {
+            var photoFile: File? = null
+            photoFile = try {
+                Helper.createImageFile(this as LogesTechsActivity)
+            } catch (ex: IOException) {
+                return ""
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                val photoURI = FileProvider.getUriForFile(
+                    this@FulfilmentSorterBarcodeScannerActivity.applicationContext!!,
+                    "${BuildConfig.APPLICATION_ID}.fileprovider",
+                    photoFile
+                )
+                val mCurrentPhotoPath = "file:" + photoFile.absolutePath
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
+                    takePictureIntent.clipData = ClipData.newRawUri("", photoURI)
+                    takePictureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                this.startActivityForResult(
+                    takePictureIntent,
+                    AppConstants.REQUEST_TAKE_PHOTO
+                )
+                return mCurrentPhotoPath
+            }
+            return ""
+        }
+        return ""
+    }
+    private fun openGallery() {
+        val pickPhoto = Intent(Intent.ACTION_PICK)
+        pickPhoto.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+        this.startActivityForResult(
+            pickPhoto,
+            AppConstants.REQUEST_LOAD_PHOTO
+        )
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            AppConstants.REQUEST_TAKE_PHOTO -> if (resultCode == AppCompatActivity.RESULT_OK) {
+                selectedPodImageUri = Uri.parse(mCurrentPhotoPath)
+                if (selectedPodImageUri != null) {
+                    val compressedImage =
+                        Helper.validateCompressedImage(
+                            selectedPodImageUri!!,
+                            true,
+                            super.getContext()
+                        )
+                    if (compressedImage != null) {
+                        loadedImagesList.add(compressedImage)
+                        if (loadedImagesList.size > 0 && loadedImagesList[loadedImagesList.size - 1]
+                                .imageUrl == null
+                        ) {
+                            callUploadPodImage(loadedImagesList[loadedImagesList.size - 1])
+                        }
+                    } else {
+                        Toast.makeText(
+                            super.getContext(),
+                            getString(R.string.error_image_capture_failed),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                } else {
+                    Toast.makeText(
+                        super.getContext(),
+                        getString(R.string.error_image_capture_failed),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+
+            AppConstants.REQUEST_LOAD_PHOTO -> if (resultCode == AppCompatActivity.RESULT_OK && data != null) {
+                selectedPodImageUri = data.data
+                if (selectedPodImageUri != null) {
+                    val compressedImage =
+                        Helper.validateCompressedImage(
+                            selectedPodImageUri!!,
+                            false,
+                            super.getContext()
+                        )
+                    if (compressedImage != null) {
+                        loadedImagesList.add(compressedImage)
+                        if (loadedImagesList.size > 0 && loadedImagesList[loadedImagesList.size - 1].imageUrl == null
+                        ) {
+                            callUploadPodImage(loadedImagesList[loadedImagesList.size - 1])
+                        }
+                    } else {
+                        Toast.makeText(
+                            super.getContext(),
+                            getString(R.string.error_image_loading),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                } else {
+                    Toast.makeText(
+                        super.getContext(),
+                        getString(R.string.error_image_loading),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+
+            else -> {}
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_done -> {
@@ -1050,8 +1287,40 @@ class FulfilmentSorterBarcodeScannerActivity :
         }
     }
 
-    override fun rejectItem(rejectItemRequestBody: RejectItemRequestBody) {
+    override fun onItemRejected(rejectItemRequestBody: RejectItemRequestBody) {
         callRejectItem(rejectItemRequestBody)
+    }
+
+    override fun onCaptureImage() {
+        isCameraAction = true
+        if (Helper.isStorageAndCameraPermissionNeeded(this as LogesTechsActivity)) {
+            Helper.showAndRequestCameraAndStorageDialog(this)
+        } else {
+            mCurrentPhotoPath = openCamera()
+        }
+    }
+
+    override fun onLoadImage() {
+        isCameraAction = false
+        if (Helper.isStorageAndCameraPermissionNeeded(this as LogesTechsActivity)) {
+            Helper.showAndRequestCameraAndStorageDialog(this)
+        } else {
+            openGallery()
+        }
+    }
+
+    override fun onDeleteImage(position: Int) {
+    }
+
+    override fun onShowRejectItemDialog(barcode: String) {
+        loadedImagesList.clear()
+        rejectItemDialog = RejectItemDialog(
+            super.getContext(),
+            this,
+            loadedImagesList,
+            barcode
+        )
+        rejectItemDialog?.showDialog()
     }
 
     override fun onDataReceived(data: Double?) {

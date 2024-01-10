@@ -343,6 +343,9 @@ class FulfilmentPackerBarcodeScannerActivity :
                     if ((binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter).getItemCount() < fulfilmentOrder?.totalQuantity!!) {
                         if (response?.isSuccessful == true && response.body() != null) {
                             withContext(Dispatchers.Main) {
+                                if (barcode != response.body()!!.barcode) {
+                                    scannedItemsHashMap.remove(barcode)
+                                }
                                 val body = response.body()
 
                                 (binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter)
@@ -358,7 +361,6 @@ class FulfilmentPackerBarcodeScannerActivity :
                                     super.getContext(), getString(R.string.success_operation_completed)
                                 )
                             }
-                            scannedItemsHashMap.remove(barcode)
                         } else {
                             scannedItemsHashMap.remove(barcode)
                             try {
