@@ -263,7 +263,7 @@ class InCarPackageCellAdapter(
                     binding.imageViewReceiverLocationKsa.visibility = View.VISIBLE
                     binding.imageViewReceiverLocationKsa.setOnClickListener {
                         if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
-                            (mAdapter.context as LogesTechsActivity).showLocationInGoogleMaps(pkg.destinationAddress)
+                            (mAdapter.context as LogesTechsActivity).showLocationInGoogleMaps(pkg.destinationAddress, true)
                         }
                     }
                 } else {

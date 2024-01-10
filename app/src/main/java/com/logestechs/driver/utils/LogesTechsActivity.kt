@@ -251,14 +251,14 @@ abstract class LogesTechsActivity : AppCompatActivity() {
         }
     }
 
-    fun showLocationInGoogleMaps(address: Address?, nationalNumber: Boolean = false) {
+    fun showLocationInGoogleMaps(address: Address?, nationalAddress: Boolean = false) {
         val packageManager: PackageManager = this.packageManager
         val intent = Intent(Intent.ACTION_VIEW)
         try {
             var latitude: Double? = null
             var longitude: Double? = null
 
-            if (nationalNumber && address?.nationalAddress != null) {
+            if (nationalAddress && address?.nationalAddress != null) {
                 val nationalAddress = getLatLngFromAddress(address.nationalAddress!!)
                 if (nationalAddress != null) {
                     latitude = nationalAddress.latitude
