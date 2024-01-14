@@ -74,7 +74,7 @@ class FulfilmentPackerBarcodeScannerActivity :
     private var scannedTote: Bin? = null
     private var selectedFulfilmentOrder: FulfilmentOrder? = null
 
-    private var selectedScanMode: FulfilmentPackerScanMode? = FulfilmentPackerScanMode.TOTE
+    private var selectedScanMode: FulfilmentPackerScanMode? = FulfilmentPackerScanMode.ITEM_INTO_TOTE
 
     private var fulfilmentOrder: FulfilmentOrder? = null
     override fun onCreate(savedInstanceState: Bundle?) {
