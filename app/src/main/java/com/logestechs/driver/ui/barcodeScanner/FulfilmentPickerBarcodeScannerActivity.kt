@@ -141,7 +141,8 @@ class FulfilmentPickerBarcodeScannerActivity :
             adapter =
                 FulfilmentOrderItemCellAdapter(
                     (selectedFulfilmentOrder?.items ?: ArrayList()) as ArrayList<ProductItem?>,
-                    this@FulfilmentPickerBarcodeScannerActivity
+                    this@FulfilmentPickerBarcodeScannerActivity,
+                    fulfilmentOrder?.id
                 )
         }
         binding.textScannedOrder.text =

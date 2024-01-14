@@ -27,7 +27,8 @@ import org.json.JSONObject
 
 class FulfilmentOrderItemCellAdapter(
     var productItemsList: ArrayList<ProductItem?>,
-    var context: Context?
+    var context: Context?,
+    var orderId: Long? = null
 ) :
     RecyclerView.Adapter<FulfilmentOrderItemCellAdapter.FulfilmentOrderItemCellViewHolder>() {
 
@@ -187,7 +188,10 @@ class FulfilmentOrderItemCellAdapter(
                     if (it.isBundle!!) {
                         GlobalScope.launch(Dispatchers.IO) {
                             try {
-                                val response = ApiAdapter.apiClient.getSubBundlesProduct(it.id!!)
+                                val response = ApiAdapter.apiClient.getSubBundlesProduct(
+                                    it.id!!,
+                                    mAdapter.orderId
+                                )
                                 withContext(Dispatchers.Main) {
                                     if (response?.isSuccessful == true && response.body() != null) {
                                         val layoutManager = PeekingLinearLayoutManager(
