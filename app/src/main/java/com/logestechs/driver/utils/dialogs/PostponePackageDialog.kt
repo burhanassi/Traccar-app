@@ -1,5 +1,6 @@
 package com.logestechs.driver.utils.dialogs
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.Context
@@ -10,6 +11,8 @@ import android.view.LayoutInflater
 import android.view.inputmethod.InputMethodManager
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.logestechs.driver.R
 import com.logestechs.driver.api.requests.PostponePackageRequestBody
 import com.logestechs.driver.data.model.Package
@@ -36,6 +39,10 @@ class PostponePackageDialog(
     lateinit var alertDialog: AlertDialog
     private val myCalendar: Calendar = Calendar.getInstance()
 
+    private var fusedLocationClient: FusedLocationProviderClient =
+        LocationServices.getFusedLocationProviderClient(context)
+
+    @SuppressLint("MissingPermission")
     fun showDialog() {
         val dialogBuilder = AlertDialog.Builder(context, 0)
         val binding: DialogPostponePackageBinding = DataBindingUtil.inflate(
@@ -54,14 +61,33 @@ class PostponePackageDialog(
             if (binding.etReason.text.toString().isNotEmpty()) {
                 if (binding.textDate.text.toString().isNotEmpty()) {
                     alertDialog.dismiss()
-                    listener?.onPackagePostponed(
-                        PostponePackageRequestBody(
-                            binding.etReason.text.toString(),
-                            (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
-                            binding.textDate.text.toString(),
-                            pkg?.id
-                        )
-                    )
+                    fusedLocationClient.lastLocation
+                        .addOnSuccessListener { location->
+                            if (location != null) {
+                                listener?.onPackagePostponed(
+                                    PostponePackageRequestBody(
+                                        binding.etReason.text.toString(),
+                                        (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
+                                        location.longitude,
+                                        location.latitude,
+                                        binding.textDate.text.toString(),
+                                        pkg?.id
+                                    )
+                                )
+                            } else {
+                                listener?.onPackagePostponed(
+                                    PostponePackageRequestBody(
+                                        binding.etReason.text.toString(),
+                                        (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
+                                        null,
+                                        null,
+                                        binding.textDate.text.toString(),
+                                        pkg?.id
+                                    )
+                                )
+                            }
+                        }
+
                 } else {
                     Helper.showErrorMessage(
                         context,
