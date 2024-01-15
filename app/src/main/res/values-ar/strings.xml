@@ -125,6 +125,7 @@
     <string name="payment_type_cash">نقداً</string>
     <string name="payment_type_cheque">شيك</string>
     <string name="payment_type_inter_pay">InterPay</string>
+    <string name="payment_type_near_pay">NearPay</string>
     <string name="payment_type_bank_transfer">حوالة بنكية</string>
     <string name="payment_type_prepaid">دفع مسبق</string>
     <string name="payment_type_digital_wallet">محفظة الكترونية</string>

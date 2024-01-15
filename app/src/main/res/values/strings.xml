@@ -125,6 +125,7 @@
     <string name="payment_type_cash">Cash</string>
     <string name="payment_type_cheque">Cheque</string>
     <string name="payment_type_inter_pay">InterPay</string>
+    <string name="payment_type_near_pay">NearPay</string>
     <string name="payment_type_bank_transfer">Bank Transfer</string>
     <string name="payment_type_prepaid">Prepaid</string>
     <string name="payment_type_digital_wallet">Digital Wallet</string>

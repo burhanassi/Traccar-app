@@ -62,6 +62,15 @@ import com.logestechs.driver.utils.customViews.StatusSelector
 import com.logestechs.driver.utils.dialogs.DeliveryCodeVerificationDialog
 import com.logestechs.driver.utils.interfaces.ThumbnailsListListener
 import com.logestechs.driver.utils.interfaces.VerificationCodeDialogListener
+import io.nearpay.sdk.Environments
+import io.nearpay.sdk.NearPay
+import io.nearpay.sdk.utils.PaymentText
+import io.nearpay.sdk.utils.enums.AuthenticationData
+import io.nearpay.sdk.utils.enums.NetworkConfiguration
+import io.nearpay.sdk.utils.enums.PurchaseFailure
+import io.nearpay.sdk.utils.enums.TransactionData
+import io.nearpay.sdk.utils.enums.UIPosition
+import io.nearpay.sdk.utils.listeners.PurchaseListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -80,6 +89,7 @@ import java.text.DecimalFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.UUID
 
 
 class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, ThumbnailsListListener,
@@ -310,6 +320,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         binding.selectorPrepaid.setOnClickListener(this)
         binding.selectorCardPayment.setOnClickListener(this)
         binding.selectorInterPay.setOnClickListener(this)
+        binding.selectorNearPay.setOnClickListener(this)
         binding.selectorBankTransfer.setOnClickListener(this)
         binding.buttonCaptureImage.setOnClickListener(this)
         binding.buttonLoadImage.setOnClickListener(this)
@@ -364,6 +375,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         binding.selectorPrepaid.enumValue = PaymentType.PREPAID
         binding.selectorCardPayment.enumValue = PaymentType.CARD
         binding.selectorInterPay.enumValue = PaymentType.INTER_PAY
+        binding.selectorNearPay.enumValue = PaymentType.NEAR_PAY
         binding.selectorBankTransfer.enumValue = PaymentType.BANK_TRANSFER
     }
 
@@ -374,6 +386,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         paymentTypeButtonsList.add(binding.selectorPrepaid)
         paymentTypeButtonsList.add(binding.selectorCardPayment)
         paymentTypeButtonsList.add(binding.selectorInterPay)
+        paymentTypeButtonsList.add(binding.selectorNearPay)
         paymentTypeButtonsList.add(binding.selectorBankTransfer)
     }
 
@@ -1231,6 +1244,65 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
     }
 
+    private fun startNearPay(cod: String) {
+        val nearPay = NearPay.Builder()
+            .context(this)
+            .authenticationData(AuthenticationData.UserEnter)
+            .environment(Environments.SANDBOX)
+            .locale(Locale.getDefault())
+            .networkConfiguration(NetworkConfiguration.SIM_PREFERRED)
+            .uiPosition(UIPosition.CENTER_BOTTOM)
+            .paymentText(PaymentText("يرجى تمرير الطاقة", "please tap your card"))
+            .loadingUi(true)
+            .build()
+
+        val amount : Long = 100 // [Required] ammount you want to set .
+        val customerReferenceNumber = "9ace70b7-977d-4094-b7f4-4ecb17de6753" //[optional] any number you want to add as a refrence
+        val enableReceiptUi = true// [optional] true will enable the ui and false will disable
+        val enableReversal = true // it will allow you to enable or disable the reverse button
+        val finishTimeOut : Long = 10 // Add the number of seconds
+        val transactionId = UUID.randomUUID(); // [optional] You can add your UUID here which allows you to ask about the transaction again using the same UUID
+        val enableUiDismiss = true // [optional] it will allow you to control dismissing the UI
+
+        nearPay.purchase(amount, customerReferenceNumber, enableReceiptUi, enableReversal, finishTimeOut, transactionId, enableUiDismiss, object :
+            PurchaseListener {
+            override fun onPurchaseApproved(transactionData: TransactionData) {
+                // Your Code Here
+            }
+
+            override fun onPurchaseFailed(purchaseFailure: PurchaseFailure) {
+                when (purchaseFailure) {
+                    is PurchaseFailure.PurchaseDeclined -> {
+                        // when the payment declined.
+                        // Your Code Here
+                    }
+
+                    is PurchaseFailure.PurchaseRejected -> {
+                        // when the payment is rejected .
+                        // Your Code Here
+                    }
+
+                    is PurchaseFailure.AuthenticationFailed -> {
+                        // when the authentication failed .
+                        // You can use the following method to update your JWT
+                        nearPay.updateAuthentication(AuthenticationData.Jwt("JWT HERE"))
+                        // Your Code Here
+                    }
+
+                    is PurchaseFailure.InvalidStatus -> {
+                        // Please note that you can get the status using purchaseFailure.status
+                        // Your Code Here
+
+                    }
+
+                    is PurchaseFailure.GeneralFailure -> {
+                        // when there is General error .
+                    }
+                }
+            }
+        })
+    }
+
     private fun handleExceptionFromSoftpos(errorCode: String, errorMessage: String, errorDetails: String?) {
         // TODO: Handle exceptions from SoftPOS here
         Log.e("SoftPOS Exception", "ErrorCode: $errorCode, ErrorMessage: $errorMessage, ErrorDetails: $errorDetails")
@@ -1256,6 +1328,9 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                             super.getContext(), getString(R.string.error_app_is_not_installed)
                         )
                     }
+                } else if (selectedPaymentType?.textView?.text == PaymentType.NEAR_PAY.englishLabel) {
+                    startNearPay(pkg?.cod?.format()!!)
+                    return
                 } else {
                     if (validateInput()) {
                         if (!needsPinVerification()) {
@@ -1327,6 +1402,12 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 unselectAllPaymentMethods()
                 binding.selectorInterPay.makeSelected()
                 selectedPaymentType = binding.selectorInterPay
+            }
+
+            R.id.selector_near_pay -> {
+                unselectAllPaymentMethods()
+                binding.selectorNearPay.makeSelected()
+                selectedPaymentType = binding.selectorNearPay
             }
 
             R.id.selector_bank_transfer -> {

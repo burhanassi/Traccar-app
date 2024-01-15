@@ -169,7 +169,8 @@ enum class PaymentType(val englishLabel: String, val arabicLabel: String) {
     PREPAID("Prepaid", "دفع مسبق"),
     DIGITAL_WALLET("Digital Wallet", "محفظة الكترونية"),
     CARD("Card Payment", "بطاقة ائتمانية"),
-    INTER_PAY("InterPay","InterPay")
+    INTER_PAY("InterPay","InterPay"),
+    NEAR_PAY("NearPay","NearPay")
 }
 
 enum class DeliveryType {
