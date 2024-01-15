@@ -58,6 +58,7 @@
             android:layout_marginEnd="14dp"
             android:src="@drawable/ic_add_note_gray"
             tools:ignore="ContentDescription" />
+
         <ImageView
             android:id="@+id/button_pickup"
             android:layout_width="wrap_content"
@@ -65,6 +66,15 @@
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="14dp"
             android:src="@drawable/ic_pickup_accepted"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/button_info"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="14dp"
+            android:src="@drawable/ic_info"
             tools:ignore="ContentDescription" />
     </LinearLayout>
 
