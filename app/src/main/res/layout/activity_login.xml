@@ -137,6 +137,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="52dp"
                     android:background="@drawable/background_logestechs_button"
+                    android:textAllCaps="false"
                     android:text="@string/button_login"
                     android:textColor="#fff" />
 

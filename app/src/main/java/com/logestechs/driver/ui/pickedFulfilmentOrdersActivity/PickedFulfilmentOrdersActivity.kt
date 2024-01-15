@@ -3,6 +3,7 @@ package com.logestechs.driver.ui.pickedFulfilmentOrdersActivity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
+import com.logestechs.driver.api.requests.PrintPickListRequestBody
 import com.logestechs.driver.data.model.FulfilmentOrder
 import com.logestechs.driver.databinding.ActivityPickedFulfilmentOrdersBinding
 import com.logestechs.driver.ui.barcodeScanner.FulfilmentPackerBarcodeScannerActivity
@@ -32,6 +34,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.util.TimeZone
 
 class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrderCardListener,
     View.OnClickListener {
@@ -298,6 +301,61 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
         }
     }
 
+    private fun callPrintPickList(index: Int) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response =
+                        ApiAdapter.apiClient.printPickList(
+                            PrintPickListRequestBody(listOf(fulfilmentOrdersList[index]?.id ?: 0))
+                        )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        val data = response.body()!!
+                        withContext(Dispatchers.Main) {
+                            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(data.url))
+                            startActivity(browserIntent)
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(), jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(), getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_back -> {
@@ -334,5 +392,9 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
 
     override fun onDirectPackFulfilmentOrder(index: Int) {
         callPackFulfilmentOrder(index)
+    }
+
+    override fun onPrintPickList(index: Int) {
+        callPrintPickList(index)
     }
 }

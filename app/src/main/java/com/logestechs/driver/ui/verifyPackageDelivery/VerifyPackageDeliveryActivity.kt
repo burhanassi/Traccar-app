@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.view.KeyEvent
 import android.view.SurfaceHolder
 import android.view.View
 import androidx.annotation.RequiresApi
@@ -28,6 +29,7 @@ import com.logestechs.driver.databinding.ActivityVerifyPackageDeliveryBinding
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.SharedPreferenceWrapper
 import java.io.IOException
 
 @Suppress("DEPRECATION")
@@ -57,7 +59,11 @@ class VerifyPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener
         setContentView(binding.root)
         toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
         initUi()
-        initialiseDetectorsAndSources()
+        if (SharedPreferenceWrapper.getScanWay() == "built-in") {
+            // Use built-in scanner, it goes for dispatchKeyEvent
+        } else {
+            initialiseDetectorsAndSources()
+        }
         initListeners()
     }
 
@@ -75,6 +81,14 @@ class VerifyPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener
 
     private fun initListeners() {
         binding.buttonTorch.setOnClickListener(this)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        if (event.characters != null && event.characters.isNotEmpty()) {
+            handleDetectedBarcode(event.characters)
+        }
+        return super.dispatchKeyEvent(event)
     }
 
     private fun initialiseDetectorsAndSources() {

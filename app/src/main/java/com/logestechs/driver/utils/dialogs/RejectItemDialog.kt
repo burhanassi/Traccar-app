@@ -10,21 +10,25 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.logestechs.driver.R
 import com.logestechs.driver.api.requests.RejectItemRequestBody
+import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.databinding.DialogRejectItemBinding
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsApp
 import com.logestechs.driver.utils.adapters.RadioGroupListAdapter
+import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
 import com.logestechs.driver.utils.interfaces.RejectItemDialogListener
 import com.logestechs.driver.utils.interfaces.RadioGroupListListener
+import com.logestechs.driver.utils.interfaces.ThumbnailsListListener
 
 class RejectItemDialog(
     private val context: Context,
     private val listener: RejectItemDialogListener?,
-    private val barcode: String?
+    var loadedImagesList: ArrayList<LoadedImage>,
+    val barcode: String?
 
-) : RadioGroupListListener {
+) : RadioGroupListListener, ThumbnailsListListener {
 
-    private lateinit var binding: DialogRejectItemBinding
+    lateinit var binding: DialogRejectItemBinding
     private lateinit var alertDialog: AlertDialog
 
     private val radioOptions = linkedMapOf(
@@ -47,6 +51,12 @@ class RejectItemDialog(
         val alertDialog = dialogBuilder.create()
         this.binding = binding
 
+        binding.rvThumbnails.apply {
+            layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = ThumbnailsAdapter(loadedImagesList, this@RejectItemDialog)
+        }
+
         binding.buttonCancel.setOnClickListener {
             alertDialog.dismiss()
         }
@@ -58,7 +68,8 @@ class RejectItemDialog(
                     RejectItemRequestBody(
                         barcode,
                         (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
-                        binding.etReason.text.toString()
+                        binding.etReason.text.toString(),
+                        getPodImagesUrls()
                     )
                 )
             } else {
@@ -74,6 +85,14 @@ class RejectItemDialog(
             adapter = RadioGroupListAdapter(radioOptions, this@RejectItemDialog)
         }
 
+        binding.buttonCaptureImage.setOnClickListener {
+            listener?.onCaptureImage()
+        }
+
+        binding.buttonLoadImage.setOnClickListener {
+            listener?.onLoadImage()
+        }
+
         binding.root.setOnClickListener {
             clearFocus()
         }
@@ -83,6 +102,17 @@ class RejectItemDialog(
         alertDialog.show()
     }
 
+    private fun getPodImagesUrls(): List<String?>? {
+        return if (loadedImagesList.isNotEmpty()) {
+            val list: ArrayList<String?> = ArrayList()
+            for (item in loadedImagesList) {
+                list.add(item.imageUrl)
+            }
+            list
+        } else {
+            null
+        }
+    }
 
     private fun getStringForFragment(resId: Int): String {
         return LogesTechsApp.instance.resources.getString(resId)
@@ -97,5 +127,9 @@ class RejectItemDialog(
     override fun onItemSelected(title: String?) {
         binding.etReason.setText(title)
         clearFocus()
+    }
+
+    override fun onDeleteImage(position: Int) {
+        listener?.onDeleteImage(position)
     }
 }

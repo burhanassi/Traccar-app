@@ -32,6 +32,7 @@ import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.FulfilmentOrderItemCellAdapter
 import com.logestechs.driver.utils.adapters.FulfilmentOrderItemToPackCellAdapter
 import com.logestechs.driver.utils.adapters.ShippingPlanCellAdapter
@@ -73,7 +74,7 @@ class FulfilmentPackerBarcodeScannerActivity :
     private var scannedTote: Bin? = null
     private var selectedFulfilmentOrder: FulfilmentOrder? = null
 
-    private var selectedScanMode: FulfilmentPackerScanMode? = FulfilmentPackerScanMode.TOTE
+    private var selectedScanMode: FulfilmentPackerScanMode? = FulfilmentPackerScanMode.ITEM_INTO_TOTE
 
     private var fulfilmentOrder: FulfilmentOrder? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,7 +84,11 @@ class FulfilmentPackerBarcodeScannerActivity :
         getExtras()
         toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
         fulfilmentOrder = intent.getParcelableExtra(IntentExtrasKeys.FULFILMENT_ORDER.name)
-        initialiseDetectorsAndSources()
+        if (SharedPreferenceWrapper.getScanWay() == "built-in") {
+            // Use built-in scanner, it goes for dispatchKeyEvent
+        } else {
+            initialiseDetectorsAndSources()
+        }
         initRecycler()
         initListeners()
         initUi()
@@ -169,33 +174,40 @@ class FulfilmentPackerBarcodeScannerActivity :
     }
 
     override fun dispatchKeyEvent(e: KeyEvent): Boolean {
-        if (e.keyCode == KeyEvent.KEYCODE_BACK) {
-            onBackPressed()
-            return true
-        }
-        val action = e.action
-        val keyCode = e.keyCode
-        val character = e.unicodeChar.toChar()
-
-        if (action == KeyEvent.ACTION_DOWN &&
-            keyCode != KeyEvent.KEYCODE_ENTER &&
-            character != '\t' &&
-            character != '\n' &&
-            character != '\u0000'
-        ) {
-            val pressedKey = character
-            scannedBarcode += pressedKey
-        }
-        if (action == KeyEvent.ACTION_DOWN &&
-            (keyCode == KeyEvent.KEYCODE_ENTER || character == '\t' || character == '\n' || character == '\u0000')
-        ) {
-            if (!scannedItemsHashMap.containsKey(scannedBarcode)) {
-                scannedItemsHashMap[scannedBarcode] = scannedBarcode
-                executeBarcodeAction(scannedBarcode)
+        if (SharedPreferenceWrapper.getScanWay() == "built-in") {
+            if (e.characters != null && e.characters.isNotEmpty()) {
+                handleDetectedBarcode(e.characters)
             }
-            scannedBarcode = ""
+            return super.dispatchKeyEvent(e)
+        } else {
+            if (e.keyCode == KeyEvent.KEYCODE_BACK) {
+                onBackPressed()
+                return true
+            }
+            val action = e.action
+            val keyCode = e.keyCode
+            val character = e.unicodeChar.toChar()
+
+            if (action == KeyEvent.ACTION_DOWN &&
+                keyCode != KeyEvent.KEYCODE_ENTER &&
+                character != '\t' &&
+                character != '\n' &&
+                character != '\u0000'
+            ) {
+                val pressedKey = character
+                scannedBarcode += pressedKey
+            }
+            if (action == KeyEvent.ACTION_DOWN &&
+                (keyCode == KeyEvent.KEYCODE_ENTER || character == '\t' || character == '\n' || character == '\u0000')
+            ) {
+                if (!scannedItemsHashMap.containsKey(scannedBarcode)) {
+                    scannedItemsHashMap[scannedBarcode] = scannedBarcode
+                    executeBarcodeAction(scannedBarcode)
+                }
+                scannedBarcode = ""
+            }
+            return false
         }
-        return false
     }
 
     @SuppressLint("MissingPermission")
@@ -331,6 +343,9 @@ class FulfilmentPackerBarcodeScannerActivity :
                     if ((binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter).getItemCount() < fulfilmentOrder?.totalQuantity!!) {
                         if (response?.isSuccessful == true && response.body() != null) {
                             withContext(Dispatchers.Main) {
+                                if (barcode != response.body()!!.barcode) {
+                                    scannedItemsHashMap.remove(barcode)
+                                }
                                 val body = response.body()
 
                                 (binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter)
@@ -346,7 +361,6 @@ class FulfilmentPackerBarcodeScannerActivity :
                                     super.getContext(), getString(R.string.success_operation_completed)
                                 )
                             }
-                            scannedItemsHashMap.remove(barcode)
                         } else {
                             scannedItemsHashMap.remove(barcode)
                             try {

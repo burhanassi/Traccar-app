@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Rect
+import android.location.Geocoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -17,6 +18,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
+import com.google.android.gms.maps.model.LatLng
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.Address
@@ -249,13 +251,29 @@ abstract class LogesTechsActivity : AppCompatActivity() {
         }
     }
 
-    fun showLocationInGoogleMaps(address: Address?) {
+    fun showLocationInGoogleMaps(address: Address?, nationalAddress: Boolean = false) {
         val packageManager: PackageManager = this.packageManager
         val intent = Intent(Intent.ACTION_VIEW)
         try {
+            var latitude: Double? = null
+            var longitude: Double? = null
+
+            if (nationalAddress && address?.nationalAddress != null) {
+                val nationalAddress = getLatLngFromAddress(address.nationalAddress!!)
+                if (nationalAddress != null) {
+                    latitude = nationalAddress.latitude
+                    longitude = nationalAddress.longitude
+                } else {
+                    Helper.showErrorMessage(this, "Google Maps can't find this address")
+                    return
+                }
+            } else {
+                latitude = address?.latitude
+                longitude = address?.longitude
+            }
             val locationDirection: String = Helper.getGoogleNavigationUrl(
-                address?.latitude,
-                address?.longitude
+                latitude,
+                longitude
             )
             intent.data = Uri.parse(locationDirection)
             if (intent.resolveActivity(packageManager) != null) {
@@ -266,6 +284,17 @@ abstract class LogesTechsActivity : AppCompatActivity() {
         }
     }
 
+    fun getLatLngFromAddress(address: String): LatLng? {
+        val geocoder = Geocoder(this)
+        val result = geocoder.getFromLocationName(address, 1)
+        return if (result?.isNotEmpty()!!) {
+            val latitude = result[0].latitude
+            val longitude = result[0].longitude
+            LatLng(latitude, longitude)
+        } else {
+            null
+        }
+    }
     fun getNotifications() {
         showWaitDialog()
         if (Helper.isInternetAvailable(this)) {

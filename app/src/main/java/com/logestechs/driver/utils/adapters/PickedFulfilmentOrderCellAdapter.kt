@@ -88,7 +88,6 @@ class PickedFulfilmentOrderCellAdapter(
             } else {
                 binding.containerPackagingType.visibility = View.GONE
                 binding.buttonPack.text = context.getString(R.string.button_continue_picking)
-                binding.buttonContextMenu.visibility = View.GONE
             }
             if (fulfilmentOrder?.notes?.trim().isNullOrEmpty()) {
                 binding.itemNotes.root.visibility = View.GONE
@@ -113,13 +112,19 @@ class PickedFulfilmentOrderCellAdapter(
             binding.buttonContextMenu.setOnClickListener {
                 val popup = PopupMenu(mAdapter.context, binding.buttonContextMenu)
                 popup.inflate(R.menu.pack_without_scan)
+
+                val actionPackWithoutScanItem = popup.menu.findItem(R.id.action_pack_without_scan)
+                actionPackWithoutScanItem.isVisible = isPicked
+
                 popup.setOnMenuItemClickListener { item: MenuItem? ->
                     if (mAdapter.context != null) {
                         when (item?.itemId) {
                             R.id.action_pack_without_scan -> {
-                                mAdapter.listener?.onDirectPackFulfilmentOrder(
-                                    adapterPosition
-                                )
+                                mAdapter.listener?.onDirectPackFulfilmentOrder(adapterPosition)
+                            }
+
+                            R.id.action_print -> {
+                                mAdapter.listener?.onPrintPickList(adapterPosition)
                             }
                         }
                     }

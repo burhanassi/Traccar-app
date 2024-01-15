@@ -7,6 +7,8 @@ import kotlinx.android.parcel.Parcelize
 data class PostponePackageRequestBody(
     val note: String?,
     val noteKey: String?,
+    val longitude: Double? = null,
+    val latitude: Double? = null,
     val postponedDeliveryDate: String?,
     @Transient
     val packageId: Long?

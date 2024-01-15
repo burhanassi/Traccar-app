@@ -200,7 +200,7 @@
     <string name="please_scan_damaged_location_barcode">الرجاء مسح باركود الموقع التالف</string>
     <string name="please_scan_bin_barcode">الرجاء مسح باركود السلة</string>
     <string name="bin_location_assigned_successfully">تم تعيين موقع السلة بنجاح</string>
-    <string name="please_scan_shipping_plan_barcode">الرجاء مسح باركود طلب التصنيف</string>
+    <string name="please_scan_shipping_plan_barcode">الرجاء مسح باركود طلب التوريد</string>
     <string name="please_scan_items">الرجاء مسح العناصر</string>
     <string name="please_scan_orders">الرجاء مسح الطلبات</string>
     <string name="please_scan_item_barcode">الرجاء مسح باركود العنصر</string>
@@ -257,6 +257,7 @@
     <string name="shipment_type_swap">تبديل</string>
     <string name="shipment_type_bring">إحضار</string>
     <string name="title_please_scan_bundle_items">الرجاء مسح عناصر الحزمة</string>
+    <string name="title_bundle">حزمة</string>
     <string name="error_package_not_found">لم يتم العثور على الطرد</string>
     <string name="in_car_status_pickup">جلب</string>
     <string name="in_car_status_pickup_sprint">إحضار</string>
@@ -332,4 +333,7 @@
     <string name="tote_barcode">باركود سلة التحميل: </string>
     <string name="number_of_items">عدد العناصر: </string>
     <string name="number_of_somthing"> من </string>
+    <string name="sku_bundle">:SKU </string>
+    <string name="name_bundle">الأسم: </string>
+    <string name="quantity_bundle">الكمية: </string>
 </resources>

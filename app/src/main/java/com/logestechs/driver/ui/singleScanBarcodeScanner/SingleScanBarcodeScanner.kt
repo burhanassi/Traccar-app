@@ -7,7 +7,9 @@ import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.os.*
+import android.view.KeyEvent
 import android.view.SurfaceHolder
+import androidx.annotation.RequiresApi
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
@@ -47,7 +49,11 @@ class SingleScanBarcodeScanner : LogesTechsActivity() {
         binding = ActivitySingleScanBarcodeScannerBinding.inflate(layoutInflater)
         setContentView(binding.root)
         toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
-        initialiseDetectorsAndSources()
+        if (SharedPreferenceWrapper.getScanWay() == "built-in") {
+            // Use built-in scanner, it goes for dispatchKeyEvent
+        } else {
+            initialiseDetectorsAndSources()
+        }
         getExtras()
     }
 
@@ -114,6 +120,14 @@ class SingleScanBarcodeScanner : LogesTechsActivity() {
                 }
             }
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        if (event.characters != null && event.characters.isNotEmpty()) {
+            handleDetectedBarcode(event.characters)
+        }
+        return super.dispatchKeyEvent(event)
     }
 
     private fun initialiseDetectorsAndSources() {

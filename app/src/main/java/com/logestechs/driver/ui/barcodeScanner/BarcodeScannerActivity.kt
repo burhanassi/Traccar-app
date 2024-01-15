@@ -76,7 +76,11 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
         toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
         initUi()
         handleOutOfDelivery()
-        initialiseDetectorsAndSources()
+        if (SharedPreferenceWrapper.getScanWay() == "built-in") {
+            // Use built-in scanner, it goes for dispatchKeyEvent
+        } else {
+            initialiseDetectorsAndSources()
+        }
         initRecycler()
         handleScannedItemsCount()
         initListeners()
@@ -160,47 +164,54 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
     }
 
     override fun dispatchKeyEvent(e: KeyEvent): Boolean {
-        if (e.keyCode == KeyEvent.KEYCODE_BACK) {
-            onBackPressed()
-            return true
-        }
-        val action = e.action
-        val keyCode = e.keyCode
-        val character = e.unicodeChar.toChar()
-
-        if (action == KeyEvent.ACTION_DOWN &&
-            keyCode != KeyEvent.KEYCODE_ENTER &&
-            character != '\t' &&
-            character != '\n' &&
-            character != '\u0000'
-        ) {
-            val pressedKey = character
-            scannedBarcode += pressedKey
-        }
-        if (action == KeyEvent.ACTION_DOWN &&
-            (keyCode == KeyEvent.KEYCODE_ENTER || character == '\t' || character == '\n' || character == '\u0000')
-        ) {
-            if (!scannedItemsHashMap.containsKey(scannedBarcode)) {
-                scannedItemsHashMap[scannedBarcode] = scannedBarcode
-                if (driverCompanyConfigurations?.isScanAllPackageAwbCopiesByDriver == true ) {
-                    if (!scannedBarcode.contains(":") && isJustOneParentPackage) {
-                        callPickupPackage(scannedBarcode)
-                    } else if (scannedBarcode.contains(":") &&
-                        scannedBarcode.contains(parentBarcode)) {
-                        callPickupPackage(scannedBarcode)
-                    } else {
-                        Helper.showErrorMessage(
-                            this@BarcodeScannerActivity,
-                            getString(R.string.error_scan_all_items)
-                        )
-                    }
-                } else {
-                    callPickupPackage(scannedBarcode)
-                }
+        if (SharedPreferenceWrapper.getScanWay() == "built-in") {
+            if (e.characters != null && e.characters.isNotEmpty()) {
+                handleDetectedBarcode(e.characters)
             }
-            scannedBarcode = ""
+            return super.dispatchKeyEvent(e)
+        } else {
+            if (e.keyCode == KeyEvent.KEYCODE_BACK) {
+                onBackPressed()
+                return true
+            }
+            val action = e.action
+            val keyCode = e.keyCode
+            val character = e.unicodeChar.toChar()
+
+            if (action == KeyEvent.ACTION_DOWN &&
+                keyCode != KeyEvent.KEYCODE_ENTER &&
+                character != '\t' &&
+                character != '\n' &&
+                character != '\u0000'
+            ) {
+                val pressedKey = character
+                scannedBarcode += pressedKey
+            }
+            if (action == KeyEvent.ACTION_DOWN &&
+                (keyCode == KeyEvent.KEYCODE_ENTER || character == '\t' || character == '\n' || character == '\u0000')
+            ) {
+                if (!scannedItemsHashMap.containsKey(scannedBarcode)) {
+                    scannedItemsHashMap[scannedBarcode] = scannedBarcode
+                    if (driverCompanyConfigurations?.isScanAllPackageAwbCopiesByDriver == true ) {
+                        if (!scannedBarcode.contains(":") && isJustOneParentPackage) {
+                            callPickupPackage(scannedBarcode)
+                        } else if (scannedBarcode.contains(":") &&
+                            scannedBarcode.contains(parentBarcode)) {
+                            callPickupPackage(scannedBarcode)
+                        } else {
+                            Helper.showErrorMessage(
+                                this@BarcodeScannerActivity,
+                                getString(R.string.error_scan_all_items)
+                            )
+                        }
+                    } else {
+                        callPickupPackage(scannedBarcode)
+                    }
+                }
+                scannedBarcode = ""
+            }
+            return false
         }
-        return false
     }
 
 
@@ -379,7 +390,7 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                                 }
 
                             } else if (driverCompanyConfigurations?.isPrintAwbCopiesAsPackageQuantity == true && (response.body()?.quantity
-                                    ?: 0) > 1
+                                    ?: 0) > 1 && ( response.body()?.isShippingPlan == false || response.body()?.isShippingPlan == null)
                             ) {
                                 (binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).insertSubPackage(
                                     response.body()?.getPickupScannedItem(),
@@ -475,6 +486,9 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                                 position
                             )
                             scannedItemsHashMap.remove(pkg?.barcode)
+                            binding.buttonDone.background = getDrawable(R.drawable.background_logestechs_button)
+                            binding.buttonDone.setTextColor(resources.getColor(R.color.white))
+                            isBackButtonEnabled = true
                             handleScannedItemsCount()
                         }
                     } else {
