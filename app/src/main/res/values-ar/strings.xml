@@ -335,4 +335,6 @@
     <string name="sku_bundle">:SKU </string>
     <string name="name_bundle">الأسم: </string>
     <string name="quantity_bundle">الكمية: </string>
+    <string name="to_pay_to_receiver">الدفع للمستلم: </string>
+    <string name="to_collect_from_receiver">التحصيل من المستلم: </string>
 </resources>

@@ -133,7 +133,7 @@ class PackageTrackBottomSheet(
             binding.itemDetailComment.root.visibility = View.GONE
         }
 
-        if (pkg?.status != null && pkg?.status!!.name!!.isNotEmpty()) {
+        if (pkg?.status != null && pkg?.status!!.name.isNotEmpty()) {
             if (Lingver.getInstance().getLocale().toString() == AppLanguages.ARABIC.value) {
                 binding.itemPackageStatus.textItem.text = pkg?.status!!.arabic
             } else {
@@ -143,6 +143,24 @@ class PackageTrackBottomSheet(
             binding.itemPackageStatus.root.visibility = View.GONE
         }
 
+        if (pkg?.description != null && pkg?.description!!.isNotEmpty()) {
+            binding.itemPackageDescription.root.visibility = View.VISIBLE
+            binding.itemPackageDescription.textItem.text = pkg?.description
+        } else {
+            binding.itemPackageDescription.root.visibility = View.GONE
+        }
+
+        if(pkg?.toPayToReceiver != null || pkg?.toCollectFromReceiver != null) {
+            binding.itemCodMethod.root.visibility = View.VISIBLE
+            if(pkg?.toPayToReceiver != null) {
+                binding.itemCodMethod.textItem.text = getString(R.string.to_pay_to_receiver) + " ${pkg?.toPayToReceiver}"
+            } else if(pkg?.toCollectFromReceiver != null) {
+                binding.itemCodMethod.textItem.text = getString(R.string.to_collect_from_receiver) + " ${pkg?.toCollectFromReceiver}"
+            }
+
+        } else {
+          binding.itemCodMethod.root.visibility = View.GONE
+        }
         binding.itemDetailShipmentId.buttonCopy.setOnClickListener {
             Helper.copyTextToClipboard(requireActivity(), pkg?.barcode!!)
         }

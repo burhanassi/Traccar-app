@@ -337,4 +337,6 @@
     <string name="sku_bundle">SKU: </string>
     <string name="name_bundle">Name: </string>
     <string name="quantity_bundle">Quantity: </string>
+    <string name="to_pay_to_receiver">To pay to receiver: </string>
+    <string name="to_collect_from_receiver">To collect from receiver: </string>
 </resources>
