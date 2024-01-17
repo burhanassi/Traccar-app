@@ -13,6 +13,7 @@ import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.ProductItem
 import com.logestechs.driver.databinding.ItemFulfilmentOrderItemCellBinding
 import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.DateFormats
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.customViews.PeekingLinearLayoutManager
@@ -129,13 +130,19 @@ class FulfilmentOrderItemCellAdapter(
             binding.textQuantity.text = productItem?.quantity.toString()
             binding.itemProductName.textItem.text = productItem?.productName
             binding.itemProductSku.textItem.text = productItem?.sku
-            if (productItem?.itemBinLocation != null && productItem.itemBinLocation!!.isNotEmpty()) {
-                binding.itemBinLocation.textItem.text = productItem.itemBinLocation
+            if (productItem?.locationBarcode != null && productItem.locationBarcode!!.isNotEmpty()) {
+                binding.itemBinLocation.textItem.text = productItem.locationBarcode
+                if (productItem?.binBarcode != null && productItem.binBarcode!!.isNotEmpty()) {
+                    binding.itemBinLocation.textItem.text = "${productItem.locationBarcode} - ${productItem.binBarcode}"
+                }
             } else {
                 binding.containerItemBinLocation.visibility = View.GONE
             }
             if (productItem?.expiryDate != null) {
-                binding.itemExpiryDate.textItem.text = productItem.expiryDate
+                binding.itemExpiryDate.textItem.text = Helper.formatServerDate(
+                    productItem.expiryDate.toString(),
+                    DateFormats.MESSAGE_TEMPLATE_WITH_TIME
+                )
             } else {
                 binding.containerItemExpiryDate.visibility = View.GONE
             }
