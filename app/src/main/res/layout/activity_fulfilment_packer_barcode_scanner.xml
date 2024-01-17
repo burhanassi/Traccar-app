@@ -69,7 +69,7 @@
                 android:layout_weight="0.65"
                 android:background="@drawable/background_barcode_scanner_bottom_section"
                 android:orientation="vertical"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
