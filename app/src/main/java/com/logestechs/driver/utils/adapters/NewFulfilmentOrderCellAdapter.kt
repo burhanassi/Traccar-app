@@ -108,7 +108,7 @@ class NewFulfilmentOrderCellAdapter(
             }
 
             binding.textItemsCount.text = fulfilmentOrder?.numberOfItems.toString()
-            binding.textSkuCount.text = fulfilmentOrder?.items?.size.toString()
+            binding.textSkuCount.text = fulfilmentOrder?.numberOfSkus.toString()
 
             binding.buttonPick.setOnClickListener {
                 mAdapter.listener?.onPickFulfilmentOrder(adapterPosition)

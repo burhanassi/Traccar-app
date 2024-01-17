@@ -239,6 +239,22 @@
                                 app:textStatus="@string/payment_type_bank_transfer" />
 
                         </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginEnd="12dp"
+                            android:orientation="horizontal">
+
+                            <com.logestechs.driver.utils.customViews.StatusSelector
+                                android:id="@+id/selector_inter_pay"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                app:textStatus="@string/payment_type_inter_pay" />
+
+                        </LinearLayout>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
