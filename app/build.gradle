@@ -45,7 +45,7 @@ android {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', 'base_url', '\"http://pal-ship.com:8080/api/\"'
+            buildConfigField 'String', 'base_url', '\"https://apisv5.logestechs.com/api/\"'
 //            buildConfigField 'String', 'base_url', '\"http://192.168.1.25:8080/\"'
             manifestPlaceholders = [crashlyticsCollectionEnabled: "false"]
         }
@@ -77,6 +77,14 @@ android {
 
     flavorDimensions 'driver'
     productFlavors {
+        interCity {
+            dimension 'driver'
+            resValue 'string', 'app_name', 'InterCity Driver'
+            buildConfigField 'int', 'company_id', '357'
+            buildConfigField 'String', 'company_name', '\"InterCity\"'
+            applicationId 'com.logestechs.driver_interCity'
+        }
+
         logesTechs {
             dimension 'driver'
             resValue 'string', 'app_name', 'LogesTechs Driver'
