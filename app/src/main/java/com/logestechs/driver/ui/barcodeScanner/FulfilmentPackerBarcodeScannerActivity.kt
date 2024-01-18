@@ -152,8 +152,12 @@ class FulfilmentPackerBarcodeScannerActivity :
         }
         binding.textScannedOrder.text =
             getString(R.string.order_barcode) + "${selectedFulfilmentOrder?.barcode}"
-        binding.textToteBarcode.text =
-            getString(R.string.order_barcode) + "${selectedFulfilmentOrder?.totBarcode}"
+        if(selectedFulfilmentOrder?.totBarcode != null && selectedFulfilmentOrder?.totBarcode!!.isNotEmpty()) {
+            binding.textToteBarcode.text =
+                getString(R.string.tote_barcode) + "${selectedFulfilmentOrder?.totBarcode}"
+        } else {
+            binding.containerToteBarcode.visibility = View.GONE
+        }
     }
 
     private fun vibrate() {
