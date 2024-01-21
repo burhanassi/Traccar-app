@@ -133,6 +133,9 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
                 getString(R.string.title_draft_pickups_sprint)
             binding.dashSubEntryReturnedPackages.titleText =
                 getString(R.string.title_returned_packages_sprint)
+            binding.dashSubEntryFailedPackages.titleText =
+                getString(R.string.dashboard_failed_sprint)
+            binding.dashSubEntryDraftPickups.titleText = getString(R.string.title_draft_pickups_sprint)
         } else {
             binding.dashEntryScanPackages.titleText =
                 getString(R.string.dashboard_scan_new_package_barcode)
@@ -140,12 +143,13 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
                 getString(R.string.dashboard_accepted_packages)
             binding.dashEntryPendingPackages.titleText =
                 getString(R.string.dashboard_pending_packages)
-            binding.dashEntryPendingPackages.titleText =
-                getString(R.string.dashboard_pending_packages)
             binding.dashEntryInCarPackages.titleText = getString(R.string.dashboard_in_car_packages)
             binding.dashSubEntryMassCodReports.titleText =
                 getString(R.string.dashboard_mass_cod_reports)
-            binding.dashSubEntryDraftPickups.titleText = getString(R.string.title_draft_pickups)
+            binding.dashSubEntryDraftPickups.titleText =
+                getString(R.string.title_draft_pickups)
+            binding.dashSubEntryFailedPackages.titleText =
+                getString(R.string.dashboard_failed)
             binding.dashSubEntryReturnedPackages.titleText =
                 getString(R.string.title_returned_packages)
         }
