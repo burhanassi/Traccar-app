@@ -63,6 +63,7 @@ class PackagesListAdapter(
         val driverCompanyConfigurations =
             SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
         fun bind(packages: Package) {
+            binding.textBarcode.text = packages.barcode
             binding.textTitle.text =  packages.getFullReceiverName()
             binding.textAddress.text =  packages.destinationAddress?.city
 

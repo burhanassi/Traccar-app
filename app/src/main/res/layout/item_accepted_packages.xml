@@ -30,6 +30,15 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/text_barcode"
+                style="@style/LogesTechsMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/fontTitleBlack"
+                android:textSize="12sp"
+                tools:text="#100919003663" />
+
+            <TextView
                 android:id="@+id/text_title"
                 style="@style/LogesTechsMedium"
                 android:layout_width="wrap_content"
