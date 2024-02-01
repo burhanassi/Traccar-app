@@ -132,9 +132,8 @@ class FulfilmentOrderItemCellAdapter(
             binding.itemProductSku.textItem.text = productItem?.sku
             if (productItem?.locationBarcode != null && productItem.locationBarcode!!.isNotEmpty()) {
                 binding.itemBinLocation.textItem.text = productItem.locationBarcode
-                if (productItem?.binBarcode != null && productItem.binBarcode!!.isNotEmpty()) {
-                    binding.itemBinLocation.textItem.text = "${productItem.locationBarcode} - ${productItem.binBarcode}"
-                }
+            } else if (productItem?.binBarcode != null && productItem.binBarcode!!.isNotEmpty()) {
+                binding.itemBinLocation.textItem.text = productItem.binBarcode
             } else {
                 binding.containerItemBinLocation.visibility = View.GONE
             }

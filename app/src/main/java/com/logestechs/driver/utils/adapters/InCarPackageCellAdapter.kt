@@ -332,6 +332,7 @@ class InCarPackageCellAdapter(
                 if (mAdapter.isSprint) {
                     popup.menu.findItem(R.id.action_edit_package_type).title =
                         mAdapter.context!!.getString(R.string.change_package_type_sprint)
+                    popup.menu.findItem(R.id.action_add_note).isVisible = false
                 }
                 popup.show()
             }
