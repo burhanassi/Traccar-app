@@ -656,4 +656,15 @@ interface LogesTechsDriverApi {
         @Query("productId") productId: Long,
         @Query("orderId") orderId: Long?
     ): Response<ArrayList<SubBundle?>>?
+
+    @GET("handler/hub/reserved-bin")
+    suspend fun scanBinBarcodeForChangeLocation (
+        @Query("barcode") barcode: String
+    ): Response<ResponseBody?>?
+
+    @PUT("handler/hub/locations/{locationBarcode}/bin/sort")
+    suspend fun scanNewLocationForChange (
+        @Path("locationBarcode") locationBarcode: String,
+        @Query("barcode") barcode: String
+    ): Response<ResponseBody?>?
 }
