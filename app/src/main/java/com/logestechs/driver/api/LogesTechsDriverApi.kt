@@ -646,6 +646,11 @@ interface LogesTechsDriverApi {
         @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString()
     ): Response<PrintAwbResponse?>?
 
+    @GET("admin/fulfillment/totes/{toteBarcode}/order")
+    suspend fun getOrderFromTote(
+        @Path("toteBarcode") toteBarcode: String?,
+    ): Response<FulfilmentOrder?>?
+
     @GET("handler/product/sub-bundle")
     suspend fun getSubBundlesProduct (
         @Query("productId") productId: Long,

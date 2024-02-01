@@ -8,7 +8,9 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
@@ -20,6 +22,7 @@ import com.logestechs.driver.databinding.ActivityPickedFulfilmentOrdersBinding
 import com.logestechs.driver.ui.barcodeScanner.FulfilmentPackerBarcodeScannerActivity
 import com.logestechs.driver.ui.barcodeScanner.FulfilmentPickerBarcodeScannerActivity
 import com.logestechs.driver.ui.barcodeScanner.FulfilmentPickerScanMode
+import com.logestechs.driver.ui.singleScanBarcodeScanner.SingleScanBarcodeScanner
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.FulfilmentOrderStatus
 import com.logestechs.driver.utils.Helper
@@ -28,6 +31,7 @@ import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.NewFulfilmentOrderCellAdapter
 import com.logestechs.driver.utils.adapters.PickedFulfilmentOrderCellAdapter
+import com.logestechs.driver.utils.dialogs.SearchPackagesDialog
 import com.logestechs.driver.utils.interfaces.PickedFulfilmentOrderCardListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -80,7 +84,12 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
 
                 currentPageIndex = 1
                 fulfilmentOrdersList.clear()
-
+                if (status == FulfilmentOrderStatus.PICKED.name) {
+                    binding.textTitle.text = getText(R.string.picked_fulfillment)
+                } else {
+                    binding.textTitle.text = getText(R.string.partially_picked_fulfillment)
+                    binding.buttonScanTote.visibility = View.GONE
+                }
                 callGetFulfilmentOrders(status)
             }
 
@@ -110,6 +119,17 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
         isOnCreateCalled = false
     }
 
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            AppConstants.REQUEST_SCAN_BARCODE -> {
+                callGetOrderByToteBarcode(data?.getStringExtra(IntentExtrasKeys.SCANNED_BARCODE.name)!!)
+            }
+
+            else -> {}
+        }
+    }
     private fun initRecycler() {
         val layoutManager = LinearLayoutManager(
             super.getContext()
@@ -136,6 +156,7 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
         if (SharedPreferenceWrapper.getNotificationsCount() == "0") {
             binding.toolbarMain.notificationCount.visibility = View.GONE
         }
+        binding.buttonScanTote.setOnClickListener(this)
     }
 
     private fun handleNoPackagesLabelVisibility(isEmpty: Boolean) {
@@ -356,10 +377,69 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
         }
     }
 
+    private fun callGetOrderByToteBarcode(toteBarcode: String) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response =
+                        ApiAdapter.apiClient.getOrderFromTote(toteBarcode)
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            onPackFulfilmentOrder(response.body()!!)
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(), jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(), getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_back -> {
                 onBackPressed()
+            }
+
+            R.id.button_scan_tote -> {
+                val scanBarcode = Intent(this, SingleScanBarcodeScanner::class.java)
+                this.startActivityForResult(
+                    scanBarcode,
+                    AppConstants.REQUEST_SCAN_BARCODE
+                )
             }
 
             R.id.button_notifications -> {
