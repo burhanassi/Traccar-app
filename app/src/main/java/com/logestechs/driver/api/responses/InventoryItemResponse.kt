@@ -27,6 +27,7 @@ data class InventoryItemResponse(
     var rejectReasonKey: ProductItemRejectReasonKey?,
     var sortingDate: String?,
     var createdDate: String?,
+    var rejectedDate: String?,
     var pickedUser: String?,
     var packedUser: String?,
     var orderBarcode: String?,

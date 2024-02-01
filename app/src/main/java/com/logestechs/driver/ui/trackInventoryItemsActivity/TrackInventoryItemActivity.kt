@@ -270,7 +270,10 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
                 binding.containerItemStatus.background = gradientDrawable
                 binding.itemAddedMethodRejected.text =
                     itemDetails.shippingPlanBarcode ?: getString(R.string.title_manually)
-                binding.itemRejectedDateRejected.visibility = View.GONE
+                binding.itemRejectedDateRejected.text = Helper.formatServerDateLocalized(
+                    itemDetails.rejectedDate,
+                    DateFormats.DEFAULT_FORMAT
+                )
                 binding.itemLocationBarcodeRejected.text = itemDetails.locationBarcode ?: "-------"
                 binding.itemRejectedReasonRejected.text = itemDetails.rejectReason ?: "-------"
                 binding.itemExpiryDateRejected.text = Helper.formatServerDateLocalized(
