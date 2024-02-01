@@ -306,12 +306,9 @@ class PickedFulfilmentOrdersActivity : LogesTechsActivity(), PickedFulfilmentOrd
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val timezone = TimeZone.getDefault().id.toString()
-
                     val response =
                         ApiAdapter.apiClient.printPickList(
-                            PrintPickListRequestBody(listOf(fulfilmentOrdersList[index]?.id ?: 0)),
-                            timezone
+                            PrintPickListRequestBody(listOf(fulfilmentOrdersList[index]?.id ?: 0))
                         )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()

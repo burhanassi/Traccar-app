@@ -265,6 +265,24 @@
                         bind:isCopyVisible="@{false}"
                         bind:itemSrc="@{@drawable/ic_package_status}" />
 
+                    <include
+                        android:id="@+id/item_package_description"
+                        layout="@layout/item_package_property"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        bind:isCopyVisible="@{false}"
+                        bind:itemSrc="@{@drawable/ic_package_description}" />
+
+                    <include
+                        android:id="@+id/item_cod_method"
+                        layout="@layout/item_package_property"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        bind:isCopyVisible="@{false}"
+                        bind:itemSrc="@{@drawable/ic_shipment_details_cod}" />
+
                 </LinearLayout>
 
 

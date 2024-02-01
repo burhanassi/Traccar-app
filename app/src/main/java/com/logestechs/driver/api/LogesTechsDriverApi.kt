@@ -465,7 +465,8 @@ interface LogesTechsDriverApi {
 
     @PUT("handler/fulfillment-order/pack")
     suspend fun packFulfilmentOrder(
-        @Query("orderId") orderId: Long?
+        @Query("orderId") orderId: Long?,
+        @Query("isPackedOrderWithoutScanningItems") isPackedOrderWithoutScanningItems: Boolean = true
     ): Response<ResponseBody?>?
 
     @GET("handler/order/{orderId}/tote")
@@ -630,8 +631,8 @@ interface LogesTechsDriverApi {
     @GET("driver/customer/{customerId}/accepted/pdf-report")
     suspend fun printPackageAwb(
         @Path("customerId") id: Long,
-        @Query("timezone") timezone: String,
-        @Query("is-image") isImage: Boolean
+        @Query("is-image") isImage: Boolean,
+        @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString(),
     ): Response<PrintAwbResponse>
 
     @PUT("driver/modify-profile")
@@ -642,11 +643,12 @@ interface LogesTechsDriverApi {
     @POST("handler/orders/items/list/pdf")
     suspend fun printPickList(
         @Body body: PrintPickListRequestBody,
-        @Query("timezone") timezone: String
+        @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString()
     ): Response<PrintAwbResponse?>?
 
     @GET("handler/product/sub-bundle")
     suspend fun getSubBundlesProduct (
-        @Query("productId") productId: Long
+        @Query("productId") productId: Long,
+        @Query("orderId") orderId: Long?
     ): Response<ArrayList<SubBundle?>>?
 }

@@ -111,7 +111,7 @@ class AcceptedPackagesBottomSheet: LogesTechsBottomSheetFragment(), PackagesList
 
         binding.rvPackages.apply {
             layoutManager = LinearLayoutManager(activity)
-            adapter = PackagesListAdapter(packagesList, listener = listener)
+            adapter = PackagesListAdapter(packagesList, listener = listener, requireActivity().supportFragmentManager)
             addOnScrollListener(recyclerViewOnScrollListener)
         }
 
@@ -133,7 +133,7 @@ class AcceptedPackagesBottomSheet: LogesTechsBottomSheetFragment(), PackagesList
 
                 if (!isLoading && !isLastPage) {
                     if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount >= AppConstants.DEFAULT_PAGE_SIZE) {
-//                        getNotifications()
+
                     }
                 }
             }
@@ -532,6 +532,10 @@ class AcceptedPackagesBottomSheet: LogesTechsBottomSheetFragment(), PackagesList
     }
     override fun onPickupPackage(barcode: String?) {
         callPickupPackage(barcode!!)
+    }
+
+    override fun onShowPackageInfo(packageId: Long) {
+        (requireActivity() as LogesTechsActivity).trackShipmentNotification(packageId)
     }
 
     override fun onPackageNoteAdded(body: AddNoteRequestBody?) {

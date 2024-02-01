@@ -1,6 +1,7 @@
 package com.logestechs.driver.ui.packageDeliveryScreens.packageDelivery
 
 import android.Manifest
+import android.app.Activity
 import android.content.ClipData
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -16,6 +17,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.text.Html
+import android.util.Log
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
@@ -73,6 +75,8 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -106,6 +110,10 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
     var items: List<PackageItemsToDeliver?>? = null
     private val checkedItems = ArrayList<String>()
+
+    private val softposPackageName = "com.interpaymea.softpos"
+    private val softposClassName = "com.interpaymea.softpos.MainActivity"
+    private val OPEN_SOFTPOS_RESULT_CODE = 1
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -301,6 +309,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         binding.selectorCheque.setOnClickListener(this)
         binding.selectorPrepaid.setOnClickListener(this)
         binding.selectorCardPayment.setOnClickListener(this)
+        binding.selectorInterPay.setOnClickListener(this)
         binding.selectorBankTransfer.setOnClickListener(this)
         binding.buttonCaptureImage.setOnClickListener(this)
         binding.buttonLoadImage.setOnClickListener(this)
@@ -354,6 +363,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         binding.selectorCheque.enumValue = PaymentType.CHEQUE
         binding.selectorPrepaid.enumValue = PaymentType.PREPAID
         binding.selectorCardPayment.enumValue = PaymentType.CARD
+        binding.selectorInterPay.enumValue = PaymentType.INTER_PAY
         binding.selectorBankTransfer.enumValue = PaymentType.BANK_TRANSFER
     }
 
@@ -363,6 +373,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         paymentTypeButtonsList.add(binding.selectorCheque)
         paymentTypeButtonsList.add(binding.selectorPrepaid)
         paymentTypeButtonsList.add(binding.selectorCardPayment)
+        paymentTypeButtonsList.add(binding.selectorInterPay)
         paymentTypeButtonsList.add(binding.selectorBankTransfer)
     }
 
@@ -571,6 +582,53 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                             getString(R.string.error_camera_and_storage_permissions)
                         )
                     }
+                }
+            }
+
+            OPEN_SOFTPOS_RESULT_CODE -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    val bundle = data?.getBundleExtra("data")
+                    if (bundle != null) {
+                        val map = HashMap<String, String>()
+                        val keys = bundle.keySet()
+
+                        if (keys != null) {
+                            for (key in keys) {
+                                map[key] = bundle.getString(key, "")
+                            }
+                        }
+                        if (validateInput()) {
+                            if (!needsPinVerification()) {
+                                if (companyConfigurations?.isDriverProveDeliveryByScanBarcode!!) {
+                                    val mIntent = Intent(
+                                        super.getContext(),
+                                        VerifyPackageDeliveryActivity::class.java
+                                    )
+                                    mIntent.putExtra("barcode", pkg?.barcode)
+                                    mIntent.putExtra("invoice", pkg?.invoiceNumber)
+                                    startActivityForResult(mIntent, AppConstants.REQUEST_VERIFY_PACKAGE)
+                                } else {
+                                    handlePackageDelivery()
+                                }
+                            }
+                        }
+                    } else {
+                        handleExceptionFromSoftpos("400", "Invalid response from SoftPOS", null)
+                    }
+                } else if (resultCode == Activity.RESULT_CANCELED) {
+                    val bundle = data?.getBundleExtra("data")
+                    val errorCode = bundle?.getString("errorCode")
+                    if (errorCode != null) {
+                        handleExceptionFromSoftpos(
+                            bundle.getString("errorCode", ""),
+                            bundle.getString("errorMessage", ""),
+                            bundle.getString("errorDetails", "")
+                        )
+                    } else {
+                        handleExceptionFromSoftpos("400", "User has cancelled the payment.", null)
+                    }
+                } else {
+                    handleExceptionFromSoftpos("404", "Unable to get data", null)
                 }
             }
 
@@ -1142,6 +1200,42 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
     }
 
+    private fun isSoftposInstalled(): Boolean {
+        var pm = packageManager;
+        return try {
+            pm.getPackageInfo(softposPackageName, 0)
+            true
+        } catch (e: PackageManager.NameNotFoundException){
+            false
+        }
+    }
+
+    private fun startSoftposApp (cod: String) {
+        val codValue = cod.toDoubleOrNull()
+        val decimalFormat = DecimalFormat("#.00", DecimalFormatSymbols(Locale.ENGLISH))
+        val formattedCod = decimalFormat.format(codValue)
+
+        val sendIntent = Intent()
+        sendIntent.setClassName(softposPackageName, softposClassName)
+
+        val bundle = Bundle()
+        bundle.putString("amount", formattedCod)
+        bundle.putString("transaction_type", "Sale")
+        sendIntent.putExtra("data", bundle)
+        sendIntent.type = "text/plain"
+
+        if (sendIntent.resolveActivity(packageManager) != null) {
+            startActivityForResult(sendIntent, OPEN_SOFTPOS_RESULT_CODE)
+        } else {
+            Log.e("Error", "SoftPOS app not installed")
+        }
+    }
+
+    private fun handleExceptionFromSoftpos(errorCode: String, errorMessage: String, errorDetails: String?) {
+        // TODO: Handle exceptions from SoftPOS here
+        Log.e("SoftPOS Exception", "ErrorCode: $errorCode, ErrorMessage: $errorMessage, ErrorDetails: $errorDetails")
+        // You may display an error message to the user or take appropriate action
+    }
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_clear_signature -> {
@@ -1153,18 +1247,29 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             }
 
             R.id.button_deliver_package -> {
-                if (validateInput()) {
-                    if (!needsPinVerification()) {
-                        if (companyConfigurations?.isDriverProveDeliveryByScanBarcode!!) {
-                            val mIntent = Intent(
-                                super.getContext(),
-                                VerifyPackageDeliveryActivity::class.java
-                            )
-                            mIntent.putExtra("barcode", pkg?.barcode)
-                            mIntent.putExtra("invoice", pkg?.invoiceNumber)
-                            startActivityForResult(mIntent, AppConstants.REQUEST_VERIFY_PACKAGE)
-                        } else {
-                            handlePackageDelivery()
+                if (selectedPaymentType?.textView?.text == PaymentType.INTER_PAY.englishLabel) {
+                    if (isSoftposInstalled()) {
+                        startSoftposApp(pkg?.cod?.format()!!)
+                        return
+                    } else {
+                        Helper.showErrorMessage(
+                            super.getContext(), getString(R.string.error_app_is_not_installed)
+                        )
+                    }
+                } else {
+                    if (validateInput()) {
+                        if (!needsPinVerification()) {
+                            if (companyConfigurations?.isDriverProveDeliveryByScanBarcode!!) {
+                                val mIntent = Intent(
+                                    super.getContext(),
+                                    VerifyPackageDeliveryActivity::class.java
+                                )
+                                mIntent.putExtra("barcode", pkg?.barcode)
+                                mIntent.putExtra("invoice", pkg?.invoiceNumber)
+                                startActivityForResult(mIntent, AppConstants.REQUEST_VERIFY_PACKAGE)
+                            } else {
+                                handlePackageDelivery()
+                            }
                         }
                     }
                 }
@@ -1216,6 +1321,12 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 unselectAllPaymentMethods()
                 binding.selectorCardPayment.makeSelected()
                 selectedPaymentType = binding.selectorCardPayment
+            }
+
+            R.id.selector_inter_pay -> {
+                unselectAllPaymentMethods()
+                binding.selectorInterPay.makeSelected()
+                selectedPaymentType = binding.selectorInterPay
             }
 
             R.id.selector_bank_transfer -> {

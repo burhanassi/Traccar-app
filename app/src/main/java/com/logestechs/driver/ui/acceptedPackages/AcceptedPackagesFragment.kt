@@ -323,14 +323,11 @@ class AcceptedPackagesFragment(
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val timezone = TimeZone.getDefault().id.toString()
-
                     val selectedDevice = chooseBluetoothDevice()
 
                     if (selectedDevice != null) {
                         val response = ApiAdapter.apiClient.printPackageAwb(
                             customer?.id!!,
-                            timezone,
                             true
                         )
                         hideWaitDialog()

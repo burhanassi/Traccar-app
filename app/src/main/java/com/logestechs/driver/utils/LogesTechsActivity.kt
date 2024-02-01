@@ -263,6 +263,9 @@ abstract class LogesTechsActivity : AppCompatActivity() {
                 if (nationalAddress != null) {
                     latitude = nationalAddress.latitude
                     longitude = nationalAddress.longitude
+                } else {
+                    Helper.showErrorMessage(this, "Google Maps can't find this address")
+                    return
                 }
             } else {
                 latitude = address?.latitude

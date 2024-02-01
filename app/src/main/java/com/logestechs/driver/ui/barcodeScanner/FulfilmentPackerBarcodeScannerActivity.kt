@@ -74,7 +74,7 @@ class FulfilmentPackerBarcodeScannerActivity :
     private var scannedTote: Bin? = null
     private var selectedFulfilmentOrder: FulfilmentOrder? = null
 
-    private var selectedScanMode: FulfilmentPackerScanMode? = FulfilmentPackerScanMode.TOTE
+    private var selectedScanMode: FulfilmentPackerScanMode? = FulfilmentPackerScanMode.ITEM_INTO_TOTE
 
     private var fulfilmentOrder: FulfilmentOrder? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -152,6 +152,12 @@ class FulfilmentPackerBarcodeScannerActivity :
         }
         binding.textScannedOrder.text =
             getString(R.string.order_barcode) + "${selectedFulfilmentOrder?.barcode}"
+        if(selectedFulfilmentOrder?.totBarcode != null && selectedFulfilmentOrder?.totBarcode!!.isNotEmpty()) {
+            binding.textToteBarcode.text =
+                getString(R.string.tote_barcode) + "${selectedFulfilmentOrder?.totBarcode}"
+        } else {
+            binding.containerToteBarcode.visibility = View.GONE
+        }
     }
 
     private fun vibrate() {

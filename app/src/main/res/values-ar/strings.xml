@@ -124,6 +124,7 @@
     <string name="text_partial_delivery">توصيل جزئي</string>
     <string name="payment_type_cash">نقداً</string>
     <string name="payment_type_cheque">شيك</string>
+    <string name="payment_type_inter_pay">InterPay</string>
     <string name="payment_type_bank_transfer">حوالة بنكية</string>
     <string name="payment_type_prepaid">دفع مسبق</string>
     <string name="payment_type_digital_wallet">محفظة الكترونية</string>
@@ -335,4 +336,6 @@
     <string name="sku_bundle">:SKU </string>
     <string name="name_bundle">الأسم: </string>
     <string name="quantity_bundle">الكمية: </string>
+    <string name="to_pay_to_receiver">الدفع للمستلم: </string>
+    <string name="to_collect_from_receiver">التحصيل من المستلم: </string>
 </resources>

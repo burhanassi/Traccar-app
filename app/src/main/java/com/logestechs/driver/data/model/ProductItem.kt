@@ -29,6 +29,8 @@ data class ProductItem(
     var price: Double? = null,
     var sum: Double? = null,
     var itemBinLocation: String? = null,
+    var binBarcode: String? = null,
+    var locationBarcode: String? = null,
     var isCustomPackaging: Boolean? = null,
     var fulfillmentOrderPackagingType: FulfillmentOrderPackagingType? = null,
     var parcelTypeName: String? = null,
