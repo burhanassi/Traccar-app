@@ -351,6 +351,9 @@ class InCarPackageCellAdapter(
             if (mAdapter.isSprint) {
                 binding.buttonDeliverPackage.text =
                     mAdapter.context?.getString(R.string.button_deliver_package_sprint)
+                if (pkg?.status == AdminPackageStatus.RETURNED_BY_RECIPIENT) {
+                    binding.buttonsContainer.visibility = View.GONE
+                }
             }
         }
     }
