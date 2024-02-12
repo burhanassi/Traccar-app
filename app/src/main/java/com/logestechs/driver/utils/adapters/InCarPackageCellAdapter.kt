@@ -162,6 +162,13 @@ class InCarPackageCellAdapter(
                 binding.itemPackageQuantity.root.visibility = View.GONE
             }
 
+            if (pkg?.pickupDate == null || pkg.pickupDate!!.isEmpty()) {
+                binding.itemPickupDate.root.visibility = View.GONE
+            } else {
+                binding.itemPickupDate.root.visibility = View.VISIBLE
+                binding.itemPickupDate.textItem.text = pkg.pickupDate
+            }
+
             //Sender Contact Actions
             binding.imageViewSenderCall.setOnClickListener {
                 if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {

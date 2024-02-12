@@ -105,7 +105,8 @@ data class Package(
     var subBundles: List<Package?>? = null,
     var verificationStatus: String? = null,
     var originalBusinessSenderName: String? = null,
-    var integrationSource: IntegrationSource? = null
+    var integrationSource: IntegrationSource? = null,
+    var pickupDate: String? = null
 ) : Parcelable {
     fun getFullSenderName(): String {
         return if (senderMiddleName?.trim().isNullOrEmpty()) {
