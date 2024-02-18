@@ -15,6 +15,7 @@ import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemInCarPackageCellBinding
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.Helper.Companion.format
+import com.logestechs.driver.utils.Helper.Companion.formatServerDate
 import com.logestechs.driver.utils.dialogs.*
 import com.logestechs.driver.utils.interfaces.*
 
@@ -166,7 +167,10 @@ class InCarPackageCellAdapter(
                 binding.itemPickupDate.root.visibility = View.GONE
             } else {
                 binding.itemPickupDate.root.visibility = View.VISIBLE
-                binding.itemPickupDate.textItem.text = pkg.pickupDate
+                binding.itemPickupDate.textItem.text = formatServerDate(
+                    pkg.pickupDate.toString(),
+                    DateFormats.MESSAGE_TEMPLATE_WITH_TIME
+                )
             }
 
             //Sender Contact Actions
