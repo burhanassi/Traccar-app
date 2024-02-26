@@ -10,6 +10,8 @@ import android.location.Geocoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.telephony.PhoneStateListener
+import android.telephony.TelephonyManager
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -17,6 +19,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.maps.model.LatLng
 import com.logestechs.driver.R
@@ -44,6 +47,9 @@ abstract class LogesTechsActivity : AppCompatActivity() {
     private var tempMobileNumber: String? = null
     var currentLangCode: String? = null
 
+    private var telephonyManager: TelephonyManager? = null
+    private var phoneStateListener: CustomPhoneStateListener? = null
+
     fun showWaitDialog() {
         if (!this.isFinishing) {
             if (mWaitDialog == null) {
@@ -61,7 +67,13 @@ abstract class LogesTechsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         LogesTechsApp.instance.currentActivity = WeakReference(this)
         currentLangCode = Lingver.getInstance().getLocale().toString()
+        checkPermissions()
         handleForwardNavigationAnimation()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        telephonyManager?.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE)
     }
 
     override fun onBackPressed() {
@@ -82,6 +94,24 @@ abstract class LogesTechsActivity : AppCompatActivity() {
         } else {
             CustomIntent.customType(this, IntentAnimation.LTR.value)
         }
+    }
+
+    private fun checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.READ_PHONE_STATE),
+                AppConstants.REQUEST_READ_PHONE_STATE
+            )
+        } else {
+            initializeTelephonyOperations()
+        }
+    }
+
+    private fun initializeTelephonyOperations() {
+        telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        phoneStateListener = CustomPhoneStateListener()
+        telephonyManager?.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE)
     }
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
@@ -163,6 +193,14 @@ abstract class LogesTechsActivity : AppCompatActivity() {
                 }
                 tempMobileNumber = null
             }
+
+            AppConstants.REQUEST_READ_PHONE_STATE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    initializeTelephonyOperations()
+                } else {
+                    // Permission denied, handle accordingly (e.g., show a message to the user)
+                }
+            }
         }
 
     }
@@ -190,6 +228,7 @@ abstract class LogesTechsActivity : AppCompatActivity() {
                     tempMobileNumber = number
                 }
             } else {
+                CustomPhoneStateListener.isOutgoingCall = true
                 this.startActivity(intent)
             }
         }
