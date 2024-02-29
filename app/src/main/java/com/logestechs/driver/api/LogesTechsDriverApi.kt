@@ -4,6 +4,7 @@ import com.logestechs.driver.api.requests.*
 import com.logestechs.driver.api.responses.*
 import com.logestechs.driver.data.model.*
 import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.PaymentGatewayType
 import com.logestechs.driver.utils.ReturnedPackageStatus
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
@@ -518,6 +519,23 @@ interface LogesTechsDriverApi {
     @POST("driver/packages/{packageId}/pin-code")
     suspend fun requestPinCodeSms(
         @Path("packageId") packageId: Long?
+    ): Response<ResponseBody?>?
+
+    @POST("driver/packages/{packageId}/clickpay")
+    suspend fun requestPaymentLinkClickPay(
+        @Path("packageId") packageId: Long?
+    ): Response<ResponseBody?>?
+
+    @GET("driver/packages/{packageId}/is-e-paid")
+    suspend fun verifyClickPay(
+        @Path("packageId") packageId: Long?
+    ): Response<VerifyClickPayResponse?>?
+
+    @POST("driver/packages/{packageId}/payment-gateway/pay")
+    suspend fun paymentGateway(
+        @Path("packageId") packageId: Long?,
+        @Query("reference") reference: String?,
+        @Query("type") type: PaymentGatewayType?
     ): Response<ResponseBody?>?
 
     @POST("driver/bundles/{bundleId}/pin-code")

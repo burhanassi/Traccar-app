@@ -159,7 +159,14 @@ enum class MassCodReportsViewMode(val value: String) {
 }
 
 enum class ConfirmationDialogAction {
-    RETURN_PACKAGE
+    RETURN_PACKAGE,
+    CLICKPAY_PAYMENT,
+    CLICKPAY_RESULT
+}
+
+enum class PaymentGatewayType {
+    NEAR_PAY,
+    INTER_PAY
 }
 
 enum class PaymentType(val englishLabel: String, val arabicLabel: String) {
@@ -169,7 +176,8 @@ enum class PaymentType(val englishLabel: String, val arabicLabel: String) {
     PREPAID("Prepaid", "دفع مسبق"),
     DIGITAL_WALLET("Digital Wallet", "محفظة الكترونية"),
     CARD("Card Payment", "بطاقة ائتمانية"),
-    INTER_PAY("InterPay","InterPay")
+    INTER_PAY("InterPay","InterPay"),
+    CLICK_PAY("ClickPay","ClickPay")
 }
 
 enum class DeliveryType {
