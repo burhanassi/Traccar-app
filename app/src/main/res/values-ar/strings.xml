@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="msg_please_wait">الرجاء الإنتظار…</string>
     <string name="error_general">عذراً، حدث خطأ ما، سيتم معالجته بأقرب وقت</string>
     <string name="error_check_internet_connection">الرجاء التحقق من الاتصال بالانترنت</string>
@@ -125,6 +125,7 @@
     <string name="payment_type_cash">نقداً</string>
     <string name="payment_type_cheque">شيك</string>
     <string name="payment_type_inter_pay">InterPay</string>
+    <string name="payment_type_click_pay">ClickPay</string>
     <string name="payment_type_bank_transfer">حوالة بنكية</string>
     <string name="payment_type_prepaid">دفع مسبق</string>
     <string name="payment_type_digital_wallet">محفظة الكترونية</string>
@@ -339,4 +340,5 @@
     <string name="quantity_bundle">الكمية: </string>
     <string name="to_pay_to_receiver">الدفع للمستلم: </string>
     <string name="to_collect_from_receiver">التحصيل من المستلم: </string>
+    <string name="click_pay_confirmation">هل تريد طلب رابط الدفع؟</string>
 </resources>
