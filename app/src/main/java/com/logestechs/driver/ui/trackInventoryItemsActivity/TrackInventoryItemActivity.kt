@@ -395,8 +395,6 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
                 binding.itemPackedByReturned.text = itemDetails.packedUser ?: "-------"
                 binding.itemPackageNumberBarcodeReturned.text =
                     itemDetails.packageBarcode ?: "-------"
-                binding.itemReturnedDateReturned.visibility = View.GONE
-                binding.itemReturnReasonReturned.visibility = View.GONE
                 binding.itemCurrentLocationReturned.text = itemDetails.locationBarcode ?: "-------"
             }
 
