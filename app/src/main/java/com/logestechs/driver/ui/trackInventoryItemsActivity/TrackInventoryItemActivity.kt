@@ -220,6 +220,8 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
         binding.customerName.textItem.text = itemDetails.customerName
 
         if (itemDetails.itemTrackingStatus.isNotEmpty()) {
+            binding.previousStatusesCard.visibility = View.VISIBLE
+
             val layoutManager = PeekingLinearLayoutManager(
                 binding.rvPreviousStatuses
                     .context,
