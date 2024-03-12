@@ -196,7 +196,8 @@ enum class SmsTemplateTag(val arabicTag: String, val englishTag: String) {
     shareLocationUrl("<رابط مشاركة الموقع>", "<Sharing Location URL>"),
     postponeDate("<تاريخ التأجيل>", "<Date Postponed>"),
     expectedDeliveryDate("<تاريخ التوصيل المتوقع>", "<Expected Delivery Date>"),
-    cod("<التحصيل>", "<COD>");
+    cod("<التحصيل>", "<COD>"),
+    customerPhoneNumber("<رقم المتجر الاضافي>", "<Customer Second Phone Number>");
 
     companion object {
         fun replaceTags(template: String): String {
