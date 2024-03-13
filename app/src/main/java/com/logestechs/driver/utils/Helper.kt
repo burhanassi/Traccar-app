@@ -657,6 +657,7 @@ class Helper {
             val companyDomain: String? =
                 SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations?.companyDomain
             var cod: String? = ""
+            var senderPhone2: String? = ""
             var expectedDeliveryDate = ""
             var postponeDate: String? = ""
 
@@ -672,6 +673,8 @@ class Helper {
                 barcode = pkg.barcode
                 businessSenderName = pkg.originalBusinessSenderName
                 cod = pkg.cod?.format()
+                senderPhone2 = pkg.senderPhone2
+
                 if (pkg.expectedDeliveryDate != null) {
                     expectedDeliveryDate = formatServerDate(
                         pkg.expectedDeliveryDate.toString(),
@@ -906,6 +909,18 @@ class Helper {
                 template =
                     template?.replace(" " + SmsTemplateTag.cod.englishTag.toRegex(), "")
                 template = template?.replace(SmsTemplateTag.cod.englishTag.toRegex(), "")
+            }
+
+            if (senderPhone2 != null && senderPhone2.isNotEmpty()) {
+                template = template?.replace(SmsTemplateTag.customerPhoneNumber.arabicTag.toRegex(), senderPhone2)
+                template = template?.replace(SmsTemplateTag.customerPhoneNumber.englishTag.toRegex(), senderPhone2)
+            } else {
+                template =
+                    template?.replace(" " + SmsTemplateTag.customerPhoneNumber.arabicTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.customerPhoneNumber.arabicTag.toRegex(), "")
+                template =
+                    template?.replace(" " + SmsTemplateTag.customerPhoneNumber.englishTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.customerPhoneNumber.englishTag.toRegex(), "")
             }
             if (postponeDate != null && postponeDate.isNotEmpty()) {
                 template = template?.replace(
@@ -1143,6 +1158,17 @@ class Helper {
                 template =
                     template?.replace(" " + SmsTemplateTag.cod.englishTag.toRegex(), "")
                 template = template?.replace(SmsTemplateTag.cod.englishTag.toRegex(), "")
+            }
+            if (senderPhone2 != null && senderPhone2.isNotEmpty()) {
+                template = template?.replace(SmsTemplateTag.customerPhoneNumber.arabicTag.toRegex(), senderPhone2)
+                template = template?.replace(SmsTemplateTag.customerPhoneNumber.englishTag.toRegex(), senderPhone2)
+            } else {
+                template =
+                    template?.replace(" " + SmsTemplateTag.customerPhoneNumber.arabicTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.customerPhoneNumber.arabicTag.toRegex(), "")
+                template =
+                    template?.replace(" " + SmsTemplateTag.customerPhoneNumber.englishTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.customerPhoneNumber.englishTag.toRegex(), "")
             }
             if (postponeDate != null && postponeDate.isNotEmpty()) {
                 template = template?.replace(

@@ -6,6 +6,7 @@ import com.logestechs.driver.utils.AdminPackageStatus
 import com.logestechs.driver.utils.AppLanguages
 import com.logestechs.driver.utils.BarcodeScanType
 import com.logestechs.driver.utils.IntegrationSource
+import com.logestechs.driver.utils.PaymentType
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -41,6 +42,7 @@ data class Package(
     var isAttachmentExist: Boolean?,
     var packageItemsToDeliverList: List<PackageItemsToDeliver?>?,
     var supplierInvoice: String? = null,
+    var paymentType: String? = null,
 
     //products
     var quantity: Int? = null,
