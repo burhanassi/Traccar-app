@@ -246,6 +246,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
     private fun callGetCustomersWithReturnedPackages() {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
+            isLoading = true
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response =
@@ -292,7 +293,9 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
                             }
                         }
                     }
+                    isLoading = false
                 } catch (e: Exception) {
+                    isLoading = false
                     hideWaitDialog()
                     Helper.logException(e, Throwable().stackTraceToString())
                     withContext(Dispatchers.Main) {
