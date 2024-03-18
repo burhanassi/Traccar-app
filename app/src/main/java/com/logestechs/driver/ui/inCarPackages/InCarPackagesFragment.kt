@@ -134,6 +134,7 @@ class InCarPackagesFragment(
     private var packageAttachmentsResponseBody: PackageAttachmentsResponseBody? = null
 
     var failDeliveryDialog: FailDeliveryDialog? = null
+    var returnPackageDialog: ReturnPackageDialog? = null
 
     var packageIdToUpload: Long? = null
 
@@ -1284,6 +1285,13 @@ class InCarPackagesFragment(
                                 dialog.binding.containerThumbnails.visibility = View.VISIBLE
                             }
 
+                            returnPackageDialog?.let { dialog ->
+                                (dialog.binding.rvThumbnails.adapter as ThumbnailsAdapter).updateItem(
+                                    loadedImagesList.size - 1
+                                )
+                                dialog.binding.containerThumbnails.visibility = View.VISIBLE
+                            }
+
                         }
                     } else {
                         try {
@@ -1357,6 +1365,17 @@ class InCarPackagesFragment(
                                         View.GONE
                                 }
                             }
+
+                            returnPackageDialog?.let { dialog ->
+                                (dialog.binding.rvThumbnails.adapter as ThumbnailsAdapter).deleteItem(
+                                    position
+                                )
+                                if (loadedImagesList.isEmpty()) {
+                                    dialog.binding.containerThumbnails.visibility =
+                                        View.GONE
+                                }
+                            }
+
                             Helper.showSuccessMessage(
                                 super.getContext(),
                                 getString(R.string.success_operation_completed)
@@ -1484,6 +1503,12 @@ class InCarPackagesFragment(
     }
 
     override fun onShowReturnPackageDialog(pkg: Package?) {
+        loadedImagesList.clear()
+        returnPackageDialog = ReturnPackageDialog(requireContext(), this, pkg, loadedImagesList)
+        packageIdToUpload = returnPackageDialog?.pkg?.id
+        addPackageNoteDialog = null
+        failDeliveryDialog = null
+
         if (pkg?.isReceiverPayCost == true) {
             (requireActivity() as LogesTechsActivity).showConfirmationDialog(
                 getString(R.string.warning_receiver_pays_cost),
@@ -1492,7 +1517,7 @@ class InCarPackagesFragment(
                 this
             )
         } else {
-            ReturnPackageDialog(context, this, pkg).showDialog()
+            returnPackageDialog?.showDialog()
         }
     }
 
@@ -1529,6 +1554,7 @@ class InCarPackagesFragment(
         failDeliveryDialog?.showDialog()
         packageIdToUpload = failDeliveryDialog?.pkg?.id
         addPackageNoteDialog = null
+        returnPackageDialog = null
     }
 
     override fun onCaptureImage() {
@@ -1561,6 +1587,7 @@ class InCarPackagesFragment(
     addPackageNoteDialog?.showDialog()
     packageIdToUpload = addPackageNoteDialog?.pkg?.id
     failDeliveryDialog = null
+    returnPackageDialog = null
 }
 
     override fun onCodChanged(body: CodChangeRequestBody?) {
@@ -1627,7 +1654,7 @@ class InCarPackagesFragment(
 
     override fun confirmAction(data: Any?, action: ConfirmationDialogAction) {
         if (action == ConfirmationDialogAction.RETURN_PACKAGE) {
-            ReturnPackageDialog(context, this, data as Package?).showDialog()
+            returnPackageDialog?.showDialog()
         }
     }
 

@@ -843,7 +843,7 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
                 this
             )
         } else {
-            ReturnPackageDialog(this, this, pkg).showDialog()
+            ReturnPackageDialog(this, this, pkg, loadedImagesList).showDialog()
         }
     }
 
@@ -960,7 +960,7 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
 
     override fun confirmAction(data: Any?, action: ConfirmationDialogAction) {
         if (action == ConfirmationDialogAction.RETURN_PACKAGE) {
-            ReturnPackageDialog(this@BroughtPackagesActivity, this, data as Package?).showDialog()
+            ReturnPackageDialog(this@BroughtPackagesActivity, this, data as Package?, loadedImagesList).showDialog()
         }
     }
 }
