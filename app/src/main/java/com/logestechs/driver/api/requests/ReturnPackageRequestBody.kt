@@ -8,6 +8,7 @@ data class ReturnPackageRequestBody(
     val note: String?,
     val noteKey: String?,
     val isCostPaid: Boolean?,
+    val deliveryProofUrlList: List<String?>?,
     @Transient
     val pkg: com.logestechs.driver.data.model.Package?
 ) : Parcelable

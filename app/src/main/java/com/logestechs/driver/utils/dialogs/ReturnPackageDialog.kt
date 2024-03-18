@@ -54,6 +54,7 @@ class ReturnPackageDialog(
                         binding.etReason.text.toString(),
                         (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
                         binding.switchReceiverPaidCosts.isChecked,
+                        getPodImagesUrls(),
                         pkg
                     )
                 )
