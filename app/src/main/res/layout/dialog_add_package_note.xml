@@ -73,7 +73,7 @@
                     android:layout_marginBottom="8dp"
                     android:background="@drawable/background_card_shape_white"
                     android:gravity="top"
-                    android:inputType="textFilter"
+                    android:inputType="textFilter|textMultiLine"
                     android:padding="10dp"
                     android:saveEnabled="false"
                     android:textColor="@color/fontTitleBlack"
