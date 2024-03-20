@@ -74,7 +74,6 @@ import com.logestechs.driver.utils.interfaces.InCarViewModeDialogListener
 import com.logestechs.driver.utils.interfaces.PackageTypeFilterDialogListener
 import com.logestechs.driver.utils.interfaces.ReturnPackageDialogListener
 import com.logestechs.driver.utils.interfaces.SearchPackagesDialogListener
-import com.logestechs.driver.utils.interfaces.ShowAttachmentsDialogListener
 import com.logestechs.driver.utils.interfaces.ViewPagerCountValuesDelegate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -139,6 +138,10 @@ class InCarPackagesFragment(
     var packageIdToUpload: Long? = null
 
     var isSprint: Boolean = false
+
+    var targetVerticalIndex: Int? = null
+    var targetHorizontalIndex: Int? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -194,7 +197,9 @@ class InCarPackagesFragment(
             ArrayList(),
             super.getContext(),
             this,
-            isSprint
+            isSprint,
+            targetHorizontalIndex,
+            targetVerticalIndex
         )
         binding.rvPackages.layoutManager = layoutManager
     }
@@ -318,7 +323,9 @@ class InCarPackagesFragment(
                     ArrayList(),
                     super.getContext(),
                     this,
-                    isSprint
+                    isSprint,
+                    targetHorizontalIndex,
+                    targetVerticalIndex
                 )
                 binding.rvPackages.layoutManager = layoutManager
             }
@@ -422,9 +429,15 @@ class InCarPackagesFragment(
                         val body = response.body()
                         withContext(Dispatchers.Main) {
                             (binding.rvPackages.adapter as InCarPackageGroupedCellAdapter).update(
-                                body?.inCarPackages as ArrayList<GroupedPackages?>, selectedViewMode
+                                body?.inCarPackages as ArrayList<GroupedPackages?>,
+                                selectedViewMode,
+                                targetHorizontalIndex,
+                                targetVerticalIndex
                             )
                             activityDelegate?.updateCountValues()
+                            if (targetVerticalIndex != null && targetVerticalIndex!! < body.inCarPackages!!.size) {
+                                binding.rvPackages.scrollToPosition(targetVerticalIndex!!)
+                            }
                             handleNoPackagesLabelVisibility(body.numberOfPackages ?: 0)
                         }
                     } else {
@@ -1594,7 +1607,8 @@ class InCarPackagesFragment(
         callCodChangeRequestApi(body)
     }
 
-    override fun onDeliverPackage(pkg: Package?) {
+    override fun onDeliverPackage(pkg: Package?, position: Int) {
+        targetHorizontalIndex = position
         val mIntent = Intent(context, PackageDeliveryActivity::class.java)
         mIntent.putExtra(IntentExtrasKeys.PACKAGE_TO_DELIVER.name, pkg)
         startActivity(mIntent)
@@ -1637,6 +1651,10 @@ class InCarPackagesFragment(
     override fun onCallReceiver(pkg: Package?, receiverPhone: String?) {
         callDeliveryAttempt(pkg?.id, DeliveryAttemptType.PHONE_CALL.name)
         (activity as LogesTechsActivity).callMobileNumber(receiverPhone)
+    }
+
+    override fun targetVerticalIndex(position: Int) {
+        targetVerticalIndex = position
     }
 
     override fun onPackageSearch(keyword: String?) {

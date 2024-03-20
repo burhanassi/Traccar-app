@@ -913,7 +913,7 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
         callCodChangeRequestApi(body)
     }
 
-    override fun onDeliverPackage(pkg: Package?) {
+    override fun onDeliverPackage(pkg: Package?, position: Int) {
         val mIntent = Intent(this@BroughtPackagesActivity, PackageDeliveryActivity::class.java)
         mIntent.putExtra(IntentExtrasKeys.PACKAGE_TO_DELIVER.name, pkg)
         startActivity(mIntent)
@@ -957,6 +957,8 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
         callDeliveryAttempt(pkg?.id, DeliveryAttemptType.PHONE_CALL.name)
         (this as LogesTechsActivity).callMobileNumber(receiverPhone)
     }
+
+    override fun targetVerticalIndex(position: Int) {}
 
     override fun confirmAction(data: Any?, action: ConfirmationDialogAction) {
         if (action == ConfirmationDialogAction.RETURN_PACKAGE) {
