@@ -228,11 +228,18 @@ class FulfilmentChangeBinLocationBarcodeScannerActivity: LogesTechsActivity(), V
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             scannedBin = barcode
-                            selectedScanMode = FulfilmentSorterScanMode.LOCATION
-                            binding.textTitle.text = getText(R.string.please_scan_location_barcode)
-                            Helper.showSuccessMessage(
-                                super.getContext(), getString(R.string.success_operation_completed)
-                            )
+                            if (response.body()!!.locationId != null && response.body()!!.locationId!! != 0 ) {
+                                selectedScanMode = FulfilmentSorterScanMode.LOCATION
+                                binding.textTitle.text = getText(R.string.please_scan_location_barcode)
+                                Helper.showSuccessMessage(
+                                    super.getContext(), getString(R.string.success_operation_completed)
+                                )
+                            } else {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_bin_not_reserved)
+                                )
+                            }
                         }
                     } else {
                         try {

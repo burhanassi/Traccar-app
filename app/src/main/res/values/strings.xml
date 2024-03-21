@@ -344,4 +344,5 @@
     <string name="to_pay_to_receiver">To pay to receiver: </string>
     <string name="to_collect_from_receiver">To collect from receiver: </string>
     <string name="click_pay_confirmation">Are you want to request the payment link?</string>
+    <string name="error_bin_not_reserved">This Bin is unsorted</string>
 </resources>

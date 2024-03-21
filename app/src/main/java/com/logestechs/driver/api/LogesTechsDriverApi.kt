@@ -678,7 +678,7 @@ interface LogesTechsDriverApi {
     @GET("handler/hub/reserved-bin")
     suspend fun scanBinBarcodeForChangeLocation (
         @Query("barcode") barcode: String
-    ): Response<ResponseBody?>?
+    ): Response<Bin?>?
 
     @PUT("handler/hub/locations/{locationBarcode}/bin/sort")
     suspend fun scanNewLocationForChange (
