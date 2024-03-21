@@ -145,12 +145,17 @@ class InCarPackageGroupedCellAdapter(
 
             if (
                 mAdapter.targetVerticalIndex != null && mAdapter.targetHorizontalIndex != null &&
-                mAdapter.targetHorizontalIndex!! < childItemAdapter.itemCount &&
                 mAdapter.targetVerticalIndex == adapterPosition
             ) {
                 mAdapter.packagesList[adapterPosition]?.isExpanded = false
                 onCardClick(adapterPosition)
-                binding.rvPackages.scrollToPosition(mAdapter.targetHorizontalIndex!!)
+
+                if (mAdapter.targetHorizontalIndex!! < childItemAdapter.itemCount) {
+                    binding.rvPackages.smoothScrollToPosition(mAdapter.targetHorizontalIndex!!)
+                } else {
+                    val lastItemPosition = childItemAdapter.itemCount - 1
+                    binding.rvPackages.smoothScrollToPosition(lastItemPosition)
+                }
             }
         }
 

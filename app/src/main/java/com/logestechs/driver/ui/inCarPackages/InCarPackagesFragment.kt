@@ -436,7 +436,9 @@ class InCarPackagesFragment(
                             )
                             activityDelegate?.updateCountValues()
                             if (targetVerticalIndex != null && targetVerticalIndex!! < body.inCarPackages!!.size) {
-                                binding.rvPackages.scrollToPosition(targetVerticalIndex!!)
+                                binding.rvPackages.smoothScrollToPosition(targetVerticalIndex!!)
+                            } else {
+                                binding.rvPackages.smoothScrollToPosition(0)
                             }
                             handleNoPackagesLabelVisibility(body.numberOfPackages ?: 0)
                         }
