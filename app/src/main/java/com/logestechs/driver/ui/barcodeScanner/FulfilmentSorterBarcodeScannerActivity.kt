@@ -62,7 +62,10 @@ enum class FulfilmentSorterScanMode {
     BIN_INTO_LOCATION,
     BIN,
     ITEM_INTO_BIN,
-    SHIPPING_PLAN
+    SHIPPING_PLAN,
+    ITEM,
+    NEW_BIN,
+    NEW_LOCATION
 }
 
 class FulfilmentSorterBarcodeScannerActivity :

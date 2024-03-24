@@ -387,7 +387,10 @@ interface LogesTechsDriverApi {
     suspend fun getShippingPlan(@Query("barcode") barcode: String?): Response<ShippingPlan?>?
 
     @GET("handler/hub/bin")
-    suspend fun getBin(@Query("barcode") barcode: String?): Response<Bin?>?
+    suspend fun getBin(
+        @Query("barcode") barcode: String?,
+        @Query("customerId") customerId: Long? = null
+    ): Response<Bin?>?
 
     @PUT("handler/hub/bins/{binId}/shipping-items/sort")
     suspend fun sortItemIntoBin(
@@ -679,6 +682,14 @@ interface LogesTechsDriverApi {
     suspend fun scanBinBarcodeForChangeLocation (
         @Query("barcode") barcode: String
     ): Response<Bin?>?
+
+    @PUT("handler/items/change-location")
+    suspend fun changeLocation (
+        @Query("itemId") itemId: Long?,
+        @Query("customerId") customerId: Long?,
+        @Query("locationBarcode") barcode: String?,
+        @Query("binId") binId: Long? = null
+    ): Response<ResponseBody?>?
 
     @PUT("handler/hub/locations/{locationBarcode}/bin/sort")
     suspend fun scanNewLocationForChange (

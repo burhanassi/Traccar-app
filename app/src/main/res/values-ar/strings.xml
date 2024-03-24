@@ -224,7 +224,7 @@
     <string name="action_reject">رفض</string>
     <string name="dashboard_new_fulfilment_orders">الطلبات المصنفة\nالجديدة</string>
     <string name="dashboard_track_inventory_items">تتبع العناصر</string>
-    <string name="dashboard_change_bin_location">تغيير موقع السلة</string>
+    <string name="dashboard_change_bin_location">تغيير المواقع</string>
     <string name="title_new_fulfilment_orders">الطلبات المصنفة الجديدة</string>
     <string name="title_fulfilment_orders">الطلبات المصنفة</string>
     <string name="title_tracking_inventory_item">تتبع العناصر</string>
@@ -342,4 +342,9 @@
     <string name="to_collect_from_receiver">التحصيل من المستلم: </string>
     <string name="click_pay_confirmation">هل تريد طلب رابط الدفع؟</string>
     <string name="error_bin_not_reserved">هذه السلة لم يتم تصنيفها</string>
+    <string name="title_choose">تغيير موقع</string>
+    <string name="bin_location">السلة</string>
+    <string name="item_location">العنصر</string>
+    <string name="please_scan_new_bin">الرجاء مسح باركود السلة الجديدة</string>
+    <string name="please_scan_new_location">الرجاء مسح باركود الموقع الجديد</string>
 </resources>

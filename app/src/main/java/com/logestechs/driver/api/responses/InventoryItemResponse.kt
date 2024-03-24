@@ -12,10 +12,12 @@ import org.intellij.lang.annotations.Language
 
 @Parcelize
 data class InventoryItemResponse(
+    var id: Long?,
     var barcode: String?,
     var expiryDate: String?,
     var sku: String?,
     var customerName: String?,
+    var customerId: Long?,
     var warehouseName: String?,
     var productName: String?,
     var binBarcode: String?,
