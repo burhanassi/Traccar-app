@@ -48,6 +48,7 @@ import com.logestechs.driver.databinding.ActivityPackageDeliveryBinding
 import com.logestechs.driver.ui.singleScanBarcodeScanner.SingleScanBarcodeScanner
 import com.logestechs.driver.ui.verifyPackageDelivery.VerifyPackageDeliveryActivity
 import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.AppLanguages
 import com.logestechs.driver.utils.ConfirmationDialogAction
 import com.logestechs.driver.utils.DeliveryType
 import com.logestechs.driver.utils.Helper
@@ -66,6 +67,7 @@ import com.logestechs.driver.utils.dialogs.DeliveryCodeVerificationDialog
 import com.logestechs.driver.utils.interfaces.ConfirmationDialogActionListener
 import com.logestechs.driver.utils.interfaces.ThumbnailsListListener
 import com.logestechs.driver.utils.interfaces.VerificationCodeDialogListener
+import com.yariksoffice.lingver.Lingver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -707,7 +709,11 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
         for (paymentType in paymentTypes) {
             val statusSelector = StatusSelector(this)
-            statusSelector.setTextStatus(paymentType.name)
+            if (Lingver.getInstance().getLocale().toString() == AppLanguages.ARABIC.value) {
+                statusSelector.setTextStatus(paymentType.arabicName)
+            } else {
+                statusSelector.setTextStatus(paymentType.name)
+            }
 
             val layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
