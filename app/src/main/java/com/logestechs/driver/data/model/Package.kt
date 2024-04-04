@@ -108,7 +108,10 @@ data class Package(
     var verificationStatus: String? = null,
     var originalBusinessSenderName: String? = null,
     var integrationSource: IntegrationSource? = null,
-    var pickupDate: String? = null
+    var pickupDate: String? = null,
+    var paymentTypeId: Long? = null,
+    var paymentTypeName: String? = null
+
 ) : Parcelable {
     fun getFullSenderName(): String {
         return if (senderMiddleName?.trim().isNullOrEmpty()) {

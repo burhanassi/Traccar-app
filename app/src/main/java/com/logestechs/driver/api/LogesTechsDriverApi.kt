@@ -11,6 +11,7 @@ import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 interface LogesTechsDriverApi {
     @POST("auth/user/mobile-login")
@@ -229,13 +230,6 @@ interface LogesTechsDriverApi {
     ): Response<UploadImageResponse?>?
 
     @Multipart
-    @POST("handler/item/image/upload")
-    suspend fun uploadPodImageForRejectedItem(
-        @Query("barcode") barcode: String,
-        @Part file: MultipartBody.Part?
-    ): Response<UploadImageResponse?>?
-
-    @Multipart
     @POST("driver/mass-returned-packages/delivery-proof/upload-multipart")
     suspend fun uploadMassReturnedPackagesPod(
         @Query("customerId") customerId: Long,
@@ -365,6 +359,143 @@ interface LogesTechsDriverApi {
         @Query("barcode") barcode: String?,
     ): Response<ResponseBody>?
 
+    @PUT("driver/packages/{packageId}/delivery-attempt")
+    suspend fun deliveryAttempt(
+        @Path("packageId") packageId: Long?,
+        @Query("deliveryAttemptType") deliveryAttemptType: String?
+    ): Response<ResponseBody>?
+
+    @GET("driver/shipping-plans")
+    suspend fun getShippingPlansForDriver(
+        @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
+        @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
+        @Query("status") status: String? = null,
+        @Query("search") search: String? = null,
+    ): Response<GetShippingPlansResponse?>?
+
+    @PUT("driver/shipping-plan")
+    suspend fun pickupShippingPlan(@Query("barcode") barcode: String): Response<ResponseBody?>?
+
+    @GET("driver/shipping-plans/stats")
+    suspend fun getDriverShippingPlansCountValues(): Response<GetDriverShippingPlansCountValuesResponse?>?
+
+    @PUT("driver/sub-bundles/pickup")
+    suspend fun pickupBundle(
+        @Query("packageId") packageId: Long?,
+        @Body body: PickupBundleRequestBody?
+    ): Response<ResponseBody?>?
+
+    @POST("driver/packages/{packageId}/pin-code")
+    suspend fun requestPinCodeSms(
+        @Path("packageId") packageId: Long?
+    ): Response<ResponseBody?>?
+
+    @POST("driver/packages/{packageId}/clickpay")
+    suspend fun requestPaymentLinkClickPay(
+        @Path("packageId") packageId: Long?
+    ): Response<ResponseBody?>?
+
+    @GET("driver/packages/{packageId}/is-e-paid")
+    suspend fun verifyClickPay(
+        @Path("packageId") packageId: Long?
+    ): Response<VerifyClickPayResponse?>?
+
+    @POST("driver/packages/{packageId}/payment-gateway/pay")
+    suspend fun paymentGateway(
+        @Path("packageId") packageId: Long?,
+        @Query("reference") reference: String?,
+        @Query("type") type: PaymentGatewayType?
+    ): Response<ResponseBody?>?
+
+    @POST("driver/bundles/{bundleId}/pin-code")
+    suspend fun requestPinCodeSmsForBundles(
+        @Path("bundleId") bundleId: Long?
+    ): Response<ResponseBody?>?
+
+    @POST("driver/mass-cod-package/{massPkgId}/pin-code")
+    suspend fun requestPinCodeSmsForMassCod(
+        @Path("massPkgId") massPkgId: Long?
+    ): Response<ResponseBody?>?
+
+    @POST("driver/mass-returned/{massPkgBarcode}/pin-code")
+    suspend fun requestPinCodeSmsForReturned(
+        @Path("massPkgBarcode") massPkgBarcode: String?
+    ): Response<ResponseBody?>?
+
+    @PUT("driver/packages/{packageId}/pin-code")
+    suspend fun verifyDeliveryPin(
+        @Path("packageId") packageId: Long?,
+        @Query("pinCode") pinCode: String?
+    ): Response<ResponseBody?>?
+
+    @PUT("driver/bundles/{bundleId}/pin-code")
+    suspend fun verifyDeliveryPinForBundles(
+        @Path("bundleId") bundleId: Long?,
+        @Query("pinCode") pinCode: String?
+    ): Response<ResponseBody?>?
+
+    @PUT("driver/mass-cod-package/{massPkgId}/pin-code")
+    suspend fun verifyDeliveryPinForMassCod(
+        @Path("massPkgId") massPkgId: Long?,
+        @Query("pinCode") pinCode: String?
+    ): Response<ResponseBody?>?
+
+    @PUT("driver/mass-returned/{massPkgBarcode}/pin-code")
+    suspend fun verifyDeliveryPinForReturned(
+        @Path("massPkgBarcode") massPkgBarcode: String?,
+        @Query("pinCode") pinCode: String?
+    ): Response<ResponseBody?>?
+
+    @GET("driver/destination-locations")
+    suspend fun getDriverPackagesLocations(
+        @Query("latStart") lat: Double?,
+        @Query("longStart") lng: Double?
+    ): Response<GetDriverPackagesLocationsResponse?>?
+
+    @PUT("driver/packages/route/order")
+    suspend fun sendDriverRoute(
+        @Body body: DriverRouteRequestBody?
+    ): Response<ResponseBody?>?
+
+    @GET("driver/checkins")
+    suspend fun getCheckIns(
+        @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
+        @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
+    ): Response<ArrayList<CheckIns>?>?
+
+    @GET("driver/hubs/scan")
+    suspend fun scanHub(@Query("barcode") barcode: String): Response<Hub>?
+
+    @POST("driver/checkin")
+    suspend fun checkIn(@Body checkIn: CheckIns): Response<ResponseBody>
+
+    @GET("driver/packages/{packageId}")
+    suspend fun trackPackageDriverNotification(
+        @Path("packageId") packageId: Long
+    ): Response<Package>?
+
+    @GET("driver/customer/{customerId}/accepted/pdf-report")
+    suspend fun printPackageAwb(
+        @Path("customerId") id: Long,
+        @Query("is-image") isImage: Boolean,
+        @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString(),
+    ): Response<PrintAwbResponse>
+
+    @PUT("driver/modify-profile")
+    suspend fun changeProfile(
+        @Body body: ModifyProfileRequestBody
+    ): Response<ResponseBody?>?
+
+    @GET("driver/payment-type")
+    suspend fun getPaymentMethods (): Response<GetPaymentTypeResponse>
+
+    @Multipart
+    @POST("handler/item/image/upload")
+    suspend fun uploadPodImageForRejectedItem(
+        @Query("barcode") barcode: String,
+        @Part file: MultipartBody.Part?
+    ): Response<UploadImageResponse?>?
+
     @GET("handler/hub/location")
     suspend fun getWarehouseLocation(@Query("barcode") barcode: String?): Response<WarehouseLocation?>?
 
@@ -485,128 +616,12 @@ interface LogesTechsDriverApi {
         @Query("barcode") barcode: String?
     ): Response<ProductItem?>?
 
-    @PUT("driver/packages/{packageId}/delivery-attempt")
-    suspend fun deliveryAttempt(
-        @Path("packageId") packageId: Long?,
-        @Query("deliveryAttemptType") deliveryAttemptType: String?
-    ): Response<ResponseBody>?
-
     @GET("handler/shipping-plans")
     suspend fun getShippingPlansForHandler(
         @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
         @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
         @Query("status") status: String? = null
     ): Response<GetShippingPlansResponse?>?
-
-
-    @GET("driver/shipping-plans")
-    suspend fun getShippingPlansForDriver(
-        @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
-        @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
-        @Query("status") status: String? = null,
-        @Query("search") search: String? = null,
-    ): Response<GetShippingPlansResponse?>?
-
-    @PUT("driver/shipping-plan")
-    suspend fun pickupShippingPlan(@Query("barcode") barcode: String): Response<ResponseBody?>?
-
-    @GET("driver/shipping-plans/stats")
-    suspend fun getDriverShippingPlansCountValues(): Response<GetDriverShippingPlansCountValuesResponse?>?
-
-    @PUT("driver/sub-bundles/pickup")
-    suspend fun pickupBundle(
-        @Query("packageId") packageId: Long?,
-        @Body body: PickupBundleRequestBody?
-    ): Response<ResponseBody?>?
-
-    @POST("driver/packages/{packageId}/pin-code")
-    suspend fun requestPinCodeSms(
-        @Path("packageId") packageId: Long?
-    ): Response<ResponseBody?>?
-
-    @POST("driver/packages/{packageId}/clickpay")
-    suspend fun requestPaymentLinkClickPay(
-        @Path("packageId") packageId: Long?
-    ): Response<ResponseBody?>?
-
-    @GET("driver/packages/{packageId}/is-e-paid")
-    suspend fun verifyClickPay(
-        @Path("packageId") packageId: Long?
-    ): Response<VerifyClickPayResponse?>?
-
-    @POST("driver/packages/{packageId}/payment-gateway/pay")
-    suspend fun paymentGateway(
-        @Path("packageId") packageId: Long?,
-        @Query("reference") reference: String?,
-        @Query("type") type: PaymentGatewayType?
-    ): Response<ResponseBody?>?
-
-    @POST("driver/bundles/{bundleId}/pin-code")
-    suspend fun requestPinCodeSmsForBundles(
-        @Path("bundleId") bundleId: Long?
-    ): Response<ResponseBody?>?
-
-    @POST("driver/mass-cod-package/{massPkgId}/pin-code")
-    suspend fun requestPinCodeSmsForMassCod(
-        @Path("massPkgId") massPkgId: Long?
-    ): Response<ResponseBody?>?
-
-    @POST("driver/mass-returned/{massPkgBarcode}/pin-code")
-    suspend fun requestPinCodeSmsForReturned(
-        @Path("massPkgBarcode") massPkgBarcode: String?
-    ): Response<ResponseBody?>?
-
-    @PUT("driver/packages/{packageId}/pin-code")
-    suspend fun verifyDeliveryPin(
-        @Path("packageId") packageId: Long?,
-        @Query("pinCode") pinCode: String?
-    ): Response<ResponseBody?>?
-
-    @PUT("driver/bundles/{bundleId}/pin-code")
-    suspend fun verifyDeliveryPinForBundles(
-        @Path("bundleId") bundleId: Long?,
-        @Query("pinCode") pinCode: String?
-    ): Response<ResponseBody?>?
-
-    @PUT("driver/mass-cod-package/{massPkgId}/pin-code")
-    suspend fun verifyDeliveryPinForMassCod(
-        @Path("massPkgId") massPkgId: Long?,
-        @Query("pinCode") pinCode: String?
-    ): Response<ResponseBody?>?
-
-    @PUT("driver/mass-returned/{massPkgBarcode}/pin-code")
-    suspend fun verifyDeliveryPinForReturned(
-        @Path("massPkgBarcode") massPkgBarcode: String?,
-        @Query("pinCode") pinCode: String?
-    ): Response<ResponseBody?>?
-
-    @GET("driver/destination-locations")
-    suspend fun getDriverPackagesLocations(
-        @Query("latStart") lat: Double?,
-        @Query("longStart") lng: Double?
-    ): Response<GetDriverPackagesLocationsResponse?>?
-
-    @PUT("driver/packages/route/order")
-    suspend fun sendDriverRoute(
-        @Body body: DriverRouteRequestBody?
-    ): Response<ResponseBody?>?
-
-    @GET("driver/checkins")
-    suspend fun getCheckIns(
-        @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
-        @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
-    ): Response<ArrayList<CheckIns>?>?
-
-    @GET("driver/hubs/scan")
-    suspend fun scanHub(@Query("barcode") barcode: String): Response<Hub>?
-
-    @POST("driver/checkin")
-    suspend fun checkIn(@Body checkIn: CheckIns): Response<ResponseBody>
-
-    @GET("driver/packages/{packageId}")
-    suspend fun trackPackageDriverNotification(
-        @Path("packageId") packageId: Long
-    ): Response<Package>?
 
     @GET("handler/shelves/scan")
     suspend fun scanShelfByBarcode(
@@ -648,18 +663,6 @@ interface LogesTechsDriverApi {
 
     @PUT("handler/packages/{packageId}/un-flag")
     suspend fun unFlagPackageInShelf(@Path("packageId") packageId: Long): Response<ResponseBody>
-
-    @GET("driver/customer/{customerId}/accepted/pdf-report")
-    suspend fun printPackageAwb(
-        @Path("customerId") id: Long,
-        @Query("is-image") isImage: Boolean,
-        @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString(),
-    ): Response<PrintAwbResponse>
-
-    @PUT("driver/modify-profile")
-    suspend fun changeProfile(
-        @Body body: ModifyProfileRequestBody
-    ): Response<ResponseBody?>?
 
     @POST("handler/orders/items/list/pdf")
     suspend fun printPickList(
