@@ -225,7 +225,7 @@
     <string name="action_reject">Reject</string>
     <string name="dashboard_new_fulfilment_orders">New Fulfillment Orders</string>
     <string name="dashboard_track_inventory_items">Track Inventory Items</string>
-    <string name="dashboard_change_bin_location">Change Bin Location</string>
+    <string name="dashboard_change_bin_location">Change Locations</string>
     <string name="title_new_fulfilment_orders">New Fulfillment Orders</string>
     <string name="title_fulfilment_orders">Fulfillment Orders</string>
     <string name="title_tracking_inventory_item">Track Inventory Item</string>
@@ -344,4 +344,10 @@
     <string name="to_pay_to_receiver">To pay to receiver: </string>
     <string name="to_collect_from_receiver">To collect from receiver: </string>
     <string name="click_pay_confirmation">Are you want to request the payment link?</string>
+    <string name="error_bin_not_reserved">This Bin is unsorted</string>
+    <string name="title_choose">Change Location</string>
+    <string name="bin_location">Bin</string>
+    <string name="item_location">Item</string>
+    <string name="please_scan_new_bin">Please Scan New Bin Barcode</string>
+    <string name="please_scan_new_location">Please Scan New Location Barcode</string>
 </resources>

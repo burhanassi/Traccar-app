@@ -19,18 +19,14 @@ import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
-import com.logestechs.driver.data.model.Bin
-import com.logestechs.driver.data.model.Customer
-import com.logestechs.driver.data.model.FulfilmentOrder
 import com.logestechs.driver.databinding.ActivityFulfilmentChangeBinLocationBarcodeScannerBinding
-import com.logestechs.driver.databinding.ActivityFulfilmentPackerBarcodeScannerBinding
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
-import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.SharedPreferenceWrapper
-import com.logestechs.driver.utils.adapters.FulfilmentOrderItemToPackCellAdapter
+import com.logestechs.driver.utils.dialogs.ChangeLocationsDialog
 import com.logestechs.driver.utils.dialogs.InsertBarcodeDialog
+import com.logestechs.driver.utils.interfaces.ChangeLocationDialogListener
 import com.logestechs.driver.utils.interfaces.InsertBarcodeDialogListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -40,14 +36,17 @@ import org.json.JSONObject
 import java.io.IOException
 
 class FulfilmentChangeBinLocationBarcodeScannerActivity: LogesTechsActivity(), View.OnClickListener,
-    InsertBarcodeDialogListener {
+    InsertBarcodeDialogListener, ChangeLocationDialogListener{
     private lateinit var binding: ActivityFulfilmentChangeBinLocationBarcodeScannerBinding
 
     private var barcodeDetector: BarcodeDetector? = null
     private var cameraSource: CameraSource? = null
 
     var scannedItemsHashMap: HashMap<String, String> = HashMap()
-    var customer: Customer? = null
+    var customerId: Long? = null
+    private var binId: Long? = null
+    private var itemId: Long? = null
+    private var isBinScan = true
 
     private var currentBarcodeRead: String? = null
     private val confirmTarget = 3
@@ -57,13 +56,14 @@ class FulfilmentChangeBinLocationBarcodeScannerActivity: LogesTechsActivity(), V
 
     private var scannedBarcode = ""
 
-    private var selectedScanMode: FulfilmentSorterScanMode? = FulfilmentSorterScanMode.BIN
+    private var selectedScanMode: FulfilmentSorterScanMode? = null
     private var scannedBin: String = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFulfilmentChangeBinLocationBarcodeScannerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.textTitle.text = getText(R.string.please_scan_bin_barcode)
+        ChangeLocationsDialog(this, this).showDialog()
+        handleSelectedScanMode()
         toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
         if (SharedPreferenceWrapper.getScanWay() == "built-in") {
             // Use built-in scanner, it goes for dispatchKeyEvent
@@ -197,6 +197,37 @@ class FulfilmentChangeBinLocationBarcodeScannerActivity: LogesTechsActivity(), V
         }
     }
 
+    private fun handleSelectedScanMode() {
+        when (selectedScanMode) {
+            FulfilmentSorterScanMode.BIN -> {
+                binding.textTitle.text = getText(R.string.please_scan_bin_barcode)
+            }
+
+            FulfilmentSorterScanMode.LOCATION -> {
+                binding.textTitle.text = getText(R.string.please_scan_location_barcode)
+            }
+
+            FulfilmentSorterScanMode.ITEM -> {
+                binding.textTitle.text = getText(R.string.please_scan_item_barcode)
+            }
+
+            FulfilmentSorterScanMode.NEW_BIN -> {
+                binding.textTitle.text = getText(R.string.please_scan_new_bin)
+                binding.buttonSwitchBinAndLocation.visibility = View.VISIBLE
+                binding.buttonSwitchBinAndLocation.setOnClickListener(this)
+            }
+
+            FulfilmentSorterScanMode.NEW_LOCATION -> {
+                binding.textTitle.text = getText(R.string.please_scan_new_location)
+                binding.buttonSwitchBinAndLocation.visibility = View.VISIBLE
+                binding.buttonSwitchBinAndLocation.setOnClickListener(this)
+            }
+
+            null -> return
+            else -> {}
+        }
+    }
+
     private fun executeBarcodeAction(barcode: String?) {
         when (selectedScanMode) {
             FulfilmentSorterScanMode.BIN -> {
@@ -205,6 +236,22 @@ class FulfilmentChangeBinLocationBarcodeScannerActivity: LogesTechsActivity(), V
 
             FulfilmentSorterScanMode.LOCATION -> {
                 callScanNewLocationBarcode(barcode)
+            }
+
+            FulfilmentSorterScanMode.ITEM -> {
+                callScanItem(barcode)
+            }
+
+            FulfilmentSorterScanMode.NEW_BIN -> {
+                if (isBinScan) {
+                    callGetBin(barcode)
+                } else {
+                    callChangeLocation(barcode)
+                }
+            }
+
+            FulfilmentSorterScanMode.NEW_LOCATION -> {
+                callChangeLocation(barcode)
             }
 
             null -> return
@@ -228,11 +275,18 @@ class FulfilmentChangeBinLocationBarcodeScannerActivity: LogesTechsActivity(), V
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             scannedBin = barcode
-                            selectedScanMode = FulfilmentSorterScanMode.LOCATION
-                            binding.textTitle.text = getText(R.string.please_scan_location_barcode)
-                            Helper.showSuccessMessage(
-                                super.getContext(), getString(R.string.success_operation_completed)
-                            )
+                            if (response.body()!!.locationId != null && response.body()!!.locationId!! != 0 ) {
+                                selectedScanMode = FulfilmentSorterScanMode.LOCATION
+                                handleSelectedScanMode()
+                                Helper.showSuccessMessage(
+                                    super.getContext(), getString(R.string.success_operation_completed)
+                                )
+                            } else {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_bin_not_reserved)
+                                )
+                            }
                         }
                     } else {
                         try {
@@ -342,6 +396,198 @@ class FulfilmentChangeBinLocationBarcodeScannerActivity: LogesTechsActivity(), V
         }
     }
 
+    private fun callScanItem(barcode: String?) {
+        this.runOnUiThread {
+            showWaitDialog()
+        }
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.searchForInventoryItem(
+                        barcode
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            selectedScanMode = FulfilmentSorterScanMode.NEW_BIN
+                            itemId = response.body()!!.id
+                            customerId = response.body()!!.customerId
+                            handleSelectedScanMode()
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                    scannedItemsHashMap.remove(barcode)
+                } catch (e: Exception) {
+                    scannedItemsHashMap.remove(barcode)
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            this.runOnUiThread {
+                hideWaitDialog()
+                Helper.showErrorMessage(
+                    super.getContext(), getString(R.string.error_check_internet_connection)
+                )
+            }
+        }
+    }
+
+    private fun callGetBin(barcode: String?) {
+        this.runOnUiThread {
+            showWaitDialog()
+        }
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.getBin(
+                        barcode,
+                        customerId
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            selectedScanMode = FulfilmentSorterScanMode.NEW_LOCATION
+                            binId = response.body()!!.id
+                            handleSelectedScanMode()
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                    scannedItemsHashMap.remove(barcode)
+                } catch (e: Exception) {
+                    scannedItemsHashMap.remove(barcode)
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            this.runOnUiThread {
+                hideWaitDialog()
+                Helper.showErrorMessage(
+                    super.getContext(), getString(R.string.error_check_internet_connection)
+                )
+            }
+        }
+    }
+
+    private fun callChangeLocation(barcode: String?) {
+        this.runOnUiThread {
+            showWaitDialog()
+        }
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.changeLocation(
+                        itemId,
+                        customerId,
+                        barcode,
+                        binId
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            Helper.showSuccessMessage(
+                                super.getContext(), getString(R.string.success_operation_completed)
+                            )
+                            onBackPressed()
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                    scannedItemsHashMap.remove(barcode)
+                } catch (e: Exception) {
+                    scannedItemsHashMap.remove(barcode)
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            this.runOnUiThread {
+                hideWaitDialog()
+                Helper.showErrorMessage(
+                    super.getContext(), getString(R.string.error_check_internet_connection)
+                )
+            }
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_done -> {
@@ -351,10 +597,32 @@ class FulfilmentChangeBinLocationBarcodeScannerActivity: LogesTechsActivity(), V
             R.id.button_insert_barcode -> {
                 InsertBarcodeDialog(this, this).showDialog()
             }
+
+            R.id.button_switch_bin_and_location -> {
+                isBinScan = !isBinScan
+                if (isBinScan) {
+                    binding.textTitle.text = getString(R.string.please_scan_new_bin)
+                } else {
+                    binding.textTitle.text = getString(R.string.please_scan_new_location)
+                }
+            }
         }
     }
 
     override fun onBarcodeInserted(barcode: String) {
         handleDetectedBarcode(barcode)
+    }
+
+    override fun onSelect(index: Int) {
+        when (index) {
+            0 -> {
+                selectedScanMode = FulfilmentSorterScanMode.BIN
+            }
+
+            1 -> {
+                selectedScanMode = FulfilmentSorterScanMode.ITEM
+            }
+        }
+        handleSelectedScanMode()
     }
 }

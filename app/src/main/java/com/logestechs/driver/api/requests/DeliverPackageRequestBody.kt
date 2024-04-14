@@ -13,5 +13,6 @@ data class DeliverPackageRequestBody(
     val subBundlesIds: List<Long?>?,
     val cod: Double?,
     val paymentType: String?,
+    val paymentTypeId: Long?,
     val packageItemsToDeliverList: List<PackageItemsToDeliver?>?
 )

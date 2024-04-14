@@ -14,12 +14,15 @@ import com.logestechs.driver.databinding.ItemInCarPackageGroupedCellBinding
 import com.logestechs.driver.utils.InCarPackagesViewMode
 import com.logestechs.driver.utils.customViews.PeekingLinearLayoutManager
 import com.logestechs.driver.utils.interfaces.InCarPackagesCardListener
+import okhttp3.internal.notifyAll
 
 class InCarPackageGroupedCellAdapter(
     var packagesList: ArrayList<GroupedPackages?>,
     var context: Context?,
     var listener: InCarPackagesCardListener?,
-    var isSprint: Boolean = false
+    var isSprint: Boolean = false,
+    var targetHorizontalIndex: Int? = 0,
+    var targetVerticalIndex: Int? = 0
 ) :
     RecyclerView.Adapter<InCarPackageGroupedCellAdapter.InCarGroupedPackageViewHolder>() {
 
@@ -50,10 +53,17 @@ class InCarPackageGroupedCellAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun update(list: ArrayList<GroupedPackages?>, selectedViewMode: InCarPackagesViewMode?) {
+    fun update(
+        list: ArrayList<GroupedPackages?>,
+        selectedViewMode: InCarPackagesViewMode?,
+        targetHorizontalIndex: Int? = null,
+        targetVerticalIndex: Int? = null
+    ) {
         this.packagesList.clear()
         this.packagesList.addAll(list)
         this.selectedViewMode = selectedViewMode
+        this.targetVerticalIndex = targetVerticalIndex
+        this.targetHorizontalIndex = targetHorizontalIndex
         this.notifyDataSetChanged()
     }
 
@@ -111,6 +121,7 @@ class InCarPackageGroupedCellAdapter(
 
             binding.root.setOnClickListener {
                 onCardClick(adapterPosition)
+                mAdapter.listener?.targetVerticalIndex(adapterPosition)
             }
 
             val layoutManager = PeekingLinearLayoutManager(
@@ -131,6 +142,21 @@ class InCarPackageGroupedCellAdapter(
             )
             binding.rvPackages.layoutManager = layoutManager
             binding.rvPackages.adapter = childItemAdapter
+
+            if (
+                mAdapter.targetVerticalIndex != null && mAdapter.targetHorizontalIndex != null &&
+                mAdapter.targetVerticalIndex == adapterPosition
+            ) {
+                mAdapter.packagesList[adapterPosition]?.isExpanded = false
+                onCardClick(adapterPosition)
+
+                if (mAdapter.targetHorizontalIndex!! < childItemAdapter.itemCount) {
+                    binding.rvPackages.smoothScrollToPosition(mAdapter.targetHorizontalIndex!!)
+                } else {
+                    val lastItemPosition = childItemAdapter.itemCount - 1
+                    binding.rvPackages.smoothScrollToPosition(lastItemPosition)
+                }
+            }
         }
 
         private fun onCardClick(position: Int) {

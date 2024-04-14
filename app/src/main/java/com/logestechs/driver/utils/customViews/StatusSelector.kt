@@ -85,5 +85,8 @@ class StatusSelector : FrameLayout {
         textView.setTextColor(ContextCompat.getColor(context, R.color.white))
     }
 
+    fun setTextStatus(text: CharSequence?) {
+        textView.text = text
+    }
 
 }
