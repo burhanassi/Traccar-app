@@ -489,6 +489,12 @@ interface LogesTechsDriverApi {
     @GET("driver/payment-type")
     suspend fun getPaymentMethods (): Response<GetPaymentTypeResponse>
 
+    @POST("driver/packages/{packageId}/call-duration")
+    suspend fun saveCallDuration (
+        @Path("packageId") packageId: Long,
+        @Query("callDuration") callDuration: Double
+    ): Response<ResponseBody?>?
+
     @Multipart
     @POST("handler/item/image/upload")
     suspend fun uploadPodImageForRejectedItem(
