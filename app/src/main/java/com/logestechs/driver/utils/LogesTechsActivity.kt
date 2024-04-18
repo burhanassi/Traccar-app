@@ -30,6 +30,7 @@ import com.logestechs.driver.utils.adapters.NotificationsListAdapter
 import com.logestechs.driver.utils.bottomSheets.NotificationsBottomSheet
 import com.logestechs.driver.utils.bottomSheets.PackageTrackBottomSheet
 import com.logestechs.driver.utils.customViews.WaitDialog
+import com.logestechs.driver.utils.interfaces.CallDurationListener
 import com.logestechs.driver.utils.interfaces.ConfirmationDialogActionListener
 import com.logestechs.driver.utils.interfaces.NotificationBottomSheetListener
 import com.yariksoffice.lingver.Lingver
@@ -205,7 +206,7 @@ abstract class LogesTechsActivity : AppCompatActivity() {
 
     }
 
-    fun callMobileNumber(mobileNumber: String?) {
+    fun callMobileNumber(mobileNumber: String?, listener: CallDurationListener? = null) {
         var number: String? = mobileNumber
         if (mobileNumber != null && mobileNumber.trim().isNotEmpty()) {
             if (Helper.getCompanyCurrency() == AppCurrency.SAR.value) {
@@ -229,6 +230,7 @@ abstract class LogesTechsActivity : AppCompatActivity() {
                 }
             } else {
                 CustomPhoneStateListener.isOutgoingCall = true
+                CustomPhoneStateListener.listener = listener
                 this.startActivity(intent)
             }
         }

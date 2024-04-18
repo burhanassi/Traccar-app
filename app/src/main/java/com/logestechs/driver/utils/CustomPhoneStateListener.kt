@@ -2,7 +2,7 @@ package com.logestechs.driver.utils
 
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
-import android.util.Log
+import com.logestechs.driver.utils.interfaces.CallDurationListener
 import java.util.*
 
 class CustomPhoneStateListener : PhoneStateListener() {
@@ -10,7 +10,7 @@ class CustomPhoneStateListener : PhoneStateListener() {
     private var callStartTime: Date? = null
     companion object {
         var isOutgoingCall = false
-
+        var listener: CallDurationListener? = null
     }
 
     override fun onCallStateChanged(state: Int, phoneNumber: String?) {
@@ -29,9 +29,9 @@ class CustomPhoneStateListener : PhoneStateListener() {
                 if (callStartTime != null && isOutgoingCall) {
                     val callEndTime = Date()
                     val callDuration = callEndTime.time - callStartTime!!.time
-                    Log.d("callDuration", callDuration.toString())
-                    // Do something with call duration (e.g., save it)
-                    // You can use callDuration to get the call duration in milliseconds
+
+                    listener?.saveCallDuration(callDuration.toDouble())
+
                     callStartTime = null
                     isOutgoingCall = false
                 }
