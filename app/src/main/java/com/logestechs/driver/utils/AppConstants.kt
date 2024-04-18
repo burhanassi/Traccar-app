@@ -160,7 +160,14 @@ enum class MassCodReportsViewMode(val value: String) {
 }
 
 enum class ConfirmationDialogAction {
-    RETURN_PACKAGE
+    RETURN_PACKAGE,
+    CLICKPAY_PAYMENT,
+    CLICKPAY_RESULT
+}
+
+enum class PaymentGatewayType {
+    NEAR_PAY,
+    INTER_PAY
 }
 
 enum class PaymentType(val englishLabel: String, val arabicLabel: String) {
@@ -170,7 +177,8 @@ enum class PaymentType(val englishLabel: String, val arabicLabel: String) {
     PREPAID("Prepaid", "دفع مسبق"),
     DIGITAL_WALLET("Digital Wallet", "محفظة الكترونية"),
     CARD("Card Payment", "بطاقة ائتمانية"),
-    INTER_PAY("InterPay","InterPay")
+    INTER_PAY("InterPay","InterPay"),
+    CLICK_PAY("ClickPay","ClickPay")
 }
 
 enum class DeliveryType {
@@ -189,7 +197,8 @@ enum class SmsTemplateTag(val arabicTag: String, val englishTag: String) {
     shareLocationUrl("<رابط مشاركة الموقع>", "<Sharing Location URL>"),
     postponeDate("<تاريخ التأجيل>", "<Date Postponed>"),
     expectedDeliveryDate("<تاريخ التوصيل المتوقع>", "<Expected Delivery Date>"),
-    cod("<التحصيل>", "<COD>");
+    cod("<التحصيل>", "<COD>"),
+    customerPhoneNumber("<رقم المتجر الاضافي>", "<Customer Second Phone Number>");
 
     companion object {
         fun replaceTags(template: String): String {

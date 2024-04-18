@@ -28,7 +28,7 @@ data class FulfilmentOrder(
     val cod: Double? = null,
     val cost: Double? = null,
     val customerShouldPayDeliveryCost: Boolean? = null,
-    val receiverPayTypeValue: String? = null,
+    val receiverPayTypeValue: Double? = null,
     val status: String? = null,
     val items: List<ProductItem?>? = null,
     val warehouseName: String? = null,

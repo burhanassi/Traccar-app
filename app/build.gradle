@@ -26,8 +26,8 @@ android {
         applicationId "com.logestechs.driver"
         minSdk 21
         targetSdk 33
-        versionCode 75
-        versionName "1.5.4"
+        versionCode 134
+        versionName "1.5.7"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -210,4 +210,7 @@ dependencies {
     //Geocoding API
     implementation 'com.google.android.gms:play-services-maps:17.0.1'
     implementation 'com.google.android.gms:play-services-location:17.1.0'
+
+    //NearPay
+    implementation "io.nearpay:nearpay-sdk-store:2.1.83"
 }

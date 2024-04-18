@@ -74,7 +74,6 @@ import com.logestechs.driver.utils.interfaces.InCarViewModeDialogListener
 import com.logestechs.driver.utils.interfaces.PackageTypeFilterDialogListener
 import com.logestechs.driver.utils.interfaces.ReturnPackageDialogListener
 import com.logestechs.driver.utils.interfaces.SearchPackagesDialogListener
-import com.logestechs.driver.utils.interfaces.ShowAttachmentsDialogListener
 import com.logestechs.driver.utils.interfaces.ViewPagerCountValuesDelegate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -134,10 +133,15 @@ class InCarPackagesFragment(
     private var packageAttachmentsResponseBody: PackageAttachmentsResponseBody? = null
 
     var failDeliveryDialog: FailDeliveryDialog? = null
+    var returnPackageDialog: ReturnPackageDialog? = null
 
     var packageIdToUpload: Long? = null
 
     var isSprint: Boolean = false
+
+    var targetVerticalIndex: Int? = null
+    var targetHorizontalIndex: Int? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -193,7 +197,9 @@ class InCarPackagesFragment(
             ArrayList(),
             super.getContext(),
             this,
-            isSprint
+            isSprint,
+            targetHorizontalIndex,
+            targetVerticalIndex
         )
         binding.rvPackages.layoutManager = layoutManager
     }
@@ -317,7 +323,9 @@ class InCarPackagesFragment(
                     ArrayList(),
                     super.getContext(),
                     this,
-                    isSprint
+                    isSprint,
+                    targetHorizontalIndex,
+                    targetVerticalIndex
                 )
                 binding.rvPackages.layoutManager = layoutManager
             }
@@ -421,9 +429,17 @@ class InCarPackagesFragment(
                         val body = response.body()
                         withContext(Dispatchers.Main) {
                             (binding.rvPackages.adapter as InCarPackageGroupedCellAdapter).update(
-                                body?.inCarPackages as ArrayList<GroupedPackages?>, selectedViewMode
+                                body?.inCarPackages as ArrayList<GroupedPackages?>,
+                                selectedViewMode,
+                                targetHorizontalIndex,
+                                targetVerticalIndex
                             )
                             activityDelegate?.updateCountValues()
+                            if (targetVerticalIndex != null && targetVerticalIndex!! < body.inCarPackages!!.size) {
+                                binding.rvPackages.smoothScrollToPosition(targetVerticalIndex!!)
+                            } else {
+                                binding.rvPackages.smoothScrollToPosition(0)
+                            }
                             handleNoPackagesLabelVisibility(body.numberOfPackages ?: 0)
                         }
                     } else {
@@ -1284,6 +1300,13 @@ class InCarPackagesFragment(
                                 dialog.binding.containerThumbnails.visibility = View.VISIBLE
                             }
 
+                            returnPackageDialog?.let { dialog ->
+                                (dialog.binding.rvThumbnails.adapter as ThumbnailsAdapter).updateItem(
+                                    loadedImagesList.size - 1
+                                )
+                                dialog.binding.containerThumbnails.visibility = View.VISIBLE
+                            }
+
                         }
                     } else {
                         try {
@@ -1357,6 +1380,17 @@ class InCarPackagesFragment(
                                         View.GONE
                                 }
                             }
+
+                            returnPackageDialog?.let { dialog ->
+                                (dialog.binding.rvThumbnails.adapter as ThumbnailsAdapter).deleteItem(
+                                    position
+                                )
+                                if (loadedImagesList.isEmpty()) {
+                                    dialog.binding.containerThumbnails.visibility =
+                                        View.GONE
+                                }
+                            }
+
                             Helper.showSuccessMessage(
                                 super.getContext(),
                                 getString(R.string.success_operation_completed)
@@ -1484,6 +1518,12 @@ class InCarPackagesFragment(
     }
 
     override fun onShowReturnPackageDialog(pkg: Package?) {
+        loadedImagesList.clear()
+        returnPackageDialog = ReturnPackageDialog(requireContext(), this, pkg, loadedImagesList)
+        packageIdToUpload = returnPackageDialog?.pkg?.id
+        addPackageNoteDialog = null
+        failDeliveryDialog = null
+
         if (pkg?.isReceiverPayCost == true) {
             (requireActivity() as LogesTechsActivity).showConfirmationDialog(
                 getString(R.string.warning_receiver_pays_cost),
@@ -1492,7 +1532,7 @@ class InCarPackagesFragment(
                 this
             )
         } else {
-            ReturnPackageDialog(context, this, pkg).showDialog()
+            returnPackageDialog?.showDialog()
         }
     }
 
@@ -1529,6 +1569,7 @@ class InCarPackagesFragment(
         failDeliveryDialog?.showDialog()
         packageIdToUpload = failDeliveryDialog?.pkg?.id
         addPackageNoteDialog = null
+        returnPackageDialog = null
     }
 
     override fun onCaptureImage() {
@@ -1561,13 +1602,15 @@ class InCarPackagesFragment(
     addPackageNoteDialog?.showDialog()
     packageIdToUpload = addPackageNoteDialog?.pkg?.id
     failDeliveryDialog = null
+    returnPackageDialog = null
 }
 
     override fun onCodChanged(body: CodChangeRequestBody?) {
         callCodChangeRequestApi(body)
     }
 
-    override fun onDeliverPackage(pkg: Package?) {
+    override fun onDeliverPackage(pkg: Package?, position: Int) {
+        targetHorizontalIndex = position
         val mIntent = Intent(context, PackageDeliveryActivity::class.java)
         mIntent.putExtra(IntentExtrasKeys.PACKAGE_TO_DELIVER.name, pkg)
         startActivity(mIntent)
@@ -1612,6 +1655,10 @@ class InCarPackagesFragment(
         (activity as LogesTechsActivity).callMobileNumber(receiverPhone)
     }
 
+    override fun targetVerticalIndex(position: Int) {
+        targetVerticalIndex = position
+    }
+
     override fun onPackageSearch(keyword: String?) {
         searchWord = keyword
         getPackagesBySelectedMode()
@@ -1627,7 +1674,7 @@ class InCarPackagesFragment(
 
     override fun confirmAction(data: Any?, action: ConfirmationDialogAction) {
         if (action == ConfirmationDialogAction.RETURN_PACKAGE) {
-            ReturnPackageDialog(context, this, data as Package?).showDialog()
+            returnPackageDialog?.showDialog()
         }
     }
 

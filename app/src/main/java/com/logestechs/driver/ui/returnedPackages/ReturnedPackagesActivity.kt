@@ -63,7 +63,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         setContentView(binding.root)
         binding.textSelectedStatus.text =
             "(${Helper.getLocalizedReturnedStatus(super.getContext(), selectedStatus)})"
-        if (companyConfigurations?.isSupportReturnedBundles!!) {
+        if (companyConfigurations?.isSupportLineHaulBundles!!) {
             binding.textTitle.text = getText(R.string.title_returned_bundles)
             binding.textSelectedStatus.visibility = View.GONE
             binding.buttonStatusFilter.visibility = View.GONE
@@ -79,7 +79,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         super.onResume()
         currentPageIndex = 1
         if (doesUpdateData) {
-            if (companyConfigurations?.isSupportReturnedBundles!!) {
+            if (companyConfigurations?.isSupportLineHaulBundles!!) {
                 callGetCustomersWithReturnedBundles()
             } else {
                 callGetCustomersWithReturnedPackages()
@@ -106,7 +106,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
                 super.getContext(),
                 getString(R.string.success_operation_completed)
             )
-            if (companyConfigurations?.isSupportReturnedBundles!!) {
+            if (companyConfigurations?.isSupportLineHaulBundles!!) {
                 callGetCustomersWithReturnedBundles()
             } else {
                 returnedPackagesList.clear()
@@ -120,7 +120,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         val layoutManager = LinearLayoutManager(
             super.getContext()
         )
-        if (companyConfigurations?.isSupportReturnedBundles!!) {
+        if (companyConfigurations?.isSupportLineHaulBundles!!) {
             binding.rvCustomers.adapter = ReturnedBundlesCustomerCellAdapter(
                 ArrayList(), super.getContext(), listener = this
             )
@@ -159,7 +159,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
             binding.textSelectedStatus.text =
                 "(${Helper.getLocalizedReturnedStatus(super.getContext(), selectedStatus)})"
             returnedPackagesList.clear()
-            if (companyConfigurations?.isSupportReturnedBundles!!) {
+            if (companyConfigurations?.isSupportLineHaulBundles!!) {
                 callGetCustomersWithReturnedBundles()
             } else {
                 callGetCustomersWithReturnedPackages()
@@ -246,6 +246,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
     private fun callGetCustomersWithReturnedPackages() {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
+            isLoading = true
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response =
@@ -292,7 +293,9 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
                             }
                         }
                     }
+                    isLoading = false
                 } catch (e: Exception) {
+                    isLoading = false
                     hideWaitDialog()
                     Helper.logException(e, Throwable().stackTraceToString())
                     withContext(Dispatchers.Main) {
@@ -516,7 +519,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
     }
 
     override fun deliverCustomerPackages(parentIndex: Int) {
-        if (companyConfigurations?.isSupportReturnedBundles!!) {
+        if (companyConfigurations?.isSupportLineHaulBundles!!) {
             val bundle =
                 (binding.rvCustomers.adapter as ReturnedBundlesCustomerCellAdapter).bundlesList[parentIndex]
             val mIntent = Intent(this, ReturnedPackageDeliveryActivity::class.java)
@@ -533,7 +536,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
 
     override fun getCustomerPackages(parentIndex: Int) {
 
-        if (companyConfigurations?.isSupportReturnedBundles!!) {
+        if (companyConfigurations?.isSupportLineHaulBundles!!) {
             val bundle =
                 (binding.rvCustomers.adapter as ReturnedBundlesCustomerCellAdapter).bundlesList[parentIndex]
             callGetCustomerReturnedBundles(
@@ -571,7 +574,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         this.selectedStatus = selectedStatus
         binding.textSelectedStatus.text =
             "(${Helper.getLocalizedReturnedStatus(super.getContext(), selectedStatus)})"
-        if (companyConfigurations?.isSupportReturnedBundles!!) {
+        if (companyConfigurations?.isSupportLineHaulBundles!!) {
             callGetCustomersWithReturnedBundles()
         } else {
             returnedPackagesList.clear()

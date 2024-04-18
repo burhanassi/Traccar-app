@@ -67,7 +67,7 @@ class InCarPackageCellAdapter(
     ) {
         val pkg: Package? = packagesList[position]
         InCarPackageViewHolder.setIsRecyclable(false);
-        InCarPackageViewHolder.bind(pkg)
+        InCarPackageViewHolder.bind(pkg, position)
     }
 
     override fun getItemCount(): Int {
@@ -91,7 +91,10 @@ class InCarPackageCellAdapter(
         private var mAdapter: InCarPackageCellAdapter
     ) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(pkg: Package?) {
+        fun bind(
+            pkg: Package?,
+            position: Int
+        ) {
             binding.itemSenderName.textItem.text = pkg?.getFullSenderName()
             binding.itemSenderAddress.textItem.text = pkg?.originAddress?.toStringAddress()
 //            if (mAdapter.companyConfigurations?.isPricingPerServiceTypeEnabled!!) {
@@ -349,7 +352,7 @@ class InCarPackageCellAdapter(
             }
 
             binding.buttonDeliverPackage.setOnClickListener {
-                mAdapter.listener?.onDeliverPackage(pkg)
+                mAdapter.listener?.onDeliverPackage(pkg, position)
             }
 
             binding.itemPackageBarcode.buttonCopy.setOnClickListener {
