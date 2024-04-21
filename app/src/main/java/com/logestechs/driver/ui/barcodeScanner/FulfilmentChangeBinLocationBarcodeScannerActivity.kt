@@ -475,9 +475,13 @@ class FulfilmentChangeBinLocationBarcodeScannerActivity: LogesTechsActivity(), V
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            selectedScanMode = FulfilmentSorterScanMode.NEW_LOCATION
-                            binId = response.body()!!.id
-                            handleSelectedScanMode()
+                            if (response.body()!!.isReserved!!) {
+                                onBackPressed()
+                            } else {
+                                selectedScanMode = FulfilmentSorterScanMode.NEW_LOCATION
+                                binId = response.body()!!.id
+                                handleSelectedScanMode()
+                            }
                         }
                     } else {
                         try {
