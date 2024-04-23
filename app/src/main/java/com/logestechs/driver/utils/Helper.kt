@@ -979,9 +979,18 @@ class Helper {
                 )
             }
 
-            if (receiverAddress != null && receiverAddress.isNotEmpty()) {
-                template = template?.replace(SmsTemplateTag.receiverAddress.arabicTag.toRegex(), receiverAddress)
-                template = template?.replace(SmsTemplateTag.receiverAddress.englishTag.toRegex(), receiverAddress)
+            if (!isToMultiple) {
+                if (receiverAddress != null && receiverAddress.isNotEmpty()) {
+                    template = template?.replace(SmsTemplateTag.receiverAddress.arabicTag.toRegex(), receiverAddress)
+                    template = template?.replace(SmsTemplateTag.receiverAddress.englishTag.toRegex(), receiverAddress)
+                } else {
+                    template =
+                        template?.replace(" " + SmsTemplateTag.receiverAddress.arabicTag.toRegex(), "")
+                    template = template?.replace(SmsTemplateTag.receiverAddress.arabicTag.toRegex(), "")
+                    template =
+                        template?.replace(" " + SmsTemplateTag.receiverAddress.englishTag.toRegex(), "")
+                    template = template?.replace(SmsTemplateTag.receiverAddress.englishTag.toRegex(), "")
+                }
             } else {
                 template =
                     template?.replace(" " + SmsTemplateTag.receiverAddress.arabicTag.toRegex(), "")
@@ -991,9 +1000,18 @@ class Helper {
                 template = template?.replace(SmsTemplateTag.receiverAddress.englishTag.toRegex(), "")
             }
 
-            if (packageContent != null && packageContent.isNotEmpty()) {
-                template = template?.replace(SmsTemplateTag.packageContent.arabicTag.toRegex(), packageContent)
-                template = template?.replace(SmsTemplateTag.packageContent.englishTag.toRegex(), packageContent)
+            if (!isToMultiple) {
+                if (packageContent != null && packageContent.isNotEmpty()) {
+                    template = template?.replace(SmsTemplateTag.packageContent.arabicTag.toRegex(), packageContent)
+                    template = template?.replace(SmsTemplateTag.packageContent.englishTag.toRegex(), packageContent)
+                } else {
+                    template =
+                        template?.replace(" " + SmsTemplateTag.packageContent.arabicTag.toRegex(), "")
+                    template = template?.replace(SmsTemplateTag.packageContent.arabicTag.toRegex(), "")
+                    template =
+                        template?.replace(" " + SmsTemplateTag.packageContent.englishTag.toRegex(), "")
+                    template = template?.replace(SmsTemplateTag.packageContent.englishTag.toRegex(), "")
+                }
             } else {
                 template =
                     template?.replace(" " + SmsTemplateTag.packageContent.arabicTag.toRegex(), "")
@@ -1002,6 +1020,7 @@ class Helper {
                     template?.replace(" " + SmsTemplateTag.packageContent.englishTag.toRegex(), "")
                 template = template?.replace(SmsTemplateTag.packageContent.englishTag.toRegex(), "")
             }
+
             if (!isToMultiple) {
                 if (barcode != null && !barcode.isEmpty()) {
                     template = template?.replace(
