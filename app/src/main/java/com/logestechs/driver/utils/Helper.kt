@@ -58,6 +58,7 @@ import java.util.*
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AlertDialog
+import com.logestechs.driver.data.model.Address
 
 enum class AppFonts(val value: Int) {
     ROBOTO_BOLD(R.font.roboto_bold),
@@ -660,6 +661,8 @@ class Helper {
             var senderPhone2: String? = ""
             var expectedDeliveryDate = ""
             var postponeDate: String? = ""
+            var receiverAddress: String? = ""
+            var packageContent: String? = ""
 
             var template: String? = ""
 
@@ -687,6 +690,9 @@ class Helper {
                         DateFormats.DEFAULT_FORMAT
                     )
                 }
+
+                receiverAddress = pkg.destinationAddress?.toString()
+                packageContent = pkg.description
             }
             driverName = loggedInUser?.firstName
             driverPhone = loggedInUser?.phone
@@ -971,6 +977,30 @@ class Helper {
                     SmsTemplateTag.expectedDeliveryDate.englishTag.toRegex(),
                     ""
                 )
+            }
+
+            if (receiverAddress != null && receiverAddress.isNotEmpty()) {
+                template = template?.replace(SmsTemplateTag.receiverAddress.arabicTag.toRegex(), receiverAddress)
+                template = template?.replace(SmsTemplateTag.receiverAddress.englishTag.toRegex(), receiverAddress)
+            } else {
+                template =
+                    template?.replace(" " + SmsTemplateTag.receiverAddress.arabicTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.receiverAddress.arabicTag.toRegex(), "")
+                template =
+                    template?.replace(" " + SmsTemplateTag.receiverAddress.englishTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.receiverAddress.englishTag.toRegex(), "")
+            }
+
+            if (packageContent != null && packageContent.isNotEmpty()) {
+                template = template?.replace(SmsTemplateTag.packageContent.arabicTag.toRegex(), packageContent)
+                template = template?.replace(SmsTemplateTag.packageContent.englishTag.toRegex(), packageContent)
+            } else {
+                template =
+                    template?.replace(" " + SmsTemplateTag.packageContent.arabicTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.packageContent.arabicTag.toRegex(), "")
+                template =
+                    template?.replace(" " + SmsTemplateTag.packageContent.englishTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.packageContent.englishTag.toRegex(), "")
             }
             if (!isToMultiple) {
                 if (barcode != null && !barcode.isEmpty()) {

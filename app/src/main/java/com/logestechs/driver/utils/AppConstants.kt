@@ -197,7 +197,9 @@ enum class SmsTemplateTag(val arabicTag: String, val englishTag: String) {
     postponeDate("<تاريخ التأجيل>", "<Date Postponed>"),
     expectedDeliveryDate("<تاريخ التوصيل المتوقع>", "<Expected Delivery Date>"),
     cod("<التحصيل>", "<COD>"),
-    customerPhoneNumber("<رقم المتجر الاضافي>", "<Customer Second Phone Number>");
+    customerPhoneNumber("<رقم المتجر الاضافي>", "<Customer Second Phone Number>"),
+    receiverAddress("<عنوان المستقبل>", "<Receiver Address>"),
+    packageContent("<محتوى الطرد>", "<Package Content>");
 
     companion object {
         fun replaceTags(template: String): String {
