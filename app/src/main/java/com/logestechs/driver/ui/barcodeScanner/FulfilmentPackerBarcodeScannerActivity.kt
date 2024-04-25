@@ -361,7 +361,7 @@ class FulfilmentPackerBarcodeScannerActivity :
                                 if ((binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter)
                                         .getItemCount() == fulfilmentOrder?.totalQuantity
                                 ) {
-                                    callPackFulfilmentOrder()
+                                    onBackPressed()
                                 }
                                 Helper.showSuccessMessage(
                                     super.getContext(), getString(R.string.success_operation_completed)
@@ -408,63 +408,6 @@ class FulfilmentPackerBarcodeScannerActivity :
                     super.getContext(), getString(R.string.error_check_internet_connection)
                 )
             }
-        }
-    }
-
-    private fun callPackFulfilmentOrder() {
-        showWaitDialog()
-        if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response =
-                        ApiAdapter.apiClient.packFulfilmentOrder(fulfilmentOrder?.id)
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        withContext(Dispatchers.Main) {
-                            Helper.showSuccessMessage(
-                                super.getContext(), getString(R.string.success_operation_completed)
-                            )
-//                            currentPageIndex = 1
-//                            (binding.rvFulfilmentOrders.adapter as PickedFulfilmentOrderCellAdapter).clearList()
-//                            callGetFulfilmentOrders(FulfilmentOrderStatus.PICKED.name)
-                            onBackPressed()
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(), jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(), getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            hideWaitDialog()
-            Helper.showErrorMessage(
-                super.getContext(), getString(R.string.error_check_internet_connection)
-            )
         }
     }
 
