@@ -495,6 +495,12 @@ interface LogesTechsDriverApi {
         @Query("callDuration") callDuration: Double
     ): Response<ResponseBody?>?
 
+    @GET("driver/first-partner-cost/{packageId}")
+    suspend fun getFirstPartnerCost (
+        @Path("packageId") packageId: Long?,
+        @Query("isReceiverPayCost") isReceiverPayCost: Boolean? = true
+    ): Response<GetFirstPartnerCostResponse?>?
+
     @Multipart
     @POST("handler/item/image/upload")
     suspend fun uploadPodImageForRejectedItem(
