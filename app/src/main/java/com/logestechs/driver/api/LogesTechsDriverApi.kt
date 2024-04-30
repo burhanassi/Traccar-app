@@ -697,7 +697,8 @@ interface LogesTechsDriverApi {
         @Query("itemId") itemId: Long?,
         @Query("customerId") customerId: Long?,
         @Query("locationBarcode") barcode: String?,
-        @Query("binId") binId: Long? = null
+        @Query("binId") binId: Long? = null,
+        @Query("locationId") locationId: Long? = null,
     ): Response<ResponseBody?>?
 
     @PUT("handler/hub/locations/{locationBarcode}/bin/sort")
