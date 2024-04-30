@@ -476,6 +476,7 @@ class FulfilmentChangeBinLocationBarcodeScannerActivity: LogesTechsActivity(), V
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             if (response.body()!!.locationId != null) {
+                                binId = response.body()!!.id
                                 callChangeLocation(null, response.body()!!.locationId)
                             } else {
                                 selectedScanMode = FulfilmentSorterScanMode.NEW_LOCATION
