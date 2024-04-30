@@ -275,7 +275,7 @@ class FulfilmentChangeBinLocationBarcodeScannerActivity: LogesTechsActivity(), V
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             scannedBin = barcode
-                            if (response.body()!!.locationId != null && response.body()!!.locationId!! != 0 ) {
+                            if (response.body()!!.locationId != null && response.body()!!.locationId!!.toInt() != 0 ) {
                                 selectedScanMode = FulfilmentSorterScanMode.LOCATION
                                 handleSelectedScanMode()
                                 Helper.showSuccessMessage(
@@ -475,8 +475,8 @@ class FulfilmentChangeBinLocationBarcodeScannerActivity: LogesTechsActivity(), V
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            if (response.body()!!.isReserved!!) {
-                                onBackPressed()
+                            if (response.body()!!.locationId != null) {
+                                callChangeLocation(null, response.body()!!.locationId)
                             } else {
                                 selectedScanMode = FulfilmentSorterScanMode.NEW_LOCATION
                                 binId = response.body()!!.id
@@ -526,7 +526,7 @@ class FulfilmentChangeBinLocationBarcodeScannerActivity: LogesTechsActivity(), V
         }
     }
 
-    private fun callChangeLocation(barcode: String?) {
+    private fun callChangeLocation(barcode: String?, locationId: Long? = null) {
         this.runOnUiThread {
             showWaitDialog()
         }
@@ -537,7 +537,8 @@ class FulfilmentChangeBinLocationBarcodeScannerActivity: LogesTechsActivity(), V
                         itemId,
                         customerId,
                         barcode,
-                        binId
+                        binId,
+                        locationId
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
