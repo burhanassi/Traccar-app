@@ -350,4 +350,5 @@
     <string name="item_location">Item</string>
     <string name="please_scan_new_bin">Please Scan New Bin Barcode</string>
     <string name="please_scan_new_location">Please Scan New Location Barcode</string>
+    <string name="title_first_partner_cost">Cost: </string>
 </resources>
