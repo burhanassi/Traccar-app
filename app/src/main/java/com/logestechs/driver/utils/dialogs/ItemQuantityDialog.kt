@@ -14,7 +14,8 @@ import com.logestechs.driver.utils.interfaces.ItemQuantityDialogListener
 class ItemQuantityDialog(
     var context: Context,
     var listener: ItemQuantityDialogListener,
-    var barcode: String
+    var barcode: String,
+    var maxQuantity: Long? = null
 ) {
     lateinit var binding: DialogItemQuantityBinding
     lateinit var alertDialog: AlertDialog
@@ -36,13 +37,26 @@ class ItemQuantityDialog(
         }
 
         binding.buttonDone.setOnClickListener {
-            if (binding.etQuantity.getText().isNotEmpty()
-                && binding.etQuantity.getText() != ""
-                && binding.etQuantity.getText() != "0") {
-                alertDialog.dismiss()
-                listener.onQuantityInserted(binding.etQuantity.getText().toInt(), barcode)
+            if (maxQuantity == null) {
+                if (binding.etQuantity.getText().isNotEmpty()
+                    && binding.etQuantity.getText() != ""
+                    && binding.etQuantity.getText() != "0") {
+                    alertDialog.dismiss()
+                    listener.onQuantityInserted(binding.etQuantity.getText().toInt(), barcode)
+                } else {
+                    binding.etQuantity.makeInvalid()
+                }
             } else {
-                binding.etQuantity.makeInvalid()
+                if (binding.etQuantity.getText().isNotEmpty()
+                    && binding.etQuantity.getText() != ""
+                    && binding.etQuantity.getText() != "0"
+                    && binding.etQuantity.getText().toLong() <= maxQuantity!!
+                ) {
+                    alertDialog.dismiss()
+                    listener.onQuantityInserted(binding.etQuantity.getText().toInt(), barcode)
+                } else {
+                    binding.etQuantity.makeInvalid()
+                }
             }
         }
 

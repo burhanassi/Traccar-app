@@ -589,6 +589,8 @@ interface LogesTechsDriverApi {
     suspend fun scanItemIntoTote(
         @Path("toteId") toteId: Long?,
         @Query("orderId") orderId: Long?,
+        @Query("locationId") locationId: Long?,
+        @Query("quantity") quantity: Int?,
         @Body body: BarcodeRequestBody?
     ): Response<SortItemIntoToteResponse>?
 
@@ -712,4 +714,20 @@ interface LogesTechsDriverApi {
         @Path("locationBarcode") locationBarcode: String,
         @Query("barcode") barcode: String
     ): Response<ResponseBody?>?
+
+    @GET("handler/customers/{customerId}/locations")
+    suspend fun getCustomerLocations(
+        @Path("customerId") customerId: Long?,
+        @Query("search") search: String? = null,
+        @Query("productId") productId: Long
+    ): Response<GetCustomerLocationsResponse>
+
+    @GET("handler/order/{orderId}/max-quantity")
+    suspend fun getMaxQuantity(
+        @Path("orderId") orderId: Long?,
+        @Query("customerId") customerId: Long?,
+        @Query("warehouseId") warehouseId: Long?,
+        @Query("productId") productId: Long?,
+        @Query("locationId") locationId: Long?,
+    ): Response<Long>
 }

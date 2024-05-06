@@ -351,4 +351,5 @@
     <string name="please_scan_new_bin">Please Scan New Bin Barcode</string>
     <string name="please_scan_new_location">Please Scan New Location Barcode</string>
     <string name="title_first_partner_cost">Cost: </string>
+    <string name="title_choose_location">Please choose location</string>
 </resources>
