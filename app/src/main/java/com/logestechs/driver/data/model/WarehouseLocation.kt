@@ -14,4 +14,8 @@ data class WarehouseLocation(
     val createdDate: String?,
     val id: Long?,
     val companyId: Int?
-) : Parcelable
+) : Parcelable, DropdownItem() {
+    override fun toString(): String {
+        return "${barcode}"
+    }
+}

@@ -292,6 +292,8 @@ class SignUpActivity : LogesTechsActivity(), View.OnClickListener, OnDropDownIte
                 binding.etAddress.editText.clearFocus()
                 binding.etAddress.editText.setText(item.toString())
             }
+
+            else -> {}
         }
     }
 

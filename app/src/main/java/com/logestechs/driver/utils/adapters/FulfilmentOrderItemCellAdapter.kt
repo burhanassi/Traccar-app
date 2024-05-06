@@ -37,6 +37,7 @@ class FulfilmentOrderItemCellAdapter(
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
     private var highlightedPosition: Int? = null
+    private var quantity: Int? = null
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
@@ -93,18 +94,47 @@ class FulfilmentOrderItemCellAdapter(
     }
 
     fun scanItem(sku: String?): Int {
-        for (index in productItemsList.indices) {
-            if (productItemsList[index]?.sku == sku) {
-                return if (productItemsList[index]?.quantity != null && productItemsList[index]!!.quantity!! > 0) {
-                    productItemsList[index]?.quantity = productItemsList[index]!!.quantity?.minus(1)
-                    if (productItemsList[index]?.quantity == 0) {
+        if (quantity == null) {
+            for (index in productItemsList.indices) {
+                if (productItemsList[index]?.sku == sku) {
+                    return if (productItemsList[index]?.quantity != null && productItemsList[index]!!.quantity!! > 0) {
+                        productItemsList[index]?.quantity =
+                            productItemsList[index]!!.quantity?.minus(1)
+                        if (productItemsList[index]?.quantity == 0) {
+                            removeItem(index)
+                        }
+                        notifyItemChanged(index)
+                        index
+                    } else {
                         removeItem(index)
+                        0
                     }
-                    notifyItemChanged(index)
-                    index
-                } else {
-                    removeItem(index)
-                    0
+                }
+            }
+        } else {
+            for (index in productItemsList.indices) {
+                if (productItemsList[index]?.sku == sku) {
+                    if (productItemsList[index]?.quantity != null && productItemsList[index]!!.quantity!! > 0) {
+                        if (quantity!! < productItemsList[index]?.quantity!!) {
+                            productItemsList[index]?.quantity = productItemsList[index]!!.quantity?.minus(
+                                quantity!!
+                            )
+                            if (productItemsList[index]?.quantity == 0) {
+                                removeItem(index)
+                            }
+                            notifyItemChanged(index)
+                            return index
+                        } else {
+                            quantity = quantity!! - productItemsList[index]?.quantity!!
+                            productItemsList[index]?.quantity = 0
+                            if (quantity == 0) {
+                                return index
+                            }
+                        }
+                    } else {
+                        removeItem(index)
+                        return 0
+                    }
                 }
             }
         }
@@ -117,6 +147,21 @@ class FulfilmentOrderItemCellAdapter(
             sum += productItemsList[index]?.quantity!!
         }
         return sum
+    }
+
+    fun setQuantity(quantity: Int) {
+        this.quantity = quantity
+    }
+
+    fun removeZeros() {
+        val iterator = productItemsList.iterator()
+        while (iterator.hasNext()) {
+            val item = iterator.next()
+            if (item?.quantity == 0) {
+                iterator.remove()
+            }
+        }
+        notifyDataSetChanged()
     }
 
     class FulfilmentOrderItemCellViewHolder(

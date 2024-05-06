@@ -21,6 +21,7 @@ data class ProductItem(
     var customerName: String? = null,
     var warehouseName: String? = null,
     var productName: String? = null,
+    var productBarcode: String? = null,
     var quantity: Int? = null,
     var shippingPlanId: Long? = null,
     var binId: Long? = null,

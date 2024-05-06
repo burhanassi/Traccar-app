@@ -52,7 +52,8 @@ enum class AppLanguages(val value: String) {
 }
 
 enum class DropdownTag {
-    SIGN_UP_VILLAGES
+    SIGN_UP_VILLAGES,
+    LOCATIONS
 }
 
 enum class PhoneType {

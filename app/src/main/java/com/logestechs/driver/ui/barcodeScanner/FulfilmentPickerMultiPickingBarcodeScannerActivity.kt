@@ -355,7 +355,6 @@ class FulfilmentPickerMultiPickingBarcodeScannerActivity :
     }
 
     //APIs
-
     private fun callScanItemIntoTote(barcode: String?) {
         this.runOnUiThread {
             showWaitDialog()
