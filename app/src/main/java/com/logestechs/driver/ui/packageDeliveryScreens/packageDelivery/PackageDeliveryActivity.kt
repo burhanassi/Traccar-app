@@ -1566,20 +1566,12 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             }
 
             R.id.button_deliver_package -> {
-                if (selectedPaymentType?.textView?.text == PaymentType.INTER_PAY.englishLabel) {
-                    if (isSoftposInstalled()) {
-                        startSoftposApp(pkg?.cod?.format()!!)
-                        return
-                    } else {
-                        Helper.showErrorMessage(
-                            super.getContext(), getString(R.string.error_app_is_not_installed)
-                        )
-                    }
-                } else if (selectedPaymentType?.textView?.text == PaymentType.CLICK_PAY.englishLabel) {
-                    callVerifyClickPay()
-                } else {
-                    makePackageDelivery()
-                }
+                (this as LogesTechsActivity).showConfirmationDialog(
+                    getString(R.string.warning_deliver_package),
+                    pkg,
+                    ConfirmationDialogAction.DELIVER_PACKAGE,
+                    this
+                )
             }
 
             R.id.button_capture_image -> {
@@ -1704,6 +1696,21 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         } else if (action == ConfirmationDialogAction.CLICKPAY_RESULT) {
             isClickPayVerified
             handlePackageDelivery()
+        } else if (action == ConfirmationDialogAction.DELIVER_PACKAGE) {
+            if (selectedPaymentType?.textView?.text == PaymentType.INTER_PAY.englishLabel) {
+                if (isSoftposInstalled()) {
+                    startSoftposApp(pkg?.cod?.format()!!)
+                    return
+                } else {
+                    Helper.showErrorMessage(
+                        super.getContext(), getString(R.string.error_app_is_not_installed)
+                    )
+                }
+            } else if (selectedPaymentType?.textView?.text == PaymentType.CLICK_PAY.englishLabel) {
+                callVerifyClickPay()
+            } else {
+                makePackageDelivery()
+            }
         }
     }
 }
