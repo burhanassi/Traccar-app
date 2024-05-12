@@ -54,7 +54,7 @@ class ReturnPackageDialog(
         if (pkg?.isReceiverPayCost == true) {
             binding.switchReceiverPaidCosts.isChecked = true
             if (pkg?.partnerPackageId != null) {
-                callGetFirstPartnerCost()
+                callGetFirstPartnerCost(null)
             }
         }
 
@@ -111,7 +111,15 @@ class ReturnPackageDialog(
 
         binding.switchReceiverPaidCosts.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked && pkg?.partnerPackageId != null && pkg?.partnerPackageId?.toInt() != 0) {
-                callGetFirstPartnerCost()
+                callGetFirstPartnerCost(
+                    ReturnPackageRequestBody(
+                        null,
+                        (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
+                        true,
+                        null,
+                        null
+                    )
+                )
             } else {
                 binding.containerFirstPartnerCost.visibility = View.GONE
             }
@@ -122,12 +130,12 @@ class ReturnPackageDialog(
         alertDialog.show()
     }
 
-    private fun callGetFirstPartnerCost() {
+    private fun callGetFirstPartnerCost(body: ReturnPackageRequestBody?) {
         if (Helper.isInternetAvailable(context)) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response =
-                        ApiAdapter.apiClient.getFirstPartnerCost(pkg?.id)
+                        ApiAdapter.apiClient.getFirstPartnerCost(pkg?.id, body)
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             binding.containerFirstPartnerCost.visibility = View.VISIBLE
@@ -194,8 +202,20 @@ class ReturnPackageDialog(
     }
 
     override fun onItemSelected(title: String?) {
+        val selectedReasonKey = (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem()
         binding.etReason.setText(title)
         clearFocus()
+        if (binding.switchReceiverPaidCosts.isChecked && pkg?.partnerPackageId != null && pkg?.partnerPackageId?.toInt() != 0) {
+            callGetFirstPartnerCost(
+                ReturnPackageRequestBody(
+                    null,
+                    selectedReasonKey,
+                    true,
+                    null,
+                    null
+                )
+            )
+        }
     }
 
     override fun onDeleteImage(position: Int) {
