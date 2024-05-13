@@ -17,6 +17,7 @@ import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.DialogReturnPackageBinding
 import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.LogesTechsApp
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.RadioGroupListAdapter
@@ -131,6 +132,7 @@ class ReturnPackageDialog(
     }
 
     private fun callGetFirstPartnerCost(body: ReturnPackageRequestBody?) {
+        (context as? LogesTechsActivity)?.showWaitDialog()
         if (Helper.isInternetAvailable(context)) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
@@ -169,9 +171,12 @@ class ReturnPackageDialog(
                             Helper.showErrorMessage(context, e.stackTraceToString())
                         }
                     }
+                } finally {
+                    (context as? LogesTechsActivity)?.hideWaitDialog()
                 }
             }
         } else {
+            (context as? LogesTechsActivity)?.hideWaitDialog()
             Helper.showErrorMessage(
                 this@ReturnPackageDialog.context, this@ReturnPackageDialog.context?.getString(R.string.error_check_internet_connection)
             )
