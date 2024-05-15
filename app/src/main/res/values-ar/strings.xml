@@ -349,4 +349,5 @@
     <string name="please_scan_new_location">الرجاء مسح باركود الموقع الجديد</string>
     <string name="title_first_partner_cost">الأجر: </string>
     <string name="title_choose_location">الرجاء اختيار الموقع</string>
+    <string name="warning_deliver_package">هل انت متاكد من اكمال التوصيل ؟</string>
 </resources>

@@ -163,7 +163,8 @@ enum class MassCodReportsViewMode(val value: String) {
 enum class ConfirmationDialogAction {
     RETURN_PACKAGE,
     CLICKPAY_PAYMENT,
-    CLICKPAY_RESULT
+    CLICKPAY_RESULT,
+    DELIVER_PACKAGE
 }
 
 enum class PaymentGatewayType {
