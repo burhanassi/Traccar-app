@@ -326,12 +326,10 @@ class FulfilmentPackerBarcodeScannerActivity :
             }
 
             null -> return
-            else -> {}
         }
     }
 
     //APIs
-
     private fun callPackFulfilmentOrderByItem(barcode: String?) {
         this.runOnUiThread {
             showWaitDialog()
@@ -361,7 +359,7 @@ class FulfilmentPackerBarcodeScannerActivity :
                                 if ((binding.rvScannedBarcodes.adapter as FulfilmentOrderItemToPackCellAdapter)
                                         .getItemCount() == fulfilmentOrder?.totalQuantity
                                 ) {
-                                    callPackFulfilmentOrder()
+                                    onBackPressed()
                                 }
                                 Helper.showSuccessMessage(
                                     super.getContext(), getString(R.string.success_operation_completed)
