@@ -21,6 +21,7 @@ import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.databinding.ActivityFulfilmentChangeBinLocationBarcodeScannerBinding
 import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.FulfillmentItemStatus
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.SharedPreferenceWrapper
@@ -411,10 +412,19 @@ class FulfilmentChangeBinLocationBarcodeScannerActivity: LogesTechsActivity(), V
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            selectedScanMode = FulfilmentSorterScanMode.NEW_BIN
-                            itemId = response.body()!!.id
-                            customerId = response.body()!!.customerId
-                            handleSelectedScanMode()
+
+                            if (response.body()!!.status == FulfillmentItemStatus.UNSORTED) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_unsorted_item)
+                                )
+                            } else {
+                                selectedScanMode = FulfilmentSorterScanMode.NEW_BIN
+                                itemId = response.body()!!.id
+                                customerId = response.body()!!.customerId
+                                handleSelectedScanMode()
+                            }
+
                         }
                     } else {
                         try {
