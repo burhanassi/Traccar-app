@@ -624,7 +624,7 @@ interface LogesTechsDriverApi {
         @Query("barcode") barcode: String?
     ): Response<ResponseBody?>?
 
-    @GET("handler/orders/{orderId}/picked-item")
+    @PUT("handler/orders/{orderId}/picked-item")
     suspend fun packFulfilmentOrderByItem(
         @Path("orderId") orderId: Long?,
         @Query("barcode") barcode: String?
