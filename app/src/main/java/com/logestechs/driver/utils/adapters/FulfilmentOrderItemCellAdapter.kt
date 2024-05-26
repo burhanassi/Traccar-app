@@ -196,7 +196,7 @@ class FulfilmentOrderItemCellAdapter(
                 binding.textTitle.text = mAdapter.context?.getText(R.string.title_bundle)
             }
 
-            if (productItem?.productImageUrl != null) {
+            if (productItem?.productImageUrl != null && productItem.productImageUrl!!.isNotEmpty()) {
                 Picasso.get()
                     .load(productItem.productImageUrl)
                     .into(binding.itemImage)
