@@ -29,7 +29,6 @@ class InCarPackageCellAdapter(
     var isSprint: Boolean = false
 ) :
     RecyclerView.Adapter<InCarPackageCellAdapter.InCarPackageCellViewHolder>(),
-    PostponePackageDialogListener,
     ChangePackageTypeDialogListener,
     ChangeCodDialogListener {
 
@@ -303,11 +302,7 @@ class InCarPackageCellAdapter(
                             }
 
                             R.id.action_postpone_package -> {
-                                PostponePackageDialog(
-                                    mAdapter.context!!,
-                                    mAdapter,
-                                    pkg
-                                ).showDialog()
+                                mAdapter.listener?.onShowPostponePackageDialog(pkg)
                             }
                             R.id.action_view_attachment -> {
                                 mAdapter.listener?.onShowAttachmentsDialog(pkg)
@@ -369,10 +364,6 @@ class InCarPackageCellAdapter(
                 binding.buttonsContainer.visibility = View.GONE
             }
         }
-    }
-
-    override fun onPackagePostponed(postponePackageRequestBody: PostponePackageRequestBody) {
-        listener?.onPackagePostponed(postponePackageRequestBody)
     }
 
     override fun onPackageTypeChanged(changePackageTypeRequestBody: ChangePackageTypeRequestBody) {
