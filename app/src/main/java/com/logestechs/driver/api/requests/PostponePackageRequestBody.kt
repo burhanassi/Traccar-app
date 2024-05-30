@@ -10,6 +10,7 @@ data class PostponePackageRequestBody(
     val longitude: Double? = null,
     val latitude: Double? = null,
     val postponedDeliveryDate: String?,
+    val deliveryProofUrlList: List<String?>?,
     @Transient
     val packageId: Long?
 ) : Parcelable

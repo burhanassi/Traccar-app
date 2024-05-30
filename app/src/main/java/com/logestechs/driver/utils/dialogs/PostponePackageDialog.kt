@@ -15,6 +15,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.logestechs.driver.R
 import com.logestechs.driver.api.requests.PostponePackageRequestBody
+import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.DialogPostponePackageBinding
 import com.logestechs.driver.utils.DateFormats
@@ -22,8 +23,10 @@ import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsApp
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.RadioGroupListAdapter
+import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
 import com.logestechs.driver.utils.interfaces.PostponePackageDialogListener
 import com.logestechs.driver.utils.interfaces.RadioGroupListListener
+import com.logestechs.driver.utils.interfaces.ThumbnailsListListener
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -32,8 +35,9 @@ import java.util.*
 class PostponePackageDialog(
     var context: Context,
     var listener: PostponePackageDialogListener?,
-    var pkg: Package?
-) : RadioGroupListListener {
+    var pkg: Package?,
+    var loadedImagesList: ArrayList<LoadedImage>
+) : RadioGroupListListener, ThumbnailsListListener {
 
     lateinit var binding: DialogPostponePackageBinding
     lateinit var alertDialog: AlertDialog
@@ -57,6 +61,12 @@ class PostponePackageDialog(
             alertDialog.dismiss()
         }
 
+        binding.rvThumbnails.apply {
+            layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = ThumbnailsAdapter(loadedImagesList, this@PostponePackageDialog)
+        }
+
         binding.buttonDone.setOnClickListener {
             if (binding.etReason.text.toString().isNotEmpty()) {
                 if (binding.textDate.text.toString().isNotEmpty()) {
@@ -71,6 +81,7 @@ class PostponePackageDialog(
                                         location.longitude,
                                         location.latitude,
                                         binding.textDate.text.toString(),
+                                        getPodImagesUrls(),
                                         pkg?.id
                                     )
                                 )
@@ -82,6 +93,7 @@ class PostponePackageDialog(
                                         null,
                                         null,
                                         binding.textDate.text.toString(),
+                                        getPodImagesUrls(),
                                         pkg?.id
                                     )
                                 )
@@ -145,6 +157,14 @@ class PostponePackageDialog(
             )
         }
 
+        binding.buttonCaptureImage.setOnClickListener {
+            listener?.onCaptureImage()
+        }
+
+        binding.buttonLoadImage.setOnClickListener {
+            listener?.onLoadImage()
+        }
+
         binding.root.setOnClickListener {
             clearFocus()
         }
@@ -152,6 +172,18 @@ class PostponePackageDialog(
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.setCanceledOnTouchOutside(false)
         alertDialog.show()
+    }
+
+    private fun getPodImagesUrls(): List<String?>? {
+        return if (loadedImagesList.isNotEmpty()) {
+            val list: ArrayList<String?> = ArrayList()
+            for (item in loadedImagesList) {
+                list.add(item.imageUrl)
+            }
+            list
+        } else {
+            null
+        }
     }
 
     private fun getStringForFragment(resId: Int): String {
@@ -168,5 +200,9 @@ class PostponePackageDialog(
     override fun onItemSelected(title: String?) {
         binding.etReason.setText(title)
         clearFocus()
+    }
+
+    override fun onDeleteImage(position: Int) {
+        listener?.onDeleteImage(position)
     }
 }
