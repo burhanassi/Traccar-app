@@ -1795,8 +1795,9 @@ class Helper {
         }
 
         fun isBuiltInScannerAvailable(): Boolean {
+            val supportedManufacturers = listOf("Honeywell", "Zebra")
             val manufacturer = Build.MANUFACTURER
-            return manufacturer.equals("Honeywell", ignoreCase = true)
+            return supportedManufacturers.any { it.equals(manufacturer, ignoreCase = true) }
         }
 
         fun handleScanWay(context: Context) {
