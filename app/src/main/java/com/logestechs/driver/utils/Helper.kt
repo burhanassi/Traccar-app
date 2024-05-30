@@ -529,6 +529,20 @@ class Helper {
                     userLat + ", " + userLng
         }
 
+        fun getWazeNavigationUrl(userLat: Double?, userLng: Double?): String {
+            return "https://waze.com/ul?ll=$userLat,$userLng&navigate=yes"
+        }
+
+        fun isAppInstalled(packageManager: PackageManager, packageName: String): Boolean {
+            val installedPackages = packageManager.getInstalledPackages(0)
+            for (packageInfo in installedPackages) {
+                if (packageInfo.packageName == packageName) {
+                    return true
+                }
+            }
+            return false
+        }
+
         fun Double.format(): String {
             return if (this % 1.0 != 0.0) {
                 val decimalSymbol = DecimalFormatSymbols(Locale.US)
