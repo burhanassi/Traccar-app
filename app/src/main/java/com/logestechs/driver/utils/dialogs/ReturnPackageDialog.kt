@@ -5,15 +5,19 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.logestechs.driver.R
+import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.ReturnPackageRequestBody
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.DialogReturnPackageBinding
+import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.LogesTechsApp
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.RadioGroupListAdapter
@@ -21,6 +25,11 @@ import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
 import com.logestechs.driver.utils.interfaces.RadioGroupListListener
 import com.logestechs.driver.utils.interfaces.ReturnPackageDialogListener
 import com.logestechs.driver.utils.interfaces.ThumbnailsListListener
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
 
 class ReturnPackageDialog(
     var context: Context?,
@@ -42,6 +51,14 @@ class ReturnPackageDialog(
         dialogBuilder.setView(binding.root)
         val alertDialog = dialogBuilder.create()
         this.binding = binding
+
+        if (pkg?.isReceiverPayCost == true) {
+            binding.switchReceiverPaidCosts.isChecked = true
+            if (pkg?.partnerPackageId != null) {
+                callGetFirstPartnerCost(null)
+            }
+        }
+
         binding.buttonCancel.setOnClickListener {
             alertDialog.dismiss()
         }
@@ -50,7 +67,7 @@ class ReturnPackageDialog(
             if (binding.etReason.text.toString().isNotEmpty()) {
                 alertDialog.dismiss()
                 listener?.onPackageReturned(
-                    ReturnPackageRequestBody(// HERE JUST NEED TO ADD THE KEY TO THE LIST-URLS, still wait the backend
+                    ReturnPackageRequestBody(
                         binding.etReason.text.toString(),
                         (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
                         binding.switchReceiverPaidCosts.isChecked,
@@ -93,9 +110,77 @@ class ReturnPackageDialog(
             clearFocus()
         }
 
+        binding.switchReceiverPaidCosts.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked && pkg?.partnerPackageId != null && pkg?.partnerPackageId?.toInt() != 0) {
+                callGetFirstPartnerCost(
+                    ReturnPackageRequestBody(
+                        null,
+                        (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
+                        true,
+                        null,
+                        null
+                    )
+                )
+            } else {
+                binding.containerFirstPartnerCost.visibility = View.GONE
+            }
+        }
+
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.setCanceledOnTouchOutside(false)
         alertDialog.show()
+    }
+
+    private fun callGetFirstPartnerCost(body: ReturnPackageRequestBody?) {
+        (context as? LogesTechsActivity)?.showWaitDialog()
+        if (Helper.isInternetAvailable(context)) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response =
+                        ApiAdapter.apiClient.getFirstPartnerCost(pkg?.id, body)
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            binding.containerFirstPartnerCost.visibility = View.VISIBLE
+                            binding.firstPartnerCost.text = response.body()?.cost.toString()
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    context,
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    context,
+                                    context?.getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(context, context?.getString(R.string.cannot_open_attachments))
+                        } else {
+                            Helper.showErrorMessage(context, e.stackTraceToString())
+                        }
+                    }
+                } finally {
+                    (context as? LogesTechsActivity)?.hideWaitDialog()
+                }
+            }
+        } else {
+            (context as? LogesTechsActivity)?.hideWaitDialog()
+            Helper.showErrorMessage(
+                this@ReturnPackageDialog.context, this@ReturnPackageDialog.context?.getString(R.string.error_check_internet_connection)
+            )
+        }
     }
 
     private fun getPodImagesUrls(): List<String?>? {
@@ -122,8 +207,20 @@ class ReturnPackageDialog(
     }
 
     override fun onItemSelected(title: String?) {
+        val selectedReasonKey = (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem()
         binding.etReason.setText(title)
         clearFocus()
+        if (binding.switchReceiverPaidCosts.isChecked && pkg?.partnerPackageId != null && pkg?.partnerPackageId?.toInt() != 0) {
+            callGetFirstPartnerCost(
+                ReturnPackageRequestBody(
+                    null,
+                    selectedReasonKey,
+                    true,
+                    null,
+                    null
+                )
+            )
+        }
     }
 
     override fun onDeleteImage(position: Int) {

@@ -30,6 +30,7 @@ class AppConstants {
         const val REQUEST_LOCATION_PERMISSION = 5004
         const val REQUEST_SCAN_BUNDLE = 5005
         const val REQUEST_VERIFY_PACKAGE = 5006
+        const val REQUEST_READ_PHONE_STATE = 123
 
         //permission codes
         const val PERMISSIONS_REQUEST_PHONE_CALL = 1
@@ -51,7 +52,8 @@ enum class AppLanguages(val value: String) {
 }
 
 enum class DropdownTag {
-    SIGN_UP_VILLAGES
+    SIGN_UP_VILLAGES,
+    LOCATIONS
 }
 
 enum class PhoneType {
@@ -161,7 +163,8 @@ enum class MassCodReportsViewMode(val value: String) {
 enum class ConfirmationDialogAction {
     RETURN_PACKAGE,
     CLICKPAY_PAYMENT,
-    CLICKPAY_RESULT
+    CLICKPAY_RESULT,
+    DELIVER_PACKAGE
 }
 
 enum class PaymentGatewayType {

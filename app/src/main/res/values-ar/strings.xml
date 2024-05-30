@@ -347,4 +347,8 @@
     <string name="item_location">العنصر</string>
     <string name="please_scan_new_bin">الرجاء مسح باركود السلة الجديدة</string>
     <string name="please_scan_new_location">الرجاء مسح باركود الموقع الجديد</string>
+    <string name="title_first_partner_cost">الأجر: </string>
+    <string name="title_choose_location">الرجاء اختيار الموقع</string>
+    <string name="warning_deliver_package">هل انت متاكد من اكمال التوصيل ؟</string>
+    <string name="error_unsorted_item">هذا العنصر غير مصنف</string>
 </resources>

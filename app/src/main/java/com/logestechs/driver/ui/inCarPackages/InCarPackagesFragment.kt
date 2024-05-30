@@ -66,6 +66,7 @@ import com.logestechs.driver.utils.dialogs.ReturnPackageDialog
 import com.logestechs.driver.utils.dialogs.SearchPackagesDialog
 import com.logestechs.driver.utils.dialogs.ShowAttachmentsDialog
 import com.logestechs.driver.utils.interfaces.AddPackageNoteDialogListener
+import com.logestechs.driver.utils.interfaces.CallDurationListener
 import com.logestechs.driver.utils.interfaces.ConfirmationDialogActionListener
 import com.logestechs.driver.utils.interfaces.FailDeliveryDialogListener
 import com.logestechs.driver.utils.interfaces.InCarPackagesCardListener
@@ -105,7 +106,8 @@ class InCarPackagesFragment(
     ReturnPackageDialogListener,
     ConfirmationDialogActionListener,
     PackageTypeFilterDialogListener,
-    FailDeliveryDialogListener {
+    FailDeliveryDialogListener,
+    CallDurationListener {
 
     private var _binding: FragmentInCarPackagesBinding? = null
     private val binding get() = _binding!!
@@ -136,6 +138,7 @@ class InCarPackagesFragment(
     var returnPackageDialog: ReturnPackageDialog? = null
 
     var packageIdToUpload: Long? = null
+    var packageIdToSaveCallDuration: Long? = null
 
     var isSprint: Boolean = false
 
@@ -1063,6 +1066,16 @@ class InCarPackagesFragment(
         }
     }
 
+    private fun callSaveCallDuration(callDuration: Double) {
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                ApiAdapter.apiClient.saveCallDuration(packageIdToSaveCallDuration!!, callDuration)
+            } catch (e: Exception) {
+                Helper.logException(e, Throwable().stackTraceToString())
+            }
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_status_filter -> {
@@ -1651,8 +1664,9 @@ class InCarPackagesFragment(
     }
 
     override fun onCallReceiver(pkg: Package?, receiverPhone: String?) {
+        packageIdToSaveCallDuration = pkg?.id
         callDeliveryAttempt(pkg?.id, DeliveryAttemptType.PHONE_CALL.name)
-        (activity as LogesTechsActivity).callMobileNumber(receiverPhone)
+        (activity as LogesTechsActivity).callMobileNumber(receiverPhone, this)
     }
 
     override fun targetVerticalIndex(position: Int) {
@@ -1681,5 +1695,9 @@ class InCarPackagesFragment(
     override fun onPackageTypeSelected(selectedPackageType: PackageType) {
         this.selectedPackageType = selectedPackageType
         getPackagesBySelectedMode()
+    }
+
+    override fun saveCallDuration(callDuration: Double) {
+        callSaveCallDuration(callDuration)
     }
 }

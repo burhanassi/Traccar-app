@@ -21,6 +21,7 @@ import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.databinding.ActivityFulfilmentChangeBinLocationBarcodeScannerBinding
 import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.FulfillmentItemStatus
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.SharedPreferenceWrapper
@@ -275,7 +276,7 @@ class FulfilmentChangeBinLocationBarcodeScannerActivity: LogesTechsActivity(), V
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             scannedBin = barcode
-                            if (response.body()!!.locationId != null && response.body()!!.locationId!! != 0 ) {
+                            if (response.body()!!.locationId != null && response.body()!!.locationId!!.toInt() != 0 ) {
                                 selectedScanMode = FulfilmentSorterScanMode.LOCATION
                                 handleSelectedScanMode()
                                 Helper.showSuccessMessage(
@@ -411,10 +412,19 @@ class FulfilmentChangeBinLocationBarcodeScannerActivity: LogesTechsActivity(), V
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            selectedScanMode = FulfilmentSorterScanMode.NEW_BIN
-                            itemId = response.body()!!.id
-                            customerId = response.body()!!.customerId
-                            handleSelectedScanMode()
+
+                            if (response.body()!!.status == FulfillmentItemStatus.UNSORTED) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_unsorted_item)
+                                )
+                            } else {
+                                selectedScanMode = FulfilmentSorterScanMode.NEW_BIN
+                                itemId = response.body()!!.id
+                                customerId = response.body()!!.customerId
+                                handleSelectedScanMode()
+                            }
+
                         }
                     } else {
                         try {
@@ -475,9 +485,14 @@ class FulfilmentChangeBinLocationBarcodeScannerActivity: LogesTechsActivity(), V
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            selectedScanMode = FulfilmentSorterScanMode.NEW_LOCATION
-                            binId = response.body()!!.id
-                            handleSelectedScanMode()
+                            if (response.body()!!.locationId != null) {
+                                binId = response.body()!!.id
+                                callChangeLocation(null, response.body()!!.locationId)
+                            } else {
+                                selectedScanMode = FulfilmentSorterScanMode.NEW_LOCATION
+                                binId = response.body()!!.id
+                                handleSelectedScanMode()
+                            }
                         }
                     } else {
                         try {
@@ -522,7 +537,7 @@ class FulfilmentChangeBinLocationBarcodeScannerActivity: LogesTechsActivity(), V
         }
     }
 
-    private fun callChangeLocation(barcode: String?) {
+    private fun callChangeLocation(barcode: String?, locationId: Long? = null) {
         this.runOnUiThread {
             showWaitDialog()
         }
@@ -533,7 +548,8 @@ class FulfilmentChangeBinLocationBarcodeScannerActivity: LogesTechsActivity(), V
                         itemId,
                         customerId,
                         barcode,
-                        binId
+                        binId,
+                        locationId
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()

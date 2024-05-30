@@ -350,4 +350,8 @@
     <string name="item_location">Item</string>
     <string name="please_scan_new_bin">Please Scan New Bin Barcode</string>
     <string name="please_scan_new_location">Please Scan New Location Barcode</string>
+    <string name="title_first_partner_cost">Cost: </string>
+    <string name="title_choose_location">Please choose location</string>
+    <string name="warning_deliver_package">Are you sure to complete the delivery?</string>
+    <string name="error_unsorted_item">This item is unsorted</string>
 </resources>

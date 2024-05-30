@@ -124,6 +124,7 @@
                                 android:layout_marginStart="16dp"
                                 android:layout_marginEnd="4dp"
                                 android:saveEnabled="false"
+                                android:checked="false"
                                 android:theme="@style/ColorSwitchStyle" />
 
                             <TextView
@@ -133,6 +134,38 @@
                                 android:layout_marginEnd="8dp"
                                 android:gravity="center_vertical"
                                 android:text="@string/receiver_paid_cost"
+                                android:textColor="@color/fontTrackHint"
+                                android:textSize="15sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/container_first_partner_cost"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="-8dp"
+                            android:layout_marginBottom="16dp"
+                            android:orientation="horizontal"
+                            android:visibility="gone">
+
+                            <TextView
+                                style="@style/LogesTechsBold"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginEnd="4dp"
+                                android:gravity="center_vertical"
+                                android:text="@string/title_first_partner_cost"
+                                android:textColor="@color/fontTrackHint"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:id="@+id/first_partner_cost"
+                                style="@style/LogesTechsLight"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_marginEnd="8dp"
+                                android:gravity="center_vertical"
+                                android:text="0"
                                 android:textColor="@color/fontTrackHint"
                                 android:textSize="15sp" />
                         </LinearLayout>

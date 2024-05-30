@@ -489,6 +489,18 @@ interface LogesTechsDriverApi {
     @GET("driver/payment-type")
     suspend fun getPaymentMethods (): Response<GetPaymentTypeResponse>
 
+    @POST("driver/packages/{packageId}/call-duration")
+    suspend fun saveCallDuration (
+        @Path("packageId") packageId: Long,
+        @Query("callDuration") callDuration: Double
+    ): Response<ResponseBody?>?
+
+    @POST("driver/first-partner-cost/{packageId}")
+    suspend fun getFirstPartnerCost (
+        @Path("packageId") packageId: Long?,
+        @Body body: ReturnPackageRequestBody?
+    ): Response<GetFirstPartnerCostResponse?>?
+
     @Multipart
     @POST("handler/item/image/upload")
     suspend fun uploadPodImageForRejectedItem(
@@ -577,6 +589,8 @@ interface LogesTechsDriverApi {
     suspend fun scanItemIntoTote(
         @Path("toteId") toteId: Long?,
         @Query("orderId") orderId: Long?,
+        @Query("locationId") locationId: Long?,
+        @Query("quantity") quantity: Int?,
         @Body body: BarcodeRequestBody?
     ): Response<SortItemIntoToteResponse>?
 
@@ -610,7 +624,7 @@ interface LogesTechsDriverApi {
         @Query("barcode") barcode: String?
     ): Response<ResponseBody?>?
 
-    @GET("handler/orders/{orderId}/picked-item")
+    @PUT("handler/orders/{orderId}/picked-item")
     suspend fun packFulfilmentOrderByItem(
         @Path("orderId") orderId: Long?,
         @Query("barcode") barcode: String?
@@ -691,7 +705,8 @@ interface LogesTechsDriverApi {
         @Query("itemId") itemId: Long?,
         @Query("customerId") customerId: Long?,
         @Query("locationBarcode") barcode: String?,
-        @Query("binId") binId: Long? = null
+        @Query("binId") binId: Long? = null,
+        @Query("locationId") locationId: Long? = null,
     ): Response<ResponseBody?>?
 
     @PUT("handler/hub/locations/{locationBarcode}/bin/sort")
@@ -699,4 +714,20 @@ interface LogesTechsDriverApi {
         @Path("locationBarcode") locationBarcode: String,
         @Query("barcode") barcode: String
     ): Response<ResponseBody?>?
+
+    @GET("handler/customers/{customerId}/locations")
+    suspend fun getCustomerLocations(
+        @Path("customerId") customerId: Long?,
+        @Query("search") search: String? = null,
+        @Query("productId") productId: Long
+    ): Response<GetCustomerLocationsResponse>
+
+    @GET("handler/order/{orderId}/max-quantity")
+    suspend fun getMaxQuantity(
+        @Path("orderId") orderId: Long?,
+        @Query("customerId") customerId: Long?,
+        @Query("warehouseId") warehouseId: Long?,
+        @Query("productId") productId: Long?,
+        @Query("locationId") locationId: Long?,
+    ): Response<Long>
 }

@@ -362,12 +362,11 @@ class InCarPackageCellAdapter(
             binding.itemInvoiceNumber.buttonCopy.setOnClickListener {
                 Helper.copyTextToClipboard(mAdapter.context, pkg?.invoiceNumber)
             }
-            if (mAdapter.isSprint) {
-                binding.buttonDeliverPackage.text =
-                    mAdapter.context?.getString(R.string.button_deliver_package_sprint)
-                if (pkg?.status == AdminPackageStatus.RETURNED_BY_RECIPIENT) {
-                    binding.buttonsContainer.visibility = View.GONE
-                }
+
+            if (mAdapter.companyConfigurations?.isPreventDriversDeliveredPickupPackages == true &&
+                pkg?.shipmentType == PackageType.BRING.name
+            ) {
+                binding.buttonsContainer.visibility = View.GONE
             }
         }
     }
