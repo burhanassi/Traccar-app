@@ -53,6 +53,7 @@ import com.logestechs.driver.utils.ConfirmationDialogAction
 import com.logestechs.driver.utils.DeliveryType
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.Helper.Companion.format
+import com.logestechs.driver.utils.Helper.Companion.isAppInstalled
 import com.logestechs.driver.utils.IntegrationSource
 import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
@@ -116,10 +117,6 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
     var items: List<PackageItemsToDeliver?>? = null
-
-    private val softposPackageName = "com.interpaymea.softpos"
-    private val softposClassName = "com.interpaymea.softpos.MainActivity"
-    private val OPEN_SOFTPOS_RESULT_CODE = 1
 
     private var isClickPayVerified = false
 
@@ -617,7 +614,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 }
             }
 
-            OPEN_SOFTPOS_RESULT_CODE -> {
+            AppConstants.OPEN_SOFTPOS_RESULT_CODE -> {
                 if (resultCode == Activity.RESULT_OK) {
                     val bundle = data?.getBundleExtra("data")
                     if (bundle != null) {
@@ -1511,23 +1508,13 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
     }
 
-    private fun isSoftposInstalled(): Boolean {
-        var pm = packageManager;
-        return try {
-            pm.getPackageInfo(softposPackageName, 0)
-            true
-        } catch (e: PackageManager.NameNotFoundException) {
-            false
-        }
-    }
-
     private fun startSoftposApp(cod: String) {
         val codValue = cod.toDoubleOrNull()
         val decimalFormat = DecimalFormat("#.00", DecimalFormatSymbols(Locale.ENGLISH))
         val formattedCod = decimalFormat.format(codValue)
 
         val sendIntent = Intent()
-        sendIntent.setClassName(softposPackageName, softposClassName)
+        sendIntent.setClassName(AppConstants.SOFTPOS_PACKAGE_NAME, AppConstants.SOFTPOS_CLASS_NAME)
 
         val bundle = Bundle()
         bundle.putString("amount", formattedCod)
@@ -1536,7 +1523,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         sendIntent.type = "text/plain"
 
         if (sendIntent.resolveActivity(packageManager) != null) {
-            startActivityForResult(sendIntent, OPEN_SOFTPOS_RESULT_CODE)
+            startActivityForResult(sendIntent, AppConstants.OPEN_SOFTPOS_RESULT_CODE)
         } else {
             Log.e("Error", "SoftPOS app not installed")
         }
@@ -1698,7 +1685,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             handlePackageDelivery()
         } else if (action == ConfirmationDialogAction.DELIVER_PACKAGE) {
             if (selectedPaymentType?.textView?.text == PaymentType.INTER_PAY.englishLabel) {
-                if (isSoftposInstalled()) {
+                if (isAppInstalled(packageManager, AppConstants.SOFTPOS_PACKAGE_NAME)) {
                     startSoftposApp(pkg?.cod?.format()!!)
                     return
                 } else {

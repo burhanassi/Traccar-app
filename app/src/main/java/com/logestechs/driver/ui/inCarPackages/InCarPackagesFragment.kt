@@ -62,6 +62,7 @@ import com.logestechs.driver.utils.dialogs.FailDeliveryDialog
 import com.logestechs.driver.utils.dialogs.InCarStatusFilterDialog
 import com.logestechs.driver.utils.dialogs.InCarViewModeDialog
 import com.logestechs.driver.utils.dialogs.PackageTypeFilterDialog
+import com.logestechs.driver.utils.dialogs.PostponePackageDialog
 import com.logestechs.driver.utils.dialogs.ReturnPackageDialog
 import com.logestechs.driver.utils.dialogs.SearchPackagesDialog
 import com.logestechs.driver.utils.dialogs.ShowAttachmentsDialog
@@ -73,6 +74,7 @@ import com.logestechs.driver.utils.interfaces.InCarPackagesCardListener
 import com.logestechs.driver.utils.interfaces.InCarStatusFilterDialogListener
 import com.logestechs.driver.utils.interfaces.InCarViewModeDialogListener
 import com.logestechs.driver.utils.interfaces.PackageTypeFilterDialogListener
+import com.logestechs.driver.utils.interfaces.PostponePackageDialogListener
 import com.logestechs.driver.utils.interfaces.ReturnPackageDialogListener
 import com.logestechs.driver.utils.interfaces.SearchPackagesDialogListener
 import com.logestechs.driver.utils.interfaces.ViewPagerCountValuesDelegate
@@ -107,6 +109,7 @@ class InCarPackagesFragment(
     ConfirmationDialogActionListener,
     PackageTypeFilterDialogListener,
     FailDeliveryDialogListener,
+    PostponePackageDialogListener,
     CallDurationListener {
 
     private var _binding: FragmentInCarPackagesBinding? = null
@@ -136,6 +139,7 @@ class InCarPackagesFragment(
 
     var failDeliveryDialog: FailDeliveryDialog? = null
     var returnPackageDialog: ReturnPackageDialog? = null
+    var postponePackageDialog: PostponePackageDialog? = null
 
     var packageIdToUpload: Long? = null
     var packageIdToSaveCallDuration: Long? = null
@@ -1320,6 +1324,13 @@ class InCarPackagesFragment(
                                 dialog.binding.containerThumbnails.visibility = View.VISIBLE
                             }
 
+                            postponePackageDialog?.let { dialog ->
+                                (dialog.binding.rvThumbnails.adapter as ThumbnailsAdapter).updateItem(
+                                    loadedImagesList.size - 1
+                                )
+                                dialog.binding.containerThumbnails.visibility = View.VISIBLE
+                            }
+
                         }
                     } else {
                         try {
@@ -1395,6 +1406,16 @@ class InCarPackagesFragment(
                             }
 
                             returnPackageDialog?.let { dialog ->
+                                (dialog.binding.rvThumbnails.adapter as ThumbnailsAdapter).deleteItem(
+                                    position
+                                )
+                                if (loadedImagesList.isEmpty()) {
+                                    dialog.binding.containerThumbnails.visibility =
+                                        View.GONE
+                                }
+                            }
+
+                            postponePackageDialog?.let { dialog ->
                                 (dialog.binding.rvThumbnails.adapter as ThumbnailsAdapter).deleteItem(
                                     position
                                 )
@@ -1536,6 +1557,7 @@ class InCarPackagesFragment(
         packageIdToUpload = returnPackageDialog?.pkg?.id
         addPackageNoteDialog = null
         failDeliveryDialog = null
+        postponePackageDialog = null
 
         if (pkg?.isReceiverPayCost == true) {
             (requireActivity() as LogesTechsActivity).showConfirmationDialog(
@@ -1583,6 +1605,17 @@ class InCarPackagesFragment(
         packageIdToUpload = failDeliveryDialog?.pkg?.id
         addPackageNoteDialog = null
         returnPackageDialog = null
+        postponePackageDialog = null
+    }
+
+    override fun onShowPostponePackageDialog(pkg: Package?) {
+        loadedImagesList.clear()
+        postponePackageDialog = PostponePackageDialog(requireContext(), this, pkg, loadedImagesList)
+        postponePackageDialog?.showDialog()
+        packageIdToUpload = postponePackageDialog?.pkg?.id
+        failDeliveryDialog = null
+        returnPackageDialog = null
+        addPackageNoteDialog = null
     }
 
     override fun onCaptureImage() {
@@ -1616,6 +1649,7 @@ class InCarPackagesFragment(
     packageIdToUpload = addPackageNoteDialog?.pkg?.id
     failDeliveryDialog = null
     returnPackageDialog = null
+    postponePackageDialog = null
 }
 
     override fun onCodChanged(body: CodChangeRequestBody?) {

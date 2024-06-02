@@ -31,6 +31,7 @@ class AppConstants {
         const val REQUEST_SCAN_BUNDLE = 5005
         const val REQUEST_VERIFY_PACKAGE = 5006
         const val REQUEST_READ_PHONE_STATE = 123
+        const val OPEN_SOFTPOS_RESULT_CODE = 1
 
         //permission codes
         const val PERMISSIONS_REQUEST_PHONE_CALL = 1
@@ -39,6 +40,10 @@ class AppConstants {
         const val PERMISSIONS_REQUEST_SEND_SMS = 4
 
         const val IMAGE_FULL_QUALITY = 50
+
+        const val SOFTPOS_PACKAGE_NAME = "com.interpaymea.softpos"
+        const val SOFTPOS_CLASS_NAME = "com.interpaymea.softpos.MainActivity"
+        const val WAZE_PACKAGE_NAME = "com.waze"
     }
 }
 

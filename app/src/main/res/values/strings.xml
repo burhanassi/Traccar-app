@@ -354,4 +354,7 @@
     <string name="title_choose_location">Please choose location</string>
     <string name="warning_deliver_package">Are you sure to complete the delivery?</string>
     <string name="error_unsorted_item">This item is unsorted</string>
+    <string name="title_choose_navigation_app">Choose Navigation App</string>
+    <string name="title_google_map">Google Map</string>
+    <string name="title_waze">Waze</string>
 </resources>
