@@ -369,7 +369,7 @@ class InCarPackageCellAdapter(
             }
 
             if (mAdapter.companyConfigurations?.isPreventDriversDeliveredPickupPackages == true &&
-                pkg?.shipmentType == PackageType.BRING.name
+                (pkg?.shipmentType == PackageType.BRING.name || pkg?.pickupDate == pkg?.firstPickupDate)
             ) {
                 binding.buttonsContainer.visibility = View.GONE
             }

@@ -109,6 +109,7 @@ data class Package(
     var originalBusinessSenderName: String? = null,
     var integrationSource: IntegrationSource? = null,
     var pickupDate: String? = null,
+    var firstPickupDate: String? = null,
     var paymentTypeId: Long? = null,
     var paymentTypeName: String? = null,
     var partnerPackageId: Long? = null
