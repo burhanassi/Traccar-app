@@ -12,6 +12,7 @@ interface InCarPackagesCardListener {
     fun onPackageTypeChanged(body: ChangePackageTypeRequestBody?)
     fun onPackageNoteAdded(body: AddNoteRequestBody?)
     fun onShowFailDeliveryDialog(pkg: Package?)
+    fun onShowPostponePackageDialog(pkg: Package?)
     fun onShowPackageNoteDialog(pkg: Package?)
     fun onCodChanged(body: CodChangeRequestBody?)
     fun onDeliverPackage(pkg: Package?, position: Int = 0)
