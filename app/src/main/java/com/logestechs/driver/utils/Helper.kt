@@ -677,6 +677,7 @@ class Helper {
             var postponeDate: String? = ""
             var receiverAddress: String? = ""
             var packageContent: String? = ""
+            var receiverPhone: String? = ""
 
             var template: String? = ""
 
@@ -703,6 +704,10 @@ class Helper {
                         pkg.postponedDeliveryDate.toString(),
                         DateFormats.DEFAULT_FORMAT
                     )
+                }
+
+                if (pkg.receiverPhone != null) {
+                    receiverPhone = pkg.receiverPhone
                 }
 
                 receiverAddress = pkg.destinationAddress?.toString()
@@ -1299,6 +1304,30 @@ class Helper {
                 template =
                     template?.replace(" " + SmsTemplateTag.hubName.englishTag.toRegex(), "")
                 template = template?.replace(SmsTemplateTag.hubName.englishTag.toRegex(), "")
+            }
+
+            if (!receiverPhone.isNullOrEmpty()) {
+                template = template?.replace(
+                    SmsTemplateTag.receiverPhone.arabicTag.toRegex(),
+                    receiverPhone
+                )
+                template = template?.replace(
+                    SmsTemplateTag.receiverPhone.englishTag.toRegex(),
+                    receiverPhone
+                )
+            } else {
+                template = template?.replace(
+                    " " + SmsTemplateTag.receiverPhone.arabicTag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.receiverPhone.arabicTag.toRegex(), "")
+                template = template?.replace(
+                    " " + SmsTemplateTag.receiverPhone.englishTag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.receiverPhone.englishTag.toRegex(), "")
             }
             return template
         }

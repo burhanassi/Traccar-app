@@ -207,8 +207,8 @@ enum class SmsTemplateTag(val arabicTag: String, val englishTag: String) {
     cod("<التحصيل>", "<COD>"),
     customerPhoneNumber("<رقم المتجر الاضافي>", "<Customer Second Phone Number>"),
     receiverAddress("<عنوان المستقبل>", "<Receiver Address>"),
-    packageContent("<محتوى الطرد>", "<Package Content>");
-
+    packageContent("<محتوى الطرد>", "<Package Content>"),
+    receiverPhone("<رقم المستلم>", "<Receiver Phone>");
     companion object {
         fun replaceTags(template: String): String {
             var replacedTemplate = template
