@@ -15,6 +15,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.logestechs.driver.R
 import com.logestechs.driver.api.requests.PostponePackageRequestBody
+import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.DialogPostponePackageBinding
@@ -46,6 +47,9 @@ class PostponePackageDialog(
     private var fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)
 
+    private var companyConfigurations: DriverCompanyConfigurations? =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
+
     @SuppressLint("MissingPermission")
     fun showDialog() {
         val dialogBuilder = AlertDialog.Builder(context, 0)
@@ -68,57 +72,37 @@ class PostponePackageDialog(
         }
 
         binding.buttonDone.setOnClickListener {
-            if (binding.etReason.text.toString().isNotEmpty()) {
-                if (binding.textDate.text.toString().isNotEmpty()) {
-                    alertDialog.dismiss()
-                    fusedLocationClient.lastLocation
-                        .addOnSuccessListener { location->
-                            if (location != null) {
-                                listener?.onPackagePostponed(
-                                    PostponePackageRequestBody(
-                                        binding.etReason.text.toString(),
-                                        (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
-                                        location.longitude,
-                                        location.latitude,
-                                        binding.textDate.text.toString(),
-                                        getPodImagesUrls(),
-                                        pkg?.id
-                                    )
+            if (validateInput()) {
+                alertDialog.dismiss()
+                fusedLocationClient.lastLocation
+                    .addOnSuccessListener { location ->
+                        if (location != null) {
+                            listener?.onPackagePostponed(
+                                PostponePackageRequestBody(
+                                    binding.etReason.text.toString(),
+                                    (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
+                                    location.longitude,
+                                    location.latitude,
+                                    binding.textDate.text.toString(),
+                                    getPodImagesUrls(),
+                                    pkg?.id
                                 )
-                            } else {
-                                listener?.onPackagePostponed(
-                                    PostponePackageRequestBody(
-                                        binding.etReason.text.toString(),
-                                        (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
-                                        null,
-                                        null,
-                                        binding.textDate.text.toString(),
-                                        getPodImagesUrls(),
-                                        pkg?.id
-                                    )
+                            )
+                        } else {
+                            listener?.onPackagePostponed(
+                                PostponePackageRequestBody(
+                                    binding.etReason.text.toString(),
+                                    (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
+                                    null,
+                                    null,
+                                    binding.textDate.text.toString(),
+                                    getPodImagesUrls(),
+                                    pkg?.id
                                 )
-                            }
+                            )
                         }
-
-                } else {
-                    Helper.showErrorMessage(
-                        context,
-                        getStringForFragment(R.string.error_select_postpone_date)
-                    )
-                    Helper.changeImageStrokeColor(
-                        binding.imageViewCalendar,
-                        R.color.red_flamingo,
-                        context
-                    )
-                }
-
-            } else {
-                Helper.showErrorMessage(
-                    context,
-                    getStringForFragment(R.string.error_insert_message_text)
-                )
+                    }
             }
-
         }
 
         binding.containerDatePicker.setOnClickListener {
@@ -172,6 +156,41 @@ class PostponePackageDialog(
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.setCanceledOnTouchOutside(false)
         alertDialog.show()
+    }
+
+    private fun validateInput(): Boolean {
+        if (binding.etReason.text.isEmpty()) {
+            Helper.showErrorMessage(
+                context,
+                getStringForFragment(R.string.error_insert_message_text)
+            )
+            return false
+        }
+
+        if (binding.textDate.text.toString().isEmpty()) {
+            Helper.showErrorMessage(
+                context,
+                getStringForFragment(R.string.error_select_postpone_date)
+            )
+            Helper.changeImageStrokeColor(
+                binding.imageViewCalendar,
+                R.color.red_flamingo,
+                context
+            )
+            return false
+        }
+
+        if (companyConfigurations?.isForceDriversToAddAttachments == true) {
+            if (loadedImagesList.isEmpty()) {
+                Helper.showErrorMessage(
+                    context,
+                    getStringForFragment(R.string.error_add_attachments)
+                )
+                return false
+            }
+
+        }
+        return true
     }
 
     private fun getPodImagesUrls(): List<String?>? {

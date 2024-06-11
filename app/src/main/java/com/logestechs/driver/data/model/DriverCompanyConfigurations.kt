@@ -36,5 +36,6 @@ data class DriverCompanyConfigurations(
     var isSortAndPickFulfillmentItemsByScanningProductBarcode: Boolean? = null,
     var isScanAllPackageAwbCopiesByDriver: Boolean? = null,
     var isAddingPaymentTypesEnabled: Boolean? = null,
-    var isPreventDriversDeliveredPickupPackages: Boolean? = null
+    var isPreventDriversDeliveredPickupPackages: Boolean? = null,
+    var isForceDriversToAddAttachments: Boolean? = null
 )

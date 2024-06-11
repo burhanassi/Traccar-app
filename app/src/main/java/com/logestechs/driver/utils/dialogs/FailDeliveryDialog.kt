@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
 import com.logestechs.driver.api.requests.FailDeliveryRequestBody
+import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.DialogFailDeliveryBinding
@@ -41,6 +42,9 @@ class FailDeliveryDialog(
     lateinit var binding: DialogFailDeliveryBinding
     lateinit var alertDialog: AlertDialog
 
+    private var companyConfigurations: DriverCompanyConfigurations? =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
+
     fun showDialog() {
         val dialogBuilder = AlertDialog.Builder(context, 0)
         val binding: DialogFailDeliveryBinding = DataBindingUtil.inflate(
@@ -62,7 +66,7 @@ class FailDeliveryDialog(
         }
 
         binding.buttonDone.setOnClickListener {
-            if (binding.etReason.text.toString().isNotEmpty()) {
+            if (validateInput()) {
                 alertDialog.dismiss()
                 listener?.onFailDelivery(
                     FailDeliveryRequestBody(
@@ -72,13 +76,7 @@ class FailDeliveryDialog(
                         pkg?.id
                     )
                 )
-            } else {
-                Helper.showErrorMessage(
-                    context,
-                    getStringForFragment(R.string.error_insert_message_text)
-                )
             }
-
         }
 
         binding.buttonCaptureImage.setOnClickListener {
@@ -104,6 +102,28 @@ class FailDeliveryDialog(
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.setCanceledOnTouchOutside(false)
         alertDialog.show()
+    }
+
+    private fun validateInput(): Boolean {
+        if (binding.etReason.text.isEmpty()) {
+            Helper.showErrorMessage(
+                context,
+                getStringForFragment(R.string.error_insert_message_text)
+            )
+            return  false
+        }
+
+        if (companyConfigurations?.isForceDriversToAddAttachments == true) {
+            if (loadedImagesList.isEmpty()){
+                Helper.showErrorMessage(
+                    context,
+                    getStringForFragment(R.string.error_add_attachments)
+                )
+                return  false
+            }
+
+        }
+        return true
     }
 
     private fun getPodImagesUrls(): List<String?>? {
