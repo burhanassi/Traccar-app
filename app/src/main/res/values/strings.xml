@@ -357,4 +357,5 @@
     <string name="title_choose_navigation_app">Choose Navigation App</string>
     <string name="title_google_map">Google Map</string>
     <string name="title_waze">Waze</string>
+    <string name="error_add_attachments">Please add attachments</string>
 </resources>

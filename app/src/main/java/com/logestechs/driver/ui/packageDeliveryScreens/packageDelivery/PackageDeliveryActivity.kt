@@ -151,7 +151,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             adapter = ThumbnailsAdapter(loadedImagesList, this@PackageDeliveryActivity)
         }
 
-        if (companyConfigurations?.isAddingPaymentTypesEnabled == false ) {
+        if (companyConfigurations?.isAddingPaymentTypesEnabled == false) {
             if (companyConfigurations?.isPartialDeliveryEnabled == true) {
                 binding.containerPartialDeliveryControls.visibility = View.VISIBLE
             }
@@ -377,7 +377,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     private fun initPaymentMethodsControls() {
         if (companyConfigurations?.isAddingPaymentTypesEnabled == true) {
             callGetPaymentMethods()
-        }else {
+        } else {
             binding.containerDynamicPaymentMethods.visibility = View.GONE
             binding.containerStaticPaymentMethods.visibility = View.VISIBLE
 
@@ -446,6 +446,16 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 }
             }
 
+        }
+
+        if (companyConfigurations?.isForceDriversToAddAttachments == true) {
+            if (loadedImagesList.isEmpty()) {
+                Helper.showErrorMessage(
+                    this,
+                    getString(R.string.error_add_attachments)
+                )
+                return false
+            }
         }
         return true
     }
@@ -980,11 +990,12 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 }
             }
 
-            val paymentType: String? = if (companyConfigurations?.isAddingPaymentTypesEnabled == true) {
-                null
-            } else {
-                (selectedPaymentType?.enumValue as PaymentType).name
-            }
+            val paymentType: String? =
+                if (companyConfigurations?.isAddingPaymentTypesEnabled == true) {
+                    null
+                } else {
+                    (selectedPaymentType?.enumValue as PaymentType).name
+                }
 
             GlobalScope.launch(Dispatchers.IO) {
                 try {
@@ -1491,19 +1502,17 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     }
 
     private fun makePackageDelivery() {
-        if (validateInput()) {
-            if (!needsPinVerification()) {
-                if (companyConfigurations?.isDriverProveDeliveryByScanBarcode!!) {
-                    val mIntent = Intent(
-                        super.getContext(),
-                        VerifyPackageDeliveryActivity::class.java
-                    )
-                    mIntent.putExtra("barcode", pkg?.barcode)
-                    mIntent.putExtra("invoice", pkg?.invoiceNumber)
-                    startActivityForResult(mIntent, AppConstants.REQUEST_VERIFY_PACKAGE)
-                } else {
-                    handlePackageDelivery()
-                }
+        if (!needsPinVerification()) {
+            if (companyConfigurations?.isDriverProveDeliveryByScanBarcode!!) {
+                val mIntent = Intent(
+                    super.getContext(),
+                    VerifyPackageDeliveryActivity::class.java
+                )
+                mIntent.putExtra("barcode", pkg?.barcode)
+                mIntent.putExtra("invoice", pkg?.invoiceNumber)
+                startActivityForResult(mIntent, AppConstants.REQUEST_VERIFY_PACKAGE)
+            } else {
+                handlePackageDelivery()
             }
         }
     }
@@ -1553,12 +1562,14 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             }
 
             R.id.button_deliver_package -> {
-                (this as LogesTechsActivity).showConfirmationDialog(
-                    getString(R.string.warning_deliver_package),
-                    pkg,
-                    ConfirmationDialogAction.DELIVER_PACKAGE,
-                    this
-                )
+                if (validateInput()) {
+                    (this as LogesTechsActivity).showConfirmationDialog(
+                        getString(R.string.warning_deliver_package),
+                        pkg,
+                        ConfirmationDialogAction.DELIVER_PACKAGE,
+                        this
+                    )
+                }
             }
 
             R.id.button_capture_image -> {

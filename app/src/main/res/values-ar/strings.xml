@@ -354,4 +354,5 @@
     <string name="title_choose_navigation_app">اختر تطبيق الخرائط</string>
     <string name="title_google_map">Google Map</string>
     <string name="title_waze">Waze</string>
+    <string name="error_add_attachments">الرجاء إضافة مرفقات</string>
 </resources>

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.ReturnPackageRequestBody
+import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.DialogReturnPackageBinding
@@ -41,6 +42,9 @@ class ReturnPackageDialog(
     lateinit var binding: DialogReturnPackageBinding
     lateinit var alertDialog: AlertDialog
 
+    private var companyConfigurations: DriverCompanyConfigurations? =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
+
     fun showDialog() {
         val dialogBuilder = AlertDialog.Builder(context, 0)
         val binding: DialogReturnPackageBinding = DataBindingUtil.inflate(
@@ -64,7 +68,7 @@ class ReturnPackageDialog(
         }
 
         binding.buttonDone.setOnClickListener {
-            if (binding.etReason.text.toString().isNotEmpty()) {
+            if (validateInput()) {
                 alertDialog.dismiss()
                 listener?.onPackageReturned(
                     ReturnPackageRequestBody(
@@ -75,13 +79,7 @@ class ReturnPackageDialog(
                         pkg
                     )
                 )
-            } else {
-                Helper.showErrorMessage(
-                    context,
-                    getStringForFragment(R.string.error_insert_message_text)
-                )
             }
-
         }
 
         binding.rvReasons.apply {
@@ -181,6 +179,28 @@ class ReturnPackageDialog(
                 this@ReturnPackageDialog.context, this@ReturnPackageDialog.context?.getString(R.string.error_check_internet_connection)
             )
         }
+    }
+
+    private fun validateInput(): Boolean {
+        if (binding.etReason.text.isEmpty()) {
+            Helper.showErrorMessage(
+                context,
+                getStringForFragment(R.string.error_insert_message_text)
+            )
+            return  false
+        }
+
+        if (companyConfigurations?.isForceDriversToAddAttachments == true) {
+            if (loadedImagesList.isEmpty()){
+                Helper.showErrorMessage(
+                    context,
+                    getStringForFragment(R.string.error_add_attachments)
+                )
+                return  false
+            }
+
+        }
+        return true
     }
 
     private fun getPodImagesUrls(): List<String?>? {
