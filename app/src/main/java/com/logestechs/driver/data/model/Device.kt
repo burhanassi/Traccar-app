@@ -1,5 +1,6 @@
 package com.logestechs.driver.data.model
 
+import android.os.Build
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
@@ -11,7 +12,9 @@ data class Device(
     val operatingSystem: String? = null,
     var notificationToken: String? = null,
     var id: Long? = null,
-    var language: String? = null
+    var language: String? = null,
+    var userAgent: String = Build.MANUFACTURER
+
 ) : Parcelable {
     constructor(uuid: String, operatingSystem: String) : this(uuid, operatingSystem, null)
 }
