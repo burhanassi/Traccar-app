@@ -28,12 +28,13 @@ data class FulfilmentOrder(
     val cod: Double? = null,
     val cost: Double? = null,
     val customerShouldPayDeliveryCost: Boolean? = null,
-    val receiverPayTypeValue: String? = null,
+    val receiverPayTypeValue: Double? = null,
     val status: String? = null,
     val items: List<ProductItem?>? = null,
     val warehouseName: String? = null,
     val customerName: String? = null,
     val numberOfItems: Int? = null,
     val totalQuantity: Int? = null,
-    val totBarcode: String? = null
+    val totBarcode: String? = null,
+    val numberOfSkus: Int? = null
 ) : Parcelable

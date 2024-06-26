@@ -26,25 +26,34 @@
             app:tabIndicatorFullWidth="false"
             app:tabRippleColor="@color/transparent" />
 
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="35dp"-->
-<!--            android:background="@color/peach_orange_tab_pager_bar">-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:background="@color/peach_orange_tab_pager_bar">
 
-<!--            <TextView-->
-<!--                android:id="@+id/text_title"-->
-<!--                style="@style/LogesTechsBold"-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_gravity="center_vertical"-->
-<!--                android:layout_marginStart="16dp"-->
-<!--                android:layout_marginEnd="16dp"-->
-<!--                android:layout_weight="1"-->
-<!--                android:text="@string/title_picked_fulfilment_orders"-->
-<!--                android:textColor="@color/fontTrackHint"-->
-<!--                android:textSize="14sp" />-->
+            <TextView
+                android:id="@+id/text_title"
+                style="@style/LogesTechsBold"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_weight="1"
+                android:text="@string/title_picked_fulfilment_orders"
+                android:textColor="@color/fontTrackHint"
+                android:textSize="14sp" />
 
-<!--        </LinearLayout>-->
+            <ImageView
+                android:id="@+id/button_scan_tote"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_barcode_gray"
+                tools:ignore="ContentDescription" />
+
+        </LinearLayout>
 
         <FrameLayout
             android:layout_width="match_parent"

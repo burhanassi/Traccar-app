@@ -26,8 +26,8 @@ android {
         applicationId "com.logestechs.driver"
         minSdk 21
         targetSdk 33
-        versionCode 134
-        versionName "1.5.7"
+        versionCode 36
+        versionName "1.4.18"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -46,7 +46,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField 'String', 'base_url', '\"http://pal-ship.com:8080/api/\"'
-//            buildConfigField 'String', 'base_url', '\"http://192.168.1.11:8080/\"'
+//            buildConfigField 'String', 'base_url', '\"http://192.168.1.25:8080/\"'
             manifestPlaceholders = [crashlyticsCollectionEnabled: "false"]
         }
     }
@@ -77,14 +77,6 @@ android {
 
     flavorDimensions 'driver'
     productFlavors {
-        interCity {
-            dimension 'driver'
-            resValue 'string', 'app_name', 'InterCity Driver'
-            buildConfigField 'int', 'company_id', '357'
-            buildConfigField 'String', 'company_name', '\"InterCity\"'
-            applicationId 'com.logestechs.driver_interCity'
-        }
-
         logesTechs {
             dimension 'driver'
             resValue 'string', 'app_name', 'LogesTechs Driver'

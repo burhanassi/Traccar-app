@@ -42,24 +42,30 @@ import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.data.model.PackageItemsToDeliver
+import com.logestechs.driver.data.model.PaymentTypeModel
 import com.logestechs.driver.data.model.Status
 import com.logestechs.driver.databinding.ActivityPackageDeliveryBinding
 import com.logestechs.driver.ui.singleScanBarcodeScanner.SingleScanBarcodeScanner
 import com.logestechs.driver.ui.verifyPackageDelivery.VerifyPackageDeliveryActivity
 import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.AppLanguages
+import com.logestechs.driver.utils.ConfirmationDialogAction
 import com.logestechs.driver.utils.DeliveryType
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.Helper.Companion.format
+import com.logestechs.driver.utils.Helper.Companion.isAppInstalled
 import com.logestechs.driver.utils.IntegrationSource
 import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.PackageType
+import com.logestechs.driver.utils.PaymentGatewayType
 import com.logestechs.driver.utils.PaymentType
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.VerificationStatus
 import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
 import com.logestechs.driver.utils.customViews.StatusSelector
 import com.logestechs.driver.utils.dialogs.DeliveryCodeVerificationDialog
+import com.logestechs.driver.utils.interfaces.ConfirmationDialogActionListener
 import com.logestechs.driver.utils.interfaces.ThumbnailsListListener
 import com.logestechs.driver.utils.interfaces.VerificationCodeDialogListener
 import io.nearpay.sdk.Environments
@@ -71,6 +77,7 @@ import io.nearpay.sdk.utils.enums.PurchaseFailure
 import io.nearpay.sdk.utils.enums.TransactionData
 import io.nearpay.sdk.utils.enums.UIPosition
 import io.nearpay.sdk.utils.listeners.PurchaseListener
+import com.yariksoffice.lingver.Lingver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -93,6 +100,7 @@ import java.util.UUID
 
 
 class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, ThumbnailsListListener,
+    ConfirmationDialogActionListener,
     VerificationCodeDialogListener {
     private lateinit var binding: ActivityPackageDeliveryBinding
 
@@ -119,11 +127,10 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
     var items: List<PackageItemsToDeliver?>? = null
-    private val checkedItems = ArrayList<String>()
 
-    private val softposPackageName = "com.interpaymea.softpos"
-    private val softposClassName = "com.interpaymea.softpos.MainActivity"
-    private val OPEN_SOFTPOS_RESULT_CODE = 1
+    private var isClickPayVerified = false
+
+    private var paymentTypeId: Long? = null
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -154,20 +161,34 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             adapter = ThumbnailsAdapter(loadedImagesList, this@PackageDeliveryActivity)
         }
 
-        if (companyConfigurations?.isPartialDeliveryEnabled == true) {
-            binding.containerPartialDeliveryControls.visibility = View.VISIBLE
-        }
+        if (companyConfigurations?.isAddingPaymentTypesEnabled == false) {
+            if (companyConfigurations?.isPartialDeliveryEnabled == true) {
+                binding.containerPartialDeliveryControls.visibility = View.VISIBLE
+            }
 
-        if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true) {
-            binding.containerSignature.visibility = View.GONE
-        }
+            if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true) {
+                binding.containerSignature.visibility = View.GONE
+            }
 
-        if (companyConfigurations?.isShowPaymentTypesWhenDriverDeliver == false) {
-            binding.containerPaymentType.visibility = View.GONE
-        }
+            if (companyConfigurations?.isShowPaymentTypesWhenDriverDeliver == false) {
+                binding.containerPaymentType.visibility = View.GONE
+            }
 
-        if (pkg?.shipmentType == PackageType.REGULAR.name) {
-            binding.containerPaymentType.visibility = View.GONE
+            if (pkg?.shipmentType == PackageType.REGULAR.name) {
+                binding.containerPaymentType.visibility = View.GONE
+            }
+
+            if (pkg?.paymentType != PaymentType.CLICK_PAY.name) {
+                binding.selectorClickPay.visibility = View.GONE
+            }
+
+            if (pkg?.paymentType != PaymentType.NEAR_PAY.name) {
+                binding.selectorNearPay.visibility = View.GONE
+            }
+
+            if (pkg?.paymentType != PaymentType.INTER_PAY.name) {
+                binding.selectorInterPay.visibility = View.GONE
+            }
         }
 
         handleWarningText()
@@ -263,7 +284,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 binding.containerPartialDeliveryNote.visibility = View.VISIBLE
                 selectedDeliveryType = DeliveryType.PARTIAL
                 if ((companyConfigurations?.isSupportDeliveringPackageItemsPartially!! && items != null) ||
-                    (pkg?.integrationSource == IntegrationSource.FULFILLMENT)) {
+                    (pkg?.integrationSource == IntegrationSource.FULFILLMENT)
+                ) {
                     binding.tvNoteTitle.text = getString(R.string.title_partial_delivery_items_flow)
                     val checkBoxContainer = findViewById<LinearLayout>(R.id.check_box_container)
                     val itemPriceLabel = getString(R.string.item_price)
@@ -321,6 +343,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         binding.selectorCardPayment.setOnClickListener(this)
         binding.selectorInterPay.setOnClickListener(this)
         binding.selectorNearPay.setOnClickListener(this)
+        binding.selectorClickPay.setOnClickListener(this)
         binding.selectorBankTransfer.setOnClickListener(this)
         binding.buttonCaptureImage.setOnClickListener(this)
         binding.buttonLoadImage.setOnClickListener(this)
@@ -367,16 +390,24 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     }
 
     private fun initPaymentMethodsControls() {
-        binding.selectorCash.makeSelected()
-        selectedPaymentType = binding.selectorCash
-        binding.selectorCash.enumValue = PaymentType.CASH
-        binding.selectorDigitalWallet.enumValue = PaymentType.DIGITAL_WALLET
-        binding.selectorCheque.enumValue = PaymentType.CHEQUE
-        binding.selectorPrepaid.enumValue = PaymentType.PREPAID
-        binding.selectorCardPayment.enumValue = PaymentType.CARD
-        binding.selectorInterPay.enumValue = PaymentType.INTER_PAY
-        binding.selectorNearPay.enumValue = PaymentType.NEAR_PAY
-        binding.selectorBankTransfer.enumValue = PaymentType.BANK_TRANSFER
+        if (companyConfigurations?.isAddingPaymentTypesEnabled == true) {
+            callGetPaymentMethods()
+        } else {
+            binding.containerDynamicPaymentMethods.visibility = View.GONE
+            binding.containerStaticPaymentMethods.visibility = View.VISIBLE
+
+            binding.selectorCash.makeSelected()
+            selectedPaymentType = binding.selectorCash
+            binding.selectorCash.enumValue = PaymentType.CASH
+            binding.selectorDigitalWallet.enumValue = PaymentType.DIGITAL_WALLET
+            binding.selectorCheque.enumValue = PaymentType.CHEQUE
+            binding.selectorPrepaid.enumValue = PaymentType.PREPAID
+            binding.selectorCardPayment.enumValue = PaymentType.CARD
+            binding.selectorInterPay.enumValue = PaymentType.INTER_PAY
+            binding.selectorNearPay.enumValue = PaymentType.NEAR_PAY
+            binding.selectorClickPay.enumValue = PaymentType.CLICK_PAY
+            binding.selectorBankTransfer.enumValue = PaymentType.BANK_TRANSFER
+        }
     }
 
     private fun fillButtonsList() {
@@ -387,6 +418,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         paymentTypeButtonsList.add(binding.selectorCardPayment)
         paymentTypeButtonsList.add(binding.selectorInterPay)
         paymentTypeButtonsList.add(binding.selectorNearPay)
+        paymentTypeButtonsList.add(binding.selectorClickPay)
         paymentTypeButtonsList.add(binding.selectorBankTransfer)
     }
 
@@ -415,7 +447,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
 
         if ((companyConfigurations?.isSupportDeliveringPackageItemsPartially == true && items != null) ||
-            (pkg?.integrationSource == IntegrationSource.FULFILLMENT)) {
+            (pkg?.integrationSource == IntegrationSource.FULFILLMENT)
+        ) {
             var deliveredItemFound = false
             for (item in items ?: emptyList()) {
                 if (item?.status == Status.DELIVERED) {
@@ -430,6 +463,16 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 }
             }
 
+        }
+
+        if (companyConfigurations?.isForceDriversToAddAttachments == true) {
+            if (loadedImagesList.isEmpty()) {
+                Helper.showErrorMessage(
+                    this,
+                    getString(R.string.error_add_attachments)
+                )
+                return false
+            }
         }
         return true
     }
@@ -598,33 +641,12 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 }
             }
 
-            OPEN_SOFTPOS_RESULT_CODE -> {
+            AppConstants.OPEN_SOFTPOS_RESULT_CODE -> {
                 if (resultCode == Activity.RESULT_OK) {
                     val bundle = data?.getBundleExtra("data")
                     if (bundle != null) {
-                        val map = HashMap<String, String>()
-                        val keys = bundle.keySet()
-
-                        if (keys != null) {
-                            for (key in keys) {
-                                map[key] = bundle.getString(key, "")
-                            }
-                        }
-                        if (validateInput()) {
-                            if (!needsPinVerification()) {
-                                if (companyConfigurations?.isDriverProveDeliveryByScanBarcode!!) {
-                                    val mIntent = Intent(
-                                        super.getContext(),
-                                        VerifyPackageDeliveryActivity::class.java
-                                    )
-                                    mIntent.putExtra("barcode", pkg?.barcode)
-                                    mIntent.putExtra("invoice", pkg?.invoiceNumber)
-                                    startActivityForResult(mIntent, AppConstants.REQUEST_VERIFY_PACKAGE)
-                                } else {
-                                    handlePackageDelivery()
-                                }
-                            }
-                        }
+                        val transactionId = bundle.getString("rrNumber", "")
+                        callPaymentGateway(PaymentGatewayType.INTER_PAY, transactionId)
                     } else {
                         handleExceptionFromSoftpos("400", "Invalid response from SoftPOS", null)
                     }
@@ -700,6 +722,37 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     )
                 }
             }
+        }
+    }
+
+    private fun setPaymentMethods(paymentTypes: List<PaymentTypeModel>) {
+        binding.containerDynamicPaymentMethods.visibility = View.VISIBLE
+        binding.containerStaticPaymentMethods.visibility = View.GONE
+
+        val container = findViewById<LinearLayout>(R.id.container_dynamic_payment_methods)
+
+        for (paymentType in paymentTypes) {
+            val statusSelector = StatusSelector(this)
+            if (Lingver.getInstance().getLocale().toString() == AppLanguages.ARABIC.value) {
+                statusSelector.setTextStatus(paymentType.arabicName)
+            } else {
+                statusSelector.setTextStatus(paymentType.name)
+            }
+
+            val layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            layoutParams.setMargins(0, 12, 0, 0)
+            statusSelector.layoutParams = layoutParams
+
+            statusSelector.setOnClickListener {
+                selectedPaymentType?.makeUnselected()
+                statusSelector.makeSelected()
+                selectedPaymentType = statusSelector
+                paymentTypeId = paymentType.id
+            }
+            container.addView(statusSelector)
         }
     }
 
@@ -938,88 +991,98 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         if (Helper.isInternetAvailable(super.getContext())) {
             val fusedLocationClient =
                 LocationServices.getFusedLocationProviderClient(super.getContext())
+            var latitude: Double? = null
+            var longitude: Double? = null
             if (ActivityCompat.checkSelfPermission(
                     this,
                     Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                     this,
                     Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
+                ) == PackageManager.PERMISSION_GRANTED
             ) {
-                return
+                fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                    latitude = location?.latitude
+                    longitude = location?.longitude
+                }
             }
-            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                    val latitude = location?.latitude
-                    val longitude = location?.longitude
-                    GlobalScope.launch(Dispatchers.IO) {
-                        try {
-                            var note: String? = null
-                            if (selectedDeliveryType == DeliveryType.PARTIAL) {
-                                note = binding.etPartialDeliveryNote.text.toString()
-                            }
-                            val response = ApiAdapter.apiClient.deliverPackage(
-                                pkg?.barcode,
-                                selectedDeliveryType?.name,
-                                note,
-                                body = DeliverPackageRequestBody(
-                                    pkg?.id,
-                                    longitude,
-                                    latitude,
-                                    0.0,
-                                    0.0,
-                                    signatureUrl,
-                                    getPodImagesUrls(),
-                                    null,
-                                    null,
-                                    (selectedPaymentType?.enumValue as PaymentType).name,
-                                    items
-                                )
-                            )
-                            withContext(Dispatchers.Main) {
-                                hideWaitDialog()
-                            }
-                            if (response?.isSuccessful == true && response.body() != null) {
-                                withContext(Dispatchers.Main) {
-                                    val returnIntent = Intent()
-                                    setResult(RESULT_OK, returnIntent)
-                                    finish()
-                                }
-                            } else {
-                                try {
-                                    val jObjError = JSONObject(response?.errorBody()!!.string())
-                                    withContext(Dispatchers.Main) {
-                                        Helper.showErrorMessage(
-                                            super.getContext(),
-                                            jObjError.optString(AppConstants.ERROR_KEY)
-                                        )
-                                    }
 
-                                } catch (e: java.lang.Exception) {
-                                    withContext(Dispatchers.Main) {
-                                        Helper.showErrorMessage(
-                                            super.getContext(),
-                                            getString(R.string.error_general)
-                                        )
-                                    }
-                                }
-                            }
-                        } catch (e: Exception) {
-                            hideWaitDialog()
-                            Helper.logException(e, Throwable().stackTraceToString())
+            val paymentType: String? =
+                if (companyConfigurations?.isAddingPaymentTypesEnabled == true) {
+                    null
+                } else {
+                    (selectedPaymentType?.enumValue as PaymentType).name
+                }
+
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    var note: String? = null
+                    if (selectedDeliveryType == DeliveryType.PARTIAL) {
+                        note = binding.etPartialDeliveryNote.text.toString()
+                    }
+                    val response = ApiAdapter.apiClient.deliverPackage(
+                        pkg?.barcode,
+                        selectedDeliveryType?.name,
+                        note,
+                        body = DeliverPackageRequestBody(
+                            pkg?.id,
+                            longitude,
+                            latitude,
+                            0.0,
+                            0.0,
+                            signatureUrl,
+                            getPodImagesUrls(),
+                            null,
+                            null,
+                            paymentType,
+                            paymentTypeId,
+                            items
+                        )
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            val returnIntent = Intent()
+                            setResult(RESULT_OK, returnIntent)
+                            finish()
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
                             withContext(Dispatchers.Main) {
-                                if (e.message != null && e.message!!.isNotEmpty()) {
-                                    Helper.showErrorMessage(super.getContext(), e.message)
-                                } else {
-                                    Helper.showErrorMessage(
-                                        super.getContext(),
-                                        e.stackTraceToString()
-                                    )
-                                }
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
                             }
                         }
                     }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(
+                                super.getContext(),
+                                e.stackTraceToString()
+                            )
+                        }
+                    }
+                }
             }
-        }else {
+        } else {
             hideWaitDialog()
             Helper.showErrorMessage(
                 super.getContext(), getString(R.string.error_check_internet_connection)
@@ -1142,6 +1205,227 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
     }
 
+    private fun requestPaymentLinkClickPay() {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.requestPaymentLinkClickPay(
+                        pkg?.id
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            Helper.showSuccessMessage(
+                                super.getContext(),
+                                getString(R.string.success_operation_completed)
+                            )
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
+    private fun callVerifyClickPay() {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.verifyClickPay(
+                        pkg?.id
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            isClickPayVerified = response.body()!!.isPaid!!
+                            makePackageDelivery()
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
+    private fun callPaymentGateway(type: PaymentGatewayType, transactionId: String) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.paymentGateway(
+                        pkg?.id,
+                        transactionId,
+                        type
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            makePackageDelivery()
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
+    private fun callGetPaymentMethods() {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response =
+                        ApiAdapter.apiClient.getPaymentMethods()
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            setPaymentMethods(response.body()!!.data!!)
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
     private fun showDeliveryCodeVerificationDialog() {
         DeliveryCodeVerificationDialog(super.getContext(), this, pkg).showDialog()
     }
@@ -1202,34 +1486,61 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     }
 
     private fun handlePackageDelivery() {
-        if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true) {
-            callDeliverPackage(null)
-        } else {
-            if (Helper.isStoragePermissionNeeded(this)) {
-                Helper.showAndRequestStorageDialog(this)
+        if (selectedPaymentType?.textView?.text == PaymentType.CLICK_PAY.englishLabel) {
+            if (isClickPayVerified) {
+                if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true) {
+                    callDeliverPackage(null)
+                } else {
+                    if (Helper.isStoragePermissionNeeded(this)) {
+                        Helper.showAndRequestStorageDialog(this)
+                    } else {
+                        uploadPackageSignature()
+                    }
+                }
             } else {
-                uploadPackageSignature()
+                (this as LogesTechsActivity).showConfirmationDialog(
+                    getString(R.string.click_pay_confirmation),
+                    pkg,
+                    ConfirmationDialogAction.CLICKPAY_RESULT,
+                    this
+                )
+            }
+        } else {
+            if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true) {
+                callDeliverPackage(null)
+            } else {
+                if (Helper.isStoragePermissionNeeded(this)) {
+                    Helper.showAndRequestStorageDialog(this)
+                } else {
+                    uploadPackageSignature()
+                }
             }
         }
     }
 
-    private fun isSoftposInstalled(): Boolean {
-        var pm = packageManager;
-        return try {
-            pm.getPackageInfo(softposPackageName, 0)
-            true
-        } catch (e: PackageManager.NameNotFoundException){
-            false
+    private fun makePackageDelivery() {
+        if (!needsPinVerification()) {
+            if (companyConfigurations?.isDriverProveDeliveryByScanBarcode!!) {
+                val mIntent = Intent(
+                    super.getContext(),
+                    VerifyPackageDeliveryActivity::class.java
+                )
+                mIntent.putExtra("barcode", pkg?.barcode)
+                mIntent.putExtra("invoice", pkg?.invoiceNumber)
+                startActivityForResult(mIntent, AppConstants.REQUEST_VERIFY_PACKAGE)
+            } else {
+                handlePackageDelivery()
+            }
         }
     }
 
-    private fun startSoftposApp (cod: String) {
+    private fun startSoftposApp(cod: String) {
         val codValue = cod.toDoubleOrNull()
         val decimalFormat = DecimalFormat("#.00", DecimalFormatSymbols(Locale.ENGLISH))
         val formattedCod = decimalFormat.format(codValue)
 
         val sendIntent = Intent()
-        sendIntent.setClassName(softposPackageName, softposClassName)
+        sendIntent.setClassName(AppConstants.SOFTPOS_PACKAGE_NAME, AppConstants.SOFTPOS_CLASS_NAME)
 
         val bundle = Bundle()
         bundle.putString("amount", formattedCod)
@@ -1238,13 +1549,13 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         sendIntent.type = "text/plain"
 
         if (sendIntent.resolveActivity(packageManager) != null) {
-            startActivityForResult(sendIntent, OPEN_SOFTPOS_RESULT_CODE)
+            startActivityForResult(sendIntent, AppConstants.OPEN_SOFTPOS_RESULT_CODE)
         } else {
             Log.e("Error", "SoftPOS app not installed")
         }
     }
 
-    private fun startNearPay(cod: String) {
+    private fun startNearPay(cod: Double) {
         val nearPay = NearPay.Builder()
             .context(this)
             .authenticationData(AuthenticationData.UserEnter)
@@ -1256,60 +1567,52 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             .loadingUi(true)
             .build()
 
-        val amount : Long = 100 // [Required] ammount you want to set .
-        val customerReferenceNumber = "9ace70b7-977d-4094-b7f4-4ecb17de6753" //[optional] any number you want to add as a refrence
-        val enableReceiptUi = true// [optional] true will enable the ui and false will disable
-        val enableReversal = true // it will allow you to enable or disable the reverse button
-        val finishTimeOut : Long = 10 // Add the number of seconds
-        val transactionId = UUID.randomUUID(); // [optional] You can add your UUID here which allows you to ask about the transaction again using the same UUID
-        val enableUiDismiss = true // [optional] it will allow you to control dismissing the UI
+        val amount : Long = cod.toLong() * 100
+        val customerReferenceNumber = pkg?.barcode
+        val enableReceiptUi = true
+        val enableReversal = true
+        val finishTimeOut : Long = 10
+        val transactionId = UUID.randomUUID()
+        val enableUiDismiss = true
 
         nearPay.purchase(amount, customerReferenceNumber, enableReceiptUi, enableReversal, finishTimeOut, transactionId, enableUiDismiss, object :
             PurchaseListener {
             override fun onPurchaseApproved(transactionData: TransactionData) {
-                // Your Code Here
+                val transactionId = transactionData.receipts?.get(0)?.receipt_id
+                callPaymentGateway(PaymentGatewayType.NEAR_PAY, transactionId!!)
             }
 
             override fun onPurchaseFailed(purchaseFailure: PurchaseFailure) {
                 when (purchaseFailure) {
                     is PurchaseFailure.PurchaseDeclined -> {
-                        // when the payment declined.
-                        // Your Code Here
                     }
 
                     is PurchaseFailure.PurchaseRejected -> {
-                        // when the payment is rejected .
-                        // Your Code Here
                     }
 
                     is PurchaseFailure.AuthenticationFailed -> {
-                        // when the authentication failed .
-                        // You can use the following method to update your JWT
-                        nearPay.updateAuthentication(AuthenticationData.Jwt("JWT HERE"))
-                        // Your Code Here
                     }
 
                     is PurchaseFailure.InvalidStatus -> {
-                        // Please note that you can get the status using purchaseFailure.status
-                        // Your Code Here
-
                     }
 
                     is PurchaseFailure.GeneralFailure -> {
-                        // when there is General error .
                     }
 
-                    is PurchaseFailure.UserCancelled -> TODO()
+                    is PurchaseFailure.UserCancelled -> {
+                    }
                 }
             }
         })
     }
 
     private fun handleExceptionFromSoftpos(errorCode: String, errorMessage: String, errorDetails: String?) {
-        // TODO: Handle exceptions from SoftPOS here
-        Log.e("SoftPOS Exception", "ErrorCode: $errorCode, ErrorMessage: $errorMessage, ErrorDetails: $errorDetails")
-        // You may display an error message to the user or take appropriate action
+        Log.e(
+            "SoftPOS Exception",
+            "ErrorCode: $errorCode, ErrorMessage: $errorMessage, ErrorDetails: $errorDetails"
+        )
     }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_clear_signature -> {
@@ -1321,34 +1624,13 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             }
 
             R.id.button_deliver_package -> {
-                if (selectedPaymentType?.textView?.text == PaymentType.INTER_PAY.englishLabel) {
-                    if (isSoftposInstalled()) {
-                        startSoftposApp(pkg?.cod?.format()!!)
-                        return
-                    } else {
-                        Helper.showErrorMessage(
-                            super.getContext(), getString(R.string.error_app_is_not_installed)
-                        )
-                    }
-                } else if (selectedPaymentType?.textView?.text == PaymentType.NEAR_PAY.englishLabel) {
-                    startNearPay(pkg?.cod?.format()!!)
-                    return
-                } else {
-                    if (validateInput()) {
-                        if (!needsPinVerification()) {
-                            if (companyConfigurations?.isDriverProveDeliveryByScanBarcode!!) {
-                                val mIntent = Intent(
-                                    super.getContext(),
-                                    VerifyPackageDeliveryActivity::class.java
-                                )
-                                mIntent.putExtra("barcode", pkg?.barcode)
-                                mIntent.putExtra("invoice", pkg?.invoiceNumber)
-                                startActivityForResult(mIntent, AppConstants.REQUEST_VERIFY_PACKAGE)
-                            } else {
-                                handlePackageDelivery()
-                            }
-                        }
-                    }
+                if (validateInput()) {
+                    (this as LogesTechsActivity).showConfirmationDialog(
+                        getString(R.string.warning_deliver_package),
+                        pkg,
+                        ConfirmationDialogAction.DELIVER_PACKAGE,
+                        this
+                    )
                 }
             }
 
@@ -1412,6 +1694,18 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 selectedPaymentType = binding.selectorNearPay
             }
 
+            R.id.selector_click_pay -> {
+                unselectAllPaymentMethods()
+                binding.selectorClickPay.makeSelected()
+                selectedPaymentType = binding.selectorClickPay
+                (this as LogesTechsActivity).showConfirmationDialog(
+                    getString(R.string.click_pay_confirmation),
+                    pkg,
+                    ConfirmationDialogAction.CLICKPAY_PAYMENT,
+                    this
+                )
+            }
+
             R.id.selector_bank_transfer -> {
                 unselectAllPaymentMethods()
                 binding.selectorBankTransfer.makeSelected()
@@ -1460,5 +1754,31 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
     override fun onResendPinSms() {
         requestPinCodeSms(isFirstPin = false)
+    }
+
+    override fun confirmAction(data: Any?, action: ConfirmationDialogAction) {
+        if (action == ConfirmationDialogAction.CLICKPAY_PAYMENT) {
+            requestPaymentLinkClickPay()
+        } else if (action == ConfirmationDialogAction.CLICKPAY_RESULT) {
+            isClickPayVerified
+            handlePackageDelivery()
+        } else if (action == ConfirmationDialogAction.DELIVER_PACKAGE) {
+            if (selectedPaymentType?.textView?.text == PaymentType.INTER_PAY.englishLabel) {
+                if (isAppInstalled(packageManager, AppConstants.SOFTPOS_PACKAGE_NAME)) {
+                    startSoftposApp(pkg?.cod?.format()!!)
+                    return
+                } else {
+                    Helper.showErrorMessage(
+                        super.getContext(), getString(R.string.error_app_is_not_installed)
+                    )
+                }
+            } else if (selectedPaymentType?.textView?.text == PaymentType.CLICK_PAY.englishLabel) {
+                callVerifyClickPay()
+            } else if (selectedPaymentType?.textView?.text == PaymentType.NEAR_PAY.englishLabel) {
+                startNearPay(pkg?.cod!!)
+            } else {
+                makePackageDelivery()
+            }
+        }
     }
 }

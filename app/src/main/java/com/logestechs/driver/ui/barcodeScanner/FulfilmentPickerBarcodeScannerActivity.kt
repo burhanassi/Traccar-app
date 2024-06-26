@@ -27,8 +27,12 @@ import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.FulfilmentOrderItemCellAdapter
+import com.logestechs.driver.utils.dialogs.ChooseLocationDialog
 import com.logestechs.driver.utils.dialogs.InsertBarcodeDialog
+import com.logestechs.driver.utils.dialogs.ItemQuantityDialog
+import com.logestechs.driver.utils.interfaces.ChooseLocationDialogListener
 import com.logestechs.driver.utils.interfaces.InsertBarcodeDialogListener
+import com.logestechs.driver.utils.interfaces.ItemQuantityDialogListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -45,7 +49,7 @@ enum class FulfilmentPickerScanMode {
 
 class FulfilmentPickerBarcodeScannerActivity :
     LogesTechsActivity(), View.OnClickListener,
-    InsertBarcodeDialogListener {
+    InsertBarcodeDialogListener, ItemQuantityDialogListener, ChooseLocationDialogListener {
     private lateinit var binding: ActivityFulfilmentPickerBarcodeScannerBinding
 
     private var barcodeDetector: BarcodeDetector? = null
@@ -68,6 +72,13 @@ class FulfilmentPickerBarcodeScannerActivity :
     private var selectedFulfilmentOrder: FulfilmentOrder? = null
 
     private var fulfilmentOrder: FulfilmentOrder? = null
+
+    private var productBarcodes: HashMap<String, Long> = HashMap()
+    private var locationId: Long? = null
+    private var productId: Long? = null
+    private var scannedProductBarcode: String? = null
+    private var isBarcodeScanningAllowed = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFulfilmentPickerBarcodeScannerBinding.inflate(layoutInflater)
@@ -127,6 +138,8 @@ class FulfilmentPickerBarcodeScannerActivity :
                 extras.getSerializable(IntentExtrasKeys.FULFILMENT_PICKER_SCAN_MODE.name) as FulfilmentPickerScanMode
             selectedFulfilmentOrder =
                 extras.getParcelable(IntentExtrasKeys.FULFILMENT_ORDER.name) as? FulfilmentOrder
+
+            populateProductBarcodes(selectedFulfilmentOrder?.items)
         }
     }
 
@@ -304,7 +317,7 @@ class FulfilmentPickerBarcodeScannerActivity :
     }
 
     private fun handleDetectedBarcode(barcode: String) {
-        if (!scannedItemsHashMap.containsKey(barcode)) {
+        if (!scannedItemsHashMap.containsKey(barcode) && isBarcodeScanningAllowed) {
             scannedItemsHashMap[barcode] = barcode
             executeBarcodeAction(barcode)
             toneGen1?.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
@@ -313,13 +326,32 @@ class FulfilmentPickerBarcodeScannerActivity :
     }
 
     private fun executeBarcodeAction(barcode: String?) {
+        if (!isBarcodeScanningAllowed) {
+            return
+        }
+
         when (selectedScanMode) {
             FulfilmentPickerScanMode.TOTE -> {
                 callGetTote(barcode)
             }
 
             FulfilmentPickerScanMode.ITEM_INTO_TOTE -> {
-                callScanItemIntoTote(barcode)
+                if (productBarcodes.contains(barcode)) {
+                    scannedItemsHashMap.remove(barcode)
+                    productId = productBarcodes[barcode]
+                    scannedProductBarcode = barcode
+                    stopBarcodeScanning()
+                    this.runOnUiThread {
+                        ChooseLocationDialog(
+                            this@FulfilmentPickerBarcodeScannerActivity,
+                            this@FulfilmentPickerBarcodeScannerActivity,
+                            selectedFulfilmentOrder?.customerId!!,
+                            productId!!
+                        ).showDialog()
+                    }
+                } else {
+                    callScanItemIntoTote(barcode)
+                }
             }
 
             FulfilmentPickerScanMode.ORDER_INTO_TOTE -> {
@@ -327,6 +359,32 @@ class FulfilmentPickerBarcodeScannerActivity :
             }
 
             null -> return
+        }
+    }
+
+    private fun toggleBarcodeScanning(allowScanning: Boolean) {
+        isBarcodeScanningAllowed = allowScanning
+    }
+
+    private fun stopBarcodeScanning() {
+        toggleBarcodeScanning(false)
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun resumeBarcodeScanning() {
+        toggleBarcodeScanning(true)
+        cameraSource?.start(binding.surfaceView.holder)
+    }
+
+    private fun populateProductBarcodes(items: List<ProductItem?>?) {
+        items?.forEach { item ->
+            item?.let {
+                it.productId?.let { productId ->
+                    it.productBarcode?.let { barcode ->
+                        productBarcodes[barcode] = productId
+                    }
+                }
+            }
         }
     }
 
@@ -396,15 +454,14 @@ class FulfilmentPickerBarcodeScannerActivity :
         }
     }
 
-    private fun callScanItemIntoTote(barcode: String?) {
+    private fun callScanItemIntoTote(barcode: String?, quantity: Int? = null) {
         this.runOnUiThread {
             showWaitDialog()
         }
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    var response: Response<SortItemIntoToteResponse>? = null
-                    response = if (fulfilmentOrder?.status == "PARTIALLY_PICKED") {
+                    val response: Response<SortItemIntoToteResponse>? = if (fulfilmentOrder?.status == "PARTIALLY_PICKED") {
                         ApiAdapter.apiClient.continuePicking(
                             selectedFulfilmentOrder?.id,
                             BarcodeRequestBody(barcode)
@@ -413,6 +470,8 @@ class FulfilmentPickerBarcodeScannerActivity :
                         ApiAdapter.apiClient.scanItemIntoTote(
                             scannedTote?.id,
                             selectedFulfilmentOrder?.id,
+                            locationId,
+                            quantity,
                             BarcodeRequestBody(barcode)
                         )
                     }
@@ -426,6 +485,7 @@ class FulfilmentPickerBarcodeScannerActivity :
                                 (binding.rvScannedBarcodes.adapter as FulfilmentOrderItemCellAdapter).scanItem(
                                     body?.sku
                                 )
+                            (binding.rvScannedBarcodes.adapter as FulfilmentOrderItemCellAdapter).removeZeros()
                             binding.rvScannedBarcodes.smoothScrollToPosition(scrollPosition)
                             (binding.rvScannedBarcodes.adapter as FulfilmentOrderItemCellAdapter).highlightItem(
                                 scrollPosition
@@ -434,9 +494,6 @@ class FulfilmentPickerBarcodeScannerActivity :
                                     .getCount() == 0
                             ) {
                                 onBackPressed()
-                            }
-                            if (response.body()!!.barcode != barcode) {
-                                scannedItemsHashMap.remove(barcode)
                             }
                         }
                     } else {
@@ -482,6 +539,74 @@ class FulfilmentPickerBarcodeScannerActivity :
         }
     }
 
+    private fun callGetMaxQuantity() {
+        this.runOnUiThread {
+            showWaitDialog()
+        }
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.getMaxQuantity(
+                        selectedFulfilmentOrder?.id,
+                        selectedFulfilmentOrder?.customerId,
+                        selectedFulfilmentOrder?.warehouseId,
+                        productId,
+                        locationId
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response.isSuccessful && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            stopBarcodeScanning()
+                            ItemQuantityDialog(
+                                this@FulfilmentPickerBarcodeScannerActivity,
+                                this@FulfilmentPickerBarcodeScannerActivity,
+                                scannedProductBarcode!!,
+                                response.body()
+                            ).showDialog()
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            this.runOnUiThread {
+                hideWaitDialog()
+                Helper.showErrorMessage(
+                    super.getContext(), getString(R.string.error_check_internet_connection)
+                )
+            }
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_done -> {
@@ -500,5 +625,23 @@ class FulfilmentPickerBarcodeScannerActivity :
             scannedItemsHashMap[barcode] = barcode
             executeBarcodeAction(barcode)
         }
+    }
+
+    override fun onQuantityInserted(quantity: Int, barcode: String) {
+        (binding.rvScannedBarcodes.adapter as FulfilmentOrderItemCellAdapter).setQuantity(
+            quantity
+        )
+        callScanItemIntoTote(barcode, quantity)
+        resumeBarcodeScanning()
+    }
+
+    override fun onChooseLocation(locationId: Long) {
+        resumeBarcodeScanning()
+        this.locationId = locationId
+        callGetMaxQuantity()
+    }
+
+    override fun onDismiss() {
+        resumeBarcodeScanning()
     }
 }

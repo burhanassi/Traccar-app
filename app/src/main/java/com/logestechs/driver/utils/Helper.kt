@@ -58,6 +58,7 @@ import java.util.*
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AlertDialog
+import com.logestechs.driver.data.model.Address
 
 enum class AppFonts(val value: Int) {
     ROBOTO_BOLD(R.font.roboto_bold),
@@ -528,6 +529,20 @@ class Helper {
                     userLat + ", " + userLng
         }
 
+        fun getWazeNavigationUrl(userLat: Double?, userLng: Double?): String {
+            return "https://waze.com/ul?ll=$userLat,$userLng&navigate=yes"
+        }
+
+        fun isAppInstalled(packageManager: PackageManager, packageName: String): Boolean {
+            val installedPackages = packageManager.getInstalledPackages(0)
+            for (packageInfo in installedPackages) {
+                if (packageInfo.packageName == packageName) {
+                    return true
+                }
+            }
+            return false
+        }
+
         fun Double.format(): String {
             return if (this % 1.0 != 0.0) {
                 val decimalSymbol = DecimalFormatSymbols(Locale.US)
@@ -657,8 +672,12 @@ class Helper {
             val companyDomain: String? =
                 SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations?.companyDomain
             var cod: String? = ""
+            var senderPhone2: String? = ""
             var expectedDeliveryDate = ""
             var postponeDate: String? = ""
+            var receiverAddress: String? = ""
+            var packageContent: String? = ""
+            var receiverPhone: String? = ""
 
             var template: String? = ""
 
@@ -672,6 +691,8 @@ class Helper {
                 barcode = pkg.barcode
                 businessSenderName = pkg.originalBusinessSenderName
                 cod = pkg.cod?.format()
+                senderPhone2 = pkg.senderPhone2
+
                 if (pkg.expectedDeliveryDate != null) {
                     expectedDeliveryDate = formatServerDate(
                         pkg.expectedDeliveryDate.toString(),
@@ -684,6 +705,13 @@ class Helper {
                         DateFormats.DEFAULT_FORMAT
                     )
                 }
+
+                if (pkg.receiverPhone != null) {
+                    receiverPhone = pkg.receiverPhone
+                }
+
+                receiverAddress = pkg.destinationAddress?.toString()
+                packageContent = pkg.description
             }
             driverName = loggedInUser?.firstName
             driverPhone = loggedInUser?.phone
@@ -907,6 +935,18 @@ class Helper {
                     template?.replace(" " + SmsTemplateTag.cod.englishTag.toRegex(), "")
                 template = template?.replace(SmsTemplateTag.cod.englishTag.toRegex(), "")
             }
+
+            if (senderPhone2 != null && senderPhone2.isNotEmpty()) {
+                template = template?.replace(SmsTemplateTag.customerPhoneNumber.arabicTag.toRegex(), senderPhone2)
+                template = template?.replace(SmsTemplateTag.customerPhoneNumber.englishTag.toRegex(), senderPhone2)
+            } else {
+                template =
+                    template?.replace(" " + SmsTemplateTag.customerPhoneNumber.arabicTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.customerPhoneNumber.arabicTag.toRegex(), "")
+                template =
+                    template?.replace(" " + SmsTemplateTag.customerPhoneNumber.englishTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.customerPhoneNumber.englishTag.toRegex(), "")
+            }
             if (postponeDate != null && postponeDate.isNotEmpty()) {
                 template = template?.replace(
                     SmsTemplateTag.postponeDate.arabicTag.toRegex(),
@@ -957,6 +997,49 @@ class Helper {
                     ""
                 )
             }
+
+            if (!isToMultiple) {
+                if (receiverAddress != null && receiverAddress.isNotEmpty()) {
+                    template = template?.replace(SmsTemplateTag.receiverAddress.arabicTag.toRegex(), receiverAddress)
+                    template = template?.replace(SmsTemplateTag.receiverAddress.englishTag.toRegex(), receiverAddress)
+                } else {
+                    template =
+                        template?.replace(" " + SmsTemplateTag.receiverAddress.arabicTag.toRegex(), "")
+                    template = template?.replace(SmsTemplateTag.receiverAddress.arabicTag.toRegex(), "")
+                    template =
+                        template?.replace(" " + SmsTemplateTag.receiverAddress.englishTag.toRegex(), "")
+                    template = template?.replace(SmsTemplateTag.receiverAddress.englishTag.toRegex(), "")
+                }
+            } else {
+                template =
+                    template?.replace(" " + SmsTemplateTag.receiverAddress.arabicTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.receiverAddress.arabicTag.toRegex(), "")
+                template =
+                    template?.replace(" " + SmsTemplateTag.receiverAddress.englishTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.receiverAddress.englishTag.toRegex(), "")
+            }
+
+            if (!isToMultiple) {
+                if (packageContent != null && packageContent.isNotEmpty()) {
+                    template = template?.replace(SmsTemplateTag.packageContent.arabicTag.toRegex(), packageContent)
+                    template = template?.replace(SmsTemplateTag.packageContent.englishTag.toRegex(), packageContent)
+                } else {
+                    template =
+                        template?.replace(" " + SmsTemplateTag.packageContent.arabicTag.toRegex(), "")
+                    template = template?.replace(SmsTemplateTag.packageContent.arabicTag.toRegex(), "")
+                    template =
+                        template?.replace(" " + SmsTemplateTag.packageContent.englishTag.toRegex(), "")
+                    template = template?.replace(SmsTemplateTag.packageContent.englishTag.toRegex(), "")
+                }
+            } else {
+                template =
+                    template?.replace(" " + SmsTemplateTag.packageContent.arabicTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.packageContent.arabicTag.toRegex(), "")
+                template =
+                    template?.replace(" " + SmsTemplateTag.packageContent.englishTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.packageContent.englishTag.toRegex(), "")
+            }
+
             if (!isToMultiple) {
                 if (barcode != null && !barcode.isEmpty()) {
                     template = template?.replace(
@@ -1144,6 +1227,17 @@ class Helper {
                     template?.replace(" " + SmsTemplateTag.cod.englishTag.toRegex(), "")
                 template = template?.replace(SmsTemplateTag.cod.englishTag.toRegex(), "")
             }
+            if (senderPhone2 != null && senderPhone2.isNotEmpty()) {
+                template = template?.replace(SmsTemplateTag.customerPhoneNumber.arabicTag.toRegex(), senderPhone2)
+                template = template?.replace(SmsTemplateTag.customerPhoneNumber.englishTag.toRegex(), senderPhone2)
+            } else {
+                template =
+                    template?.replace(" " + SmsTemplateTag.customerPhoneNumber.arabicTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.customerPhoneNumber.arabicTag.toRegex(), "")
+                template =
+                    template?.replace(" " + SmsTemplateTag.customerPhoneNumber.englishTag.toRegex(), "")
+                template = template?.replace(SmsTemplateTag.customerPhoneNumber.englishTag.toRegex(), "")
+            }
             if (postponeDate != null && postponeDate.isNotEmpty()) {
                 template = template?.replace(
                     SmsTemplateTag.postponeDate.arabicTag.toRegex(),
@@ -1210,6 +1304,30 @@ class Helper {
                 template =
                     template?.replace(" " + SmsTemplateTag.hubName.englishTag.toRegex(), "")
                 template = template?.replace(SmsTemplateTag.hubName.englishTag.toRegex(), "")
+            }
+
+            if (!receiverPhone.isNullOrEmpty()) {
+                template = template?.replace(
+                    SmsTemplateTag.receiverPhone.arabicTag.toRegex(),
+                    receiverPhone
+                )
+                template = template?.replace(
+                    SmsTemplateTag.receiverPhone.englishTag.toRegex(),
+                    receiverPhone
+                )
+            } else {
+                template = template?.replace(
+                    " " + SmsTemplateTag.receiverPhone.arabicTag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.receiverPhone.arabicTag.toRegex(), "")
+                template = template?.replace(
+                    " " + SmsTemplateTag.receiverPhone.englishTag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.receiverPhone.englishTag.toRegex(), "")
             }
             return template
         }
@@ -1706,8 +1824,9 @@ class Helper {
         }
 
         fun isBuiltInScannerAvailable(): Boolean {
+            val supportedManufacturers = listOf("Honeywell", "Zebra Technologies")
             val manufacturer = Build.MANUFACTURER
-            return manufacturer.equals("Honeywell", ignoreCase = true)
+            return supportedManufacturers.any { it.equals(manufacturer, ignoreCase = true) }
         }
 
         fun handleScanWay(context: Context) {

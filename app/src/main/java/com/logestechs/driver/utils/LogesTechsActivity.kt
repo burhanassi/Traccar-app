@@ -1,6 +1,7 @@
 package com.logestechs.driver.utils
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -10,23 +11,34 @@ import android.location.Geocoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.telephony.PhoneStateListener
+import android.telephony.TelephonyManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.maps.model.LatLng
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.Address
 import com.logestechs.driver.databinding.DialogConfirmActionBinding
+import com.logestechs.driver.utils.Helper.Companion.getWazeNavigationUrl
+import com.logestechs.driver.utils.Helper.Companion.isAppInstalled
+import com.logestechs.driver.utils.adapters.LocationPackageItemAdapter
 import com.logestechs.driver.utils.adapters.NotificationsListAdapter
 import com.logestechs.driver.utils.bottomSheets.NotificationsBottomSheet
 import com.logestechs.driver.utils.bottomSheets.PackageTrackBottomSheet
 import com.logestechs.driver.utils.customViews.WaitDialog
+import com.logestechs.driver.utils.interfaces.CallDurationListener
 import com.logestechs.driver.utils.interfaces.ConfirmationDialogActionListener
 import com.logestechs.driver.utils.interfaces.NotificationBottomSheetListener
 import com.yariksoffice.lingver.Lingver
@@ -43,6 +55,9 @@ abstract class LogesTechsActivity : AppCompatActivity() {
     private var mWaitDialog: WaitDialog? = null
     private var tempMobileNumber: String? = null
     var currentLangCode: String? = null
+
+    private var telephonyManager: TelephonyManager? = null
+    private var phoneStateListener: CustomPhoneStateListener? = null
 
     fun showWaitDialog() {
         if (!this.isFinishing) {
@@ -61,7 +76,13 @@ abstract class LogesTechsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         LogesTechsApp.instance.currentActivity = WeakReference(this)
         currentLangCode = Lingver.getInstance().getLocale().toString()
+        checkPermissions()
         handleForwardNavigationAnimation()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        telephonyManager?.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE)
     }
 
     override fun onBackPressed() {
@@ -82,6 +103,24 @@ abstract class LogesTechsActivity : AppCompatActivity() {
         } else {
             CustomIntent.customType(this, IntentAnimation.LTR.value)
         }
+    }
+
+    private fun checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.READ_PHONE_STATE),
+                AppConstants.REQUEST_READ_PHONE_STATE
+            )
+        } else {
+            initializeTelephonyOperations()
+        }
+    }
+
+    private fun initializeTelephonyOperations() {
+        telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        phoneStateListener = CustomPhoneStateListener()
+        telephonyManager?.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE)
     }
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
@@ -163,11 +202,19 @@ abstract class LogesTechsActivity : AppCompatActivity() {
                 }
                 tempMobileNumber = null
             }
+
+            AppConstants.REQUEST_READ_PHONE_STATE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    initializeTelephonyOperations()
+                } else {
+                    // Permission denied, handle accordingly (e.g., show a message to the user)
+                }
+            }
         }
 
     }
 
-    fun callMobileNumber(mobileNumber: String?) {
+    fun callMobileNumber(mobileNumber: String?, listener: CallDurationListener? = null) {
         var number: String? = mobileNumber
         if (mobileNumber != null && mobileNumber.trim().isNotEmpty()) {
             if (Helper.getCompanyCurrency() == AppCurrency.SAR.value) {
@@ -190,6 +237,8 @@ abstract class LogesTechsActivity : AppCompatActivity() {
                     tempMobileNumber = number
                 }
             } else {
+                CustomPhoneStateListener.isOutgoingCall = true
+                CustomPhoneStateListener.listener = listener
                 this.startActivity(intent)
             }
         }
@@ -251,12 +300,45 @@ abstract class LogesTechsActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("MissingInflatedId")
+    fun showNavigationOptionsDialog(context: Context, address: Address?, nationalAddress: Boolean = false) {
+        val dialogBuilder = AlertDialog.Builder(this, 0)
+        val inflater = LayoutInflater.from(this)
+        val dialogView: View = inflater.inflate(R.layout.dialog_choose_navigation_app, null)
+        dialogBuilder.setView(dialogView)
+        val alertDialog = dialogBuilder.create()
+        val mGoogleButton = dialogView.findViewById<Button>(R.id.button_google_map)
+        val mWazeButton = dialogView.findViewById<Button>(R.id.button_waze)
+        mGoogleButton.setOnClickListener {
+            showLocationInGoogleMaps(address, nationalAddress)
+            alertDialog.dismiss()
+        }
+        mWazeButton.setOnClickListener {
+            val isWazeInstalled = isAppInstalled(
+                context.packageManager,
+                AppConstants.WAZE_PACKAGE_NAME
+            )
+            if (isWazeInstalled) {
+                showLocationInWaze(address, nationalAddress)
+            } else {
+                val playStoreIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=${AppConstants.WAZE_PACKAGE_NAME}"))
+                if (playStoreIntent.resolveActivity(context.packageManager) != null) {
+                    context.startActivity(playStoreIntent)
+                }
+            }
+            alertDialog.dismiss()
+        }
+        alertDialog.setCanceledOnTouchOutside(true)
+        if (alertDialog.window != null) alertDialog.window!!.setBackgroundDrawableResource(R.color.transparent)
+        alertDialog.show()
+    }
+
     fun showLocationInGoogleMaps(address: Address?, nationalAddress: Boolean = false) {
         val packageManager: PackageManager = this.packageManager
         val intent = Intent(Intent.ACTION_VIEW)
         try {
-            var latitude: Double? = null
-            var longitude: Double? = null
+            val latitude: Double?
+            val longitude: Double?
 
             if (nationalAddress && address?.nationalAddress != null) {
                 val nationalAddress = getLatLngFromAddress(address.nationalAddress!!)
@@ -279,6 +361,34 @@ abstract class LogesTechsActivity : AppCompatActivity() {
             if (intent.resolveActivity(packageManager) != null) {
                 this.startActivity(intent)
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun showLocationInWaze(address: Address?, nationalAddress: Boolean = false) {
+        try {
+            val latitude: Double?
+            val longitude: Double?
+
+            if (nationalAddress && address?.nationalAddress != null) {
+                val nationalAddress = getLatLngFromAddress(address.nationalAddress!!)
+                if (nationalAddress != null) {
+                    latitude = nationalAddress.latitude
+                    longitude = nationalAddress.longitude
+                } else {
+                    Helper.showErrorMessage(this, "Waze can't find this address")
+                    return
+                }
+            } else {
+                latitude = address?.latitude
+                longitude = address?.longitude
+            }
+
+            val locationDirection: String = getWazeNavigationUrl(latitude, longitude)
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(locationDirection))
+            intent.setPackage(AppConstants.WAZE_PACKAGE_NAME)
+            this.startActivity(intent)
         } catch (e: Exception) {
             e.printStackTrace()
         }

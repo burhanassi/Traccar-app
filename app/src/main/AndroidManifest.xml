@@ -14,6 +14,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission
@@ -23,7 +24,6 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.VIBRATE" />
-
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
@@ -49,7 +49,8 @@
         <package android:name="com.whatsapp" />
         <package android:name="com.whatsapp.w4b" />
         <package android:name="com.google.android.apps.maps" />
-        <package android:name="com.interpaymea.softpos"/>
+        <package android:name="com.interpaymea.softpos" />
+        <package android:name="com.waze"/>
     </queries>
 
     <application
@@ -65,6 +66,9 @@
         android:theme="@style/Theme.Design.Light.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.barcodeScanner.FulfilmentChangeBinLocationBarcodeScannerActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.checkInActivity.CheckInActivity"
             android:exported="false" />
@@ -85,12 +89,6 @@
             android:exported="false" />
         <activity
             android:name=".ui.sortOnShelveActivity.SortOnShelveActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.barcodeScanner.FulfilmentPackerBarcodeScannerActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.verifyPackageDelivery.VerifyPackageDeliveryActivity"
             android:exported="false" />
         <activity
             android:name=".ui.trackInventoryItemsActivity.TrackInventoryItemActivity"

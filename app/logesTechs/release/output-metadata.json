@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.logestechs.driver",
+  "variantName": "logesTechsRelease",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 150,
+      "versionName": "1.5.13",
+      "outputFile": "app-logesTechs-release.apk"
+    }
+  ],
+  "elementType": "File"
+}

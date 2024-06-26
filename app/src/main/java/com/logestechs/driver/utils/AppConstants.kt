@@ -30,6 +30,8 @@ class AppConstants {
         const val REQUEST_LOCATION_PERMISSION = 5004
         const val REQUEST_SCAN_BUNDLE = 5005
         const val REQUEST_VERIFY_PACKAGE = 5006
+        const val REQUEST_READ_PHONE_STATE = 123
+        const val OPEN_SOFTPOS_RESULT_CODE = 1
 
         //permission codes
         const val PERMISSIONS_REQUEST_PHONE_CALL = 1
@@ -38,6 +40,10 @@ class AppConstants {
         const val PERMISSIONS_REQUEST_SEND_SMS = 4
 
         const val IMAGE_FULL_QUALITY = 50
+
+        const val SOFTPOS_PACKAGE_NAME = "com.interpaymea.softpos"
+        const val SOFTPOS_CLASS_NAME = "com.interpaymea.softpos.MainActivity"
+        const val WAZE_PACKAGE_NAME = "com.waze"
     }
 }
 
@@ -51,7 +57,8 @@ enum class AppLanguages(val value: String) {
 }
 
 enum class DropdownTag {
-    SIGN_UP_VILLAGES
+    SIGN_UP_VILLAGES,
+    LOCATIONS
 }
 
 enum class PhoneType {
@@ -159,7 +166,15 @@ enum class MassCodReportsViewMode(val value: String) {
 }
 
 enum class ConfirmationDialogAction {
-    RETURN_PACKAGE
+    RETURN_PACKAGE,
+    CLICKPAY_PAYMENT,
+    CLICKPAY_RESULT,
+    DELIVER_PACKAGE
+}
+
+enum class PaymentGatewayType {
+    NEAR_PAY,
+    INTER_PAY
 }
 
 enum class PaymentType(val englishLabel: String, val arabicLabel: String) {
@@ -170,7 +185,8 @@ enum class PaymentType(val englishLabel: String, val arabicLabel: String) {
     DIGITAL_WALLET("Digital Wallet", "محفظة الكترونية"),
     CARD("Card Payment", "بطاقة ائتمانية"),
     INTER_PAY("InterPay","InterPay"),
-    NEAR_PAY("NearPay","NearPay")
+    NEAR_PAY("NearPay","NearPay"),
+    CLICK_PAY("ClickPay","ClickPay")
 }
 
 enum class DeliveryType {
@@ -189,8 +205,11 @@ enum class SmsTemplateTag(val arabicTag: String, val englishTag: String) {
     shareLocationUrl("<رابط مشاركة الموقع>", "<Sharing Location URL>"),
     postponeDate("<تاريخ التأجيل>", "<Date Postponed>"),
     expectedDeliveryDate("<تاريخ التوصيل المتوقع>", "<Expected Delivery Date>"),
-    cod("<التحصيل>", "<COD>");
-
+    cod("<التحصيل>", "<COD>"),
+    customerPhoneNumber("<رقم المتجر الاضافي>", "<Customer Second Phone Number>"),
+    receiverAddress("<عنوان المستقبل>", "<Receiver Address>"),
+    packageContent("<محتوى الطرد>", "<Package Content>"),
+    receiverPhone("<رقم المستلم>", "<Receiver Phone>");
     companion object {
         fun replaceTags(template: String): String {
             var replacedTemplate = template

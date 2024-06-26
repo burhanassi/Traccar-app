@@ -39,12 +39,14 @@ import com.logestechs.driver.utils.adapters.InCarPackageGroupedCellAdapter
 import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
 import com.logestechs.driver.utils.dialogs.AddPackageNoteDialog
 import com.logestechs.driver.utils.dialogs.FailDeliveryDialog
+import com.logestechs.driver.utils.dialogs.PostponePackageDialog
 import com.logestechs.driver.utils.dialogs.ReturnPackageDialog
 import com.logestechs.driver.utils.dialogs.ShowAttachmentsDialog
 import com.logestechs.driver.utils.interfaces.AddPackageNoteDialogListener
 import com.logestechs.driver.utils.interfaces.ConfirmationDialogActionListener
 import com.logestechs.driver.utils.interfaces.FailDeliveryDialogListener
 import com.logestechs.driver.utils.interfaces.InCarPackagesCardListener
+import com.logestechs.driver.utils.interfaces.PostponePackageDialogListener
 import com.logestechs.driver.utils.interfaces.ReturnPackageDialogListener
 import com.logestechs.driver.utils.interfaces.ViewPagerCountValuesDelegate
 import kotlinx.coroutines.Dispatchers
@@ -61,6 +63,7 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
     ReturnPackageDialogListener,
     AddPackageNoteDialogListener,
     FailDeliveryDialogListener,
+    PostponePackageDialogListener,
     View.OnClickListener {
     private lateinit var binding: ActivityBroughtPackagesBinding
 
@@ -76,6 +79,7 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
     var mCurrentPhotoPath: String? = null
 
     var failDeliveryDialog: FailDeliveryDialog? = null
+    var postponePackageDialog: PostponePackageDialog? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBroughtPackagesBinding.inflate(layoutInflater)
@@ -843,7 +847,7 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
                 this
             )
         } else {
-            ReturnPackageDialog(this, this, pkg).showDialog()
+            ReturnPackageDialog(this, this, pkg, loadedImagesList).showDialog()
         }
     }
 
@@ -881,6 +885,12 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
         failDeliveryDialog?.showDialog()
     }
 
+    override fun onShowPostponePackageDialog(pkg: Package?) {
+        loadedImagesList.clear()
+        postponePackageDialog = PostponePackageDialog(this, this, pkg, loadedImagesList)
+        postponePackageDialog?.showDialog()
+    }
+
     override fun onCaptureImage() {
         isCameraAction = true
         if (Helper.isStorageAndCameraPermissionNeeded(this as LogesTechsActivity)) {
@@ -913,7 +923,7 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
         callCodChangeRequestApi(body)
     }
 
-    override fun onDeliverPackage(pkg: Package?) {
+    override fun onDeliverPackage(pkg: Package?, position: Int) {
         val mIntent = Intent(this@BroughtPackagesActivity, PackageDeliveryActivity::class.java)
         mIntent.putExtra(IntentExtrasKeys.PACKAGE_TO_DELIVER.name, pkg)
         startActivity(mIntent)
@@ -958,9 +968,11 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
         (this as LogesTechsActivity).callMobileNumber(receiverPhone)
     }
 
+    override fun targetVerticalIndex(position: Int) {}
+
     override fun confirmAction(data: Any?, action: ConfirmationDialogAction) {
         if (action == ConfirmationDialogAction.RETURN_PACKAGE) {
-            ReturnPackageDialog(this@BroughtPackagesActivity, this, data as Package?).showDialog()
+            ReturnPackageDialog(this@BroughtPackagesActivity, this, data as Package?, loadedImagesList).showDialog()
         }
     }
 }

@@ -13,6 +13,7 @@ import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.ProductItem
 import com.logestechs.driver.databinding.ItemFulfilmentOrderItemCellBinding
 import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.DateFormats
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.customViews.PeekingLinearLayoutManager
@@ -36,6 +37,7 @@ class FulfilmentOrderItemCellAdapter(
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
     private var highlightedPosition: Int? = null
+    private var quantity: Int? = null
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
@@ -92,18 +94,47 @@ class FulfilmentOrderItemCellAdapter(
     }
 
     fun scanItem(sku: String?): Int {
-        for (index in productItemsList.indices) {
-            if (productItemsList[index]?.sku == sku) {
-                return if (productItemsList[index]?.quantity != null && productItemsList[index]!!.quantity!! > 0) {
-                    productItemsList[index]?.quantity = productItemsList[index]!!.quantity?.minus(1)
-                    if (productItemsList[index]?.quantity == 0) {
+        if (quantity == null) {
+            for (index in productItemsList.indices) {
+                if (productItemsList[index]?.sku == sku) {
+                    return if (productItemsList[index]?.quantity != null && productItemsList[index]!!.quantity!! > 0) {
+                        productItemsList[index]?.quantity =
+                            productItemsList[index]!!.quantity?.minus(1)
+                        if (productItemsList[index]?.quantity == 0) {
+                            removeItem(index)
+                        }
+                        notifyItemChanged(index)
+                        index
+                    } else {
                         removeItem(index)
+                        0
                     }
-                    notifyItemChanged(index)
-                    index
-                } else {
-                    removeItem(index)
-                    0
+                }
+            }
+        } else {
+            for (index in productItemsList.indices) {
+                if (productItemsList[index]?.sku == sku) {
+                    if (productItemsList[index]?.quantity != null && productItemsList[index]!!.quantity!! > 0) {
+                        if (quantity!! < productItemsList[index]?.quantity!!) {
+                            productItemsList[index]?.quantity = productItemsList[index]!!.quantity?.minus(
+                                quantity!!
+                            )
+                            if (productItemsList[index]?.quantity == 0) {
+                                removeItem(index)
+                            }
+                            notifyItemChanged(index)
+                            return index
+                        } else {
+                            quantity = quantity!! - productItemsList[index]?.quantity!!
+                            productItemsList[index]?.quantity = 0
+                            if (quantity == 0) {
+                                return index
+                            }
+                        }
+                    } else {
+                        removeItem(index)
+                        return 0
+                    }
                 }
             }
         }
@@ -118,6 +149,21 @@ class FulfilmentOrderItemCellAdapter(
         return sum
     }
 
+    fun setQuantity(quantity: Int) {
+        this.quantity = quantity
+    }
+
+    fun removeZeros() {
+        val iterator = productItemsList.iterator()
+        while (iterator.hasNext()) {
+            val item = iterator.next()
+            if (item?.quantity == 0) {
+                iterator.remove()
+            }
+        }
+        notifyDataSetChanged()
+    }
+
     class FulfilmentOrderItemCellViewHolder(
         private var binding: ItemFulfilmentOrderItemCellBinding,
         private var parent: ViewGroup,
@@ -129,146 +175,31 @@ class FulfilmentOrderItemCellAdapter(
             binding.textQuantity.text = productItem?.quantity.toString()
             binding.itemProductName.textItem.text = productItem?.productName
             binding.itemProductSku.textItem.text = productItem?.sku
-            if (productItem?.itemBinLocation != null && productItem.itemBinLocation!!.isNotEmpty()) {
-                binding.itemBinLocation.textItem.text = productItem.itemBinLocation
+            if (productItem?.locationBarcode != null && productItem.locationBarcode!!.isNotEmpty()) {
+                binding.itemBinLocation.textItem.text = productItem.locationBarcode
+                if (productItem.binBarcode != null && productItem.binBarcode!!.isNotEmpty()) {
+                    binding.itemBinLocation.textItem.text = "${productItem.locationBarcode} - ${productItem.binBarcode}"
+                }
             } else {
                 binding.containerItemBinLocation.visibility = View.GONE
             }
             if (productItem?.expiryDate != null) {
-                binding.itemExpiryDate.textItem.text = productItem.expiryDate
+                binding.itemExpiryDate.textItem.text = Helper.formatServerDate(
+                    productItem.expiryDate.toString(),
+                    DateFormats.MESSAGE_TEMPLATE_WITH_TIME
+                )
             } else {
                 binding.containerItemExpiryDate.visibility = View.GONE
             }
 
             if (productItem?.isBundle == true) {
                 binding.textTitle.text = mAdapter.context?.getText(R.string.title_bundle)
-                binding.imageArrow.visibility = View.VISIBLE
-                handleCardExpansion(adapterPosition)
-                binding.root.setOnClickListener {
-                    onCardClick(adapterPosition)
-                }
             }
 
-            if (productItem?.productImageUrl != null) {
+            if (productItem?.productImageUrl != null && productItem.productImageUrl!!.isNotEmpty()) {
                 Picasso.get()
                     .load(productItem.productImageUrl)
                     .into(binding.itemImage)
-            }
-        }
-
-        private fun onCardClick(position: Int) {
-            if (mAdapter.productItemsList[position]?.isExpanded == true) {
-                mAdapter.productItemsList[position]?.isExpanded = false
-                binding.rvSubBundles.visibility = View.GONE
-                binding.containerSubBundleDetails.visibility = View.GONE
-
-                if (mAdapter.context != null) {
-                    binding.imageArrow.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            mAdapter.context!!,
-                            R.drawable.ic_card_arrow_down_pink
-                        )
-                    )
-                }
-            } else {
-                mAdapter.productItemsList[position]?.isExpanded = true
-                binding.rvSubBundles.visibility = View.VISIBLE
-                binding.containerSubBundleDetails.visibility = View.VISIBLE
-
-                if (mAdapter.context != null) {
-                    binding.imageArrow.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            mAdapter.context!!,
-                            R.drawable.ic_card_arrow_up_pink
-                        )
-                    )
-                }
-
-                mAdapter.productItemsList[position]?.let {
-                    if (it.isBundle!!) {
-                        GlobalScope.launch(Dispatchers.IO) {
-                            try {
-                                val response = ApiAdapter.apiClient.getSubBundlesProduct(
-                                    it.id!!,
-                                    mAdapter.orderId
-                                )
-                                withContext(Dispatchers.Main) {
-                                    if (response?.isSuccessful == true && response.body() != null) {
-                                        val layoutManager = PeekingLinearLayoutManager(
-                                            binding.rvSubBundles.context,
-                                            LinearLayoutManager.HORIZONTAL,
-                                            false
-                                        )
-
-                                        layoutManager.initialPrefetchItemCount =
-                                            response.body()!!.size
-                                        val childItemAdapter = SubBundleCellAdapter(
-                                            response.body()!!,
-                                            mAdapter.context
-                                        )
-                                        binding.rvSubBundles.layoutManager = layoutManager
-                                        binding.rvSubBundles.adapter = childItemAdapter
-                                    } else {
-                                        try {
-                                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                                            withContext(Dispatchers.Main) {
-                                                Helper.showErrorMessage(
-                                                    mAdapter.context,
-                                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                                )
-                                            }
-                                        } catch (e: java.lang.Exception) {
-                                            withContext(Dispatchers.Main) {
-                                                Helper.showErrorMessage(
-                                                    mAdapter.context,
-                                                    mAdapter.context!!.getString(R.string.error_general)
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            } catch (e: Exception) {
-                                Helper.logException(e, Throwable().stackTraceToString())
-                                withContext(Dispatchers.Main) {
-                                    if (e.message != null && e.message!!.isNotEmpty()) {
-                                        Helper.showErrorMessage(mAdapter.context, e.message)
-                                    } else {
-                                        Helper.showErrorMessage(mAdapter.context, e.stackTraceToString())
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private fun handleCardExpansion(position: Int) {
-            if (mAdapter.productItemsList[position]?.isExpanded == true) {
-
-                binding.rvSubBundles.visibility = View.VISIBLE
-                binding.containerSubBundleDetails.visibility = View.VISIBLE
-
-                if (mAdapter.context != null) {
-                    binding.imageArrow.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            mAdapter.context!!,
-                            R.drawable.ic_card_arrow_up_pink
-                        )
-                    )
-                }
-            } else {
-                binding.rvSubBundles.visibility = View.GONE
-                binding.containerSubBundleDetails.visibility = View.GONE
-
-                if (mAdapter.context != null) {
-                    binding.imageArrow.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            mAdapter.context!!,
-                            R.drawable.ic_card_arrow_down_pink
-                        )
-                    )
-                }
             }
         }
     }

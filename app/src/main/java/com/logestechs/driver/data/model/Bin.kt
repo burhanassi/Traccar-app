@@ -10,5 +10,6 @@ data class Bin(
     var id: Long? = null,
     var companyId: Int? = null,
     var isReserved: Boolean? = null,
-    var isTote: Boolean? = null
+    var isTote: Boolean? = null,
+    var locationId: Long? = null
 )

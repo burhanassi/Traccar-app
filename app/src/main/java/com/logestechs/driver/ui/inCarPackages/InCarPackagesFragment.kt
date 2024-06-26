@@ -62,19 +62,21 @@ import com.logestechs.driver.utils.dialogs.FailDeliveryDialog
 import com.logestechs.driver.utils.dialogs.InCarStatusFilterDialog
 import com.logestechs.driver.utils.dialogs.InCarViewModeDialog
 import com.logestechs.driver.utils.dialogs.PackageTypeFilterDialog
+import com.logestechs.driver.utils.dialogs.PostponePackageDialog
 import com.logestechs.driver.utils.dialogs.ReturnPackageDialog
 import com.logestechs.driver.utils.dialogs.SearchPackagesDialog
 import com.logestechs.driver.utils.dialogs.ShowAttachmentsDialog
 import com.logestechs.driver.utils.interfaces.AddPackageNoteDialogListener
+import com.logestechs.driver.utils.interfaces.CallDurationListener
 import com.logestechs.driver.utils.interfaces.ConfirmationDialogActionListener
 import com.logestechs.driver.utils.interfaces.FailDeliveryDialogListener
 import com.logestechs.driver.utils.interfaces.InCarPackagesCardListener
 import com.logestechs.driver.utils.interfaces.InCarStatusFilterDialogListener
 import com.logestechs.driver.utils.interfaces.InCarViewModeDialogListener
 import com.logestechs.driver.utils.interfaces.PackageTypeFilterDialogListener
+import com.logestechs.driver.utils.interfaces.PostponePackageDialogListener
 import com.logestechs.driver.utils.interfaces.ReturnPackageDialogListener
 import com.logestechs.driver.utils.interfaces.SearchPackagesDialogListener
-import com.logestechs.driver.utils.interfaces.ShowAttachmentsDialogListener
 import com.logestechs.driver.utils.interfaces.ViewPagerCountValuesDelegate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -106,7 +108,9 @@ class InCarPackagesFragment(
     ReturnPackageDialogListener,
     ConfirmationDialogActionListener,
     PackageTypeFilterDialogListener,
-    FailDeliveryDialogListener {
+    FailDeliveryDialogListener,
+    PostponePackageDialogListener,
+    CallDurationListener {
 
     private var _binding: FragmentInCarPackagesBinding? = null
     private val binding get() = _binding!!
@@ -134,10 +138,17 @@ class InCarPackagesFragment(
     private var packageAttachmentsResponseBody: PackageAttachmentsResponseBody? = null
 
     var failDeliveryDialog: FailDeliveryDialog? = null
+    var returnPackageDialog: ReturnPackageDialog? = null
+    var postponePackageDialog: PostponePackageDialog? = null
 
     var packageIdToUpload: Long? = null
+    var packageIdToSaveCallDuration: Long? = null
 
     var isSprint: Boolean = false
+
+    var targetVerticalIndex: Int? = null
+    var targetHorizontalIndex: Int? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -193,7 +204,9 @@ class InCarPackagesFragment(
             ArrayList(),
             super.getContext(),
             this,
-            isSprint
+            isSprint,
+            targetHorizontalIndex,
+            targetVerticalIndex
         )
         binding.rvPackages.layoutManager = layoutManager
     }
@@ -317,7 +330,9 @@ class InCarPackagesFragment(
                     ArrayList(),
                     super.getContext(),
                     this,
-                    isSprint
+                    isSprint,
+                    targetHorizontalIndex,
+                    targetVerticalIndex
                 )
                 binding.rvPackages.layoutManager = layoutManager
             }
@@ -421,9 +436,17 @@ class InCarPackagesFragment(
                         val body = response.body()
                         withContext(Dispatchers.Main) {
                             (binding.rvPackages.adapter as InCarPackageGroupedCellAdapter).update(
-                                body?.inCarPackages as ArrayList<GroupedPackages?>, selectedViewMode
+                                body?.inCarPackages as ArrayList<GroupedPackages?>,
+                                selectedViewMode,
+                                targetHorizontalIndex,
+                                targetVerticalIndex
                             )
                             activityDelegate?.updateCountValues()
+                            if (targetVerticalIndex != null && targetVerticalIndex!! < body.inCarPackages!!.size) {
+                                binding.rvPackages.smoothScrollToPosition(targetVerticalIndex!!)
+                            } else {
+                                binding.rvPackages.smoothScrollToPosition(0)
+                            }
                             handleNoPackagesLabelVisibility(body.numberOfPackages ?: 0)
                         }
                     } else {
@@ -1047,6 +1070,16 @@ class InCarPackagesFragment(
         }
     }
 
+    private fun callSaveCallDuration(callDuration: Double) {
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                ApiAdapter.apiClient.saveCallDuration(packageIdToSaveCallDuration!!, callDuration)
+            } catch (e: Exception) {
+                Helper.logException(e, Throwable().stackTraceToString())
+            }
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_status_filter -> {
@@ -1284,6 +1317,20 @@ class InCarPackagesFragment(
                                 dialog.binding.containerThumbnails.visibility = View.VISIBLE
                             }
 
+                            returnPackageDialog?.let { dialog ->
+                                (dialog.binding.rvThumbnails.adapter as ThumbnailsAdapter).updateItem(
+                                    loadedImagesList.size - 1
+                                )
+                                dialog.binding.containerThumbnails.visibility = View.VISIBLE
+                            }
+
+                            postponePackageDialog?.let { dialog ->
+                                (dialog.binding.rvThumbnails.adapter as ThumbnailsAdapter).updateItem(
+                                    loadedImagesList.size - 1
+                                )
+                                dialog.binding.containerThumbnails.visibility = View.VISIBLE
+                            }
+
                         }
                     } else {
                         try {
@@ -1357,6 +1404,27 @@ class InCarPackagesFragment(
                                         View.GONE
                                 }
                             }
+
+                            returnPackageDialog?.let { dialog ->
+                                (dialog.binding.rvThumbnails.adapter as ThumbnailsAdapter).deleteItem(
+                                    position
+                                )
+                                if (loadedImagesList.isEmpty()) {
+                                    dialog.binding.containerThumbnails.visibility =
+                                        View.GONE
+                                }
+                            }
+
+                            postponePackageDialog?.let { dialog ->
+                                (dialog.binding.rvThumbnails.adapter as ThumbnailsAdapter).deleteItem(
+                                    position
+                                )
+                                if (loadedImagesList.isEmpty()) {
+                                    dialog.binding.containerThumbnails.visibility =
+                                        View.GONE
+                                }
+                            }
+
                             Helper.showSuccessMessage(
                                 super.getContext(),
                                 getString(R.string.success_operation_completed)
@@ -1484,6 +1552,13 @@ class InCarPackagesFragment(
     }
 
     override fun onShowReturnPackageDialog(pkg: Package?) {
+        loadedImagesList.clear()
+        returnPackageDialog = ReturnPackageDialog(requireContext(), this, pkg, loadedImagesList)
+        packageIdToUpload = returnPackageDialog?.pkg?.id
+        addPackageNoteDialog = null
+        failDeliveryDialog = null
+        postponePackageDialog = null
+
         if (pkg?.isReceiverPayCost == true) {
             (requireActivity() as LogesTechsActivity).showConfirmationDialog(
                 getString(R.string.warning_receiver_pays_cost),
@@ -1492,7 +1567,7 @@ class InCarPackagesFragment(
                 this
             )
         } else {
-            ReturnPackageDialog(context, this, pkg).showDialog()
+            returnPackageDialog?.showDialog()
         }
     }
 
@@ -1529,6 +1604,18 @@ class InCarPackagesFragment(
         failDeliveryDialog?.showDialog()
         packageIdToUpload = failDeliveryDialog?.pkg?.id
         addPackageNoteDialog = null
+        returnPackageDialog = null
+        postponePackageDialog = null
+    }
+
+    override fun onShowPostponePackageDialog(pkg: Package?) {
+        loadedImagesList.clear()
+        postponePackageDialog = PostponePackageDialog(requireContext(), this, pkg, loadedImagesList)
+        postponePackageDialog?.showDialog()
+        packageIdToUpload = postponePackageDialog?.pkg?.id
+        failDeliveryDialog = null
+        returnPackageDialog = null
+        addPackageNoteDialog = null
     }
 
     override fun onCaptureImage() {
@@ -1561,13 +1648,16 @@ class InCarPackagesFragment(
     addPackageNoteDialog?.showDialog()
     packageIdToUpload = addPackageNoteDialog?.pkg?.id
     failDeliveryDialog = null
+    returnPackageDialog = null
+    postponePackageDialog = null
 }
 
     override fun onCodChanged(body: CodChangeRequestBody?) {
         callCodChangeRequestApi(body)
     }
 
-    override fun onDeliverPackage(pkg: Package?) {
+    override fun onDeliverPackage(pkg: Package?, position: Int) {
+        targetHorizontalIndex = position
         val mIntent = Intent(context, PackageDeliveryActivity::class.java)
         mIntent.putExtra(IntentExtrasKeys.PACKAGE_TO_DELIVER.name, pkg)
         startActivity(mIntent)
@@ -1608,8 +1698,13 @@ class InCarPackagesFragment(
     }
 
     override fun onCallReceiver(pkg: Package?, receiverPhone: String?) {
+        packageIdToSaveCallDuration = pkg?.id
         callDeliveryAttempt(pkg?.id, DeliveryAttemptType.PHONE_CALL.name)
-        (activity as LogesTechsActivity).callMobileNumber(receiverPhone)
+        (activity as LogesTechsActivity).callMobileNumber(receiverPhone, this)
+    }
+
+    override fun targetVerticalIndex(position: Int) {
+        targetVerticalIndex = position
     }
 
     override fun onPackageSearch(keyword: String?) {
@@ -1627,12 +1722,16 @@ class InCarPackagesFragment(
 
     override fun confirmAction(data: Any?, action: ConfirmationDialogAction) {
         if (action == ConfirmationDialogAction.RETURN_PACKAGE) {
-            ReturnPackageDialog(context, this, data as Package?).showDialog()
+            returnPackageDialog?.showDialog()
         }
     }
 
     override fun onPackageTypeSelected(selectedPackageType: PackageType) {
         this.selectedPackageType = selectedPackageType
         getPackagesBySelectedMode()
+    }
+
+    override fun saveCallDuration(callDuration: Double) {
+        callSaveCallDuration(callDuration)
     }
 }

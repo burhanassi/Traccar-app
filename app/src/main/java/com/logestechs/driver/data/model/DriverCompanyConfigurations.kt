@@ -28,11 +28,14 @@ data class DriverCompanyConfigurations(
     var isPrintAwbCopiesAsPackageQuantity: Boolean? = null,
     var isAllowDriversToViewAttachments: Boolean? = null,
     var isSupportDeliveringPackageItemsPartially: Boolean? = null,
-    var isSupportReturnedBundles: Boolean? = null,
+    var isSupportLineHaulBundles: Boolean? = null,
     var isEnableDeliveryVerificationPinCodeForReturnedBundles: Boolean? = null,
     var isPricingPerServiceTypeEnabled: Boolean? = null,
     var isDriverProveDeliveryByScanBarcode: Boolean? = null,
     var isEnablePinCodeForMassCodReportsAndMassReturnedPackages: Boolean? = null,
     var isSortAndPickFulfillmentItemsByScanningProductBarcode: Boolean? = null,
-    var isScanAllPackageAwbCopiesByDriver: Boolean? = null
+    var isScanAllPackageAwbCopiesByDriver: Boolean? = null,
+    var isAddingPaymentTypesEnabled: Boolean? = null,
+    var isPreventDriversDeliveredPickupPackages: Boolean? = null,
+    var isForceDriversToAddAttachments: Boolean? = null
 )

@@ -2,6 +2,8 @@ package com.logestechs.driver.utils.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -15,6 +17,7 @@ import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemInCarPackageCellBinding
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.Helper.Companion.format
+import com.logestechs.driver.utils.Helper.Companion.formatServerDate
 import com.logestechs.driver.utils.dialogs.*
 import com.logestechs.driver.utils.interfaces.*
 
@@ -28,7 +31,6 @@ class InCarPackageCellAdapter(
     var isSprint: Boolean = false
 ) :
     RecyclerView.Adapter<InCarPackageCellAdapter.InCarPackageCellViewHolder>(),
-    PostponePackageDialogListener,
     ChangePackageTypeDialogListener,
     ChangeCodDialogListener {
 
@@ -57,7 +59,7 @@ class InCarPackageCellAdapter(
         if (loginResponse?.user?.companyID == 240.toLong() || loginResponse?.user?.companyID == 313.toLong()) {
             isSprint = true
         }
-        return InCarPackageCellViewHolder(inflater, viewGroup, this)
+        return InCarPackageCellViewHolder(inflater, viewGroup, this, context!!)
     }
 
     override fun onBindViewHolder(
@@ -66,7 +68,7 @@ class InCarPackageCellAdapter(
     ) {
         val pkg: Package? = packagesList[position]
         InCarPackageViewHolder.setIsRecyclable(false);
-        InCarPackageViewHolder.bind(pkg)
+        InCarPackageViewHolder.bind(pkg, position)
     }
 
     override fun getItemCount(): Int {
@@ -87,10 +89,14 @@ class InCarPackageCellAdapter(
     class InCarPackageCellViewHolder(
         private var binding: ItemInCarPackageCellBinding,
         private var parent: ViewGroup,
-        private var mAdapter: InCarPackageCellAdapter
+        private var mAdapter: InCarPackageCellAdapter,
+        private var context: Context
     ) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(pkg: Package?) {
+        fun bind(
+            pkg: Package?,
+            position: Int
+        ) {
             binding.itemSenderName.textItem.text = pkg?.getFullSenderName()
             binding.itemSenderAddress.textItem.text = pkg?.originAddress?.toStringAddress()
 //            if (mAdapter.companyConfigurations?.isPricingPerServiceTypeEnabled!!) {
@@ -160,6 +166,16 @@ class InCarPackageCellAdapter(
                 binding.itemPackageQuantity.textItem.text = pkg.quantity.toString()
             } else {
                 binding.itemPackageQuantity.root.visibility = View.GONE
+            }
+
+            if (pkg?.pickupDate == null || pkg.pickupDate!!.isEmpty()) {
+                binding.itemPickupDate.root.visibility = View.GONE
+            } else {
+                binding.itemPickupDate.root.visibility = View.VISIBLE
+                binding.itemPickupDate.textItem.text = formatServerDate(
+                    pkg.pickupDate.toString(),
+                    DateFormats.MESSAGE_TEMPLATE_WITH_TIME
+                )
             }
 
             //Sender Contact Actions
@@ -251,7 +267,10 @@ class InCarPackageCellAdapter(
                     binding.imageViewReceiverLocation.visibility = View.VISIBLE
                     binding.imageViewReceiverLocation.setOnClickListener {
                         if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
-                            (mAdapter.context as LogesTechsActivity).showLocationInGoogleMaps(pkg.destinationAddress)
+                            (mAdapter.context as LogesTechsActivity).showNavigationOptionsDialog(
+                                mAdapter.context as LogesTechsActivity,
+                                pkg.destinationAddress
+                            )
                         }
                     }
                 } else {
@@ -263,7 +282,11 @@ class InCarPackageCellAdapter(
                     binding.imageViewReceiverLocationKsa.visibility = View.VISIBLE
                     binding.imageViewReceiverLocationKsa.setOnClickListener {
                         if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
-                            (mAdapter.context as LogesTechsActivity).showLocationInGoogleMaps(pkg.destinationAddress, true)
+                            (mAdapter.context as LogesTechsActivity).showNavigationOptionsDialog(
+                                mAdapter.context as LogesTechsActivity,
+                                pkg.destinationAddress,
+                                true
+                            )
                         }
                     }
                 } else {
@@ -289,11 +312,7 @@ class InCarPackageCellAdapter(
                             }
 
                             R.id.action_postpone_package -> {
-                                PostponePackageDialog(
-                                    mAdapter.context!!,
-                                    mAdapter,
-                                    pkg
-                                ).showDialog()
+                                mAdapter.listener?.onShowPostponePackageDialog(pkg)
                             }
                             R.id.action_view_attachment -> {
                                 mAdapter.listener?.onShowAttachmentsDialog(pkg)
@@ -332,12 +351,13 @@ class InCarPackageCellAdapter(
                 if (mAdapter.isSprint) {
                     popup.menu.findItem(R.id.action_edit_package_type).title =
                         mAdapter.context!!.getString(R.string.change_package_type_sprint)
+                    popup.menu.findItem(R.id.action_add_note).isVisible = false
                 }
                 popup.show()
             }
 
             binding.buttonDeliverPackage.setOnClickListener {
-                mAdapter.listener?.onDeliverPackage(pkg)
+                mAdapter.listener?.onDeliverPackage(pkg, position)
             }
 
             binding.itemPackageBarcode.buttonCopy.setOnClickListener {
@@ -347,15 +367,13 @@ class InCarPackageCellAdapter(
             binding.itemInvoiceNumber.buttonCopy.setOnClickListener {
                 Helper.copyTextToClipboard(mAdapter.context, pkg?.invoiceNumber)
             }
-            if (mAdapter.isSprint) {
-                binding.buttonDeliverPackage.text =
-                    mAdapter.context?.getString(R.string.button_deliver_package_sprint)
+
+            if (mAdapter.companyConfigurations?.isPreventDriversDeliveredPickupPackages == true &&
+                (pkg?.shipmentType == PackageType.BRING.name || pkg?.pickupDate == pkg?.firstPickupDate)
+            ) {
+                binding.buttonsContainer.visibility = View.GONE
             }
         }
-    }
-
-    override fun onPackagePostponed(postponePackageRequestBody: PostponePackageRequestBody) {
-        listener?.onPackagePostponed(postponePackageRequestBody)
     }
 
     override fun onPackageTypeChanged(changePackageTypeRequestBody: ChangePackageTypeRequestBody) {

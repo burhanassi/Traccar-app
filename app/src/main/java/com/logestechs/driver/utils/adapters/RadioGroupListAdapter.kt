@@ -68,8 +68,8 @@ class RadioGroupListAdapter(
             binding.radioButton.isChecked = adapterPosition == mAdapter.selectedPosition
 
             binding.radioButton.setOnClickListener {
-                mAdapter.listener?.onItemSelected(item?.value)
                 mAdapter.applySelection(adapterPosition)
+                mAdapter.listener?.onItemSelected(item?.value)
             }
 
         }

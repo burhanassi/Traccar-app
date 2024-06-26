@@ -4,12 +4,14 @@ import com.logestechs.driver.api.requests.*
 import com.logestechs.driver.api.responses.*
 import com.logestechs.driver.data.model.*
 import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.PaymentGatewayType
 import com.logestechs.driver.utils.ReturnedPackageStatus
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 interface LogesTechsDriverApi {
     @POST("auth/user/mobile-login")
@@ -228,13 +230,6 @@ interface LogesTechsDriverApi {
     ): Response<UploadImageResponse?>?
 
     @Multipart
-    @POST("handler/item/image/upload")
-    suspend fun uploadPodImageForRejectedItem(
-        @Query("barcode") barcode: String,
-        @Part file: MultipartBody.Part?
-    ): Response<UploadImageResponse?>?
-
-    @Multipart
     @POST("driver/mass-returned-packages/delivery-proof/upload-multipart")
     suspend fun uploadMassReturnedPackagesPod(
         @Query("customerId") customerId: Long,
@@ -364,136 +359,11 @@ interface LogesTechsDriverApi {
         @Query("barcode") barcode: String?,
     ): Response<ResponseBody>?
 
-    @GET("handler/hub/location")
-    suspend fun getWarehouseLocation(@Query("barcode") barcode: String?): Response<WarehouseLocation?>?
-
-    @GET("handler/item/detail")
-    suspend fun searchForInventoryItem(@Query("barcode") barcode: String?): Response<InventoryItemResponse?>?
-
-    @GET("handler/damaged-location")
-    suspend fun getWarehouseDamagedLocation(
-        @Query("barcode") barcode: String?,
-        @Query("shippingPlanId") shippingPlanId: Long?,
-    ): Response<WarehouseLocation?>?
-
-    @PUT("handler/hub/locations/{locationId}/bins/sort")
-    suspend fun sortBinIntoLocation(
-        @Path("locationId") locationId: Long?,
-        @Query("barcode") barcode: String?
-    ): Response<ResponseBody?>?
-
-    @PUT("handler/shipping-plan")
-    suspend fun getShippingPlan(@Query("barcode") barcode: String?): Response<ShippingPlan?>?
-
-    @GET("handler/hub/bin")
-    suspend fun getBin(@Query("barcode") barcode: String?): Response<Bin?>?
-
-    @PUT("handler/hub/bins/{binId}/shipping-items/sort")
-    suspend fun sortItemIntoBin(
-        @Path("binId") binId: Long?,
-        @Query("shippingPlanId") shippingPlanId: Long?,
-        @Query("quantity") quantity: Int?,
-        @Body body: BarcodeRequestBody?
-    ): Response<SortItemIntoBinResponse>?
-
-    @PUT("handler/locations/{locationId}/items/sort")
-    suspend fun sortItemIntoLocation(
-        @Path("locationId") locationId: Long?,
-        @Query("shippingPlanId") shippingPlanId: Long?,
-        @Query("quantity") quantity: Int?,
-        @Body body: BarcodeRequestBody?
-    ): Response<SortItemIntoBinResponse>?
-
-    @PUT("handler/locations/{locationId}/items/rejected/sort")
-    suspend fun sortRejectedItemIntoLocation(
-        @Path("locationId") locationId: Long?,
-        @Query("itemBarcode") itemBarcode: String
-    ): Response<SortRejectedItemIntoBinResponse>?
-
-    @PUT("handler/hub/shipping-items/reject")
-    suspend fun rejectItem(
-        @Query("binId") binId: Long?,
-        @Query("locationId") locationId: Long?,
-        @Query("shippingPlanId") shippingPlanId: Long?,
-        @Body body: RejectItemRequestBody?
-    ): Response<RejectItemResponse>?
-
-    @PUT("handler/shipping-plan/{shippingPlanId}/sorting-hours")
-    suspend fun setTimeSpent(
-        @Path("shippingPlanId") shippingPlanId: Long?,
-        @Query("sortingHours") sortingHours: Double?
-    ):Response<ResponseBody?>
-
-    @GET("handler/fulfilment/orders")
-    suspend fun getFulfilmentOrders(
-        @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
-        @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
-        @Query("status") status: String?,
-        @Query("statuses") statuses: List<String>? = null
-    ): Response<GetFulfilmentOrdersResponse?>?
-
-    @GET("handler/hub/tote")
-    suspend fun getTote(
-        @Query("barcode") barcode: String?,
-        @Query("orderId") orderId: Long?
-    ): Response<Bin?>?
-
-    @PUT("handler/hub/totes/{toteId}/order-items/sort")
-    suspend fun scanItemIntoTote(
-        @Path("toteId") toteId: Long?,
-        @Query("orderId") orderId: Long?,
-        @Body body: BarcodeRequestBody?
-    ): Response<SortItemIntoToteResponse>?
-
-    @PUT("handler/order-items/pick")
-    suspend fun scanItemsIntoTote(
-        @Query("orderIds") orderIds: List<Long?>,
-        @Body body: BarcodeRequestBody?
-    ): Response<SortItemIntoToteResponse>?
-
-    @PUT("handler/tote/order/{orderId}/sort")
-    suspend fun scanOrderIntoTote(
-        @Path("orderId") orderId: Long?,
-        @Query("barcode") barcode: String?
-    ): Response<ResponseBody>?
-
-    @PUT("handler/hub/order-items/continue-picking")
-    suspend fun continuePicking(
-        @Query("orderId") orderId: Long?,
-        @Body body: BarcodeRequestBody?
-    ): Response<SortItemIntoToteResponse>?
-
-    @PUT("handler/fulfillment-order/pack")
-    suspend fun packFulfilmentOrder(
-        @Query("orderId") orderId: Long?,
-        @Query("isPackedOrderWithoutScanningItems") isPackedOrderWithoutScanningItems: Boolean = true
-    ): Response<ResponseBody?>?
-
-    @GET("handler/order/{orderId}/tote")
-    suspend fun scanToteToPack(
-        @Path("orderId") orderId: Long?,
-        @Query("barcode") barcode: String?
-    ): Response<ResponseBody?>?
-
-    @GET("handler/orders/{orderId}/picked-item")
-    suspend fun packFulfilmentOrderByItem(
-        @Path("orderId") orderId: Long?,
-        @Query("barcode") barcode: String?
-    ): Response<ProductItem?>?
-
     @PUT("driver/packages/{packageId}/delivery-attempt")
     suspend fun deliveryAttempt(
         @Path("packageId") packageId: Long?,
         @Query("deliveryAttemptType") deliveryAttemptType: String?
     ): Response<ResponseBody>?
-
-    @GET("handler/shipping-plans")
-    suspend fun getShippingPlansForHandler(
-        @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
-        @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
-        @Query("status") status: String? = null
-    ): Response<GetShippingPlansResponse?>?
-
 
     @GET("driver/shipping-plans")
     suspend fun getShippingPlansForDriver(
@@ -518,6 +388,23 @@ interface LogesTechsDriverApi {
     @POST("driver/packages/{packageId}/pin-code")
     suspend fun requestPinCodeSms(
         @Path("packageId") packageId: Long?
+    ): Response<ResponseBody?>?
+
+    @POST("driver/packages/{packageId}/clickpay")
+    suspend fun requestPaymentLinkClickPay(
+        @Path("packageId") packageId: Long?
+    ): Response<ResponseBody?>?
+
+    @GET("driver/packages/{packageId}/is-e-paid")
+    suspend fun verifyClickPay(
+        @Path("packageId") packageId: Long?
+    ): Response<VerifyClickPayResponse?>?
+
+    @POST("driver/packages/{packageId}/payment-gateway/pay")
+    suspend fun paymentGateway(
+        @Path("packageId") packageId: Long?,
+        @Query("reference") reference: String?,
+        @Query("type") type: PaymentGatewayType?
     ): Response<ResponseBody?>?
 
     @POST("driver/bundles/{bundleId}/pin-code")
@@ -587,6 +474,169 @@ interface LogesTechsDriverApi {
         @Path("packageId") packageId: Long
     ): Response<Package>?
 
+    @GET("driver/customer/{customerId}/accepted/pdf-report")
+    suspend fun printPackageAwb(
+        @Path("customerId") id: Long,
+        @Query("is-image") isImage: Boolean,
+        @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString(),
+    ): Response<PrintAwbResponse>
+
+    @PUT("driver/modify-profile")
+    suspend fun changeProfile(
+        @Body body: ModifyProfileRequestBody
+    ): Response<ResponseBody?>?
+
+    @GET("driver/payment-type")
+    suspend fun getPaymentMethods (): Response<GetPaymentTypeResponse>
+
+    @POST("driver/packages/{packageId}/call-duration")
+    suspend fun saveCallDuration (
+        @Path("packageId") packageId: Long,
+        @Query("callDuration") callDuration: Double
+    ): Response<ResponseBody?>?
+
+    @POST("driver/first-partner-cost/{packageId}")
+    suspend fun getFirstPartnerCost (
+        @Path("packageId") packageId: Long?,
+        @Body body: ReturnPackageRequestBody?
+    ): Response<GetFirstPartnerCostResponse?>?
+
+    @Multipart
+    @POST("handler/item/image/upload")
+    suspend fun uploadPodImageForRejectedItem(
+        @Query("barcode") barcode: String,
+        @Part file: MultipartBody.Part?
+    ): Response<UploadImageResponse?>?
+
+    @GET("handler/hub/location")
+    suspend fun getWarehouseLocation(@Query("barcode") barcode: String?): Response<WarehouseLocation?>?
+
+    @GET("handler/item/detail")
+    suspend fun searchForInventoryItem(@Query("barcode") barcode: String?): Response<InventoryItemResponse?>?
+
+    @GET("handler/damaged-location")
+    suspend fun getWarehouseDamagedLocation(
+        @Query("barcode") barcode: String?,
+        @Query("shippingPlanId") shippingPlanId: Long?,
+    ): Response<WarehouseLocation?>?
+
+    @PUT("handler/hub/locations/{locationId}/bins/sort")
+    suspend fun sortBinIntoLocation(
+        @Path("locationId") locationId: Long?,
+        @Query("barcode") barcode: String?
+    ): Response<ResponseBody?>?
+
+    @PUT("handler/shipping-plan")
+    suspend fun getShippingPlan(@Query("barcode") barcode: String?): Response<ShippingPlan?>?
+
+    @GET("handler/hub/bin")
+    suspend fun getBin(
+        @Query("barcode") barcode: String?,
+        @Query("customerId") customerId: Long? = null
+    ): Response<Bin?>?
+
+    @PUT("handler/hub/bins/{binId}/shipping-items/sort")
+    suspend fun sortItemIntoBin(
+        @Path("binId") binId: Long?,
+        @Query("shippingPlanId") shippingPlanId: Long?,
+        @Query("quantity") quantity: Int?,
+        @Body body: BarcodeRequestBody?
+    ): Response<SortItemIntoBinResponse>?
+
+    @PUT("handler/locations/{locationId}/items/sort")
+    suspend fun sortItemIntoLocation(
+        @Path("locationId") locationId: Long?,
+        @Query("shippingPlanId") shippingPlanId: Long?,
+        @Query("quantity") quantity: Int?,
+        @Body body: BarcodeRequestBody?
+    ): Response<SortItemIntoBinResponse>?
+
+    @PUT("handler/locations/{locationId}/items/rejected/sort")
+    suspend fun sortRejectedItemIntoLocation(
+        @Path("locationId") locationId: Long?,
+        @Query("itemBarcode") itemBarcode: String
+    ): Response<SortRejectedItemIntoBinResponse>?
+
+    @PUT("handler/hub/shipping-items/reject")
+    suspend fun rejectItem(
+        @Query("binId") binId: Long?,
+        @Query("locationId") locationId: Long?,
+        @Query("shippingPlanId") shippingPlanId: Long?,
+        @Body body: RejectItemRequestBody?
+    ): Response<RejectItemResponse>?
+
+    @PUT("handler/shipping-plan/{shippingPlanId}/sorting-hours")
+    suspend fun setTimeSpent(
+        @Path("shippingPlanId") shippingPlanId: Long?,
+        @Query("sortingHours") sortingHours: Double?
+    ):Response<ResponseBody?>
+
+    @GET("handler/fulfilment/orders")
+    suspend fun getFulfilmentOrders(
+        @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
+        @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
+        @Query("status") status: String?,
+        @Query("statuses") statuses: List<String>? = null
+    ): Response<GetFulfilmentOrdersResponse?>?
+
+    @GET("handler/hub/tote")
+    suspend fun getTote(
+        @Query("barcode") barcode: String?,
+        @Query("orderId") orderId: Long?
+    ): Response<Bin?>?
+
+    @PUT("handler/hub/totes/{toteId}/order-items/sort")
+    suspend fun scanItemIntoTote(
+        @Path("toteId") toteId: Long?,
+        @Query("orderId") orderId: Long?,
+        @Query("locationId") locationId: Long?,
+        @Query("quantity") quantity: Int?,
+        @Body body: BarcodeRequestBody?
+    ): Response<SortItemIntoToteResponse>?
+
+    @PUT("handler/order-items/pick")
+    suspend fun scanItemsIntoTote(
+        @Query("orderIds") orderIds: List<Long?>,
+        @Body body: BarcodeRequestBody?
+    ): Response<SortItemIntoToteResponse>?
+
+    @PUT("handler/tote/order/{orderId}/sort")
+    suspend fun scanOrderIntoTote(
+        @Path("orderId") orderId: Long?,
+        @Query("barcode") barcode: String?
+    ): Response<ResponseBody>?
+
+    @PUT("handler/hub/order-items/continue-picking")
+    suspend fun continuePicking(
+        @Query("orderId") orderId: Long?,
+        @Body body: BarcodeRequestBody?
+    ): Response<SortItemIntoToteResponse>?
+
+    @PUT("handler/fulfillment-order/pack")
+    suspend fun packFulfilmentOrder(
+        @Query("orderId") orderId: Long?,
+        @Query("isPackedOrderWithoutScanningItems") isPackedOrderWithoutScanningItems: Boolean = true
+    ): Response<ResponseBody?>?
+
+    @GET("handler/order/{orderId}/tote")
+    suspend fun scanToteToPack(
+        @Path("orderId") orderId: Long?,
+        @Query("barcode") barcode: String?
+    ): Response<ResponseBody?>?
+
+    @PUT("handler/orders/{orderId}/picked-item")
+    suspend fun packFulfilmentOrderByItem(
+        @Path("orderId") orderId: Long?,
+        @Query("barcode") barcode: String?
+    ): Response<ProductItem?>?
+
+    @GET("handler/shipping-plans")
+    suspend fun getShippingPlansForHandler(
+        @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
+        @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
+        @Query("status") status: String? = null
+    ): Response<GetShippingPlansResponse?>?
+
     @GET("handler/shelves/scan")
     suspend fun scanShelfByBarcode(
         @Query("barcode") barcode: String?
@@ -628,27 +678,56 @@ interface LogesTechsDriverApi {
     @PUT("handler/packages/{packageId}/un-flag")
     suspend fun unFlagPackageInShelf(@Path("packageId") packageId: Long): Response<ResponseBody>
 
-    @GET("driver/customer/{customerId}/accepted/pdf-report")
-    suspend fun printPackageAwb(
-        @Path("customerId") id: Long,
-        @Query("is-image") isImage: Boolean,
-        @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString(),
-    ): Response<PrintAwbResponse>
-
-    @PUT("driver/modify-profile")
-    suspend fun changeProfile(
-        @Body body: ModifyProfileRequestBody
-    ): Response<ResponseBody?>?
-
     @POST("handler/orders/items/list/pdf")
     suspend fun printPickList(
         @Body body: PrintPickListRequestBody,
         @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString()
     ): Response<PrintAwbResponse?>?
 
+    @GET("admin/fulfillment/totes/{toteBarcode}/order")
+    suspend fun getOrderFromTote(
+        @Path("toteBarcode") toteBarcode: String?,
+    ): Response<FulfilmentOrder?>?
+
     @GET("handler/product/sub-bundle")
     suspend fun getSubBundlesProduct (
         @Query("productId") productId: Long,
         @Query("orderId") orderId: Long?
     ): Response<ArrayList<SubBundle?>>?
+
+    @GET("handler/hub/reserved-bin")
+    suspend fun scanBinBarcodeForChangeLocation (
+        @Query("barcode") barcode: String
+    ): Response<Bin?>?
+
+    @PUT("handler/items/change-location")
+    suspend fun changeLocation (
+        @Query("itemId") itemId: Long?,
+        @Query("customerId") customerId: Long?,
+        @Query("locationBarcode") barcode: String?,
+        @Query("binId") binId: Long? = null,
+        @Query("locationId") locationId: Long? = null,
+    ): Response<ResponseBody?>?
+
+    @PUT("handler/hub/locations/{locationBarcode}/bin/sort")
+    suspend fun scanNewLocationForChange (
+        @Path("locationBarcode") locationBarcode: String,
+        @Query("barcode") barcode: String
+    ): Response<ResponseBody?>?
+
+    @GET("handler/customers/{customerId}/locations")
+    suspend fun getCustomerLocations(
+        @Path("customerId") customerId: Long?,
+        @Query("search") search: String? = null,
+        @Query("productId") productId: Long
+    ): Response<GetCustomerLocationsResponse>
+
+    @GET("handler/order/{orderId}/max-quantity")
+    suspend fun getMaxQuantity(
+        @Path("orderId") orderId: Long?,
+        @Query("customerId") customerId: Long?,
+        @Query("warehouseId") warehouseId: Long?,
+        @Query("productId") productId: Long?,
+        @Query("locationId") locationId: Long?,
+    ): Response<Long>
 }

@@ -1,0 +1,238 @@
+{
+  "project_info": {
+    "project_number": "211675168150",
+    "project_id": "logestechs-customers7",
+    "storage_bucket": "logestechs-customers7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211675168150:android:de97861f85eeab53f231b7",
+        "android_client_info": {
+          "package_name": "com.logestechs.customer_Jahez"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcO829b_aKV3hntaplkrdF8EJr2F99Dq0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211675168150:android:957c941c8e40c651f231b7",
+        "android_client_info": {
+          "package_name": "com.logestechs.customer_MTL4Shipping"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcO829b_aKV3hntaplkrdF8EJr2F99Dq0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211675168150:android:69d0a3010e6ca6aef231b7",
+        "android_client_info": {
+          "package_name": "com.logestechs.customer_abuGharbieh"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcO829b_aKV3hntaplkrdF8EJr2F99Dq0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211675168150:android:d99ea2153cdb49a2f231b7",
+        "android_client_info": {
+          "package_name": "com.logestechs.customer_fastArrive"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcO829b_aKV3hntaplkrdF8EJr2F99Dq0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211675168150:android:0d02b6e865e4d903f231b7",
+        "android_client_info": {
+          "package_name": "com.logestechs.customer_leader"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcO829b_aKV3hntaplkrdF8EJr2F99Dq0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211675168150:android:210bae7ada11ed18f231b7",
+        "android_client_info": {
+          "package_name": "com.logestechs.customer_prolo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcO829b_aKV3hntaplkrdF8EJr2F99Dq0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211675168150:android:de4807e6f1b4fe74f231b7",
+        "android_client_info": {
+          "package_name": "com.logestechs.customer_quickly1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcO829b_aKV3hntaplkrdF8EJr2F99Dq0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211675168150:android:687c00fc93face5df231b7",
+        "android_client_info": {
+          "package_name": "com.logestechs.customer_rPlus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcO829b_aKV3hntaplkrdF8EJr2F99Dq0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211675168150:android:6a75b2ab50bda924f231b7",
+        "android_client_info": {
+          "package_name": "com.logestechs.customer_rallyDelivery"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcO829b_aKV3hntaplkrdF8EJr2F99Dq0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211675168150:android:89fa4b9f28cceac6f231b7",
+        "android_client_info": {
+          "package_name": "com.logestechs.customer_skySpeed"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcO829b_aKV3hntaplkrdF8EJr2F99Dq0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211675168150:android:a5f17091cf503eebf231b7",
+        "android_client_info": {
+          "package_name": "com.logestechs.customer_wa9el"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcO829b_aKV3hntaplkrdF8EJr2F99Dq0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211675168150:android:bc196261becc9fd4f231b7",
+        "android_client_info": {
+          "package_name": "com.logestechs.driver_mtl4Shipping"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcO829b_aKV3hntaplkrdF8EJr2F99Dq0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

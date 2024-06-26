@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="msg_please_wait">الرجاء الإنتظار…</string>
     <string name="error_general">عذراً، حدث خطأ ما، سيتم معالجته بأقرب وقت</string>
     <string name="error_check_internet_connection">الرجاء التحقق من الاتصال بالانترنت</string>
@@ -126,6 +126,7 @@
     <string name="payment_type_cheque">شيك</string>
     <string name="payment_type_inter_pay">InterPay</string>
     <string name="payment_type_near_pay">NearPay</string>
+    <string name="payment_type_click_pay">ClickPay</string>
     <string name="payment_type_bank_transfer">حوالة بنكية</string>
     <string name="payment_type_prepaid">دفع مسبق</string>
     <string name="payment_type_digital_wallet">محفظة الكترونية</string>
@@ -224,6 +225,7 @@
     <string name="action_reject">رفض</string>
     <string name="dashboard_new_fulfilment_orders">الطلبات المصنفة\nالجديدة</string>
     <string name="dashboard_track_inventory_items">تتبع العناصر</string>
+    <string name="dashboard_change_bin_location">تغيير المواقع</string>
     <string name="title_new_fulfilment_orders">الطلبات المصنفة الجديدة</string>
     <string name="title_fulfilment_orders">الطلبات المصنفة</string>
     <string name="title_tracking_inventory_item">تتبع العناصر</string>
@@ -337,4 +339,21 @@
     <string name="sku_bundle">:SKU </string>
     <string name="name_bundle">الأسم: </string>
     <string name="quantity_bundle">الكمية: </string>
+    <string name="to_pay_to_receiver">الدفع للمستلم: </string>
+    <string name="to_collect_from_receiver">التحصيل من المستلم: </string>
+    <string name="click_pay_confirmation">هل تريد طلب رابط الدفع؟</string>
+    <string name="error_bin_not_reserved">هذه السلة لم يتم تصنيفها</string>
+    <string name="title_choose">تغيير موقع</string>
+    <string name="bin_location">السلة</string>
+    <string name="item_location">العنصر</string>
+    <string name="please_scan_new_bin">الرجاء مسح باركود السلة الجديدة</string>
+    <string name="please_scan_new_location">الرجاء مسح باركود الموقع الجديد</string>
+    <string name="title_first_partner_cost">الأجر: </string>
+    <string name="title_choose_location">الرجاء اختيار الموقع</string>
+    <string name="warning_deliver_package">هل انت متاكد من اكمال التوصيل ؟</string>
+    <string name="error_unsorted_item">هذا العنصر غير مصنف</string>
+    <string name="title_choose_navigation_app">اختر تطبيق الخرائط</string>
+    <string name="title_google_map">Google Map</string>
+    <string name="title_waze">Waze</string>
+    <string name="error_add_attachments">الرجاء إضافة مرفقات</string>
 </resources>

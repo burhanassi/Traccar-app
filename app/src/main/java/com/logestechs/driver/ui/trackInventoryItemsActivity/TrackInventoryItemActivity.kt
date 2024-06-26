@@ -220,6 +220,8 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
         binding.customerName.textItem.text = itemDetails.customerName
 
         if (itemDetails.itemTrackingStatus.isNotEmpty()) {
+            binding.previousStatusesCard.visibility = View.VISIBLE
+
             val layoutManager = PeekingLinearLayoutManager(
                 binding.rvPreviousStatuses
                     .context,
@@ -270,7 +272,10 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
                 binding.containerItemStatus.background = gradientDrawable
                 binding.itemAddedMethodRejected.text =
                     itemDetails.shippingPlanBarcode ?: getString(R.string.title_manually)
-                binding.itemRejectedDateRejected.visibility = View.GONE
+                binding.itemRejectedDateRejected.text = Helper.formatServerDateLocalized(
+                    itemDetails.rejectedDate,
+                    DateFormats.DEFAULT_FORMAT
+                )
                 binding.itemLocationBarcodeRejected.text = itemDetails.locationBarcode ?: "-------"
                 binding.itemRejectedReasonRejected.text = itemDetails.rejectReason ?: "-------"
                 binding.itemExpiryDateRejected.text = Helper.formatServerDateLocalized(
@@ -392,8 +397,6 @@ class TrackInventoryItemActivity : LogesTechsActivity(), View.OnClickListener {
                 binding.itemPackedByReturned.text = itemDetails.packedUser ?: "-------"
                 binding.itemPackageNumberBarcodeReturned.text =
                     itemDetails.packageBarcode ?: "-------"
-                binding.itemReturnedDateReturned.visibility = View.GONE
-                binding.itemReturnReasonReturned.visibility = View.GONE
                 binding.itemCurrentLocationReturned.text = itemDetails.locationBarcode ?: "-------"
             }
 
