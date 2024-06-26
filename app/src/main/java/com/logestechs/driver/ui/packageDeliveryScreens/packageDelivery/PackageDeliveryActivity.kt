@@ -1298,6 +1298,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     is PurchaseFailure.GeneralFailure -> {
                         // when there is General error .
                     }
+
+                    is PurchaseFailure.UserCancelled -> TODO()
                 }
             }
         })
