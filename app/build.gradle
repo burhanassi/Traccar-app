@@ -77,6 +77,14 @@ android {
 
     flavorDimensions 'driver'
     productFlavors {
+        interCity {
+            dimension 'driver'
+            resValue 'string', 'app_name', 'InterCity Driver'
+            buildConfigField 'int', 'company_id', '357'
+            buildConfigField 'String', 'company_name', '\"InterCity\"'
+            applicationId 'com.logestechs.driver_interCity'
+        }
+
         logesTechs {
             dimension 'driver'
             resValue 'string', 'app_name', 'LogesTechs Driver'
@@ -110,6 +118,11 @@ android {
     }
 
     sourceSets {
+        interCity{
+            res {
+                srcDirs 'src\\interCity\\res'
+            }
+        }
         logesTechs {
             res {
                 srcDirs 'src\\logesTechs\\res'
