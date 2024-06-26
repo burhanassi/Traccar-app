@@ -185,6 +185,7 @@ enum class PaymentType(val englishLabel: String, val arabicLabel: String) {
     DIGITAL_WALLET("Digital Wallet", "محفظة الكترونية"),
     CARD("Card Payment", "بطاقة ائتمانية"),
     INTER_PAY("InterPay","InterPay"),
+    NEAR_PAY("NearPay","NearPay"),
     CLICK_PAY("ClickPay","ClickPay")
 }
 

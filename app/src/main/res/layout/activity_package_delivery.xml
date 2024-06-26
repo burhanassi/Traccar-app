@@ -263,6 +263,14 @@
                                     app:textStatus="@string/payment_type_inter_pay" />
 
                                 <com.logestechs.driver.utils.customViews.StatusSelector
+                                    android:id="@+id/selector_near_pay"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_weight="1"
+                                    app:textStatus="@string/payment_type_near_pay" />
+
+                                <com.logestechs.driver.utils.customViews.StatusSelector
                                     android:id="@+id/selector_click_pay"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
@@ -281,8 +289,7 @@
                             android:layout_marginStart="12dp"
                             android:layout_marginEnd="12dp"
                             android:orientation="vertical"
-                            android:visibility="visible">
-
+                            android:visibility="gone">
                         </LinearLayout>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
