@@ -99,12 +99,17 @@ class InCarPackageCellAdapter(
         ) {
             binding.itemSenderName.textItem.text = pkg?.getFullSenderName()
             binding.itemSenderAddress.textItem.text = pkg?.originAddress?.toStringAddress()
-//            if (mAdapter.companyConfigurations?.isPricingPerServiceTypeEnabled!!) {
-                if (pkg?.serviceTypeName != null && pkg?.serviceTypeName!!.isNotEmpty()) {
-                    binding.containerServiceType.visibility = View.VISIBLE
-                    binding.serviceType.text = pkg?.serviceTypeName
+            if (pkg?.serviceTypeName != null && pkg.serviceTypeName!!.isNotEmpty()) {
+                binding.containerServiceType.visibility = View.VISIBLE
+                binding.serviceType.text = pkg.serviceTypeName
+            }
+
+            if (mAdapter.companyConfigurations?.isHideSenderInfo == true) {
+                if (mAdapter.companyConfigurations?.isShowSenderPhone == false) {
+                    binding.containerSenderPhoneNumber.visibility = View.GONE
                 }
-//            }
+            }
+
             binding.itemReceiverName.textItem.text = pkg?.getFullReceiverName()
             binding.itemReceiverAddress.textItem.text = pkg?.destinationAddress?.toStringAddress()
 
