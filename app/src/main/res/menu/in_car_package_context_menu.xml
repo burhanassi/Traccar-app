@@ -17,6 +17,10 @@
         android:title="@string/change_package_type" />
 
     <item
+        android:id="@+id/action_edit_package_weight"
+        android:title="@string/change_package_weight" />
+
+    <item
         android:id="@+id/action_edit_package_cod"
         android:title="@string/change_package_cod" />
 

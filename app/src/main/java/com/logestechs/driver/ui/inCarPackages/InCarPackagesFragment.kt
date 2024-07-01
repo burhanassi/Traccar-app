@@ -1594,6 +1594,10 @@ class InCarPackagesFragment(
         callChangePackageType(body?.packageId, body)
     }
 
+    override fun onPackageWeightChanged(packageId: Long?) {
+        //TODO here we need the api
+    }
+
     override fun onPackageNoteAdded(body: AddNoteRequestBody?) {
         callAddPackageNote(body?.packageId, body)
     }
