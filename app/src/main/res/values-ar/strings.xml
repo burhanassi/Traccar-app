@@ -79,6 +79,7 @@
     <string name="action_fail_delivery">فشل في التوصيل</string>
     <string name="title_fail_delivery">فشل في التوصيل</string>
     <string name="change_package_type">تعديل نوع الطرد</string>
+    <string name="change_package_weight">تعديل وزن الطرد</string>
     <string name="change_package_type_sprint">تعديل نوع الشحنة</string>
     <string name="change_package_cod">تعديل قيمة التحصيل</string>
     <string name="add_note">إضافة ملاحظة</string>
@@ -356,4 +357,5 @@
     <string name="title_google_map">Google Map</string>
     <string name="title_waze">Waze</string>
     <string name="error_add_attachments">الرجاء إضافة مرفقات</string>
+    <string name="hint_weight">الوزن</string>
 </resources>
