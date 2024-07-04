@@ -104,8 +104,8 @@ class InCarPackageCellAdapter(
                 binding.serviceType.text = pkg.serviceTypeName
             }
 
-            if (mAdapter.companyConfigurations?.isHideSenderInfo == true) {
-                if (mAdapter.companyConfigurations?.isShowSenderPhone == false) {
+            if (mAdapter.loginResponse?.user?.isHideSenderInfo == true) {
+                if (mAdapter.loginResponse?.user?.isShowSenderPhone == false) {
                     binding.containerSenderPhoneNumber.visibility = View.GONE
                 }
             }

@@ -85,5 +85,7 @@ data class User(
 
     @SerializedName("companyId")
     val companyID: Long?,
-    val andoidAdminAppMinVersion: String? = null
+    val andoidAdminAppMinVersion: String? = null,
+    var isHideSenderInfo: Boolean? = null,
+    var isShowSenderPhone: Boolean? = null
 ) : Parcelable
