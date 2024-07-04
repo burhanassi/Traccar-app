@@ -125,6 +125,7 @@
     <string name="payment_type_cash">نقداً</string>
     <string name="payment_type_cheque">شيك</string>
     <string name="payment_type_inter_pay">InterPay</string>
+    <string name="payment_type_near_pay">NearPay</string>
     <string name="payment_type_click_pay">ClickPay</string>
     <string name="payment_type_bank_transfer">حوالة بنكية</string>
     <string name="payment_type_prepaid">دفع مسبق</string>
@@ -351,4 +352,8 @@
     <string name="title_choose_location">الرجاء اختيار الموقع</string>
     <string name="warning_deliver_package">هل انت متاكد من اكمال التوصيل ؟</string>
     <string name="error_unsorted_item">هذا العنصر غير مصنف</string>
+    <string name="title_choose_navigation_app">اختر تطبيق الخرائط</string>
+    <string name="title_google_map">Google Map</string>
+    <string name="title_waze">Waze</string>
+    <string name="error_add_attachments">الرجاء إضافة مرفقات</string>
 </resources>

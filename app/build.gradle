@@ -26,8 +26,8 @@ android {
         applicationId "com.logestechs.driver"
         minSdk 21
         targetSdk 33
-        versionCode 134
-        versionName "1.5.7"
+        versionCode 36
+        versionName "1.4.18"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -46,7 +46,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField 'String', 'base_url', '\"http://pal-ship.com:8080/api/\"'
-//            buildConfigField 'String', 'base_url', '\"http://192.168.1.11:8080/\"'
+//            buildConfigField 'String', 'base_url', '\"http://192.168.1.25:8080/\"'
             manifestPlaceholders = [crashlyticsCollectionEnabled: "false"]
         }
     }
@@ -118,6 +118,11 @@ android {
     }
 
     sourceSets {
+        interCity{
+            res {
+                srcDirs 'src\\interCity\\res'
+            }
+        }
         logesTechs {
             res {
                 srcDirs 'src\\logesTechs\\res'
@@ -212,5 +217,5 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:17.1.0'
 
     //NearPay
-    implementation "io.nearpay:nearpay-sdk-store:2.1.83"
+    implementation "io.nearpay:nearpay-sdk:2.1.87"
 }

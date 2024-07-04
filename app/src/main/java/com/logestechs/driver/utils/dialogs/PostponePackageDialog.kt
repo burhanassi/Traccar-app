@@ -15,6 +15,8 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.logestechs.driver.R
 import com.logestechs.driver.api.requests.PostponePackageRequestBody
+import com.logestechs.driver.data.model.DriverCompanyConfigurations
+import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.DialogPostponePackageBinding
 import com.logestechs.driver.utils.DateFormats
@@ -22,8 +24,10 @@ import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsApp
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.RadioGroupListAdapter
+import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
 import com.logestechs.driver.utils.interfaces.PostponePackageDialogListener
 import com.logestechs.driver.utils.interfaces.RadioGroupListListener
+import com.logestechs.driver.utils.interfaces.ThumbnailsListListener
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -32,8 +36,9 @@ import java.util.*
 class PostponePackageDialog(
     var context: Context,
     var listener: PostponePackageDialogListener?,
-    var pkg: Package?
-) : RadioGroupListListener {
+    var pkg: Package?,
+    var loadedImagesList: ArrayList<LoadedImage>
+) : RadioGroupListListener, ThumbnailsListListener {
 
     lateinit var binding: DialogPostponePackageBinding
     lateinit var alertDialog: AlertDialog
@@ -41,6 +46,9 @@ class PostponePackageDialog(
 
     private var fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)
+
+    private var companyConfigurations: DriverCompanyConfigurations? =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
     @SuppressLint("MissingPermission")
     fun showDialog() {
@@ -57,56 +65,44 @@ class PostponePackageDialog(
             alertDialog.dismiss()
         }
 
+        binding.rvThumbnails.apply {
+            layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = ThumbnailsAdapter(loadedImagesList, this@PostponePackageDialog)
+        }
+
         binding.buttonDone.setOnClickListener {
-            if (binding.etReason.text.toString().isNotEmpty()) {
-                if (binding.textDate.text.toString().isNotEmpty()) {
-                    alertDialog.dismiss()
-                    fusedLocationClient.lastLocation
-                        .addOnSuccessListener { location->
-                            if (location != null) {
-                                listener?.onPackagePostponed(
-                                    PostponePackageRequestBody(
-                                        binding.etReason.text.toString(),
-                                        (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
-                                        location.longitude,
-                                        location.latitude,
-                                        binding.textDate.text.toString(),
-                                        pkg?.id
-                                    )
+            if (validateInput()) {
+                alertDialog.dismiss()
+                fusedLocationClient.lastLocation
+                    .addOnSuccessListener { location ->
+                        if (location != null) {
+                            listener?.onPackagePostponed(
+                                PostponePackageRequestBody(
+                                    binding.etReason.text.toString(),
+                                    (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
+                                    location.longitude,
+                                    location.latitude,
+                                    binding.textDate.text.toString(),
+                                    getPodImagesUrls(),
+                                    pkg?.id
                                 )
-                            } else {
-                                listener?.onPackagePostponed(
-                                    PostponePackageRequestBody(
-                                        binding.etReason.text.toString(),
-                                        (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
-                                        null,
-                                        null,
-                                        binding.textDate.text.toString(),
-                                        pkg?.id
-                                    )
+                            )
+                        } else {
+                            listener?.onPackagePostponed(
+                                PostponePackageRequestBody(
+                                    binding.etReason.text.toString(),
+                                    (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
+                                    null,
+                                    null,
+                                    binding.textDate.text.toString(),
+                                    getPodImagesUrls(),
+                                    pkg?.id
                                 )
-                            }
+                            )
                         }
-
-                } else {
-                    Helper.showErrorMessage(
-                        context,
-                        getStringForFragment(R.string.error_select_postpone_date)
-                    )
-                    Helper.changeImageStrokeColor(
-                        binding.imageViewCalendar,
-                        R.color.red_flamingo,
-                        context
-                    )
-                }
-
-            } else {
-                Helper.showErrorMessage(
-                    context,
-                    getStringForFragment(R.string.error_insert_message_text)
-                )
+                    }
             }
-
         }
 
         binding.containerDatePicker.setOnClickListener {
@@ -145,6 +141,14 @@ class PostponePackageDialog(
             )
         }
 
+        binding.buttonCaptureImage.setOnClickListener {
+            listener?.onCaptureImage()
+        }
+
+        binding.buttonLoadImage.setOnClickListener {
+            listener?.onLoadImage()
+        }
+
         binding.root.setOnClickListener {
             clearFocus()
         }
@@ -152,6 +156,53 @@ class PostponePackageDialog(
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.setCanceledOnTouchOutside(false)
         alertDialog.show()
+    }
+
+    private fun validateInput(): Boolean {
+        if (binding.etReason.text.isEmpty()) {
+            Helper.showErrorMessage(
+                context,
+                getStringForFragment(R.string.error_insert_message_text)
+            )
+            return false
+        }
+
+        if (binding.textDate.text.toString().isEmpty()) {
+            Helper.showErrorMessage(
+                context,
+                getStringForFragment(R.string.error_select_postpone_date)
+            )
+            Helper.changeImageStrokeColor(
+                binding.imageViewCalendar,
+                R.color.red_flamingo,
+                context
+            )
+            return false
+        }
+
+        if (companyConfigurations?.isForceDriversToAddAttachments == true) {
+            if (loadedImagesList.isEmpty()) {
+                Helper.showErrorMessage(
+                    context,
+                    getStringForFragment(R.string.error_add_attachments)
+                )
+                return false
+            }
+
+        }
+        return true
+    }
+
+    private fun getPodImagesUrls(): List<String?>? {
+        return if (loadedImagesList.isNotEmpty()) {
+            val list: ArrayList<String?> = ArrayList()
+            for (item in loadedImagesList) {
+                list.add(item.imageUrl)
+            }
+            list
+        } else {
+            null
+        }
     }
 
     private fun getStringForFragment(resId: Int): String {
@@ -168,5 +219,9 @@ class PostponePackageDialog(
     override fun onItemSelected(title: String?) {
         binding.etReason.setText(title)
         clearFocus()
+    }
+
+    override fun onDeleteImage(position: Int) {
+        listener?.onDeleteImage(position)
     }
 }

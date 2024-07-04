@@ -2,6 +2,8 @@ package com.logestechs.driver.utils.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -29,7 +31,6 @@ class InCarPackageCellAdapter(
     var isSprint: Boolean = false
 ) :
     RecyclerView.Adapter<InCarPackageCellAdapter.InCarPackageCellViewHolder>(),
-    PostponePackageDialogListener,
     ChangePackageTypeDialogListener,
     ChangeCodDialogListener {
 
@@ -58,7 +59,7 @@ class InCarPackageCellAdapter(
         if (loginResponse?.user?.companyID == 240.toLong() || loginResponse?.user?.companyID == 313.toLong()) {
             isSprint = true
         }
-        return InCarPackageCellViewHolder(inflater, viewGroup, this)
+        return InCarPackageCellViewHolder(inflater, viewGroup, this, context!!)
     }
 
     override fun onBindViewHolder(
@@ -88,7 +89,8 @@ class InCarPackageCellAdapter(
     class InCarPackageCellViewHolder(
         private var binding: ItemInCarPackageCellBinding,
         private var parent: ViewGroup,
-        private var mAdapter: InCarPackageCellAdapter
+        private var mAdapter: InCarPackageCellAdapter,
+        private var context: Context
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(
@@ -265,7 +267,10 @@ class InCarPackageCellAdapter(
                     binding.imageViewReceiverLocation.visibility = View.VISIBLE
                     binding.imageViewReceiverLocation.setOnClickListener {
                         if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
-                            (mAdapter.context as LogesTechsActivity).showLocationInGoogleMaps(pkg.destinationAddress)
+                            (mAdapter.context as LogesTechsActivity).showNavigationOptionsDialog(
+                                mAdapter.context as LogesTechsActivity,
+                                pkg.destinationAddress
+                            )
                         }
                     }
                 } else {
@@ -277,7 +282,11 @@ class InCarPackageCellAdapter(
                     binding.imageViewReceiverLocationKsa.visibility = View.VISIBLE
                     binding.imageViewReceiverLocationKsa.setOnClickListener {
                         if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
-                            (mAdapter.context as LogesTechsActivity).showLocationInGoogleMaps(pkg.destinationAddress, true)
+                            (mAdapter.context as LogesTechsActivity).showNavigationOptionsDialog(
+                                mAdapter.context as LogesTechsActivity,
+                                pkg.destinationAddress,
+                                true
+                            )
                         }
                     }
                 } else {
@@ -303,11 +312,7 @@ class InCarPackageCellAdapter(
                             }
 
                             R.id.action_postpone_package -> {
-                                PostponePackageDialog(
-                                    mAdapter.context!!,
-                                    mAdapter,
-                                    pkg
-                                ).showDialog()
+                                mAdapter.listener?.onShowPostponePackageDialog(pkg)
                             }
                             R.id.action_view_attachment -> {
                                 mAdapter.listener?.onShowAttachmentsDialog(pkg)
@@ -369,10 +374,6 @@ class InCarPackageCellAdapter(
                 binding.buttonsContainer.visibility = View.GONE
             }
         }
-    }
-
-    override fun onPackagePostponed(postponePackageRequestBody: PostponePackageRequestBody) {
-        listener?.onPackagePostponed(postponePackageRequestBody)
     }
 
     override fun onPackageTypeChanged(changePackageTypeRequestBody: ChangePackageTypeRequestBody) {
