@@ -8,6 +8,7 @@ import android.text.InputType
 import android.view.LayoutInflater
 import androidx.databinding.DataBindingUtil
 import com.logestechs.driver.R
+import com.logestechs.driver.api.requests.ChangePackageWeightRequestBody
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.DialogChangePackageWeightBinding
 import com.logestechs.driver.utils.interfaces.ChangePackageWeightDialogListener
@@ -46,7 +47,7 @@ class ChangePackageWeightDialog(
                 binding.etWeight.makeInvalid()
             } else {
                 binding.etWeight.makeValid()
-                listener?.onPackageWeightChanged(pkg?.id)
+                listener?.onPackageWeightChanged(pkg?.id, ChangePackageWeightRequestBody(weight.toDouble()))
                 alertDialog.dismiss()
             }
         }

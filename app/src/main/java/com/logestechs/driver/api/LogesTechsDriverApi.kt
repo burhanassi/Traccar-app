@@ -188,6 +188,12 @@ interface LogesTechsDriverApi {
         @Body body: ChangePackageTypeRequestBody?
     ): Response<ResponseBody>?
 
+    @PUT("driver/packages/{packageId}/weight")
+    suspend fun changePackageWeight(
+        @Path("packageId") long: Long?,
+        @Body body: ChangePackageWeightRequestBody?
+    ): Response<ResponseBody>?
+
     @PUT("driver/packages/{packageId}/notes")
     suspend fun addPackageNote(
         @Path("packageId") long: Long?,

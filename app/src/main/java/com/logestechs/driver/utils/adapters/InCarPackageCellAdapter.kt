@@ -356,7 +356,7 @@ class InCarPackageCellAdapter(
                 if (mAdapter.companyConfigurations?.isDriverCanFailPackageDisabled == true) {
                     popup.menu.findItem(R.id.action_fail_delivery).isVisible = false
                 }
-                if (false) {//TODO here we need the configuration
+                if (mAdapter.companyConfigurations?.isAllowDriversToChangePkgWeight == false) {
                     popup.menu.findItem(R.id.action_edit_package_weight).isVisible = false
                 }
                 if (mAdapter.isSprint) {
@@ -395,7 +395,7 @@ class InCarPackageCellAdapter(
         listener?.onCodChanged(codChangeRequestBody)
     }
 
-    override fun onPackageWeightChanged(packageId: Long?) {
-        listener?.onPackageWeightChanged(packageId)
+    override fun onPackageWeightChanged(packageId: Long?, body: ChangePackageWeightRequestBody) {
+        listener?.onPackageWeightChanged(packageId, body)
     }
 }
