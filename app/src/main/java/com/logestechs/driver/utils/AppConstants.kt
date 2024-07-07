@@ -119,7 +119,8 @@ enum class IntentExtrasKeys() {
     FULFILMENT_ORDER,
     FULFILMENT_ORDERS,
     BUNDLE,
-    DRIVER_PACKAGES_LOCATIONS
+    DRIVER_PACKAGES_LOCATIONS,
+    PICK_WITHOUT_TOTE
 }
 
 enum class BarcodeScanType {

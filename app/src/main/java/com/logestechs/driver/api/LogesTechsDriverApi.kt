@@ -603,8 +603,15 @@ interface LogesTechsDriverApi {
     @PUT("handler/order-items/pick")
     suspend fun scanItemsIntoTote(
         @Query("orderIds") orderIds: List<Long?>,
+        @Query("locationId") locationId: Long?,
+        @Query("quantity") quantity: Int?,
         @Body body: BarcodeRequestBody?
     ): Response<SortItemIntoToteResponse>?
+
+    @PUT("handler/tote/order/{orderId}/un-bind-order")
+    suspend fun unBindOrder(
+        @Path("orderId") orderId: Long,
+    ): Response<ResponseBody>?
 
     @PUT("handler/tote/order/{orderId}/sort")
     suspend fun scanOrderIntoTote(
