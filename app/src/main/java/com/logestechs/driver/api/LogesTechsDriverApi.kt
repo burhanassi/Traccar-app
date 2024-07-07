@@ -162,7 +162,8 @@ interface LogesTechsDriverApi {
     @PUT("driver/packages/{packageId}/return")
     suspend fun returnPackage(
         @Path("packageId") long: Long?,
-        @Body body: ReturnPackageRequestBody?
+        @Body body: ReturnPackageRequestBody?,
+        @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString()
     ): Response<ResponseBody>?
 
     @GET("driver/packages/{packageId}/attachments")
@@ -266,6 +267,7 @@ interface LogesTechsDriverApi {
         @Query("barcode") barcode: String?,
         @Query("type") type: String?,
         @Query("note") partialDeliveryNote: String?,
+        @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString(),
         @Body body: DeliverPackageRequestBody?
     ): Response<ResponseBody>?
 
