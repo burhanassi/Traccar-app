@@ -620,10 +620,16 @@ class FulfilmentReturnOrderBarcodeScannerActivity :
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.getWarehouseDamagedLocationForReturn(
-                        barcode,
-                        selectedFulfilmentOrder?.customerId
-                    )
+                    val response = if (!isReject) {
+                        ApiAdapter.apiClient.getWarehouseLocation(
+                            barcode
+                        )
+                    } else {
+                        ApiAdapter.apiClient.getWarehouseDamagedLocationForReturn(
+                            barcode,
+                            selectedFulfilmentOrder?.customerId
+                        )
+                    }
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
