@@ -80,10 +80,6 @@ class ReturnedFulfilmentOrderCellAdapter(
             binding.buttonReturn.setOnClickListener {
                 mAdapter.listener?.onReturnFulfilmentOrder(adapterPosition)
             }
-
-            binding.itemOrderBarcode.buttonCopy.setOnClickListener {
-                Helper.copyTextToClipboard(mAdapter.context, fulfilmentOrder?.barcode)
-            }
         }
     }
 }

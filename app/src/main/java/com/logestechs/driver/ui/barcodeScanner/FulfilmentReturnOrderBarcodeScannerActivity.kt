@@ -5,6 +5,7 @@ import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.net.Uri
@@ -47,6 +48,7 @@ import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.FulfilmentOrderItemCellAdapter
 import com.logestechs.driver.utils.adapters.ReturnedItemCellAdapter
 import com.logestechs.driver.utils.adapters.ScannedShippingPlanItemCellAdapter
+import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
 import com.logestechs.driver.utils.dialogs.InsertBarcodeDialog
 import com.logestechs.driver.utils.dialogs.ItemQuantityDialog
 import com.logestechs.driver.utils.dialogs.RejectItemDialog
@@ -57,16 +59,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 enum class FulfilmentReturnScanMode {
     BIN,
-    ITEM_INTO_BIN,
-    ITEM,
-    NEW_BIN,
-    NEW_LOCATION
+    ITEM_INTO_BIN
 }
 
 class FulfilmentReturnOrderBarcodeScannerActivity :
@@ -92,16 +99,11 @@ class FulfilmentReturnOrderBarcodeScannerActivity :
     private var selectedScanMode: FulfilmentReturnScanMode? = null
     private var selectedFulfilmentOrder: FulfilmentOrder? = null
     private var returnedItemsList: ArrayList<ProductItem?> = ArrayList()
-    private var rejectedItemsList: ArrayList<ProductItem?> = ArrayList()
 
     private var scannedWarehouseLocation: WarehouseLocation? = null
-    private var scannedShippingPlan: ShippingPlan? = null
     private var scannedBin: Bin? = null
     private var isBinScan = true
-    private var hours: Double? = null
-    private var rejectedItems: Int? = null
     private var isReject: Boolean = false
-    private var flagLocation: Boolean = false
     private var productBarcode: String? = null
 
     var loadedImagesList: java.util.ArrayList<LoadedImage> = java.util.ArrayList()
@@ -348,7 +350,7 @@ class FulfilmentReturnOrderBarcodeScannerActivity :
                         if (loadedImagesList.size > 0 && loadedImagesList[loadedImagesList.size - 1]
                                 .imageUrl == null
                         ) {
-//                            callUploadPodImage(loadedImagesList[loadedImagesList.size - 1])
+                            callUploadPodImage(loadedImagesList[loadedImagesList.size - 1])
                         }
                     } else {
                         Toast.makeText(
@@ -379,7 +381,7 @@ class FulfilmentReturnOrderBarcodeScannerActivity :
                         loadedImagesList.add(compressedImage)
                         if (loadedImagesList.size > 0 && loadedImagesList[loadedImagesList.size - 1].imageUrl == null
                         ) {
-//                            callUploadPodImage(loadedImagesList[loadedImagesList.size - 1])
+                            callUploadPodImage(loadedImagesList[loadedImagesList.size - 1])
                         }
                     } else {
                         Toast.makeText(
@@ -465,14 +467,6 @@ class FulfilmentReturnOrderBarcodeScannerActivity :
             return
         }
         when (selectedScanMode) {
-//            FulfilmentSorterScanMode.LOCATION -> {
-//                callGetWarehouseLocation(barcode)
-//            }
-//
-//            FulfilmentSorterScanMode.BIN_INTO_LOCATION -> {
-//                callSortBinIntoWarehouseLocation(barcode)
-//            }
-//
             FulfilmentReturnScanMode.BIN -> {
                 if (isBinScan) {
                     callGetBin(barcode)
@@ -484,11 +478,7 @@ class FulfilmentReturnOrderBarcodeScannerActivity :
             FulfilmentReturnScanMode.ITEM_INTO_BIN -> {
                 callSortReturnedItem(barcode)
             }
-//
-//            FulfilmentSorterScanMode.SHIPPING_PLAN -> {
-//                callGetShippingPlan(barcode)
-//            }
-//
+
             null -> return
             else -> {}
         }
@@ -836,6 +826,92 @@ class FulfilmentReturnOrderBarcodeScannerActivity :
                     super.getContext(), getString(R.string.error_check_internet_connection)
                 )
             }
+        }
+    }
+
+    private fun callUploadPodImage(loadedImage: LoadedImage?) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val file: File = File(
+                        Helper.getRealPathFromURI(
+                            super.getContext(),
+                            loadedImage?.imageUri!!
+                        ) ?: ""
+                    )
+                    val bitmap: Bitmap = MediaStore.Images.Media
+                        .getBitmap(super.getContext()?.contentResolver, Uri.fromFile(file))
+
+                    val bytes = ByteArrayOutputStream()
+                    bitmap.compress(
+                        Bitmap.CompressFormat.JPEG,
+                        AppConstants.IMAGE_FULL_QUALITY,
+                        bytes
+                    )
+
+                    val reqFile: RequestBody =
+                        bytes.toByteArray().toRequestBody("image/jpeg".toMediaTypeOrNull())
+
+                    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale("en")).format(Date())
+                    val imageFileName = "JPEG_" + timeStamp + "_"
+
+                    val body: MultipartBody.Part = MultipartBody.Part.createFormData(
+                        "file",
+                        "$imageFileName.jpeg", reqFile
+                    )
+
+                    val response = ApiAdapter.apiClient.uploadPodImageForRejectedItem(
+                        rejectItemDialog?.barcode!!,
+                        body
+                    )
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            hideWaitDialog()
+                            loadedImagesList[loadedImagesList.size - 1].imageUrl =
+                                response.body()?.fileUrl
+                            (rejectItemDialog?.binding?.rvThumbnails?.adapter as ThumbnailsAdapter).updateItem(
+                                loadedImagesList.size - 1
+                            )
+                            rejectItemDialog?.binding?.containerThumbnails?.visibility =
+                                View.VISIBLE
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
         }
     }
 
