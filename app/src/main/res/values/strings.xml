@@ -227,8 +227,10 @@
     <string name="action_reject">Reject</string>
     <string name="dashboard_new_fulfilment_orders">New Fulfillment Orders</string>
     <string name="dashboard_track_inventory_items">Track Inventory Items</string>
+    <string name="dashboard_returned_orders">Returned Fulfillment Orders</string>
     <string name="dashboard_change_bin_location">Change Locations</string>
     <string name="title_new_fulfilment_orders">New Fulfillment Orders</string>
+    <string name="title_returned_fulfilment_orders">Returned Fulfillment Orders</string>
     <string name="title_fulfilment_orders">Fulfillment Orders</string>
     <string name="title_tracking_inventory_item">Track Inventory Item</string>
     <string name="dashboard_picked_fulfilment_orders">Picked Fulfillment Orders</string>
@@ -361,4 +363,6 @@
     <string name="title_waze">Waze</string>
     <string name="error_add_attachments">Please add attachments</string>
     <string name="hint_weight">Weight</string>
+    <string name="button_return_fulfillment_order">Return</string>
+    <string name="title_status">Status</string>
 </resources>

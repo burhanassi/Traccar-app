@@ -587,6 +587,12 @@ interface LogesTechsDriverApi {
         @Query("statuses") statuses: List<String>? = null
     ): Response<GetFulfilmentOrdersResponse?>?
 
+    @GET("handler/orders/returned")
+    suspend fun getReturnedFulfilmentOrders(
+        @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
+        @Query("page") page: Int = AppConstants.DEFAULT_PAGE
+    ): Response<GetFulfilmentOrdersResponse?>?
+
     @GET("handler/hub/tote")
     suspend fun getTote(
         @Query("barcode") barcode: String?,
@@ -745,4 +751,32 @@ interface LogesTechsDriverApi {
         @Query("productId") productId: Long?,
         @Query("locationId") locationId: Long?,
     ): Response<Long>
+
+    @GET("handler/order/{orderId}/items")
+    suspend fun getReturnedItems(
+        @Path("orderId") orderId: Long?,
+        @Query("status") status: String = "RETURNED"
+    ): Response<GetReturnedItemsResponse>
+
+    @PUT("handler/items/returned/sort")
+    suspend fun sortReturnedItemIntoBin(
+        @Query("barcode") barcode: String,
+        @Query("customerId") customerId: Long,
+        @Query("binId") binId: Long?,
+        @Query("locationId") locationId: Long?,
+        @Query("orderId") orderId: Long?
+    ): Response<ResponseBody>?
+
+    @PUT("handler/locations/{locationId}/returned-item/reject")
+    suspend fun rejectReturnedItem(
+        @Path("locationId") locationId: Long?,
+        @Query("orderId") orderId: Long?,
+        @Body body: RejectItemRequestBody?
+    ): Response<ResponseBody>?
+
+    @GET("handler/locations/damaged-location")
+    suspend fun getWarehouseDamagedLocationForReturn(
+        @Query("barcode") barcode: String?,
+        @Query("customerId") customerId: Long?,
+    ): Response<WarehouseLocation?>?
 }
