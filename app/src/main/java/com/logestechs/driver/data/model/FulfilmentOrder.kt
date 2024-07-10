@@ -1,6 +1,8 @@
 package com.logestechs.driver.data.model
 
 import android.os.Parcelable
+import com.logestechs.driver.utils.AppLanguages
+import com.logestechs.driver.utils.ReturnedFulfillmentOrderStatus
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -36,5 +38,15 @@ data class FulfilmentOrder(
     val numberOfItems: Int? = null,
     val totalQuantity: Int? = null,
     val totBarcode: String? = null,
-    val numberOfSkus: Int? = null
-) : Parcelable
+    val numberOfSkus: Int? = null,
+    val packageBarcode: String? = null,
+    val returnDate: String? = null
+) : Parcelable {
+    fun getStatusInEnglish(): String? {
+        return ReturnedFulfillmentOrderStatus.fromStatus(this.status)?.english
+    }
+
+    fun getStatusInArabic(): String? {
+        return ReturnedFulfillmentOrderStatus.fromStatus(this.status)?.arabic
+    }
+}

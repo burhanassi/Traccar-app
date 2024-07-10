@@ -162,7 +162,8 @@ interface LogesTechsDriverApi {
     @PUT("driver/packages/{packageId}/return")
     suspend fun returnPackage(
         @Path("packageId") long: Long?,
-        @Body body: ReturnPackageRequestBody?
+        @Body body: ReturnPackageRequestBody?,
+        @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString()
     ): Response<ResponseBody>?
 
     @GET("driver/packages/{packageId}/attachments")
@@ -186,6 +187,12 @@ interface LogesTechsDriverApi {
     suspend fun changePackageType(
         @Path("packageId") long: Long?,
         @Body body: ChangePackageTypeRequestBody?
+    ): Response<ResponseBody>?
+
+    @PUT("driver/packages/{packageId}/weight")
+    suspend fun changePackageWeight(
+        @Path("packageId") long: Long?,
+        @Body body: ChangePackageWeightRequestBody?
     ): Response<ResponseBody>?
 
     @PUT("driver/packages/{packageId}/notes")
@@ -260,6 +267,7 @@ interface LogesTechsDriverApi {
         @Query("barcode") barcode: String?,
         @Query("type") type: String?,
         @Query("note") partialDeliveryNote: String?,
+        @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString(),
         @Body body: DeliverPackageRequestBody?
     ): Response<ResponseBody>?
 
@@ -579,6 +587,12 @@ interface LogesTechsDriverApi {
         @Query("statuses") statuses: List<String>? = null
     ): Response<GetFulfilmentOrdersResponse?>?
 
+    @GET("handler/orders/returned")
+    suspend fun getReturnedFulfilmentOrders(
+        @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
+        @Query("page") page: Int = AppConstants.DEFAULT_PAGE
+    ): Response<GetFulfilmentOrdersResponse?>?
+
     @GET("handler/hub/tote")
     suspend fun getTote(
         @Query("barcode") barcode: String?,
@@ -597,8 +611,15 @@ interface LogesTechsDriverApi {
     @PUT("handler/order-items/pick")
     suspend fun scanItemsIntoTote(
         @Query("orderIds") orderIds: List<Long?>,
+        @Query("locationId") locationId: Long?,
+        @Query("quantity") quantity: Int?,
         @Body body: BarcodeRequestBody?
     ): Response<SortItemIntoToteResponse>?
+
+    @PUT("handler/tote/order/{orderId}/un-bind-order")
+    suspend fun unBindOrder(
+        @Path("orderId") orderId: Long,
+    ): Response<ResponseBody>?
 
     @PUT("handler/tote/order/{orderId}/sort")
     suspend fun scanOrderIntoTote(
@@ -730,4 +751,32 @@ interface LogesTechsDriverApi {
         @Query("productId") productId: Long?,
         @Query("locationId") locationId: Long?,
     ): Response<Long>
+
+    @GET("handler/order/{orderId}/items")
+    suspend fun getReturnedItems(
+        @Path("orderId") orderId: Long?,
+        @Query("status") status: String = "RETURNED"
+    ): Response<GetReturnedItemsResponse>
+
+    @PUT("handler/items/returned/sort")
+    suspend fun sortReturnedItemIntoBin(
+        @Query("barcode") barcode: String,
+        @Query("customerId") customerId: Long,
+        @Query("binId") binId: Long?,
+        @Query("locationId") locationId: Long?,
+        @Query("orderId") orderId: Long?
+    ): Response<ResponseBody>?
+
+    @PUT("handler/locations/{locationId}/returned-item/reject")
+    suspend fun rejectReturnedItem(
+        @Path("locationId") locationId: Long?,
+        @Query("orderId") orderId: Long?,
+        @Body body: RejectItemRequestBody?
+    ): Response<ResponseBody>?
+
+    @GET("handler/locations/damaged-location")
+    suspend fun getWarehouseDamagedLocationForReturn(
+        @Query("barcode") barcode: String?,
+        @Query("customerId") customerId: Long?,
+    ): Response<WarehouseLocation?>?
 }

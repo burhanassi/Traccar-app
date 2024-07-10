@@ -10,4 +10,5 @@ data class RejectItemRequestBody(
     val rejectReasonKey: String?,
     val rejectReason: String?,
     val urls: List<String?>?,
+    var locationId: Long? = null
 ): Parcelable

@@ -1,37 +1,35 @@
-package com.logestechs.driver.ui.newFulfilmentOrders
+package com.logestechs.driver.ui.returnedFulfilmentOrders
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
-import com.logestechs.driver.api.requests.PrintPickListRequestBody
-import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.FulfilmentOrder
-import com.logestechs.driver.databinding.ActivityNewFulfilmentOrdersBinding
-import com.logestechs.driver.ui.barcodeScanner.FulfilmentPickerBarcodeScannerActivity
-import com.logestechs.driver.ui.barcodeScanner.FulfilmentPickerMultiPickingBarcodeScannerActivity
-import com.logestechs.driver.ui.barcodeScanner.FulfilmentPickerScanMode
-import com.logestechs.driver.utils.*
+import com.logestechs.driver.databinding.ActivityReturnedFulfillmentOrdersBinding
+import com.logestechs.driver.ui.barcodeScanner.FulfilmentReturnOrderBarcodeScannerActivity
+import com.logestechs.driver.ui.barcodeScanner.FulfilmentReturnScanMode
+import com.logestechs.driver.ui.barcodeScanner.FulfilmentSorterScanMode
+import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.IntentExtrasKeys
+import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.NewFulfilmentOrderCellAdapter
-import com.logestechs.driver.utils.adapters.PickedFulfilmentOrderCellAdapter
-import com.logestechs.driver.utils.dialogs.InCarViewModeDialog
-import com.logestechs.driver.utils.interfaces.NewFulfilmentOrderCardListener
+import com.logestechs.driver.utils.adapters.ReturnedFulfilmentOrderCellAdapter
+import com.logestechs.driver.utils.interfaces.ReturnedFulfilmentOrderCardListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-import java.util.TimeZone
 
-class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCardListener,
-    View.OnClickListener {
-    private lateinit var binding: ActivityNewFulfilmentOrdersBinding
+class ReturnedFulfillmentOrdersActivity : LogesTechsActivity(), View.OnClickListener,
+    ReturnedFulfilmentOrderCardListener {
+    private lateinit var binding: ActivityReturnedFulfillmentOrdersBinding
 
     //pagination fields
     private var isLoading = false
@@ -39,15 +37,9 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
     private var currentPageIndex = 1
 
     private var fulfilmentOrdersList: ArrayList<FulfilmentOrder?> = ArrayList()
-
-    var isMultiPicking: Boolean = false
-
-    private var companyConfigurations: DriverCompanyConfigurations? =
-        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityNewFulfilmentOrdersBinding.inflate(layoutInflater)
+        binding = ActivityReturnedFulfillmentOrdersBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initRecycler()
         initListeners()
@@ -56,12 +48,7 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
     override fun onResume() {
         super.onResume()
         currentPageIndex = 1
-        (binding.rvFulfilmentOrders.adapter as NewFulfilmentOrderCellAdapter).clearList()
-        binding.buttonMultiPickContainer.visibility = View.GONE
-        (binding.rvFulfilmentOrders.adapter as NewFulfilmentOrderCellAdapter).isMultiPicking =
-            false
-        (binding.rvFulfilmentOrders.adapter as NewFulfilmentOrderCellAdapter).clearSelectedItems()
-
+        (binding.rvFulfilmentOrders.adapter as ReturnedFulfilmentOrderCellAdapter).clearList()
         binding.rvFulfilmentOrders.adapter?.notifyDataSetChanged()
         callGetFulfilmentOrders()
     }
@@ -70,7 +57,7 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
         val layoutManager = LinearLayoutManager(
             super.getContext()
         )
-        binding.rvFulfilmentOrders.adapter = NewFulfilmentOrderCellAdapter(
+        binding.rvFulfilmentOrders.adapter = ReturnedFulfilmentOrderCellAdapter(
             fulfilmentOrdersList, super.getContext(), listener = this
         )
         binding.rvFulfilmentOrders.layoutManager = layoutManager
@@ -80,7 +67,7 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
     private fun initListeners() {
         binding.refreshLayoutCustomers.setOnRefreshListener {
             currentPageIndex = 1
-            (binding.rvFulfilmentOrders.adapter as NewFulfilmentOrderCellAdapter).clearList()
+            (binding.rvFulfilmentOrders.adapter as ReturnedFulfilmentOrderCellAdapter).clearList()
             callGetFulfilmentOrders()
         }
 
@@ -90,8 +77,6 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
         if (SharedPreferenceWrapper.getNotificationsCount() == "0") {
             binding.toolbarMain.notificationCount.visibility = View.GONE
         }
-        binding.buttonViewMode.setOnClickListener(this)
-        binding.buttonMultiPick.setOnClickListener(this)
     }
 
     private fun handleNoPackagesLabelVisibility(isEmpty: Boolean) {
@@ -129,7 +114,7 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
             }
         }
 
-    //apis
+    //APIs
     @SuppressLint("NotifyDataSetChanged")
     private fun callGetFulfilmentOrders() {
         showWaitDialog()
@@ -137,10 +122,8 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
             isLoading = true
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.getFulfilmentOrders(
-                        page = currentPageIndex,
-                        status = FulfilmentOrderStatus.CREATED.name,
-                        statuses = null
+                    val response = ApiAdapter.apiClient.getReturnedFulfilmentOrders(
+                        page = currentPageIndex
                     )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
@@ -203,61 +186,6 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
         }
     }
 
-    private fun callPrintPickList(index: Int) {
-        showWaitDialog()
-        if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response =
-                        ApiAdapter.apiClient.printPickList(
-                            PrintPickListRequestBody(listOf(fulfilmentOrdersList[index]?.id ?: 0))
-                        )
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        val data = response.body()!!
-                        withContext(Dispatchers.Main) {
-                            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(data.url))
-                            startActivity(browserIntent)
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(), jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(), getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            hideWaitDialog()
-            Helper.showErrorMessage(
-                super.getContext(), getString(R.string.error_check_internet_connection)
-            )
-        }
-    }
-
     @SuppressLint("NotifyDataSetChanged")
     override fun onClick(v: View?) {
         when (v?.id) {
@@ -268,60 +196,19 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
             R.id.button_notifications -> {
                 super.getNotifications()
             }
-
-            R.id.button_view_mode -> {
-                isMultiPicking = !isMultiPicking
-                if (isMultiPicking) {
-                    binding.buttonMultiPickContainer.visibility = View.VISIBLE
-                    (binding.rvFulfilmentOrders.adapter as NewFulfilmentOrderCellAdapter).isMultiPicking =
-                        isMultiPicking
-                    binding.rvFulfilmentOrders.adapter?.notifyDataSetChanged()
-                } else {
-                    binding.buttonMultiPickContainer.visibility = View.GONE
-                    (binding.rvFulfilmentOrders.adapter as NewFulfilmentOrderCellAdapter).isMultiPicking =
-                        isMultiPicking
-                    binding.rvFulfilmentOrders.adapter?.notifyDataSetChanged()
-                }
-            }
-
-            R.id.button_multi_pick -> {
-                val selectedItems = (binding.rvFulfilmentOrders.adapter as NewFulfilmentOrderCellAdapter).getSelectedItems()
-                val mIntent = Intent(this, FulfilmentPickerMultiPickingBarcodeScannerActivity::class.java)
-                mIntent.putExtra(
-                    IntentExtrasKeys.FULFILMENT_ORDERS.name,
-                    selectedItems
-                )
-                startActivity(mIntent)
-            }
         }
     }
 
-    override fun onPickFulfilmentOrder(index: Int) {
-        val mIntent = Intent(this, FulfilmentPickerBarcodeScannerActivity::class.java)
-        if (companyConfigurations?.isAllowToPickingOrderWithoutTote == true) {
-            mIntent.putExtra(
-                IntentExtrasKeys.FULFILMENT_PICKER_SCAN_MODE.name,
-                FulfilmentPickerScanMode.ITEM_INTO_TOTE
-            )
-            mIntent.putExtra(
-                IntentExtrasKeys.PICK_WITHOUT_TOTE.name,
-                true
-            )
-        } else {
-            mIntent.putExtra(
-                IntentExtrasKeys.FULFILMENT_PICKER_SCAN_MODE.name,
-                FulfilmentPickerScanMode.TOTE
-            )
-        }
-
+    override fun onReturnFulfilmentOrder(index: Int) {
+        val mIntent = Intent(this, FulfilmentReturnOrderBarcodeScannerActivity::class.java)
+        mIntent.putExtra(
+            IntentExtrasKeys.FULFILMENT_RETURN_ORDER_SCAN_MODE.name,
+            FulfilmentReturnScanMode.BIN
+        )
         mIntent.putExtra(
             IntentExtrasKeys.FULFILMENT_ORDER.name,
             fulfilmentOrdersList[index]
         )
         startActivity(mIntent)
-    }
-
-    override fun onPrintPickList(index: Int) {
-        callPrintPickList(index)
     }
 }
