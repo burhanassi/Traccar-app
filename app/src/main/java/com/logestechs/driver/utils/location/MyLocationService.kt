@@ -23,6 +23,7 @@ import com.logestechs.driver.data.model.LatLng
 import com.logestechs.driver.data.model.User
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsApp
+import com.logestechs.driver.utils.PermissionRequestActivity
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -50,7 +51,11 @@ class MyLocationService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        initData()
+        if (checkPermissions()) {
+            initData()
+        } else {
+            requestPermissions()
+        }
     }
 
     private fun initData() {
@@ -60,6 +65,25 @@ class MyLocationService : Service() {
         myProfile = SharedPreferenceWrapper.getLoginResponse()?.user
         mFusedLocationClient =
             LocationServices.getFusedLocationProviderClient(LogesTechsApp.instance)
+    }
+
+    private fun checkPermissions(): Boolean {
+        return ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.FOREGROUND_SERVICE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestPermissions() {
+        val intent = Intent(this, PermissionRequestActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 
     //Location Callback
