@@ -32,7 +32,8 @@ class InCarPackageCellAdapter(
 ) :
     RecyclerView.Adapter<InCarPackageCellAdapter.InCarPackageCellViewHolder>(),
     ChangePackageTypeDialogListener,
-    ChangeCodDialogListener {
+    ChangeCodDialogListener,
+    ChangePackageWeightDialogListener {
 
     val companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
@@ -99,12 +100,17 @@ class InCarPackageCellAdapter(
         ) {
             binding.itemSenderName.textItem.text = pkg?.getFullSenderName()
             binding.itemSenderAddress.textItem.text = pkg?.originAddress?.toStringAddress()
-//            if (mAdapter.companyConfigurations?.isPricingPerServiceTypeEnabled!!) {
-                if (pkg?.serviceTypeName != null && pkg?.serviceTypeName!!.isNotEmpty()) {
-                    binding.containerServiceType.visibility = View.VISIBLE
-                    binding.serviceType.text = pkg?.serviceTypeName
+            if (pkg?.serviceTypeName != null && pkg.serviceTypeName!!.isNotEmpty()) {
+                binding.containerServiceType.visibility = View.VISIBLE
+                binding.serviceType.text = pkg.serviceTypeName
+            }
+
+            if (mAdapter.loginResponse?.user?.isHideSenderInfo == true) {
+                if (mAdapter.loginResponse?.user?.isShowSenderPhone == false) {
+                    binding.containerSenderPhoneNumber.visibility = View.GONE
                 }
-//            }
+            }
+
             binding.itemReceiverName.textItem.text = pkg?.getFullReceiverName()
             binding.itemReceiverAddress.textItem.text = pkg?.destinationAddress?.toStringAddress()
 
@@ -324,6 +330,13 @@ class InCarPackageCellAdapter(
                                     pkg
                                 ).showDialog()
                             }
+                            R.id.action_edit_package_weight -> {
+                                ChangePackageWeightDialog(
+                                    mAdapter.context!!,
+                                    mAdapter,
+                                    pkg
+                                ).showDialog()
+                            }
                             R.id.action_fail_delivery -> {
                                 mAdapter.listener?.onShowFailDeliveryDialog(pkg)
                             }
@@ -347,6 +360,9 @@ class InCarPackageCellAdapter(
                 }
                 if (mAdapter.companyConfigurations?.isDriverCanFailPackageDisabled == true) {
                     popup.menu.findItem(R.id.action_fail_delivery).isVisible = false
+                }
+                if (mAdapter.companyConfigurations?.isAllowDriversToChangePkgWeight == false) {
+                    popup.menu.findItem(R.id.action_edit_package_weight).isVisible = false
                 }
                 if (mAdapter.isSprint) {
                     popup.menu.findItem(R.id.action_edit_package_type).title =
@@ -382,5 +398,9 @@ class InCarPackageCellAdapter(
 
     override fun onCodChanged(codChangeRequestBody: CodChangeRequestBody?) {
         listener?.onCodChanged(codChangeRequestBody)
+    }
+
+    override fun onPackageWeightChanged(packageId: Long?, body: ChangePackageWeightRequestBody) {
+        listener?.onPackageWeightChanged(packageId, body)
     }
 }

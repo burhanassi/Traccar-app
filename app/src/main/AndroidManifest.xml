@@ -51,7 +51,7 @@
         <package android:name="com.whatsapp.w4b" />
         <package android:name="com.google.android.apps.maps" />
         <package android:name="com.interpaymea.softpos" />
-        <package android:name="com.waze" />
+        <package android:name="com.waze"/>
     </queries>
 
     <application
@@ -69,6 +69,12 @@
         tools:targetApi="31">
         <activity
             android:name=".utils.PermissionRequestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.barcodeScanner.FulfilmentReturnOrderBarcodeScannerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.returnedFulfilmentOrders.ReturnedFulfillmentOrdersActivity"
             android:exported="false" />
         <activity
             android:name=".ui.barcodeScanner.FulfilmentChangeBinLocationBarcodeScannerActivity"
