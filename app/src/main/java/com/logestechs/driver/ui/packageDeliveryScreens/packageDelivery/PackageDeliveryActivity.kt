@@ -1463,6 +1463,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             if (response.body()!!.paymentStatus == "PAID") {
+                                selectedPaymentType = null
+                                paymentTypeId = null
                                 makePackageDelivery()
                             } else {
                                 Helper.showSuccessMessage(
