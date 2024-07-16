@@ -51,7 +51,8 @@ interface LogesTechsDriverApi {
     suspend fun pickupPackage(
         @Query("barcode") barcode: String,
         @Query("is-bundle-pod-enabled") isBundlePodEnabled: Boolean? = null,
-        @Query("isToFinalDestination") isToFinalDestination: Boolean? = null
+        @Query("isToFinalDestination") isToFinalDestination: Boolean? = null,
+        @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString()
     ): Response<Package?>?
 
     @GET("driver/customers/accepted")
@@ -508,6 +509,12 @@ interface LogesTechsDriverApi {
         @Path("packageId") packageId: Long?,
         @Body body: ReturnPackageRequestBody?
     ): Response<GetFirstPartnerCostResponse?>?
+
+    @PUT("driver/packages/{packageId}/paymentType/pay")
+    suspend fun payMultiWay(
+        @Path("packageId") packageId: Long?,
+        @Body body: PayMultiWayRequestBody?,
+    ): Response<PayMultiWayResponse?>?
 
     @Multipart
     @POST("handler/item/image/upload")

@@ -365,4 +365,6 @@
     <string name="hint_weight">Weight</string>
     <string name="button_return_fulfillment_order">Return</string>
     <string name="title_status">Status</string>
+    <string name="title_insert_payment_type_value">Please insert value</string>
+    <string name="hint_value">Value</string>
 </resources>
