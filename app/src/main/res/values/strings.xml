@@ -363,6 +363,6 @@
     <string name="title_waze">Waze</string>
     <string name="error_add_attachments">Please add attachments</string>
     <string name="hint_weight">Weight</string>
-    <string name="button_return_fulfillment_order">Return</string>
+    <string name="button_return_fulfillment_order">Sort</string>
     <string name="title_status">Status</string>
 </resources>
