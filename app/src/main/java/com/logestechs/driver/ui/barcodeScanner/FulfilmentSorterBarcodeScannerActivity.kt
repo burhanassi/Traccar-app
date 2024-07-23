@@ -617,7 +617,7 @@ class FulfilmentSorterBarcodeScannerActivity :
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.getShippingPlan(
+                    val response = ApiAdapter.apiClient.getShippingPlanForSort(
                         barcode
                     )
                     withContext(Dispatchers.Main) {
