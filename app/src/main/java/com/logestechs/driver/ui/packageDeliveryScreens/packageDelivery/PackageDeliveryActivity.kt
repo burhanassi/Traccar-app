@@ -1020,12 +1020,13 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 }
             }
 
-            val paymentType: String? =
-                if (companyConfigurations?.isAddingPaymentTypesEnabled == true) {
-                    null
-                } else {
-                    (selectedPaymentType?.enumValue as PaymentType).name
+            val paymentType: String? = if (companyConfigurations?.isAddingPaymentTypesEnabled == true) {
+                null
+            } else {
+                selectedPaymentType?.let {
+                    (it.enumValue as PaymentType).name
                 }
+            }
 
             GlobalScope.launch(Dispatchers.IO) {
                 try {
@@ -1345,7 +1346,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            if (companyConfigurations?.isEnableDriversPayingMultiPaymentTypes == true) {
+                            if (companyConfigurations?.isEnableDeliverByMultiPaymentTypes == true) {
                                 callPayMultiWay()
                             } else {
                                 makePackageDelivery()
@@ -1843,7 +1844,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             isClickPayVerified
             handlePackageDelivery()
         } else if (action == ConfirmationDialogAction.DELIVER_PACKAGE) {
-            if (companyConfigurations?.isEnableDriversPayingMultiPaymentTypes == true) {
+            if (companyConfigurations?.isEnableDeliverByMultiPaymentTypes == true) {
                 PaymentTypeValueDialog(super.getContext(), this, selectedPaymentType, paymentTypeId).showDialog()
             } else {
                 if (selectedPaymentType?.textView?.text == PaymentType.INTER_PAY.englishLabel) {

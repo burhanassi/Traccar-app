@@ -40,5 +40,5 @@ data class DriverCompanyConfigurations(
     var isForceDriversToAddAttachments: Boolean? = null,
     var isAllowDriversToChangePkgWeight: Boolean? = null,
     var isAllowToPickingOrderWithoutTote: Boolean? = null,
-    var isEnableDriversPayingMultiPaymentTypes: Boolean? = null
+    var isEnableDeliverByMultiPaymentTypes: Boolean? = null
 )
