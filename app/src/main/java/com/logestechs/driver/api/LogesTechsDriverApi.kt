@@ -544,6 +544,9 @@ interface LogesTechsDriverApi {
     @PUT("handler/shipping-plan")
     suspend fun getShippingPlan(@Query("barcode") barcode: String?): Response<ShippingPlan?>?
 
+    @GET("handler/shipping-plan")
+    suspend fun getShippingPlanForSort(@Query("barcode") barcode: String?): Response<ShippingPlan?>?
+
     @GET("handler/hub/bin")
     suspend fun getBin(
         @Query("barcode") barcode: String?,
