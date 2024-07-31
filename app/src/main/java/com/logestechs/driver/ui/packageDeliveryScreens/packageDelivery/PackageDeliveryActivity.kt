@@ -49,6 +49,7 @@ import com.logestechs.driver.databinding.ActivityPackageDeliveryBinding
 import com.logestechs.driver.ui.singleScanBarcodeScanner.SingleScanBarcodeScanner
 import com.logestechs.driver.ui.verifyPackageDelivery.VerifyPackageDeliveryActivity
 import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.AppCurrency
 import com.logestechs.driver.utils.AppLanguages
 import com.logestechs.driver.utils.ConfirmationDialogAction
 import com.logestechs.driver.utils.DeliveryType
@@ -184,16 +185,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 binding.containerPaymentType.visibility = View.GONE
             }
 
-            if (pkg?.paymentType != PaymentType.CLICK_PAY.name) {
-                binding.selectorClickPay.visibility = View.GONE
-            }
-
-            if (pkg?.paymentType != PaymentType.NEAR_PAY.name) {
-                binding.selectorNearPay.visibility = View.GONE
-            }
-
-            if (pkg?.paymentType != PaymentType.INTER_PAY.name) {
-                binding.selectorInterPay.visibility = View.GONE
+            if (Helper.getCompanyCurrency() == AppCurrency.SAR.value) {
+                binding.containerPaymentGateways.visibility = View.VISIBLE
             }
         }
 
