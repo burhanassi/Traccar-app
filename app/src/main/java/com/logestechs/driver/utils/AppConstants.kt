@@ -90,7 +90,8 @@ enum class AppCurrency(val value: String) {
     IQD("IQD"),
     SAR("SAR"),
     LYD("LYD"),
-    OMR("OMR")
+    OMR("OMR"),
+    EGP("EGP")
 }
 
 enum class DraftPickupStatus {
