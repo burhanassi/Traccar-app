@@ -348,6 +348,10 @@ class InCarPackageCellAdapter(
                             R.id.action_edit_package_cod -> {
                                 ChangeCodDialog(mAdapter.context!!, mAdapter, pkg).showDialog()
                             }
+
+                            R.id.action_show_package_content -> {
+                                ShowPackageContentDialog(mAdapter.context!!, pkg?.description).showDialog()
+                            }
                         }
                     }
                     true
@@ -363,6 +367,11 @@ class InCarPackageCellAdapter(
                 }
                 if (mAdapter.companyConfigurations?.isAllowDriversToChangePkgWeight == false) {
                     popup.menu.findItem(R.id.action_edit_package_weight).isVisible = false
+                }
+                if (mAdapter.companyConfigurations?.isShowPackageContentForDrivers == false ||
+                    !pkg?.description.isNullOrEmpty()
+                    ) {
+                    popup.menu.findItem(R.id.action_show_package_content).isVisible = false
                 }
                 if (mAdapter.isSprint) {
                     popup.menu.findItem(R.id.action_edit_package_type).title =
