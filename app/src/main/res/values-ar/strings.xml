@@ -107,6 +107,7 @@
     <string name="error_insert_message_text">الرجاء إدخال نص الرسالة</string>
     <string name="title_postpone">تأجيل</string>
     <string name="title_attachments">المرفقات</string>
+    <string name="title_package_content">محتويات الطرد</string>
     <string name="error_select_postpone_date">اختر تاريخ التأجيل</string>
     <string name="package_type_cod">تحصيل عند الاستلام</string>
     <string name="package_type_regular">مدفوع مسبقا</string>
@@ -364,4 +365,5 @@
     <string name="title_status">الحالة</string>
     <string name="title_insert_payment_type_value">الرجاء ادخال القيمة</string>
     <string name="hint_value">القيمة</string>
+    <string name="show_package_content">عرض محتويات الطرد</string>
 </resources>

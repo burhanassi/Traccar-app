@@ -107,6 +107,7 @@
     <string name="error_insert_message_text">Please insert message text</string>
     <string name="title_postpone">Postpone</string>
     <string name="title_attachments">Attachments</string>
+    <string name="title_package_content">Package Content</string>
     <string name="error_select_postpone_date">Please select postpone date</string>
     <string name="package_type_cod">COD</string>
     <string name="package_type_regular">Prepaid</string>
@@ -367,4 +368,5 @@
     <string name="title_status">Status</string>
     <string name="title_insert_payment_type_value">Please insert value</string>
     <string name="hint_value">Value</string>
+    <string name="show_package_content">Show package content</string>
 </resources>
