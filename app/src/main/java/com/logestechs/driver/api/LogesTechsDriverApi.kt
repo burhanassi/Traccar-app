@@ -115,7 +115,9 @@ interface LogesTechsDriverApi {
     ): Response<GetCustomerReturnedPackagesResponse?>?
 
     @GET("admin/bundles/returned")
-    suspend fun getCustomersWithReturnedBundles(): Response<GetCustomersWithReturnedBundlesResponse?>?
+    suspend fun getCustomersWithReturnedBundles(
+        @Query("status") status: String = "IN_TRANSIT_TO_CUSTOMER"
+    ): Response<GetCustomersWithReturnedBundlesResponse?>?
 
     @GET("admin/bundles/{bundleId}/packages")
     suspend fun getCustomerReturnedBundles(
