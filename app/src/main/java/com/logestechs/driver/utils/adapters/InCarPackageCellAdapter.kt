@@ -398,6 +398,10 @@ class InCarPackageCellAdapter(
             ) {
                 binding.buttonsContainer.visibility = View.GONE
             }
+
+            if (pkg?.isBundle == true) {
+                binding.buttonContextMenu.visibility = View.GONE
+            }
         }
     }
 
