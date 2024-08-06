@@ -399,7 +399,8 @@ class InCarPackageCellAdapter(
                 binding.buttonsContainer.visibility = View.GONE
             }
 
-            if (pkg?.isBundle == true) {
+            if (mAdapter.companyConfigurations?.isSupportLineHaulBundles == true &&
+                pkg?.isBundle == true) {
                 binding.buttonContextMenu.visibility = View.GONE
             }
         }
