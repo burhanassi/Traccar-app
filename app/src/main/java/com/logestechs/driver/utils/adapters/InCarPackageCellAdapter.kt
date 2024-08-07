@@ -369,7 +369,7 @@ class InCarPackageCellAdapter(
                     popup.menu.findItem(R.id.action_edit_package_weight).isVisible = false
                 }
                 if (mAdapter.companyConfigurations?.isShowPackageContentForDrivers == false ||
-                    !pkg?.description.isNullOrEmpty()
+                    pkg?.description.isNullOrEmpty()
                     ) {
                     popup.menu.findItem(R.id.action_show_package_content).isVisible = false
                 }
