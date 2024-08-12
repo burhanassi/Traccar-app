@@ -12,6 +12,7 @@
         android:orientation="horizontal">
 
         <ImageView
+            android:id="@+id/button_show_package_content"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="13dp"
