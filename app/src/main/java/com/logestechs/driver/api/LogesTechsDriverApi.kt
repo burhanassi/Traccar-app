@@ -183,6 +183,7 @@ interface LogesTechsDriverApi {
     @PUT("driver/packages/{packageId}/postpone")
     suspend fun postponePackage(
         @Path("packageId") long: Long?,
+        @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString(),
         @Body body: PostponePackageRequestBody?
     ): Response<ResponseBody>?
 
