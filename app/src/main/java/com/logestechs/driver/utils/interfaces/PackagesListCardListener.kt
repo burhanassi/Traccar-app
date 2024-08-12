@@ -3,7 +3,6 @@ package com.logestechs.driver.utils.interfaces
 import com.logestechs.driver.data.model.Package
 
 interface PackagesListCardListener {
-    fun onShowPackageContent(pkg: Package?)
     fun onShowPackageNoteDialog(pkg: Package?)
     fun onPickupPackage(barcode: String?)
     fun onShowPackageInfo(packageId: Long)

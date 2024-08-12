@@ -364,8 +364,6 @@ class FulfilmentPickerMultiPickingBarcodeScannerActivity :
                 try {
                     val response = ApiAdapter.apiClient.scanItemsIntoTote(
                         orderIds!!,
-                        null,
-                        null,
                         BarcodeRequestBody(barcode)
                     )
                     withContext(Dispatchers.Main) {

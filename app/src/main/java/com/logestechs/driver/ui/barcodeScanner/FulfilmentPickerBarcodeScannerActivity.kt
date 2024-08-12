@@ -78,7 +78,6 @@ class FulfilmentPickerBarcodeScannerActivity :
     private var productId: Long? = null
     private var scannedProductBarcode: String? = null
     private var isBarcodeScanningAllowed = true
-    private var isPickWithoutTote: Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -139,14 +138,8 @@ class FulfilmentPickerBarcodeScannerActivity :
                 extras.getSerializable(IntentExtrasKeys.FULFILMENT_PICKER_SCAN_MODE.name) as FulfilmentPickerScanMode
             selectedFulfilmentOrder =
                 extras.getParcelable(IntentExtrasKeys.FULFILMENT_ORDER.name) as? FulfilmentOrder
-            isPickWithoutTote =
-                extras.getSerializable(IntentExtrasKeys.PICK_WITHOUT_TOTE.name) as? Boolean
 
             populateProductBarcodes(selectedFulfilmentOrder?.items)
-
-            if (isPickWithoutTote == true) {
-                callUnBindOrder()
-            }
         }
     }
 
@@ -473,13 +466,6 @@ class FulfilmentPickerBarcodeScannerActivity :
                             selectedFulfilmentOrder?.id,
                             BarcodeRequestBody(barcode)
                         )
-                    } else  if (scannedTote == null) {
-                        ApiAdapter.apiClient.scanItemsIntoTote(
-                            listOf(selectedFulfilmentOrder?.id),
-                            locationId,
-                            quantity,
-                            BarcodeRequestBody(barcode)
-                        )
                     } else {
                         ApiAdapter.apiClient.scanItemIntoTote(
                             scannedTote?.id,
@@ -581,58 +567,6 @@ class FulfilmentPickerBarcodeScannerActivity :
                             ).showDialog()
                         }
                     } else {
-                        try {
-                            val jObjError = JSONObject(response.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            this.runOnUiThread {
-                hideWaitDialog()
-                Helper.showErrorMessage(
-                    super.getContext(), getString(R.string.error_check_internet_connection)
-                )
-            }
-        }
-    }
-
-    private fun callUnBindOrder() {
-        this.runOnUiThread {
-            showWaitDialog()
-        }
-        if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response = ApiAdapter.apiClient.unBindOrder(selectedFulfilmentOrder?.id!!)
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (!response!!.isSuccessful && response.body() == null) {
                         try {
                             val jObjError = JSONObject(response.errorBody()!!.string())
                             withContext(Dispatchers.Main) {

@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.PrintPickListRequestBody
-import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.FulfilmentOrder
 import com.logestechs.driver.databinding.ActivityNewFulfilmentOrdersBinding
 import com.logestechs.driver.ui.barcodeScanner.FulfilmentPickerBarcodeScannerActivity
@@ -41,10 +40,6 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
     private var fulfilmentOrdersList: ArrayList<FulfilmentOrder?> = ArrayList()
 
     var isMultiPicking: Boolean = false
-
-    private var companyConfigurations: DriverCompanyConfigurations? =
-        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNewFulfilmentOrdersBinding.inflate(layoutInflater)
@@ -298,22 +293,10 @@ class NewFulfilmentOrdersActivity : LogesTechsActivity(), NewFulfilmentOrderCard
 
     override fun onPickFulfilmentOrder(index: Int) {
         val mIntent = Intent(this, FulfilmentPickerBarcodeScannerActivity::class.java)
-        if (companyConfigurations?.isAllowToPickingOrderWithoutTote == true) {
-            mIntent.putExtra(
-                IntentExtrasKeys.FULFILMENT_PICKER_SCAN_MODE.name,
-                FulfilmentPickerScanMode.ITEM_INTO_TOTE
-            )
-            mIntent.putExtra(
-                IntentExtrasKeys.PICK_WITHOUT_TOTE.name,
-                true
-            )
-        } else {
-            mIntent.putExtra(
-                IntentExtrasKeys.FULFILMENT_PICKER_SCAN_MODE.name,
-                FulfilmentPickerScanMode.TOTE
-            )
-        }
-
+        mIntent.putExtra(
+            IntentExtrasKeys.FULFILMENT_PICKER_SCAN_MODE.name,
+            FulfilmentPickerScanMode.TOTE
+        )
         mIntent.putExtra(
             IntentExtrasKeys.FULFILMENT_ORDER.name,
             fulfilmentOrdersList[index]
