@@ -352,18 +352,6 @@ class Helper {
                             number
                         }
                     }
-                    AppCurrency.EGP.value -> {
-                        return if (number.length == 11) {
-                            number = number.drop(1)
-                            number = "+20$number"
-                            number
-                        } else if (number.length == 10 && number[0] == '1') {
-                            number = "+20$number"
-                            number
-                        } else {
-                            number
-                        }
-                    }
                 }
             }
             return number

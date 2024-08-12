@@ -38,7 +38,6 @@ import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.AddNoteRequestBody
 import com.logestechs.driver.api.requests.DeleteImageRequestBody
 import com.logestechs.driver.api.requests.DeliverPackageRequestBody
-import com.logestechs.driver.api.requests.PayMultiWayRequestBody
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
@@ -67,9 +66,7 @@ import com.logestechs.driver.utils.VerificationStatus
 import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
 import com.logestechs.driver.utils.customViews.StatusSelector
 import com.logestechs.driver.utils.dialogs.DeliveryCodeVerificationDialog
-import com.logestechs.driver.utils.dialogs.PaymentTypeValueDialog
 import com.logestechs.driver.utils.interfaces.ConfirmationDialogActionListener
-import com.logestechs.driver.utils.interfaces.PaymentTypeValueDialogListener
 import com.logestechs.driver.utils.interfaces.ThumbnailsListListener
 import com.logestechs.driver.utils.interfaces.VerificationCodeDialogListener
 import io.nearpay.sdk.Environments
@@ -105,8 +102,7 @@ import java.util.UUID
 
 class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, ThumbnailsListListener,
     ConfirmationDialogActionListener,
-    VerificationCodeDialogListener,
-    PaymentTypeValueDialogListener {
+    VerificationCodeDialogListener {
     private lateinit var binding: ActivityPackageDeliveryBinding
 
     private var path: String? = null
@@ -136,8 +132,6 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     private var isClickPayVerified = false
 
     private var paymentTypeId: Long? = null
-    private var packageCodToPay: Double = 0.0
-    private var packageValueToPay: Double = 0.0
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -385,7 +379,6 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         val extras = intent.extras
         if (extras != null) {
             pkg = extras.getParcelable(IntentExtrasKeys.PACKAGE_TO_DELIVER.name)
-            packageCodToPay = pkg?.cod!!
         }
     }
 
@@ -426,12 +419,6 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         for (item in paymentTypeButtonsList) {
             item.makeUnselected()
         }
-    }
-
-    private fun handleSelectPaymentMethod(selector: StatusSelector) {
-        unselectAllPaymentMethods()
-        selector.makeSelected()
-        selectedPaymentType = selector
     }
 
     private fun validateInput(): Boolean {
@@ -1013,13 +1000,12 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 }
             }
 
-            val paymentType: String? = if (companyConfigurations?.isAddingPaymentTypesEnabled == true) {
-                null
-            } else {
-                selectedPaymentType?.let {
-                    (it.enumValue as PaymentType).name
+            val paymentType: String? =
+                if (companyConfigurations?.isAddingPaymentTypesEnabled == true) {
+                    null
+                } else {
+                    (selectedPaymentType?.enumValue as PaymentType).name
                 }
-            }
 
             GlobalScope.launch(Dispatchers.IO) {
                 try {
@@ -1339,11 +1325,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            if (companyConfigurations?.isEnableDeliverByMultiPaymentTypes == true) {
-                                callPayMultiWay()
-                            } else {
-                                makePackageDelivery()
-                            }
+                            makePackageDelivery()
                         }
                     } else {
                         try {
@@ -1397,75 +1379,6 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     if (response.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             setPaymentMethods(response.body()!!.data!!)
-                        }
-                    } else {
-                        try {
-                            val jObjError = JSONObject(response?.errorBody()!!.string())
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    jObjError.optString(AppConstants.ERROR_KEY)
-                                )
-                            }
-
-                        } catch (e: java.lang.Exception) {
-                            withContext(Dispatchers.Main) {
-                                Helper.showErrorMessage(
-                                    super.getContext(),
-                                    getString(R.string.error_general)
-                                )
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    hideWaitDialog()
-                    Helper.logException(e, Throwable().stackTraceToString())
-                    withContext(Dispatchers.Main) {
-                        if (e.message != null && e.message!!.isNotEmpty()) {
-                            Helper.showErrorMessage(super.getContext(), e.message)
-                        } else {
-                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
-                        }
-                    }
-                }
-            }
-        } else {
-            hideWaitDialog()
-            Helper.showErrorMessage(
-                super.getContext(), getString(R.string.error_check_internet_connection)
-            )
-        }
-    }
-
-    private fun callPayMultiWay() {
-        showWaitDialog()
-        if (Helper.isInternetAvailable(super.getContext())) {
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    val response =
-                        ApiAdapter.apiClient.payMultiWay(
-                            pkg?.id,
-                            PayMultiWayRequestBody(
-                                (selectedPaymentType?.enumValue as PaymentType).name,
-                                paymentTypeId,
-                                packageValueToPay
-                            )
-                        )
-                    withContext(Dispatchers.Main) {
-                        hideWaitDialog()
-                    }
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        withContext(Dispatchers.Main) {
-                            if (response.body()!!.paymentStatus == "PAID") {
-                                selectedPaymentType = null
-                                paymentTypeId = null
-                                makePackageDelivery()
-                            } else {
-                                Helper.showSuccessMessage(
-                                    super.getContext(),
-                                    getString(R.string.success_operation_completed)
-                                )
-                            }
                         }
                     } else {
                         try {
@@ -1647,58 +1560,46 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             .loadingUi(true)
             .build()
 
-        val amount: Long = cod.toLong() * 100
+        val amount : Long = cod.toLong() * 100
         val customerReferenceNumber = pkg?.barcode
         val enableReceiptUi = true
         val enableReversal = true
-        val finishTimeOut: Long = 10
+        val finishTimeOut : Long = 10
         val transactionId = UUID.randomUUID()
         val enableUiDismiss = true
 
-        nearPay.purchase(
-            amount,
-            customerReferenceNumber,
-            enableReceiptUi,
-            enableReversal,
-            finishTimeOut,
-            transactionId,
-            enableUiDismiss,
-            object :
-                PurchaseListener {
-                override fun onPurchaseApproved(transactionData: TransactionData) {
-                    val transactionId = transactionData.receipts?.get(0)?.receipt_id
-                    callPaymentGateway(PaymentGatewayType.NEAR_PAY, transactionId!!)
-                }
+        nearPay.purchase(amount, customerReferenceNumber, enableReceiptUi, enableReversal, finishTimeOut, transactionId, enableUiDismiss, object :
+            PurchaseListener {
+            override fun onPurchaseApproved(transactionData: TransactionData) {
+                val transactionId = transactionData.receipts?.get(0)?.receipt_id
+                callPaymentGateway(PaymentGatewayType.NEAR_PAY, transactionId!!)
+            }
 
-                override fun onPurchaseFailed(purchaseFailure: PurchaseFailure) {
-                    when (purchaseFailure) {
-                        is PurchaseFailure.PurchaseDeclined -> {
-                        }
+            override fun onPurchaseFailed(purchaseFailure: PurchaseFailure) {
+                when (purchaseFailure) {
+                    is PurchaseFailure.PurchaseDeclined -> {
+                    }
 
-                        is PurchaseFailure.PurchaseRejected -> {
-                        }
+                    is PurchaseFailure.PurchaseRejected -> {
+                    }
 
-                        is PurchaseFailure.AuthenticationFailed -> {
-                        }
+                    is PurchaseFailure.AuthenticationFailed -> {
+                    }
 
-                        is PurchaseFailure.InvalidStatus -> {
-                        }
+                    is PurchaseFailure.InvalidStatus -> {
+                    }
 
-                        is PurchaseFailure.GeneralFailure -> {
-                        }
+                    is PurchaseFailure.GeneralFailure -> {
+                    }
 
-                        is PurchaseFailure.UserCancelled -> {
-                        }
+                    is PurchaseFailure.UserCancelled -> {
                     }
                 }
-            })
+            }
+        })
     }
 
-    private fun handleExceptionFromSoftpos(
-        errorCode: String,
-        errorMessage: String,
-        errorDetails: String?
-    ) {
+    private fun handleExceptionFromSoftpos(errorCode: String, errorMessage: String, errorDetails: String?) {
         Log.e(
             "SoftPOS Exception",
             "ErrorCode: $errorCode, ErrorMessage: $errorMessage, ErrorDetails: $errorDetails"
@@ -1745,35 +1646,51 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             }
 
             R.id.selector_cash -> {
-                handleSelectPaymentMethod(binding.selectorCash)
+                unselectAllPaymentMethods()
+                binding.selectorCash.makeSelected()
+                selectedPaymentType = binding.selectorCash
             }
 
             R.id.selector_digital_wallet -> {
-                handleSelectPaymentMethod(binding.selectorDigitalWallet)
+                unselectAllPaymentMethods()
+                binding.selectorDigitalWallet.makeSelected()
+                selectedPaymentType = binding.selectorDigitalWallet
             }
 
             R.id.selector_cheque -> {
-                handleSelectPaymentMethod(binding.selectorCheque)
+                unselectAllPaymentMethods()
+                binding.selectorCheque.makeSelected()
+                selectedPaymentType = binding.selectorCheque
             }
 
             R.id.selector_prepaid -> {
-                handleSelectPaymentMethod(binding.selectorPrepaid)
+                unselectAllPaymentMethods()
+                binding.selectorPrepaid.makeSelected()
+                selectedPaymentType = binding.selectorPrepaid
             }
 
             R.id.selector_card_payment -> {
-                handleSelectPaymentMethod(binding.selectorCardPayment)
+                unselectAllPaymentMethods()
+                binding.selectorCardPayment.makeSelected()
+                selectedPaymentType = binding.selectorCardPayment
             }
 
             R.id.selector_inter_pay -> {
-                handleSelectPaymentMethod(binding.selectorInterPay)
+                unselectAllPaymentMethods()
+                binding.selectorInterPay.makeSelected()
+                selectedPaymentType = binding.selectorInterPay
             }
 
             R.id.selector_near_pay -> {
-                handleSelectPaymentMethod(binding.selectorNearPay)
+                unselectAllPaymentMethods()
+                binding.selectorNearPay.makeSelected()
+                selectedPaymentType = binding.selectorNearPay
             }
 
             R.id.selector_click_pay -> {
-                handleSelectPaymentMethod(binding.selectorClickPay)
+                unselectAllPaymentMethods()
+                binding.selectorClickPay.makeSelected()
+                selectedPaymentType = binding.selectorClickPay
                 (this as LogesTechsActivity).showConfirmationDialog(
                     getString(R.string.click_pay_confirmation),
                     pkg,
@@ -1783,7 +1700,9 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             }
 
             R.id.selector_bank_transfer -> {
-                handleSelectPaymentMethod(binding.selectorBankTransfer)
+                unselectAllPaymentMethods()
+                binding.selectorBankTransfer.makeSelected()
+                selectedPaymentType = binding.selectorBankTransfer
             }
 
             R.id.button_back -> {
@@ -1837,51 +1756,22 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             isClickPayVerified
             handlePackageDelivery()
         } else if (action == ConfirmationDialogAction.DELIVER_PACKAGE) {
-            if (companyConfigurations?.isEnableDeliverByMultiPaymentTypes == true) {
-                PaymentTypeValueDialog(super.getContext(), this, selectedPaymentType, paymentTypeId).showDialog()
-            } else {
-                if (selectedPaymentType?.textView?.text == PaymentType.INTER_PAY.englishLabel) {
-                    if (isAppInstalled(packageManager, AppConstants.SOFTPOS_PACKAGE_NAME)) {
-                        startSoftposApp(pkg?.cod?.format()!!)
-                        return
-                    } else {
-                        Helper.showErrorMessage(
-                            super.getContext(), getString(R.string.error_app_is_not_installed)
-                        )
-                    }
-                } else if (selectedPaymentType?.textView?.text == PaymentType.CLICK_PAY.englishLabel) {
-                    callVerifyClickPay()
-                } else if (selectedPaymentType?.textView?.text == PaymentType.NEAR_PAY.englishLabel) {
-                    startNearPay(pkg?.cod!!)
+            if (selectedPaymentType?.textView?.text == PaymentType.INTER_PAY.englishLabel) {
+                if (isAppInstalled(packageManager, AppConstants.SOFTPOS_PACKAGE_NAME)) {
+                    startSoftposApp(pkg?.cod?.format()!!)
+                    return
                 } else {
-                    makePackageDelivery()
+                    Helper.showErrorMessage(
+                        super.getContext(), getString(R.string.error_app_is_not_installed)
+                    )
                 }
-            }
-        }
-    }
-
-    override fun onValueInserted(
-        value: Double,
-        selectedPaymentType: StatusSelector?,
-        paymentTypeId: Long?
-    ) {
-        packageValueToPay = value
-        this.selectedPaymentType = selectedPaymentType
-        this.paymentTypeId = paymentTypeId
-
-        if (selectedPaymentType?.textView?.text == PaymentType.INTER_PAY.englishLabel) {
-            if (isAppInstalled(packageManager, AppConstants.SOFTPOS_PACKAGE_NAME)) {
-                startSoftposApp(packageCodToPay.format())
-                return
+            } else if (selectedPaymentType?.textView?.text == PaymentType.CLICK_PAY.englishLabel) {
+                callVerifyClickPay()
+            } else if (selectedPaymentType?.textView?.text == PaymentType.NEAR_PAY.englishLabel) {
+                startNearPay(pkg?.cod!!)
             } else {
-                Helper.showErrorMessage(
-                    super.getContext(), getString(R.string.error_app_is_not_installed)
-                )
+                makePackageDelivery()
             }
-        } else if (selectedPaymentType?.textView?.text == PaymentType.NEAR_PAY.englishLabel) {
-            startNearPay(packageCodToPay)
-        } else {
-            callPayMultiWay()
         }
     }
 }
