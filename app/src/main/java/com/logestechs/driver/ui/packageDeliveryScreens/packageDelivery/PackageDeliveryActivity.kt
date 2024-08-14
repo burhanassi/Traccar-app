@@ -1639,7 +1639,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         val nearPay = NearPay.Builder()
             .context(this)
             .authenticationData(AuthenticationData.UserEnter)
-            .environment(Environments.SANDBOX)
+            .environment(Environments.PRODUCTION)
             .locale(Locale.getDefault())
             .networkConfiguration(NetworkConfiguration.SIM_PREFERRED)
             .uiPosition(UIPosition.CENTER_BOTTOM)
