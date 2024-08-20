@@ -10,6 +10,7 @@ interface InCarPackagesCardListener {
     fun onFailDelivery(body: FailDeliveryRequestBody?)
     fun onPackagePostponed(body: PostponePackageRequestBody?)
     fun onPackageTypeChanged(body: ChangePackageTypeRequestBody?)
+    fun onPackageWeightChanged(packageId: Long?, body: ChangePackageWeightRequestBody)
     fun onPackageNoteAdded(body: AddNoteRequestBody?)
     fun onShowFailDeliveryDialog(pkg: Package?)
     fun onShowPostponePackageDialog(pkg: Package?)

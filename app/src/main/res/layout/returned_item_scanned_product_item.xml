@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="4dp"
+            android:animateLayoutChanges="true"
+            android:background="@drawable/background_oval_white"
+            android:elevation="2dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                tools:ignore="UselessParent">
+
+                <include
+                    android:id="@+id/item_barcode"
+                    layout="@layout/item_card_row"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="18dp"
+                    android:layout_marginTop="8dp"
+                    bind:itemSrc="@{@drawable/ic_barcode_gray}" />
+
+                <include
+                    android:id="@+id/item_product_barcode"
+                    layout="@layout/item_card_row"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="18dp"
+                    android:layout_marginTop="8dp"
+                    bind:itemSrc="@{@drawable/ic_barcode_gray}" />
+
+                <include
+                    android:id="@+id/item_product_name"
+                    layout="@layout/item_card_row"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="18dp"
+                    android:layout_marginTop="8dp"
+                    bind:itemSrc="@{@drawable/ic_package_gray}" />
+
+                <include
+                    android:id="@+id/item_product_sku"
+                    layout="@layout/item_card_row"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="18dp"
+                    android:layout_marginTop="8dp"
+                    bind:itemSrc="@{@drawable/ic_sku}" />
+
+                <include
+                    android:id="@+id/item_bin_location"
+                    layout="@layout/item_card_row"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="18dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="13dp"
+                    bind:itemSrc="@{@drawable/ic_location_pin_gray}" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/button_context_menu"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="bottom"
+                android:layout_marginEnd="2dp"
+                android:layout_marginBottom="8dp"
+                android:src="@drawable/ic_context_menu_gray"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

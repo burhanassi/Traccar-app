@@ -36,6 +36,7 @@ import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.PackagesListAdapter
 import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
 import com.logestechs.driver.utils.dialogs.AddPackageNoteDialog
+import com.logestechs.driver.utils.dialogs.ShowPackageContentDialog
 import com.logestechs.driver.utils.interfaces.AddPackageNoteDialogListener
 import com.logestechs.driver.utils.interfaces.PackagesListCardListener
 import kotlinx.coroutines.Dispatchers
@@ -525,6 +526,13 @@ class AcceptedPackagesBottomSheet: LogesTechsBottomSheetFragment(), PackagesList
             AppConstants.REQUEST_LOAD_PHOTO
         )
     }
+
+    override fun onShowPackageContent(pkg: Package?) {
+        if (!pkg?.description.isNullOrEmpty()) {
+            ShowPackageContentDialog(requireContext(), pkg?.description).showDialog()
+        }
+    }
+
     override fun onShowPackageNoteDialog(pkg: Package?) {
         loadedImagesList.clear()
         addPackageNoteDialog = AddPackageNoteDialog(requireContext(), this, pkg, loadedImagesList)

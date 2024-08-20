@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
+import com.logestechs.driver.R
+import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemAcceptedPackagesBinding
 import com.logestechs.driver.utils.BundleKeys
@@ -23,6 +25,10 @@ class PackagesListAdapter(
     ) :
     RecyclerView.Adapter<PackagesListAdapter.PackagesViewHolder>() {
     var mContext: Context? = null
+
+    val companyConfigurations: DriverCompanyConfigurations? =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
+
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
         i: Int
@@ -62,25 +68,31 @@ class PackagesListAdapter(
         RecyclerView.ViewHolder(binding.root){
         val driverCompanyConfigurations =
             SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
-        fun bind(packages: Package) {
-            binding.textBarcode.text = packages.barcode
-            binding.textTitle.text =  packages.getFullReceiverName()
-            binding.textAddress.text =  packages.destinationAddress?.city
+        fun bind(pkg: Package) {
+            binding.textBarcode.text = pkg.barcode
+            binding.textTitle.text =  pkg.getFullReceiverName()
+            binding.textAddress.text =  pkg.destinationAddress?.city
 
-            if(driverCompanyConfigurations?.isDriverPickupAcceptedPackages!! || packages.shipmentType == PackageType.BRING.name){
+            if (mAdapter.companyConfigurations?.isShowPackageContentForDrivers == true) {
+                binding.buttonShowPackageContent.setOnClickListener {
+                    mAdapter.listener.onShowPackageContent(pkg)
+                }
+            }
+
+            if(driverCompanyConfigurations?.isDriverPickupAcceptedPackages!! || pkg.shipmentType == PackageType.BRING.name){
                 binding.buttonPickup.setOnClickListener {
-                    mAdapter.listener.onPickupPackage(packages.barcode!!)
+                    mAdapter.listener.onPickupPackage(pkg.barcode!!)
                 }
             }else {
                 binding.buttonPickup.visibility = View.GONE
             }
             binding.buttonAddNote.setOnClickListener {
-                mAdapter.listener.onShowPackageNoteDialog(packages)
+                mAdapter.listener.onShowPackageNoteDialog(pkg)
             }
             binding.buttonInfo.setOnClickListener {
                 val bottomSheet = PackageTrackBottomSheet()
                 val bundle = Bundle()
-                bundle.putParcelable(BundleKeys.PKG_KEY.toString(), packages)
+                bundle.putParcelable(BundleKeys.PKG_KEY.toString(), pkg)
                 bottomSheet.arguments = bundle
                 bottomSheet.show(mAdapter.fragmentManager, "exampleBottomSheet")
             }
