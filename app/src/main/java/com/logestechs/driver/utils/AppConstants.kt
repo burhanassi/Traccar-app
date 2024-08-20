@@ -90,7 +90,8 @@ enum class AppCurrency(val value: String) {
     IQD("IQD"),
     SAR("SAR"),
     LYD("LYD"),
-    OMR("OMR")
+    OMR("OMR"),
+    EGP("EGP")
 }
 
 enum class DraftPickupStatus {
@@ -119,7 +120,9 @@ enum class IntentExtrasKeys() {
     FULFILMENT_ORDER,
     FULFILMENT_ORDERS,
     BUNDLE,
-    DRIVER_PACKAGES_LOCATIONS
+    DRIVER_PACKAGES_LOCATIONS,
+    PICK_WITHOUT_TOTE,
+    FULFILMENT_RETURN_ORDER_SCAN_MODE
 }
 
 enum class BarcodeScanType {
@@ -319,4 +322,16 @@ enum class FulfillmentItemStatus(val english: String, val arabic: String) {
     PACKED("Packed", "مغلفة"),
     DAMAGED("Damaged", "تالف"),
     RETURNED("Returned", "مرجعة")
+}
+
+enum class ReturnedFulfillmentOrderStatus(val english: String, val arabic: String) {
+    RETURNED("Returned", "راجع"),
+    PARTIALLY_DELIVERED("Partially Delivered", "تم توصيلها بشكل جزئي"),
+    CANCELED("Cancelled", "ملغاة");
+
+    companion object {
+        fun fromStatus(status: String?): ReturnedFulfillmentOrderStatus? {
+            return values().find { it.name == status }
+        }
+    }
 }

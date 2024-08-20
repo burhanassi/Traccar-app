@@ -37,5 +37,9 @@ data class DriverCompanyConfigurations(
     var isScanAllPackageAwbCopiesByDriver: Boolean? = null,
     var isAddingPaymentTypesEnabled: Boolean? = null,
     var isPreventDriversDeliveredPickupPackages: Boolean? = null,
-    var isForceDriversToAddAttachments: Boolean? = null
+    var isForceDriversToAddAttachments: Boolean? = null,
+    var isAllowDriversToChangePkgWeight: Boolean? = null,
+    var isAllowToPickingOrderWithoutTote: Boolean? = null,
+    var isEnableDeliverByMultiPaymentTypes: Boolean? = null,
+    var isShowPackageContentForDrivers: Boolean? = null
 )
