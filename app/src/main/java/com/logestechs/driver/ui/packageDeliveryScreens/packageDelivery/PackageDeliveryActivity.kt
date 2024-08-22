@@ -1513,28 +1513,10 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     private fun needsPinVerification(): Boolean {
         if (companyConfigurations != null) {
             if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true || isSignatureEntered()) {
-                if ((pkg?.shipmentType == PackageType.REGULAR.toString() || pkg?.cod == 0.0) && companyConfigurations?.isEnableDeliveryVerificationPinCodeForPkgs == true) {
-                    return when (pkg?.verificationStatus) {
-                        VerificationStatus.NOT_SENT.toString() -> {
-                            requestPinCodeSms()
-                            true
-                        }
-
-                        VerificationStatus.SENT.toString() -> {
-                            showDeliveryCodeVerificationDialog()
-                            true
-                        }
-
-                        VerificationStatus.VERIFIED.toString() -> {
-                            false
-                        }
-
-                        else -> {
-                            false
-                        }
-                    }
-                } else if (companyConfigurations?.isEnableDeliveryVerificationPinCodeForPkgsWithCodGreaterThan != null && (pkg?.cod
-                        ?: 0.0) >= companyConfigurations!!.isEnableDeliveryVerificationPinCodeForPkgsWithCodGreaterThan!!
+                if (
+                    pkg?.shipmentType != PackageType.REGULAR.toString() &&
+                    companyConfigurations?.isEnableDeliveryVerificationPinCodeForPkgsWithCodGreaterThan != null &&
+                    (pkg?.cod ?: 0.0) >= companyConfigurations!!.isEnableDeliveryVerificationPinCodeForPkgsWithCodGreaterThan!!
                 ) {
                     return when (pkg?.verificationStatus) {
                         VerificationStatus.NOT_SENT.toString() -> {
