@@ -45,6 +45,8 @@ class FailDeliveryDialog(
     private var companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
+    private val loginResponse = SharedPreferenceWrapper.getLoginResponse()
+
     fun showDialog() {
         val dialogBuilder = AlertDialog.Builder(context, 0)
         val binding: DialogFailDeliveryBinding = DataBindingUtil.inflate(
@@ -55,8 +57,13 @@ class FailDeliveryDialog(
         dialogBuilder.setView(binding.root)
         val alertDialog = dialogBuilder.create()
         this.binding = binding
+
         binding.buttonCancel.setOnClickListener {
             alertDialog.dismiss()
+        }
+
+        if (loginResponse?.user?.companyID == 368.toLong()) {
+            binding.etReason.visibility = android.view.View.GONE
         }
 
         binding.rvThumbnails.apply {
