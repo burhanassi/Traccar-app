@@ -12,6 +12,7 @@ import com.logestechs.driver.api.requests.RejectPackageRequestBody
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemPendingPackageCellBinding
 import com.logestechs.driver.utils.Helper
+import com.logestechs.driver.utils.Helper.Companion.format
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.dialogs.RejectPackageDialog
 import com.logestechs.driver.utils.interfaces.PendingPackagesCardListener
@@ -95,7 +96,6 @@ class PendingPackageCellAdapter(
 
                     when (item?.itemId) {
                         R.id.action_reject_package -> {
-//                            mAdapter.listener?.rejectPackage(mAdapter.parentIndex, adapterPosition)
                             mAdapter.rejectedPackagePosition = adapterPosition
                             RejectPackageDialog(
                                 mAdapter.context!!,
@@ -114,6 +114,18 @@ class PendingPackageCellAdapter(
                 binding.buttonContextMenu.visibility = View.GONE
             } else {
                 binding.buttonContextMenu.visibility = View.VISIBLE
+            }
+
+            if (mAdapter.companyConfigurations?.isShowReceiverInfoForDriverPendingShipments == true) {
+                binding.containerReceiverInfo.visibility = View.VISIBLE
+                binding.containerCod.visibility = View.VISIBLE
+
+                binding.itemReceiverName.textItem.text = pkg?.getFullReceiverName()
+                binding.itemReceiverAddress.textItem.text = pkg?.destinationAddress?.toStringAddress()
+                binding.textCod.text = "${Helper.getCompanyCurrency()} ${pkg?.cod?.format()}"
+            } else {
+                binding.containerReceiverInfo.visibility = View.GONE
+                binding.containerCod.visibility = View.GONE
             }
         }
     }

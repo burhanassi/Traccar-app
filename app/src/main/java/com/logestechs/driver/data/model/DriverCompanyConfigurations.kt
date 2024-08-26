@@ -42,5 +42,6 @@ data class DriverCompanyConfigurations(
     var isAllowToPickingOrderWithoutTote: Boolean? = null,
     var isEnableDeliverByMultiPaymentTypes: Boolean? = null,
     var isShowPackageContentForDrivers: Boolean? = null,
-    var isEnableMaxCapacityLocationForProducts: Boolean? = null
+    var isEnableMaxCapacityLocationForProducts: Boolean? = null,
+    var isShowReceiverInfoForDriverPendingShipments: Boolean? = null
 )
