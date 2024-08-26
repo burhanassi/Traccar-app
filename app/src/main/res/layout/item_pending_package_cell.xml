@@ -59,6 +59,66 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         bind:itemSrc="@{@drawable/ic_location_pin_gray}" />
+
+                    <LinearLayout
+                        android:id="@+id/container_receiver_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <include
+                            android:id="@+id/item_receiver_name"
+                            layout="@layout/item_card_row"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            bind:itemSrc="@{@drawable/ic_receiver_gray}" />
+
+                        <include
+                            android:id="@+id/item_receiver_address"
+                            layout="@layout/item_card_row"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            bind:itemSrc="@{@drawable/ic_location_pin_gray}" />
+                    </LinearLayout>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/container_cod"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/background_card_semi_circle"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="12dp"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/text_cod"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_bold"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textColor="@color/fontTrackHint"
+                            android:textSize="20sp" />
+
+                        <TextView
+                            style="@style/LogesTechsLight"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/cod"
+                            android:textColor="@color/detailsTextBlack"
+                            android:textSize="12sp" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 
