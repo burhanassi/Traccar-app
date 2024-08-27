@@ -369,5 +369,6 @@
     <string name="title_insert_payment_type_value">Please insert value</string>
     <string name="hint_value">Value</string>
     <string name="show_package_content">Show package content</string>
+    <string name="error_location_capacity">Location Capacity Reached</string>
     <string name="show_note">Notes</string>
 </resources>
