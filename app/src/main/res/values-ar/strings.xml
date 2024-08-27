@@ -366,4 +366,5 @@
     <string name="title_insert_payment_type_value">الرجاء ادخال القيمة</string>
     <string name="hint_value">القيمة</string>
     <string name="show_package_content">عرض محتويات الطرد</string>
+    <string name="show_note">الملاحظات</string>
 </resources>

@@ -26,6 +26,7 @@ import com.logestechs.driver.databinding.ActivityBarcodeScannerBinding
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.ScannedBarcodeCellAdapter
 import com.logestechs.driver.utils.dialogs.InsertBarcodeDialog
+import com.logestechs.driver.utils.dialogs.ShowPackageNoteDialog
 import com.logestechs.driver.utils.interfaces.InsertBarcodeDialogListener
 import com.logestechs.driver.utils.interfaces.ScannedBarcodeCardListener
 import kotlinx.coroutines.Dispatchers
@@ -360,6 +361,10 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                     }
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
+                            if (loginResponse?.user?.companyID == 4.toLong() && !response.body()?.notes.isNullOrEmpty()) {
+                                ShowPackageNoteDialog(this@BarcodeScannerActivity, response.body()).showDialog()
+                            }
+
                             if (response.body()?.status?.name == AdminPackageStatus.RETURNED_BY_RECIPIENT.name) {
                                 Helper.run {
                                     showErrorMessage(
