@@ -35,7 +35,7 @@ import kotlin.math.floor
 
 class MyLocationService : Service() {
     //region data
-    private val UPDATE_INTERVAL_IN_MILLISECONDS = (60 * 1000).toLong()
+    private val UPDATE_INTERVAL_IN_MILLISECONDS = (5 * 60 * 1000).toLong()
     private var mFusedLocationClient: FusedLocationProviderClient? = null
     private var locationRequest: LocationRequest? = null
     private val locationSettingsRequest: LocationSettingsRequest? = null
@@ -43,6 +43,8 @@ class MyLocationService : Service() {
     private var NOTIFICATION_ID = (System.currentTimeMillis() % 10000).toInt()
     private var myProfile: User? = null
     var factor = 1000.0
+
+    private val MIN_DISTANCE_CHANGE_FOR_UPDATES = 20
 
     private var loginResponse = SharedPreferenceWrapper.getLoginResponse()
     override fun onBind(p0: Intent?): IBinder? {
@@ -102,13 +104,15 @@ class MyLocationService : Service() {
             super.onLocationResult(locationResult)
             val currentLocation = locationResult.lastLocation
             if (currentLocation != null) {
-                val previousLocation = SharedPreferenceWrapper.getLastSyncLocation()
+                val previousLocation = SharedPreferenceWrapper.getLastSyncLocation()?.let { latLng ->
+                    Location("").apply {
+                        latitude = latLng.lat ?: 0.0
+                        longitude = latLng.lng ?: 0.0
+                    }
+                }
                 if (previousLocation != null) {
-                    if (!(floor((previousLocation.lat ?: 0.0) * factor) / factor ==
-                                floor(currentLocation.latitude * factor) / factor &&
-                                floor((previousLocation.lng ?: 0.0) * factor) / factor ==
-                                floor(currentLocation.longitude * factor) / factor)
-                    ) {
+                    val distance = previousLocation.distanceTo(currentLocation)
+                    if (distance > MIN_DISTANCE_CHANGE_FOR_UPDATES) {
                         updateLocation(currentLocation)
                     }
                 } else {
