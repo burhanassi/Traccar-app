@@ -76,6 +76,15 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (SharedPreferenceWrapper.doesInvoiceForDeeplinkExist()) {
+            val invoice = SharedPreferenceWrapper.getInvoiceForDeeplink()
+            if (!invoice.isNullOrEmpty()) {
+
+            }
+            SharedPreferenceWrapper.deleteInvoiceForDeeplink()
+        }
+
         Helper.handleScanWay(this)
         initData()
         initOnClickListeners()

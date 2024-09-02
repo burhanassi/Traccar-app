@@ -140,6 +140,26 @@ class SharedPreferenceWrapper {
         fun getScanWay(): String {
             return prefs.pull(SharedPrefsKeys.SCAN_WAY.value, "")
         }
+
+        fun saveInvoiceForDeeplink(invoiceNumber: String) {
+            val json = Gson().toJson(invoiceNumber)
+            prefs.push(SharedPrefsKeys.INVOICE_NUMBER_FOR_DEEP_LINK.value, json)
+        }
+        fun getInvoiceForDeeplink(): String? {
+            val json = prefs.pull(SharedPrefsKeys.INVOICE_NUMBER_FOR_DEEP_LINK.value, "")
+            return if (json.isEmpty()) {
+                null
+            } else {
+                Gson().fromJson(json, String::class.java)
+            }
+        }
+        fun deleteInvoiceForDeeplink() {
+            prefs.push(SharedPrefsKeys.INVOICE_NUMBER_FOR_DEEP_LINK.value, "")
+        }
+        fun doesInvoiceForDeeplinkExist(): Boolean{
+            val json = prefs.pull(SharedPrefsKeys.INVOICE_NUMBER_FOR_DEEP_LINK.value, "")
+            return json.isNotEmpty()
+        }
     }
 }
 
@@ -153,5 +173,6 @@ private enum class SharedPrefsKeys(val value: String) {
     IS_WHATSAPP_BUSINESS("is_whatsapp_business"),
     SELECTED_SERVER_IP("selected_server_ip"),
     NOTIFICATIONS_COUNT("notifications_count"),
-    SCAN_WAY("scan_way")
+    SCAN_WAY("scan_way"),
+    INVOICE_NUMBER_FOR_DEEP_LINK("invoice_number_for_deep_link")
 }
