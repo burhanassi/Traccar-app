@@ -19,6 +19,7 @@
     <string name="dashboard_delivered">Delivered</string>
     <string name="dashboard_cod_sum">COD\nSum</string>
     <string name="dashboard_mass_cod_reports_sum">Mass COD Reports Sum</string>
+    <string name="dashboard_driver_earnings_sum">Total Driver Earning</string>
     <string name="dashboard_scan_new_package_barcode">Scan New\nBarcodes</string>
     <string name="dashboard_scan_new_package_barcode_sprint">Scan New\nBarcodes</string>
     <string name="dashboard_accepted_packages">Accepted\nPackages</string>

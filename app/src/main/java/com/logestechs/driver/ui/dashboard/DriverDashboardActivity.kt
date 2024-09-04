@@ -108,6 +108,10 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
             binding.containerWarehousePackages.visibility = View.VISIBLE
         }
 
+        if (companyConfigurations?.isDriverEarningEnabled == true) {
+            binding.containerDriverEarnings.visibility = View.VISIBLE
+        }
+
         createLocationRequest()
 
         if (Helper.isLogesTechsDriver()) {
@@ -188,7 +192,7 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
         binding.textMassCodReportsSum.text =
             "${Helper.getCompanyCurrency()} ${data?.carriedMassReportsSum?.format()}"
         binding.textCodSum.text = "${Helper.getCompanyCurrency()} ${data?.carriedCodSum?.format()}"
-
+        binding.textDriverEarningsSum.text = "${Helper.getCompanyCurrency()} ${data?.driverEarningsSum?.format()}"
 
         if (data?.isDriverOnline == true) {
             stopServiceStatusTimer()
