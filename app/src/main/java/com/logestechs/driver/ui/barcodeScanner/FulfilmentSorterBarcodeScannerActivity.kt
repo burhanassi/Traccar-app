@@ -112,6 +112,9 @@ class FulfilmentSorterBarcodeScannerActivity :
 
     private var companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
+
+    private var selectedProductId: Long = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFulfilmentSorterBarcodeScannerBinding.inflate(layoutInflater)
@@ -419,7 +422,6 @@ class FulfilmentSorterBarcodeScannerActivity :
                     if (isBinScan) {
                         callSortItemIntoBin(barcode)
                     } else {
-
                         callSortItemIntoLocation(barcode)
                     }
                 } else {
@@ -866,6 +868,11 @@ class FulfilmentSorterBarcodeScannerActivity :
                                 )
                                 binding.rvScannedBarcodes.smoothScrollToPosition(0)
                                 updateShippingPlanCountValues(response?.shippingPlanDetails)
+
+                                if (companyConfigurations?.isEnableMaxCapacityLocationForProducts == true) {
+                                    selectedProductId = response?.itemDetails?.get(0)?.productId ?: 0
+                                    callCheckLocationCapacity()
+                                }
                             }
                         } else {
                             scannedItemsHashMap.remove(barcode)
@@ -914,7 +921,6 @@ class FulfilmentSorterBarcodeScannerActivity :
             }
         }
     }
-
 
     private fun callRejectItem(rejectItemRequestBody: RejectItemRequestBody?) {
         this.runOnUiThread {
@@ -1127,6 +1133,67 @@ class FulfilmentSorterBarcodeScannerActivity :
             Helper.showErrorMessage(
                 super.getContext(), getString(R.string.error_check_internet_connection)
             )
+        }
+    }
+
+    private fun callCheckLocationCapacity() {
+        this.runOnUiThread {
+            showWaitDialog()
+        }
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.checkLocationCapacity(
+                        selectedProductId,
+                        scannedWarehouseLocation?.id
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            if (response.body()!!.isOverCapacity == 1) {
+                                Helper.showErrorMessage(super.getContext(), getString(R.string.error_location_capacity))
+                            }
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            this.runOnUiThread {
+                hideWaitDialog()
+                Helper.showErrorMessage(
+                    super.getContext(), getString(R.string.error_check_internet_connection)
+                )
+            }
         }
     }
 

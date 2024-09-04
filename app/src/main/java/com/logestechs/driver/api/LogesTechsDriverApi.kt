@@ -792,4 +792,10 @@ interface LogesTechsDriverApi {
         @Query("barcode") barcode: String?,
         @Query("customerId") customerId: Long?,
     ): Response<WarehouseLocation?>?
+
+    @GET("admin/fulfillment/products/{productId}/check-capacity")
+    suspend fun checkLocationCapacity(
+        @Path("productId") productId: Long?,
+        @Query("locationId") locationId: Long? = null
+    ): Response<CheckLocationCapacityResponse>?
 }
