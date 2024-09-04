@@ -330,7 +330,9 @@ class Helper {
                         }
                     }
                     AppCurrency.SAR.value -> {
-                        return if (number.length == 9) {
+                        return if (number.startsWith("+") || number.startsWith("00")) {
+                            number
+                        } else if (number.length == 9) {
                             number = "+966$number"
                             number
                         } else if (number.length == 10) {
