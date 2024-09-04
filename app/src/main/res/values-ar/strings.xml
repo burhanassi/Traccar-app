@@ -19,6 +19,7 @@
     <string name="dashboard_delivered">تم توصيلها</string>
     <string name="dashboard_cod_sum">مجموع\nالتحصيلات</string>
     <string name="dashboard_mass_cod_reports_sum">مجموع تقارير التحصيلات المحمولة</string>
+    <string name="dashboard_driver_earnings_sum">مجموع اجور السائقين</string>
     <string name="dashboard_scan_new_package_barcode">مسح كود\n طرود جديدة</string>
     <string name="dashboard_scan_new_package_barcode_sprint">مسح كود\n شحنات جديدة</string>
     <string name="dashboard_accepted_packages">طرود جاهزة\nللتحميل من الزبائن</string>
