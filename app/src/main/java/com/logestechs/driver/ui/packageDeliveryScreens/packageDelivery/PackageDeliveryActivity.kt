@@ -1876,27 +1876,6 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 ConfirmationDialogAction.DELIVER_PACKAGE,
                 this
             )
-            if (companyConfigurations?.isEnableDeliverByMultiPaymentTypes == true) {
-                showWaitDialog()
-                hideWaitDialog()
-            } else {
-                if (selectedPaymentType?.textView?.text == PaymentType.INTER_PAY.englishLabel) {
-                    if (isAppInstalled(packageManager, AppConstants.SOFTPOS_PACKAGE_NAME)) {
-                        startSoftposApp(pkg?.cod?.format()!!)
-                        return
-                    } else {
-                        Helper.showErrorMessage(
-                            super.getContext(), getString(R.string.error_app_is_not_installed)
-                        )
-                    }
-                } else if (selectedPaymentType?.textView?.text == PaymentType.CLICK_PAY.englishLabel) {
-                    callVerifyClickPay()
-                } else if (selectedPaymentType?.textView?.text == PaymentType.NEAR_PAY.englishLabel) {
-                    startNearPay(pkg?.cod!!)
-                } else {
-                    makePackageDelivery()
-                }
-            }
         }
     }
 
