@@ -139,6 +139,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     private var packageCodToPay: Double = 0.0
     private var packageValueToPay: Double = 0.0
 
+    private var notes: String? = null
+
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -229,6 +231,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         } else {
             binding.itemNotes.root.visibility = View.VISIBLE
             binding.itemNotes.textItem.text = pkg?.notes
+            notes = pkg?.notes
         }
 
         if (pkg?.supplierInvoice?.trim().isNullOrEmpty()) {
@@ -1717,12 +1720,21 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
             R.id.button_deliver_package -> {
                 if (validateInput()) {
-                    (this as LogesTechsActivity).showConfirmationDialog(
-                        getString(R.string.warning_deliver_package),
-                        pkg,
-                        ConfirmationDialogAction.DELIVER_PACKAGE,
-                        this
-                    )
+                    if (companyConfigurations?.isPromptNoteForDriverInPackageDelivery == true && !notes.isNullOrEmpty()){
+                        (this as LogesTechsActivity).showConfirmationDialog(
+                            notes.toString(),
+                            pkg,
+                            ConfirmationDialogAction.PACKAGE_NOTE,
+                            this
+                        )
+                    } else {
+                        (this as LogesTechsActivity).showConfirmationDialog(
+                            getString(R.string.warning_deliver_package),
+                            pkg,
+                            ConfirmationDialogAction.DELIVER_PACKAGE,
+                            this
+                        )
+                    }
                 }
             }
 
@@ -1837,6 +1849,27 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             isClickPayVerified
             handlePackageDelivery()
         } else if (action == ConfirmationDialogAction.DELIVER_PACKAGE) {
+            if (companyConfigurations?.isEnableDeliverByMultiPaymentTypes == true) {
+                PaymentTypeValueDialog(super.getContext(), this, selectedPaymentType, paymentTypeId).showDialog()
+            } else {
+                if (selectedPaymentType?.textView?.text == PaymentType.INTER_PAY.englishLabel) {
+                    if (isAppInstalled(packageManager, AppConstants.SOFTPOS_PACKAGE_NAME)) {
+                        startSoftposApp(pkg?.cod?.format()!!)
+                        return
+                    } else {
+                        Helper.showErrorMessage(
+                            super.getContext(), getString(R.string.error_app_is_not_installed)
+                        )
+                    }
+                } else if (selectedPaymentType?.textView?.text == PaymentType.CLICK_PAY.englishLabel) {
+                    callVerifyClickPay()
+                } else if (selectedPaymentType?.textView?.text == PaymentType.NEAR_PAY.englishLabel) {
+                    startNearPay(pkg?.cod!!)
+                } else {
+                    makePackageDelivery()
+                }
+            }
+        } else if (action == ConfirmationDialogAction.PACKAGE_NOTE) {
             if (companyConfigurations?.isEnableDeliverByMultiPaymentTypes == true) {
                 PaymentTypeValueDialog(super.getContext(), this, selectedPaymentType, paymentTypeId).showDialog()
             } else {
