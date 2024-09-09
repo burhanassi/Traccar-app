@@ -1870,8 +1870,15 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 }
             }
         } else if (action == ConfirmationDialogAction.PACKAGE_NOTE) {
+            showConfirmationDialog(
+                getString(R.string.warning_deliver_package),
+                pkg,
+                ConfirmationDialogAction.DELIVER_PACKAGE,
+                this
+            )
             if (companyConfigurations?.isEnableDeliverByMultiPaymentTypes == true) {
-                PaymentTypeValueDialog(super.getContext(), this, selectedPaymentType, paymentTypeId).showDialog()
+                showWaitDialog()
+                hideWaitDialog()
             } else {
                 if (selectedPaymentType?.textView?.text == PaymentType.INTER_PAY.englishLabel) {
                     if (isAppInstalled(packageManager, AppConstants.SOFTPOS_PACKAGE_NAME)) {
