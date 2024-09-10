@@ -369,4 +369,6 @@
     <string name="show_package_content">عرض محتويات الطرد</string>
     <string name="error_location_capacity">تم الوصول إلى سعة الموقع</string>
     <string name="show_note">الملاحظات</string>
+    <string name="error_transaction_failed">Transaction Failed</string>
+    <string name="error_transaction_failed_by_bank">Transaction Failed By Bank</string>
 </resources>
