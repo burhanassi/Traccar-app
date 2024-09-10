@@ -64,6 +64,7 @@
                         android:id="@+id/container_receiver_info"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:orientation="vertical">
                         <include
                             android:id="@+id/item_receiver_name"
@@ -89,6 +90,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/background_card_semi_circle"
                     android:gravity="center"
+                    android:visibility="gone"
                     android:orientation="horizontal">
 
                     <LinearLayout
