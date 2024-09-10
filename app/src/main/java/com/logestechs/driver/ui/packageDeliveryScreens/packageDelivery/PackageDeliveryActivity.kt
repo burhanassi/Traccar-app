@@ -652,7 +652,20 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     val bundle = data?.getBundleExtra("data")
                     if (bundle != null) {
                         val transactionId = bundle.getString("rrNumber", "")
-                        callPaymentGateway(PaymentGatewayType.INTER_PAY, transactionId)
+                        val isFailed = bundle.getBoolean("isFailed")
+                        val txtType = bundle.getString("txtType", "")
+                        val responseCode = bundle.getString("responseCode", "")
+                        val approvalCode = bundle.getString("approvalCode", "")
+
+                        if (isFailed || (txtType != null && txtType.toLowerCase(Locale.ROOT) == "reversal")) {
+                            Helper.showErrorMessage(this, getString(R.string.error_transaction_failed))
+                        } else {
+                            if (responseCode == "000" && approvalCode != null) {
+                                callPaymentGateway(PaymentGatewayType.INTER_PAY, transactionId)
+                            } else {
+                                Helper.showErrorMessage(this, getString(R.string.error_transaction_failed_by_bank))
+                            }
+                        }
                     } else {
                         handleExceptionFromSoftpos("400", "Invalid response from SoftPOS", null)
                     }

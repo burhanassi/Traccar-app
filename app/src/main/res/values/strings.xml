@@ -370,4 +370,6 @@
     <string name="hint_value">Value</string>
     <string name="show_package_content">Show package content</string>
     <string name="show_note">Notes</string>
+    <string name="error_transaction_failed">Transaction Failed</string>
+    <string name="error_transaction_failed_by_bank">Transaction Failed By Bank</string>
 </resources>
