@@ -139,6 +139,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     private var packageCodToPay: Double = 0.0
     private var packageValueToPay: Double = 0.0
 
+    private var notes: String? = null
+
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -229,6 +231,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         } else {
             binding.itemNotes.root.visibility = View.VISIBLE
             binding.itemNotes.textItem.text = pkg?.notes
+            notes = pkg?.notes
         }
 
         if (pkg?.supplierInvoice?.trim().isNullOrEmpty()) {
@@ -1652,7 +1655,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         val nearPay = NearPay.Builder()
             .context(this)
             .authenticationData(AuthenticationData.UserEnter)
-            .environment(Environments.SANDBOX)
+            .environment(Environments.PRODUCTION)
             .locale(Locale.getDefault())
             .networkConfiguration(NetworkConfiguration.SIM_PREFERRED)
             .uiPosition(UIPosition.CENTER_BOTTOM)
@@ -1730,12 +1733,21 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
             R.id.button_deliver_package -> {
                 if (validateInput()) {
-                    (this as LogesTechsActivity).showConfirmationDialog(
-                        getString(R.string.warning_deliver_package),
-                        pkg,
-                        ConfirmationDialogAction.DELIVER_PACKAGE,
-                        this
-                    )
+                    if (companyConfigurations?.isPromptNoteForDriverInPackageDelivery == true && !notes.isNullOrEmpty()){
+                        (this as LogesTechsActivity).showConfirmationDialog(
+                            notes.toString(),
+                            pkg,
+                            ConfirmationDialogAction.PACKAGE_NOTE,
+                            this
+                        )
+                    } else {
+                        (this as LogesTechsActivity).showConfirmationDialog(
+                            getString(R.string.warning_deliver_package),
+                            pkg,
+                            ConfirmationDialogAction.DELIVER_PACKAGE,
+                            this
+                        )
+                    }
                 }
             }
 
@@ -1870,6 +1882,13 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     makePackageDelivery()
                 }
             }
+        } else if (action == ConfirmationDialogAction.PACKAGE_NOTE) {
+            showConfirmationDialog(
+                getString(R.string.warning_deliver_package),
+                pkg,
+                ConfirmationDialogAction.DELIVER_PACKAGE,
+                this
+            )
         }
     }
 

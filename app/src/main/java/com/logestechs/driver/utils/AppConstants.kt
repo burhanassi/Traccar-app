@@ -172,7 +172,8 @@ enum class ConfirmationDialogAction {
     RETURN_PACKAGE,
     CLICKPAY_PAYMENT,
     CLICKPAY_RESULT,
-    DELIVER_PACKAGE
+    DELIVER_PACKAGE,
+    PACKAGE_NOTE
 }
 
 enum class PaymentGatewayType {
