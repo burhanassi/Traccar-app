@@ -112,7 +112,8 @@ data class Package(
     var firstPickupDate: String? = null,
     var paymentTypeId: Long? = null,
     var paymentTypeName: String? = null,
-    var partnerPackageId: Long? = null
+    var partnerPackageId: Long? = null,
+    var notificationTemplate: String? = null
 
 ) : Parcelable {
     fun getFullSenderName(): String {
