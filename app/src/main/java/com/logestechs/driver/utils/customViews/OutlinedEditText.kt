@@ -1,5 +1,6 @@
 package com.logestechs.driver.utils.customViews
 
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.PorterDuff
@@ -13,9 +14,9 @@ import android.widget.LinearLayout
 import androidx.annotation.StyleableRes
 import androidx.core.content.ContextCompat
 import com.logestechs.driver.R
+import com.logestechs.driver.databinding.ViewOutlinedEditTextBinding
 import com.logestechs.driver.utils.AppLanguages
 import com.yariksoffice.lingver.Lingver
-import kotlinx.android.synthetic.main.view_outlined_edit_text.view.*
 
 class OutlinedEditText : LinearLayout {
     @JvmOverloads
@@ -40,31 +41,35 @@ class OutlinedEditText : LinearLayout {
     @StyleableRes
     val textHint = 0
 
+    @SuppressLint("ResourceType")
     @StyleableRes
     val imageStart = 1
 
+    @SuppressLint("ResourceType")
     @StyleableRes
     val isPassword = 2
 
     lateinit var editText: EditText
     lateinit var buttonShowPassword: EditText
 
+    private var _binding: ViewOutlinedEditTextBinding? = null
+    private val binding get() = _binding!!
     private fun init(attrs: AttributeSet?) {
-        LayoutInflater.from(context).inflate(R.layout.view_outlined_edit_text, this, true)
+        _binding = ViewOutlinedEditTextBinding.inflate(LayoutInflater.from(context), this)
 
         val sets = intArrayOf(R.attr.hintText, R.attr.imageStart, R.attr.isPassword)
         val typedArray = context.obtainStyledAttributes(attrs, sets)
 
-        editText = edit_text
+        editText = binding.editText
 
         if (typedArray.getBoolean(isPassword, false)) {
 
             if (Lingver.getInstance().getLocale().toString() == AppLanguages.ARABIC.value) {
-                edit_text.setCompoundDrawablesWithIntrinsicBounds(
+                binding.editText.setCompoundDrawablesWithIntrinsicBounds(
                     null, null, typedArray.getDrawable(imageStart), null
                 )
             } else {
-                edit_text.setCompoundDrawablesWithIntrinsicBounds(
+                binding.editText.setCompoundDrawablesWithIntrinsicBounds(
                     typedArray.getDrawable(imageStart), null, null, null
                 )
             }
@@ -74,13 +79,13 @@ class OutlinedEditText : LinearLayout {
 
             if (Lingver.getInstance().getLocale().toString() == AppLanguages.ARABIC.value) {
 
-                edit_text.setCompoundDrawablesWithIntrinsicBounds(
+                binding.editText.setCompoundDrawablesWithIntrinsicBounds(
                     null, null, typedArray.getDrawable(
                         imageStart
                     ), null
                 )
             } else {
-                edit_text.setCompoundDrawablesWithIntrinsicBounds(
+                binding.editText.setCompoundDrawablesWithIntrinsicBounds(
                     typedArray.getDrawable(
                         imageStart
                     ), null, null, null
@@ -88,16 +93,16 @@ class OutlinedEditText : LinearLayout {
             }
         }
 
-        text_view.text = typedArray.getText(textHint)?.toString()
+        binding.textView.text = typedArray.getText(textHint)?.toString()
 
         typedArray.recycle()
 
     }
 
     fun makeInvalid() {
-        text_view.setTextColor(ContextCompat.getColor(context, R.color.selectedBottomBarItemTint))
+        binding.textView.setTextColor(ContextCompat.getColor(context, R.color.selectedBottomBarItemTint))
 
-        for (drawable in edit_text.compoundDrawables) {
+        for (drawable in binding.editText.compoundDrawables) {
             if (drawable != null) {
                 drawable.colorFilter =
                     PorterDuffColorFilter(
@@ -107,17 +112,17 @@ class OutlinedEditText : LinearLayout {
             }
         }
 
-        edit_text?.background =
+        binding.editText.background =
             ContextCompat.getDrawable(context, R.drawable.border_outlined_edittext_red)
 
-        edit_text.setTextColor(ContextCompat.getColor(context, R.color.selectedBottomBarItemTint))
+        binding.editText.setTextColor(ContextCompat.getColor(context, R.color.selectedBottomBarItemTint))
 
     }
 
     fun makeValid() {
-        text_view.setTextColor(ContextCompat.getColor(context, R.color.fontTitleBlack))
+        binding.textView.setTextColor(ContextCompat.getColor(context, R.color.fontTitleBlack))
 
-        for (drawable in edit_text.compoundDrawables) {
+        for (drawable in binding.editText.compoundDrawables) {
             if (drawable != null) {
                 drawable.colorFilter =
                     PorterDuffColorFilter(
@@ -127,15 +132,15 @@ class OutlinedEditText : LinearLayout {
             }
         }
 
-        edit_text?.background =
+        binding.editText.background =
             ContextCompat.getDrawable(context, R.drawable.border_outlined_edittext)
 
-        edit_text.setTextColor(ContextCompat.getColor(context, R.color.fontTitleBlack))
+        binding.editText.setTextColor(ContextCompat.getColor(context, R.color.fontTitleBlack))
 
     }
 
     fun getText(): String {
-        return edit_text.text.toString()
+        return binding.editText.text.toString()
     }
 
     fun isEmpty(): Boolean {
