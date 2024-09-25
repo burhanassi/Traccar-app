@@ -724,7 +724,7 @@ class Helper {
                     receiverPhone = pkg.receiverPhone
                 }
 
-                receiverAddress = pkg.destinationAddress?.toString()
+                receiverAddress = "${pkg.destinationAddress?.toString()} ${pkg.destinationAddress?.addressLine1.toString()}"
                 packageContent = pkg.description
             }
             driverName = loggedInUser?.firstName

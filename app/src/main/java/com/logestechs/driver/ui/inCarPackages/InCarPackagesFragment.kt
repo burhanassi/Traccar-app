@@ -1732,15 +1732,18 @@ class InCarPackagesFragment(
         if (pkg?.partnerId != null && pkg.partnerId != 0L) {
             callGetPartnerNameById(pkg.id, pkg, false, isSecondary)
         } else {
-            (context as LogesTechsActivity).sendWhatsAppMessage(
-                Helper.formatNumberForWhatsApp(
-                    pkg?.receiverPhone,
-                    isSecondary
-                ), Helper.getInterpretedMessageFromTemplate(
+            val message = pkg?.notificationTemplate?.takeIf { it.isNotEmpty() }
+                ?: Helper.getInterpretedMessageFromTemplate(
                     pkg,
                     false,
                     messageTemplates?.distribution
                 )
+
+            (context as LogesTechsActivity).sendWhatsAppMessage(
+                Helper.formatNumberForWhatsApp(
+                    pkg?.receiverPhone,
+                    isSecondary
+                ), message
             )
         }
     }
@@ -1750,13 +1753,15 @@ class InCarPackagesFragment(
         if (pkg?.partnerId != null && pkg.partnerId != 0L) {
             callGetPartnerNameById(pkg.id, pkg, isSms = true, isSecondary = false)
         } else {
-            (context as LogesTechsActivity).sendSms(
-                pkg?.receiverPhone,
-                Helper.getInterpretedMessageFromTemplate(
+            val message = pkg?.notificationTemplate?.takeIf { it.isNotEmpty() }
+                ?: Helper.getInterpretedMessageFromTemplate(
                     pkg,
                     false,
-                    messageTemplates?.distribution,
+                    messageTemplates?.distribution
                 )
+            (context as LogesTechsActivity).sendSms(
+                pkg?.receiverPhone,
+                message
             )
         }
     }
