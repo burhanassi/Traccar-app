@@ -92,7 +92,7 @@
     <string name="in_car_status_postponed">مؤجل</string>
     <string name="in_car_status_returned">مرجع</string>
     <string name="in_car_status_cod">التحصيل</string>
-    <string name="view_mode_villages">مناطق</string>
+    <string name="view_mode_districts">أحياء</string>
     <string name="view_mode_packages">طرود</string>
     <string name="view_mode_packages_sprint">شحنات</string>
     <string name="view_mode_vendors">تجار</string>
