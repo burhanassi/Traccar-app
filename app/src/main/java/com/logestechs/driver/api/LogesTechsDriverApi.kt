@@ -798,4 +798,9 @@ interface LogesTechsDriverApi {
         @Path("productId") productId: Long?,
         @Query("locationId") locationId: Long? = null
     ): Response<CheckLocationCapacityResponse>?
+
+    @GET("driver/package/info")
+    suspend fun getPackageByInvoiceNumber(
+        @Query("invoiceNumber") invoiceNumber: String
+    ): Response<Package>?
 }
