@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.hardware.Camera
 import android.media.AudioManager
 import android.media.ToneGenerator
+import android.net.Uri
 import android.os.*
 import android.view.KeyEvent
 import android.view.SurfaceHolder
@@ -289,7 +290,9 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
             override fun receiveDetections(detections: Detections<Barcode>) {
                 val barcodes = detections.detectedItems
                 if (barcodes.size() != 0) {
-                    val scannedBarcode = barcodes.valueAt(0).displayValue
+                    val barcode = barcodes.valueAt(0)
+                    val scannedBarcode = barcode.displayValue
+
                     if (scannedBarcode != currentBarcodeRead) {
                         confirmCounter = 0
                         currentBarcodeRead = scannedBarcode
@@ -298,7 +301,11 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                         if (confirmCounter >= confirmTarget) {
                             currentBarcodeRead = null
                             confirmCounter = 0
-                            handleDetectedBarcode(scannedBarcode)
+                            if (barcode.format == Barcode.QR_CODE) {
+                                handleDetectedQRCodes(scannedBarcode)
+                            } else {
+                                handleDetectedBarcode(scannedBarcode)
+                            }
                         }
                     }
                 }
@@ -324,6 +331,18 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
             } else {
                 callPickupPackage(barcode)
             }
+            toneGen1?.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
+            vibrate()
+        }
+    }
+
+    private fun handleDetectedQRCodes(QRCode: String) {
+        val uri = Uri.parse(QRCode)
+        val invoiceNumber = uri.getQueryParameter("invoiceNumber")
+
+        if (invoiceNumber != null && !scannedItemsHashMap.containsKey(invoiceNumber)) {
+            scannedItemsHashMap[invoiceNumber] = invoiceNumber
+            callPickupPackage(invoiceNumber)
             toneGen1?.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
             vibrate()
         }
