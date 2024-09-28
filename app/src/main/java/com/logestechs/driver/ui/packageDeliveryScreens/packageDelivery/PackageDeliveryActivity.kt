@@ -139,6 +139,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     private var packageCodToPay: Double = 0.0
     private var packageValueToPay: Double = 0.0
 
+    private var notes: String? = null
+
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -229,6 +231,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         } else {
             binding.itemNotes.root.visibility = View.VISIBLE
             binding.itemNotes.textItem.text = pkg?.notes
+            notes = pkg?.notes
         }
 
         if (pkg?.supplierInvoice?.trim().isNullOrEmpty()) {
@@ -652,7 +655,20 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     val bundle = data?.getBundleExtra("data")
                     if (bundle != null) {
                         val transactionId = bundle.getString("rrNumber", "")
-                        callPaymentGateway(PaymentGatewayType.INTER_PAY, transactionId)
+                        val isFailed = bundle.getBoolean("isFailed")
+                        val txtType = bundle.getString("txtType", "")
+                        val responseCode = bundle.getString("responseCode", "")
+                        val approvalCode = bundle.getString("approvalCode", "")
+
+                        if (isFailed || (txtType != null && txtType.toLowerCase(Locale.ROOT) == "reversal")) {
+                            Helper.showErrorMessage(this, getString(R.string.error_transaction_failed))
+                        } else {
+                            if (responseCode == "000" && approvalCode != null) {
+                                callPaymentGateway(PaymentGatewayType.INTER_PAY, transactionId)
+                            } else {
+                                Helper.showErrorMessage(this, getString(R.string.error_transaction_failed_by_bank))
+                            }
+                        }
                     } else {
                         handleExceptionFromSoftpos("400", "Invalid response from SoftPOS", null)
                     }
@@ -1717,12 +1733,21 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
             R.id.button_deliver_package -> {
                 if (validateInput()) {
-                    (this as LogesTechsActivity).showConfirmationDialog(
-                        getString(R.string.warning_deliver_package),
-                        pkg,
-                        ConfirmationDialogAction.DELIVER_PACKAGE,
-                        this
-                    )
+                    if (companyConfigurations?.isPromptNoteForDriverInPackageDelivery == true && !notes.isNullOrEmpty()){
+                        (this as LogesTechsActivity).showConfirmationDialog(
+                            notes.toString(),
+                            pkg,
+                            ConfirmationDialogAction.PACKAGE_NOTE,
+                            this
+                        )
+                    } else {
+                        (this as LogesTechsActivity).showConfirmationDialog(
+                            getString(R.string.warning_deliver_package),
+                            pkg,
+                            ConfirmationDialogAction.DELIVER_PACKAGE,
+                            this
+                        )
+                    }
                 }
             }
 
@@ -1857,6 +1882,13 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     makePackageDelivery()
                 }
             }
+        } else if (action == ConfirmationDialogAction.PACKAGE_NOTE) {
+            showConfirmationDialog(
+                getString(R.string.warning_deliver_package),
+                pkg,
+                ConfirmationDialogAction.DELIVER_PACKAGE,
+                this
+            )
         }
     }
 

@@ -43,5 +43,6 @@ data class DriverCompanyConfigurations(
     var isEnableDeliverByMultiPaymentTypes: Boolean? = null,
     var isShowPackageContentForDrivers: Boolean? = null,
     var isEnableMaxCapacityLocationForProducts: Boolean? = null,
-    var isShowReceiverInfoForDriverPendingShipments: Boolean? = null
+    var isShowReceiverInfoForDriverPendingShipments: Boolean? = null,
+    var isDriverEarningEnabled: Boolean? = null
 )

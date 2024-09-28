@@ -74,7 +74,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:layout_weight="1"
-                        app:textStatus="@string/view_mode_villages" />
+                        app:textStatus="@string/view_mode_districts" />
 
                     <com.logestechs.driver.utils.customViews.StatusSelector
                         android:id="@+id/selector_packages"

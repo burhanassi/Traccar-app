@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.annotation.StyleableRes
 import androidx.core.content.ContextCompat
 import com.logestechs.driver.R
-import kotlinx.android.synthetic.main.view_status_selector.view.*
+import com.logestechs.driver.databinding.ViewStatusSelectorBinding
 
 class StatusSelector : FrameLayout {
     @JvmOverloads
@@ -39,11 +39,14 @@ class StatusSelector : FrameLayout {
 
     var enumValue: Any? = null
 
-    private fun init(attrs: AttributeSet?) {
-        LayoutInflater.from(context).inflate(R.layout.view_status_selector, this, true)
+    private var _binding: ViewStatusSelectorBinding? = null
+    private val binding get() = _binding!!
 
-        textView = text_status
-        container = frame_container
+    private fun init(attrs: AttributeSet?) {
+        _binding = ViewStatusSelectorBinding.inflate(LayoutInflater.from(context), this)
+
+        textView = binding.textStatus
+        container = binding.frameContainer
         val sets = intArrayOf(R.attr.textStatus)
         val typedArray = context.obtainStyledAttributes(attrs, sets)
 

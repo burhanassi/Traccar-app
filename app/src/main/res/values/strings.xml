@@ -19,6 +19,7 @@
     <string name="dashboard_delivered">Delivered</string>
     <string name="dashboard_cod_sum">COD\nSum</string>
     <string name="dashboard_mass_cod_reports_sum">Mass COD Reports Sum</string>
+    <string name="dashboard_driver_earnings_sum">Total Driver Earning</string>
     <string name="dashboard_scan_new_package_barcode">Scan New\nBarcodes</string>
     <string name="dashboard_scan_new_package_barcode_sprint">Scan New\nBarcodes</string>
     <string name="dashboard_accepted_packages">Accepted\nPackages</string>
@@ -91,7 +92,7 @@
     <string name="in_car_status_postponed">Postponed</string>
     <string name="in_car_status_returned">Returned</string>
     <string name="in_car_status_cod">COD</string>
-    <string name="view_mode_villages">Villages</string>
+    <string name="view_mode_districts">Districts</string>
     <string name="view_mode_packages">Packages</string>
     <string name="view_mode_packages_sprint">Packages</string>
     <string name="view_mode_vendors">Vendors</string>
@@ -371,4 +372,6 @@
     <string name="show_package_content">Show package content</string>
     <string name="error_location_capacity">Location Capacity Reached</string>
     <string name="show_note">Notes</string>
+    <string name="error_transaction_failed">Transaction Failed</string>
+    <string name="error_transaction_failed_by_bank">Transaction Failed By Bank</string>
 </resources>

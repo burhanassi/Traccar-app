@@ -62,7 +62,7 @@ class FailDeliveryDialog(
             alertDialog.dismiss()
         }
 
-        if (loginResponse?.user?.companyID == 368.toLong()) {
+        if (Helper.getCompanyId() == AppConstants.PROLO_COMPANY_ID.toLong()){
             binding.etReason.visibility = android.view.View.GONE
         }
 

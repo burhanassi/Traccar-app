@@ -330,7 +330,9 @@ class Helper {
                         }
                     }
                     AppCurrency.SAR.value -> {
-                        return if (number.length == 9) {
+                        return if (number.startsWith("+") || number.startsWith("00")) {
+                            number
+                        } else if (number.length == 9) {
                             number = "+966$number"
                             number
                         } else if (number.length == 10) {
@@ -722,7 +724,7 @@ class Helper {
                     receiverPhone = pkg.receiverPhone
                 }
 
-                receiverAddress = pkg.destinationAddress?.toString()
+                receiverAddress = "${pkg.destinationAddress?.toString()} ${pkg.destinationAddress?.addressLine1.toString()}"
                 packageContent = pkg.description
             }
             driverName = loggedInUser?.firstName

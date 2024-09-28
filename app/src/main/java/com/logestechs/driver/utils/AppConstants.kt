@@ -44,6 +44,8 @@ class AppConstants {
         const val SOFTPOS_PACKAGE_NAME = "com.interpaymea.softpos"
         const val SOFTPOS_CLASS_NAME = "com.interpaymea.softpos.MainActivity"
         const val WAZE_PACKAGE_NAME = "com.waze"
+
+        const val PROLO_COMPANY_ID = 368
     }
 }
 
@@ -172,7 +174,8 @@ enum class ConfirmationDialogAction {
     RETURN_PACKAGE,
     CLICKPAY_PAYMENT,
     CLICKPAY_RESULT,
-    DELIVER_PACKAGE
+    DELIVER_PACKAGE,
+    PACKAGE_NOTE
 }
 
 enum class PaymentGatewayType {
