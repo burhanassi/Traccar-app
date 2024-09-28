@@ -15,7 +15,6 @@ import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.interfaces.FulfilmentOrderCardListener
 import com.logestechs.driver.utils.interfaces.NewFulfilmentOrderCardListener
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_fulfilment_order_item_cell.view.item_card
 
 
 class FulfilmentOrderCellAdapter(
@@ -30,17 +29,20 @@ class FulfilmentOrderCellAdapter(
 
     private var highlightedPosition: Int? = null
 
+    private var _binding: ItemFulfilmentOrderCellBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
         i: Int
     ): FulfilmentOrderCellViewHolder {
-        val inflater =
+        _binding =
             ItemFulfilmentOrderCellBinding.inflate(
                 LayoutInflater.from(viewGroup.context),
                 viewGroup,
                 false
             )
-        return FulfilmentOrderCellViewHolder(inflater, viewGroup, this)
+        return FulfilmentOrderCellViewHolder(binding, viewGroup, this)
     }
 
     override fun onBindViewHolder(
@@ -50,9 +52,9 @@ class FulfilmentOrderCellAdapter(
         val productItem: FulfilmentOrder? = fulfilmentOrderList[position]
 
         if (position == highlightedPosition) {
-            FulfilmentOrderItemCellViewHolder.itemView.item_card.setBackgroundResource(R.drawable.highlighted_item_background)
+            binding.itemCard.setBackgroundResource(R.drawable.highlighted_item_background)
         } else {
-            FulfilmentOrderItemCellViewHolder.itemView.item_card.setBackgroundResource(0)
+            binding.itemCard.setBackgroundResource(0)
         }
 
         FulfilmentOrderItemCellViewHolder.setIsRecyclable(false);

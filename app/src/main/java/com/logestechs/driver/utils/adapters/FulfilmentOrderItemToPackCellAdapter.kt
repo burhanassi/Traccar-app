@@ -13,7 +13,6 @@ import com.logestechs.driver.databinding.ItemFulfilmentOrderItemCellBinding
 import com.logestechs.driver.databinding.ItemFulfilmentOrderItemToPackCellBinding
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_fulfilment_order_item_cell.view.item_card
 
 
 class FulfilmentOrderItemToPackCellAdapter(
@@ -27,18 +26,21 @@ class FulfilmentOrderItemToPackCellAdapter(
 
     private var highlightedPosition: Int? = null
 
+    private var _binding: ItemFulfilmentOrderItemToPackCellBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
         i: Int
     ): FulfilmentOrderItemToPackCellViewHolder {
-        val inflater =
-            ItemFulfilmentOrderItemToPackCellBinding.inflate(
-                LayoutInflater.from(viewGroup.context),
-                viewGroup,
-                false
-            )
-        return FulfilmentOrderItemToPackCellViewHolder(inflater, viewGroup, this)
+        _binding = ItemFulfilmentOrderItemToPackCellBinding.inflate(
+            LayoutInflater.from(viewGroup.context),
+            viewGroup,
+            false
+        )
+        return FulfilmentOrderItemToPackCellViewHolder(binding, viewGroup, this)
     }
+
 
     override fun onBindViewHolder(
         FulfilmentOrderItemToPackCellViewHolder: FulfilmentOrderItemToPackCellViewHolder,
@@ -47,9 +49,9 @@ class FulfilmentOrderItemToPackCellAdapter(
         val productItem: ProductItem? = productItemsList[position]
 
         if (position == highlightedPosition) {
-            FulfilmentOrderItemToPackCellViewHolder.itemView.item_card.setBackgroundResource(R.drawable.highlighted_item_background)
+            binding.itemCard.setBackgroundResource(R.drawable.highlighted_item_background)
         } else {
-            FulfilmentOrderItemToPackCellViewHolder.itemView.item_card.setBackgroundResource(0)
+            binding.itemCard.setBackgroundResource(0)
         }
 
         FulfilmentOrderItemToPackCellViewHolder.setIsRecyclable(false);
