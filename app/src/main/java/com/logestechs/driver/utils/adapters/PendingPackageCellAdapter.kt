@@ -116,17 +116,17 @@ class PendingPackageCellAdapter(
                 binding.buttonContextMenu.visibility = View.VISIBLE
             }
 
-//            if (mAdapter.companyConfigurations?.isShowReceiverInfoForDriverPendingShipments == true) {
-//                binding.containerReceiverInfo.visibility = View.VISIBLE
-//                binding.containerCod.visibility = View.VISIBLE
-//
-//                binding.itemReceiverName.textItem.text = pkg?.getFullReceiverName()
-//                binding.itemReceiverAddress.textItem.text = pkg?.destinationAddress?.toStringAddress()
-//                binding.textCod.text = "${Helper.getCompanyCurrency()} ${pkg?.cod?.format()}"
-//            } else {
-//                binding.containerReceiverInfo.visibility = View.GONE
-//                binding.containerCod.visibility = View.GONE
-//            }
+            if (mAdapter.companyConfigurations?.isShowReceiverInfoForDriverPendingShipments == true) {
+                binding.containerReceiverInfo.visibility = View.VISIBLE
+                binding.containerCod.visibility = View.VISIBLE
+
+                binding.itemReceiverName.textItem.text = pkg?.getFullReceiverName()
+                binding.itemReceiverAddress.textItem.text = pkg?.destinationAddress?.toStringAddress()
+                binding.textCod.text = "${Helper.getCompanyCurrency()} ${pkg?.cod?.format()}"
+            } else {
+                binding.containerReceiverInfo.visibility = View.GONE
+                binding.containerCod.visibility = View.GONE
+            }
         }
     }
 }
