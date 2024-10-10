@@ -127,7 +127,12 @@ class ScannedBarcodeViewHolder(
         if (scannedItem?.barcodeScanType == BarcodeScanType.PACKAGE_PICKUP) {
             val pkg = scannedItem.data as Package
 
-            binding.itemReceiverName.textItem.text = pkg.receiverName
+            if (!pkg.receiverName.isNullOrEmpty()){
+                binding.itemReceiverName.textItem.text = pkg.receiverName
+            } else {
+                binding.itemReceiverName.textItem.text = pkg.customerName
+            }
+
             binding.itemBarcode.textItem.text = pkg.barcode
             binding.itemReceiverCity.textItem.text = pkg.destinationCity
             if (pkg.invoiceNumber != null) {
