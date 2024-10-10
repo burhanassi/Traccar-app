@@ -1,5 +1,6 @@
 package com.logestechs.driver.utils.customViews
 
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build
@@ -11,9 +12,9 @@ import android.widget.*
 import androidx.annotation.StyleableRes
 import androidx.core.content.ContextCompat
 import com.logestechs.driver.R
+import com.logestechs.driver.databinding.ViewOutlinedFormEditTextBinding
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsApp
-import kotlinx.android.synthetic.main.view_outlined_form_edit_text.view.*
 
 
 class OutlinedFormEditText : RelativeLayout {
@@ -39,15 +40,19 @@ class OutlinedFormEditText : RelativeLayout {
     @StyleableRes
     val textHint = 0
 
+    @SuppressLint("ResourceType")
     @StyleableRes
     val imageStart = 1
 
+    @SuppressLint("ResourceType")
     @StyleableRes
     val isDropdown = 2
 
+    @SuppressLint("ResourceType")
     @StyleableRes
     val isNumeric = 3
 
+    @SuppressLint("ResourceType")
     @StyleableRes
     val isPhone = 4
 
@@ -59,8 +64,12 @@ class OutlinedFormEditText : RelativeLayout {
 
     var isValid: Boolean = true
 
+    private var _binding: ViewOutlinedFormEditTextBinding? = null
+    private val binding get() = _binding!!
+
     private fun init(attrs: AttributeSet?) {
-        LayoutInflater.from(context).inflate(R.layout.view_outlined_form_edit_text, this, true)
+
+        _binding = ViewOutlinedFormEditTextBinding.inflate(LayoutInflater.from(context), this)
 
         val sets =
             intArrayOf(
@@ -72,26 +81,26 @@ class OutlinedFormEditText : RelativeLayout {
             )
         val typedArray = context.obtainStyledAttributes(attrs, sets)
 
-        editText = edit_text
-        textView = text_view
+        editText = binding.editText
+        textView = binding.textView
         editText.isSaveEnabled = false
-        viewLine = view_line
-        formButton = linear_Layout_icons_container
-        iconImageView = image_view_icon
+        viewLine = binding.viewLine
+        formButton = binding.linearLayoutIconsContainer
+        iconImageView = binding.imageViewIcon
 
 
         if (typedArray.getDrawable(imageStart) != null) {
             iconImageView.setImageDrawable(typedArray.getDrawable(imageStart))
         } else {
-            linear_Layout_icons_container.visibility = View.GONE
+            binding.linearLayoutIconsContainer.visibility = View.GONE
         }
 
         if (typedArray.getBoolean(isDropdown, false)) {
-            ic_arrow.visibility = View.VISIBLE
+            binding.icArrow.visibility = View.VISIBLE
             iconImageView.setPadding(6, 4, 6, 4)
         }
 
-        text_view.text = typedArray.getText(textHint)?.toString()
+        binding.textView.text = typedArray.getText(textHint)?.toString()
 
         if (typedArray.getBoolean(isNumeric, false)) {
             editText.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
@@ -108,21 +117,21 @@ class OutlinedFormEditText : RelativeLayout {
 
     fun makeInvalid() {
         isValid = false
-        linear_Layout_container.background =
+        binding.linearLayoutContainer.background =
             ContextCompat.getDrawable(context, R.drawable.border_outlined_edittext_red)
-        text_view.setTextColor(ContextCompat.getColor(context, R.color.selectedBottomBarItemTint))
+        binding.textView.setTextColor(ContextCompat.getColor(context, R.color.selectedBottomBarItemTint))
     }
 
     fun makeValid() {
         isValid = true
-        linear_Layout_container.background =
+        binding.linearLayoutContainer.background =
             ContextCompat.getDrawable(context, R.drawable.border_outlined_edittext)
 
-        text_view.setTextColor(ContextCompat.getColor(context, R.color.fontTitleBlack))
+        binding.textView.setTextColor(ContextCompat.getColor(context, R.color.fontTitleBlack))
     }
 
     fun getText(): String {
-        return edit_text.text.toString()
+        return binding.editText.text.toString()
     }
 
     fun getHintText(): String {
@@ -130,13 +139,13 @@ class OutlinedFormEditText : RelativeLayout {
     }
 
     fun setText(text: String?) {
-        if (edit_text != null) {
-            edit_text.setText(text ?: "")
+        if (binding.editText != null) {
+            binding.editText.setText(text ?: "")
         }
     }
 
     fun clearEditTextFocus() {
-        edit_text.clearFocus()
+        binding.editText.clearFocus()
     }
 
     fun clearText() {
@@ -144,14 +153,14 @@ class OutlinedFormEditText : RelativeLayout {
     }
 
     fun disableInput() {
-        linear_Layout_container.background =
+        binding.linearLayoutContainer.background =
             ContextCompat.getDrawable(context, R.drawable.border_outlined_disabled_edittext)
-        text_view.setTextColor(ContextCompat.getColor(context, R.color.fontTitleBlack))
+        binding.textView.setTextColor(ContextCompat.getColor(context, R.color.fontTitleBlack))
         editText.isEnabled = false
     }
 
     fun enableInput() {
-        linear_Layout_container.background =
+        binding.linearLayoutContainer.background =
             ContextCompat.getDrawable(context, R.drawable.border_outlined_edittext)
         editText.isEnabled = true
     }
@@ -165,8 +174,8 @@ class OutlinedFormEditText : RelativeLayout {
     }
 
     fun setCurrency() {
-        image_view_icon.visibility = View.GONE
-        text_currency.visibility = View.VISIBLE
-        text_currency.text = Helper.getCompanyCurrency()
+        binding.imageViewIcon.visibility = View.GONE
+        binding.textCurrency.visibility = View.VISIBLE
+        binding.textCurrency.text = Helper.getCompanyCurrency()
     }
 }

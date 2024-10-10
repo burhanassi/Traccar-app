@@ -30,6 +30,14 @@ class SplashActivity : LogesTechsActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+
+        val data: Uri? = intent?.data
+        data?.let {
+            val content = it.query
+            val invoiceNumber = content?.substringAfter("invoiceNumber=")
+            SharedPreferenceWrapper.saveInvoiceForDeeplink(invoiceNumber ?: "")
+        }
+
         hideStatusBar()
         handleNotificationToken()
         getMinVersion("https://play.google.com/store/apps/details?id=com.logestechs.driver")

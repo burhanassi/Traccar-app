@@ -44,6 +44,8 @@ class AppConstants {
         const val SOFTPOS_PACKAGE_NAME = "com.interpaymea.softpos"
         const val SOFTPOS_CLASS_NAME = "com.interpaymea.softpos.MainActivity"
         const val WAZE_PACKAGE_NAME = "com.waze"
+
+        const val PROLO_COMPANY_ID = 368
     }
 }
 

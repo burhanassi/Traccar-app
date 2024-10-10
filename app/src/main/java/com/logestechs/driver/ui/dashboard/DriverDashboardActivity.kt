@@ -42,6 +42,7 @@ import com.logestechs.driver.ui.returnedPackages.ReturnedPackagesActivity
 import com.logestechs.driver.ui.warehousePackagesByStatusViewPager.WarehousePackagesByStatusViewPagerActivity
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.Helper.Companion.format
+import com.logestechs.driver.utils.bottomSheets.PackageTrackBottomSheet
 import com.logestechs.driver.utils.location.AlarmReceiver
 import com.logestechs.driver.utils.location.LocationListener
 import com.logestechs.driver.utils.location.MyLocationService
@@ -76,6 +77,15 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (SharedPreferenceWrapper.doesInvoiceForDeeplinkExist()) {
+            val invoice = SharedPreferenceWrapper.getInvoiceForDeeplink()
+            if (!invoice.isNullOrEmpty()) {
+                getPackageByInvoiceNumber(invoice)
+            }
+            SharedPreferenceWrapper.deleteInvoiceForDeeplink()
+        }
+
         Helper.handleScanWay(this)
         initData()
         initOnClickListeners()
@@ -678,6 +688,66 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
                 }
             }
         } else {
+            Helper.showErrorMessage(
+                this, getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+    private fun getPackageByInvoiceNumber(invoiceNumber: String) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(this)) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.getPackageByInvoiceNumber(invoiceNumber)
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response!!.isSuccessful && response.body() != null) {
+                        val data = response?.body()!!
+                        val bottomSheet = PackageTrackBottomSheet()
+                        val bundle = Bundle()
+                        bundle.putParcelable(BundleKeys.PKG_KEY.toString(), data)
+                        bottomSheet.arguments = bundle
+                        bottomSheet.show(supportFragmentManager, "exampleBottomSheet")
+
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    this@DriverDashboardActivity,
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    this@DriverDashboardActivity,
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(this@DriverDashboardActivity, e.message)
+                        } else {
+                            Helper.showErrorMessage(
+                                this@DriverDashboardActivity,
+                                e.stackTraceToString()
+                            )
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
             Helper.showErrorMessage(
                 this, getString(R.string.error_check_internet_connection)
             )
