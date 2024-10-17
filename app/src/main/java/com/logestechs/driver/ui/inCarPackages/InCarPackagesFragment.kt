@@ -34,6 +34,7 @@ import com.logestechs.driver.api.requests.FailDeliveryRequestBody
 import com.logestechs.driver.api.requests.PostponePackageRequestBody
 import com.logestechs.driver.api.requests.ReturnPackageRequestBody
 import com.logestechs.driver.api.responses.GetInCarPackagesGroupedResponse
+import com.logestechs.driver.api.responses.GetInCarPackagesUngroupedResponse
 import com.logestechs.driver.api.responses.PackageAttachmentsResponseBody
 import com.logestechs.driver.data.model.GroupedPackages
 import com.logestechs.driver.data.model.LatLng
@@ -81,12 +82,14 @@ import com.logestechs.driver.utils.interfaces.SearchPackagesDialogListener
 import com.logestechs.driver.utils.interfaces.ViewPagerCountValuesDelegate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.json.JSONObject
 import retrofit2.Response
 import java.io.ByteArrayOutputStream
@@ -398,35 +401,87 @@ class InCarPackagesFragment(
                     var response: Response<GetInCarPackagesGroupedResponse?>? = null
                     response = when (selectedViewMode) {
                         InCarPackagesViewMode.BY_VILLAGE -> {
-                            ApiAdapter.apiClient.getInCarPackagesByVillage(
+                            val primaryResponse = async { ApiAdapter.apiClient.getInCarPackagesByVillage(
                                 status = selectedStatus.value,
                                 packageType = selectedPackageType.name,
                                 searchWord
-                            )
+                            )}
+
+                            val secondaryResponse = if (selectedStatus == InCarPackageStatus.TO_DELIVER) {
+                                async {  ApiAdapter.apiClient.getInCarPackagesByVillage(
+                                    status = InCarPackageStatus.FAILED.value,
+                                    packageType = selectedPackageType.name,
+                                    searchWord
+                                )}
+                            } else {
+                                null
+                            }
+
+                            primaryResponse.await()
+                                ?.let { processData(it, secondaryResponse?.await()) }
                         }
 
                         InCarPackagesViewMode.BY_CUSTOMER -> {
-                            ApiAdapter.apiClient.getInCarPackagesByCustomer(
+                            val primaryResponse = async { ApiAdapter.apiClient.getInCarPackagesByCustomer(
                                 status = selectedStatus.value,
                                 packageType = selectedPackageType.name,
                                 searchWord
-                            )
+                            )}
+
+                            val secondaryResponse = if (selectedStatus == InCarPackageStatus.TO_DELIVER) {
+                                async {  ApiAdapter.apiClient.getInCarPackagesByCustomer(
+                                    status = InCarPackageStatus.FAILED.value,
+                                    packageType = selectedPackageType.name,
+                                    searchWord
+                                )}
+                            } else {
+                                null
+                            }
+
+                            primaryResponse.await()
+                                ?.let { processData(it, secondaryResponse?.await()) }
                         }
 
                         InCarPackagesViewMode.BY_RECEIVER -> {
-                            ApiAdapter.apiClient.getInCarPackagesByReceiver(
+                            val primaryResponse = async { ApiAdapter.apiClient.getInCarPackagesByReceiver(
                                 status = selectedStatus.value,
                                 packageType = selectedPackageType.name,
                                 searchWord
-                            )
+                            )}
+
+                            val secondaryResponse = if (selectedStatus == InCarPackageStatus.TO_DELIVER) {
+                                async {  ApiAdapter.apiClient.getInCarPackagesByReceiver(
+                                    status = InCarPackageStatus.FAILED.value,
+                                    packageType = selectedPackageType.name,
+                                    searchWord
+                                )}
+                            } else {
+                                null
+                            }
+
+                            primaryResponse.await()
+                                ?.let { processData(it, secondaryResponse?.await()) }
                         }
 
                         else -> {
-                            ApiAdapter.apiClient.getInCarPackagesByVillage(
+                            val primaryResponse = async { ApiAdapter.apiClient.getInCarPackagesByVillage(
                                 status = selectedStatus.value,
                                 packageType = selectedPackageType.name,
                                 searchWord
-                            )
+                            )}
+
+                            val secondaryResponse = if (selectedStatus == InCarPackageStatus.TO_DELIVER) {
+                                async {  ApiAdapter.apiClient.getInCarPackagesByVillage(
+                                    status = InCarPackageStatus.FAILED.value,
+                                    packageType = selectedPackageType.name,
+                                    searchWord
+                                )}
+                            } else {
+                                null
+                            }
+
+                            primaryResponse.await()
+                                ?.let { processData(it, secondaryResponse?.await()) }
                         }
                     }
 
@@ -489,17 +544,90 @@ class InCarPackagesFragment(
         }
     }
 
+    // Function to handle merging of both responses
+    fun processData(
+        primaryResponse: Response<GetInCarPackagesGroupedResponse?>,
+        secondaryResponse: Response<GetInCarPackagesGroupedResponse?>?
+    ): Response<GetInCarPackagesGroupedResponse?> {
+        return if (primaryResponse.isSuccessful && (secondaryResponse == null || secondaryResponse.isSuccessful)) {
+            val primaryBody = primaryResponse.body()
+            val secondaryBody = secondaryResponse?.body()
+
+            // Merge packages: Create an ArrayList from combined packages
+            val combinedPackages = ArrayList<GroupedPackages?>(
+                (primaryBody?.inCarPackages ?: emptyList()) +
+                        (secondaryBody?.inCarPackages ?: emptyList())
+            )
+
+            // Create a new response with merged data
+            val mergedResponse = GetInCarPackagesGroupedResponse(
+                inCarPackages = combinedPackages, // Now this is an ArrayList<GroupedPackages?>
+                codSum = primaryBody?.codSum ?: secondaryBody?.codSum,
+                numberOfPackages = primaryBody?.numberOfPackages ?: secondaryBody?.numberOfPackages
+            )
+
+            Response.success(mergedResponse) // This is non-nullable
+        } else {
+            // Handle errors: return the primary error or secondary error if available
+            val errorBody = primaryResponse.errorBody() ?: secondaryResponse?.errorBody() ?: "Unknown Error".toResponseBody()
+            Response.error(primaryResponse.code(), errorBody)
+        }
+    }
+
+    // Function to handle processing of ungrouped responses
+    fun processDataUngrouped(
+        primaryResponse: Response<GetInCarPackagesUngroupedResponse?>,
+        secondaryResponse: Response<GetInCarPackagesUngroupedResponse?>? = null
+    ): Response<GetInCarPackagesUngroupedResponse?> {
+        return if (primaryResponse.isSuccessful && (secondaryResponse == null || secondaryResponse.isSuccessful)) {
+            val primaryBody = primaryResponse.body()
+            val secondaryBody = secondaryResponse?.body()
+
+            // Merge packages if necessary
+            val combinedPackages = ArrayList<Package?>().apply {
+                addAll(primaryBody?.pkgs ?: emptyList())
+                addAll(secondaryBody?.pkgs ?: emptyList())
+            }
+
+            // Create a new response with merged data
+            val mergedResponse = GetInCarPackagesUngroupedResponse(
+                pkgs = combinedPackages,
+                codSum = primaryBody?.codSum ?: secondaryBody?.codSum,
+                numberOfPackages = (primaryBody?.numberOfPackages ?: 0) + (secondaryBody?.numberOfPackages ?: 0)
+            )
+
+            Response.success(mergedResponse)
+        } else {
+            // Handle errors: return the primary error or secondary error if available
+            val errorBody = primaryResponse.errorBody() ?: secondaryResponse?.errorBody()
+            Response.error(primaryResponse.code(), errorBody!!)
+        }
+    }
+
+
     private fun callGetInCarPackagesUngrouped() {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response =
-                        ApiAdapter.apiClient.getInCarPackagesUngrouped(
-                            status = selectedStatus.value,
+                    val primaryResponse = async { ApiAdapter.apiClient.getInCarPackagesUngrouped(
+                        status = selectedStatus.value,
+                        packageType = selectedPackageType.name,
+                        searchWord
+                    )}
+
+                    val secondaryResponse = if (selectedStatus == InCarPackageStatus.TO_DELIVER) {
+                        async {  ApiAdapter.apiClient.getInCarPackagesUngrouped(
+                            status = InCarPackageStatus.FAILED.value,
                             packageType = selectedPackageType.name,
                             searchWord
-                        )
+                        )}
+                    } else {
+                        null
+                    }
+
+                    val response = primaryResponse.await()
+                        ?.let { processDataUngrouped(it, secondaryResponse?.await()) }
 
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
