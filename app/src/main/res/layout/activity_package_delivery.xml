@@ -157,13 +157,34 @@
                         android:orientation="vertical"
                         android:visibility="visible">
 
-                        <TextView
-                            style="@style/LogesTechsMedium"
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="368dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:text="@string/title_payment_method"
-                            android:textColor="@color/fontTrackHint" />
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="16dp"
+                            android:orientation="horizontal"
+                            android:visibility="visible">
+
+                            <TextView
+                                style="@style/LogesTechsMedium"
+                                android:layout_width="156dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginEnd="16dp"
+                                android:text="@string/title_payment_method"
+                                android:textColor="@color/fontTrackHint" />
+
+                            <TextView
+                                android:id="@+id/text_payment_amount"
+                                style="@style/LogesTechsMedium"
+                                android:layout_width="139dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginEnd="16dp"
+                                android:text="0/0"
+                                android:textAlignment="center"
+                                android:textColor="@color/fontTrackHint" />
+                        </LinearLayout>
 
                         <LinearLayout
                             android:id="@+id/container_static_payment_methods"
