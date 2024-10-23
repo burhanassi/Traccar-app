@@ -1,8 +1,10 @@
 package com.logestechs.driver.ui.packageDeliveryScreens.packageDelivery
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ClipData
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.gesture.GestureOverlayView
@@ -16,7 +18,10 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.text.Editable
 import android.text.Html
+import android.text.InputType
+import android.text.TextWatcher
 import android.util.Log
 import android.view.MenuItem
 import android.view.MotionEvent
@@ -143,6 +148,9 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
     private var notes: String? = null
 
+    private var sum: Double? = 0.0
+    private val paymentDataList = mutableListOf<PayMultiWayRequestBody>()
+
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -192,6 +200,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             if (Helper.getCountryCode() == CountriesCode.SAR.value) {
                 binding.containerPaymentGateways.visibility = View.VISIBLE
             }
+            binding.textPaymentAmount.visibility = View.GONE
         }
 
         handleWarningText()
@@ -246,6 +255,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         if (companyConfigurations?.isPartialDeliveryEnabled == true) {
             selectedDeliveryType = DeliveryType.FULL
         }
+
+        binding.textPaymentAmount.text = sum?.format() + "/" + pkg?.cod?.format()
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -749,34 +760,126 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
     }
 
-    private fun setPaymentMethods(paymentTypes: List<CodCollectionMethod>) {
+    @SuppressLint("SetTextI18n")
+    private fun setPaymentMethods(paymentTypes: List<PaymentTypeModel>) {
         binding.containerDynamicPaymentMethods.visibility = View.VISIBLE
         binding.containerStaticPaymentMethods.visibility = View.GONE
+        binding.textPaymentAmount.visibility = View.VISIBLE
 
         val container = findViewById<LinearLayout>(R.id.container_dynamic_payment_methods)
+        val textFieldIds = mutableListOf<Int>()
 
         for (paymentType in paymentTypes) {
-            val statusSelector = StatusSelector(this)
-            statusSelector.setTextStatus(paymentType.paymentTypeName)
+            val statusSelector = StatusSelector(this).apply {
+                id = View.generateViewId()
+                if (Lingver.getInstance().getLocale().toString() == AppLanguages.ARABIC.value) {
+                    setTextStatus(paymentType.arabicName)
+                } else {
+                    setTextStatus(paymentType.name)
+                }
+            }
 
-            val layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
+            val horizontalLayout = LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+            }
+
+            val textField = EditText(this).apply {
+                hint = getString(R.string.hint_value)
+                layoutParams = LinearLayout.LayoutParams(
+                    0,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    0.5f
+                )
+                inputType = InputType.TYPE_CLASS_NUMBER
+                isEnabled = false
+
+                id = View.generateViewId()
+                textFieldIds.add(id)
+            }
+
+            val statusLayoutParams = LinearLayout.LayoutParams(
+                0,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                1f
             )
-            layoutParams.setMargins(0, 12, 0, 0)
-            statusSelector.layoutParams = layoutParams
+            statusLayoutParams.setMargins(0, 12, 0, 0)
+            statusSelector.layoutParams = statusLayoutParams
 
+            horizontalLayout.addView(statusSelector)
+            horizontalLayout.addView(textField)
+            container.addView(horizontalLayout)
             statusSelector.setOnClickListener {
                 selectedPaymentType?.makeUnselected()
+                selectedPaymentType?.parent?.let { parentLayout ->
+                    if (parentLayout is LinearLayout) {
+                        if (parentLayout.childCount > 1) {
+                            val previousTextField = parentLayout.getChildAt(1) as? EditText
+                            previousTextField?.isEnabled = false
+                        }
+                    }
+                }
                 statusSelector.makeSelected()
                 selectedPaymentType = statusSelector
-                if (companyConfigurations?.isEnableDeliverByMultiPaymentTypes == true) {
-                    selectedPaymentType!!.enumValue = paymentType.paymentTypeName
+                paymentTypeId = paymentType.id
+
+                textField.isEnabled = true
+                textField.requestFocus()
+                showKeyboard(textField)
+                textField.addTextChangedListener(object : TextWatcher {
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+                    override fun afterTextChanged(s: Editable?) {
+                        var newSum = 0.0
+                        for (id in textFieldIds) {
+                            val field = findViewById<EditText>(id)
+                            val value = field.text.toString().toDoubleOrNull() ?: 0.0
+                            newSum += value
+                        }
+
+                        if (newSum > packageCodToPay) {
+                            val currentValue = textField.text.toString().toDoubleOrNull() ?: 0.0
+                            newSum -= currentValue
+                            textField.removeTextChangedListener(this)
+                            textField.setText("")
+                            textField.addTextChangedListener(this)
+
+                            Helper.showErrorMessage(this@PackageDeliveryActivity, "Sum cannot exceed ${packageCodToPay.format()}")
+                        }
+
+                        sum = newSum
+                        binding.textPaymentAmount.text = "${sum?.format()}/${packageCodToPay.format()}"
+
+                        Log.d("sum", "${sum?.format()}/${packageCodToPay.format()}")
+                    }
+                })
+
+                textField.setOnFocusChangeListener { _, hasFocus ->
+                    if (!hasFocus) {
+                        val amount = textField.text.toString().toDoubleOrNull() ?: 0.0
+                        if (amount > 0) {
+                            val paymentData = PayMultiWayRequestBody(
+                                paymentType = paymentType.name,
+                                paymentTypeId = paymentType.id,
+                                amount = amount
+                            )
+                            paymentDataList.add(paymentData)
+                            Log.d("paymentData", "${paymentData}")
+                            Log.d("paymentDataList", "${paymentDataList.toString()}")
+
+                        }
+                    }
                 }
-                paymentTypeId = paymentType.id.toLong()
+                Log.d("sum", "${sum?.format()}")
             }
-            container.addView(statusSelector)
+            Log.d("paymentDataList", "${paymentDataList.toString()}")
         }
+    }
+
+    private fun showKeyboard(view: View) {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
     }
 
     //Apis
@@ -1407,13 +1510,13 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response =
-                        ApiAdapter.apiClient.getPaymentMethods(pkg?.customerId!!)
+                        ApiAdapter.apiClient.getPaymentMethods()
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
                     if (response.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            setPaymentMethods(response.body()!!)
+                            setPaymentMethods(response.body()!!.data!!)
                         }
                     } else {
                         try {
@@ -1463,7 +1566,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                         ApiAdapter.apiClient.payMultiWay(
                             pkg?.id,
                             PayMultiWayRequestBody(
-                                selectedPaymentType?.enumValue.toString(),
+                                (selectedPaymentType?.enumValue as PaymentType).name,
                                 paymentTypeId,
                                 packageValueToPay
                             )
