@@ -134,7 +134,11 @@ class ScannedBarcodeViewHolder(
             }
 
             binding.itemBarcode.textItem.text = pkg.barcode
-            binding.itemReceiverCity.textItem.text = pkg.destinationAddress!!.toStringAddress()
+            if (pkg.destinationAddress != null) {
+                binding.itemReceiverCity.textItem.text = pkg.destinationAddress!!.toStringAddress()
+            } else {
+                binding.itemReceiverCity.textItem.text = pkg.destinationCity.toString()
+            }
             if (pkg.invoiceNumber != null) {
                 binding.itemInvoiceNumber.textItem.text = pkg.invoiceNumber
                 binding.itemInvoiceNumber.root.visibility = View.VISIBLE
