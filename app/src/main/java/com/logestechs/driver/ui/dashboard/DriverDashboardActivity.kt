@@ -470,11 +470,22 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
 
     private val mLocationCallback: LocationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
-            val locationList = locationResult.locations
-            if (locationList.size > 0) {
-                val location = locationList[locationList.size - 1]
-                if (location != null) {
-                    updateLocation(location)
+            super.onLocationResult(locationResult)
+            val currentLocation = locationResult.lastLocation
+            if (currentLocation != null) {
+                val previousLocation = SharedPreferenceWrapper.getLastSyncLocation()?.let { latLng ->
+                    Location("").apply {
+                        latitude = latLng.lat ?: 0.0
+                        longitude = latLng.lng ?: 0.0
+                    }
+                }
+                if (previousLocation != null) {
+                    val distance = previousLocation.distanceTo(currentLocation)
+                    if (distance > 1000) {
+                        updateLocation(currentLocation)
+                    }
+                } else {
+                    updateLocation(currentLocation)
                 }
             }
         }
