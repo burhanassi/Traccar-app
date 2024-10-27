@@ -338,11 +338,13 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
 
     private fun handleDetectedQRCodes(QRCode: String) {
         val uri = Uri.parse(QRCode)
-        val invoiceNumber = uri.getQueryParameter("invoiceNumber") ?: uri.toString()
+        val queryParameter =
+            uri.getQueryParameter("invoiceNumber") ?: uri.getQueryParameter("barcode")
+            ?: uri.toString()
 
-        if (!scannedItemsHashMap.containsKey(invoiceNumber)) {
-            scannedItemsHashMap[invoiceNumber] = invoiceNumber
-            callPickupPackage(invoiceNumber)
+        if (!scannedItemsHashMap.containsKey(queryParameter)) {
+            scannedItemsHashMap[queryParameter] = queryParameter
+            callPickupPackage(queryParameter)
             toneGen1?.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
             vibrate()
         }
