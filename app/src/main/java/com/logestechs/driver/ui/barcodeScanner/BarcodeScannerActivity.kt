@@ -338,7 +338,7 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
 
     private fun handleDetectedQRCodes(QRCode: String) {
         val uri = Uri.parse(QRCode)
-        val invoiceNumber = uri.getQueryParameter("barcode") ?: uri.toString()
+        val invoiceNumber = uri.getQueryParameter("invoiceNumber") ?: uri.toString()
 
         if (!scannedItemsHashMap.containsKey(invoiceNumber)) {
             scannedItemsHashMap[invoiceNumber] = invoiceNumber
