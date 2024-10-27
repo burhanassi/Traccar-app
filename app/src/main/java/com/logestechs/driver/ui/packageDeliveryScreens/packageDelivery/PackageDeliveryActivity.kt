@@ -1549,7 +1549,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                             false
                         }
                     }
-                } else if (companyConfigurations?.isEnableDeliveryVerificationPinCodeForPkgsWithCodGreaterThan != null && (pkg?.cod
+                } else if (companyConfigurations?.isEnableDeliveryVerificationPinCodeForPkgsWithCodGreaterThan!! > -1 && (pkg?.cod
                         ?: 0.0) >= companyConfigurations!!.isEnableDeliveryVerificationPinCodeForPkgsWithCodGreaterThan!!
                 ) {
                     return when (pkg?.verificationStatus) {
