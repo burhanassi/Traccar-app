@@ -1406,7 +1406,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response =
-                        ApiAdapter.apiClient.getPaymentMethods()
+                        ApiAdapter.apiClient.getPaymentMethods(pkg?.customerId!!)
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
