@@ -404,7 +404,7 @@ class InCarPackageCellAdapter(
                 binding.buttonContextMenu.visibility = View.GONE
             }
 
-            if (pkg?.failuresNumber!! > 0) {
+            if (pkg?.isFailed!!) {
                 binding.textPackageStatus.visibility = View.VISIBLE
                 binding.textPackageStatus.setText(R.string.in_car_status_failed)
             } else {
