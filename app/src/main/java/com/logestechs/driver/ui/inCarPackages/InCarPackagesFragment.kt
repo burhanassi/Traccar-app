@@ -1635,10 +1635,10 @@ class InCarPackagesFragment(
         if(pkg?.isAttachmentExist == true ){
             callGetAttachments(pkg.id)
         }else{
-                Helper.showErrorMessage(
-                    super.getContext(),
-                    getString(R.string.cannot_open_attachments)
-                )
+            Helper.showErrorMessage(
+                super.getContext(),
+                getString(R.string.cannot_open_attachments)
+            )
         }
     }
 
@@ -1703,18 +1703,18 @@ class InCarPackagesFragment(
     override fun onDeleteImage(position: Int) {
         callDeletePodImage(position)
     }
-//    override fun showAttachments(packageId: Long?) {
+    //    override fun showAttachments(packageId: Long?) {
 //        callGetAttachments(packageId)
 //    }
     override fun onShowPackageNoteDialog(pkg: Package?) {
-    loadedImagesList.clear()
-    addPackageNoteDialog = AddPackageNoteDialog(requireContext(), this, pkg, loadedImagesList)
-    addPackageNoteDialog?.showDialog()
-    packageIdToUpload = addPackageNoteDialog?.pkg?.id
-    failDeliveryDialog = null
-    returnPackageDialog = null
-    postponePackageDialog = null
-}
+        loadedImagesList.clear()
+        addPackageNoteDialog = AddPackageNoteDialog(requireContext(), this, pkg, loadedImagesList)
+        addPackageNoteDialog?.showDialog()
+        packageIdToUpload = addPackageNoteDialog?.pkg?.id
+        failDeliveryDialog = null
+        returnPackageDialog = null
+        postponePackageDialog = null
+    }
 
     override fun onCodChanged(body: CodChangeRequestBody?) {
         callCodChangeRequestApi(body)
