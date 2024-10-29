@@ -501,7 +501,7 @@ interface LogesTechsDriverApi {
     @GET("driver/payment-types")
     suspend fun getPaymentMethods (
         @Query("customerId") id: Long,
-    ): Response<GetPaymentTypeResponse>
+    ): Response<ArrayList<CodCollectionMethod>>
 
     @POST("driver/packages/{packageId}/call-duration")
     suspend fun saveCallDuration (

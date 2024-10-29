@@ -39,6 +39,7 @@ import com.logestechs.driver.api.requests.AddNoteRequestBody
 import com.logestechs.driver.api.requests.DeleteImageRequestBody
 import com.logestechs.driver.api.requests.DeliverPackageRequestBody
 import com.logestechs.driver.api.requests.PayMultiWayRequestBody
+import com.logestechs.driver.data.model.CodCollectionMethod
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
@@ -747,7 +748,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
     }
 
-    private fun setPaymentMethods(paymentTypes: List<PaymentTypeModel>) {
+    private fun setPaymentMethods(paymentTypes: List<CodCollectionMethod>) {
         binding.containerDynamicPaymentMethods.visibility = View.VISIBLE
         binding.containerStaticPaymentMethods.visibility = View.GONE
 
@@ -755,11 +756,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
         for (paymentType in paymentTypes) {
             val statusSelector = StatusSelector(this)
-            if (Lingver.getInstance().getLocale().toString() == AppLanguages.ARABIC.value) {
-                statusSelector.setTextStatus(paymentType.arabicName)
-            } else {
-                statusSelector.setTextStatus(paymentType.name)
-            }
+            statusSelector.setTextStatus(paymentType.paymentTypeName)
 
             val layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -772,7 +769,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 selectedPaymentType?.makeUnselected()
                 statusSelector.makeSelected()
                 selectedPaymentType = statusSelector
-                paymentTypeId = paymentType.id
+                paymentTypeId = paymentType.id.toLong()
             }
             container.addView(statusSelector)
         }
@@ -1412,7 +1409,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     }
                     if (response.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            setPaymentMethods(response.body()!!.data!!)
+                            setPaymentMethods(response.body()!!)
                         }
                     } else {
                         try {
