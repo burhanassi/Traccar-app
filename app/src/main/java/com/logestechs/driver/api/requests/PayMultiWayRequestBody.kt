@@ -5,8 +5,8 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class PayMultiWayRequestBody(
-    val paymentType: String? = null,
-    val paymentTypeId: Long? = null,
+    val paymentType: String?,
+    val paymentTypeId: Long?,
     val amount: Double,
 ) : Parcelable
 
