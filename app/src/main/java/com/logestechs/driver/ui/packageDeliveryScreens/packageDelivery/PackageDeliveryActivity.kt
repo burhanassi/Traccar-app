@@ -19,7 +19,9 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.text.Editable
+import android.text.Editable
 import android.text.Html
+import android.text.TextWatcher
 import android.text.InputType
 import android.text.TextWatcher
 import android.util.Log
@@ -44,6 +46,7 @@ import com.logestechs.driver.api.requests.AddNoteRequestBody
 import com.logestechs.driver.api.requests.DeleteImageRequestBody
 import com.logestechs.driver.api.requests.DeliverPackageRequestBody
 import com.logestechs.driver.api.requests.PayMultiWayRequestBody
+import com.logestechs.driver.data.model.CodCollectionMethod
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
@@ -800,7 +803,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     }
 
     @SuppressLint("SetTextI18n")
-    private fun setPaymentMethods(paymentTypes: List<PaymentTypeModel>) {
+    private fun setPaymentMethods(paymentTypes: List<CodCollectionMethod>) {
         binding.containerDynamicPaymentMethods.visibility = View.VISIBLE
         binding.containerStaticPaymentMethods.visibility = View.GONE
         binding.textPaymentAmount.visibility = View.VISIBLE
@@ -817,6 +820,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     setTextStatus(paymentType.name)
                 }
             }
+            val statusSelector = StatusSelector(this)
+            statusSelector.setTextStatus(paymentType.paymentTypeName)
 
             val horizontalLayout = LinearLayout(this).apply {
                 orientation = LinearLayout.HORIZONTAL
@@ -873,8 +878,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 }
                 statusSelector.makeSelected()
                 selectedPaymentType = statusSelector
-                paymentTypeId = paymentType.id
-
+                paymentTypeId = paymentType.id.toLong()
                 textField.isEnabled = true
                 textField.requestFocus()
                 showKeyboard(textField)
@@ -950,137 +954,6 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             }
             Log.d("paymentDataList", "${paymentDataList.toString()}")
         }
-    }
-
-    // Define a data class to hold the status selector and the associated EditText
-    data class PaymentSelector(
-        val selector: StatusSelector,
-        val editText: EditText
-    )
-
-    private fun setupPaymentMethodSelectors() {
-        val paymentSelectors = listOf(
-            PaymentSelector(binding.selectorCash, binding.textFieldCash),
-            PaymentSelector(binding.selectorDigitalWallet, binding.textFieldDigitalWallet),
-            PaymentSelector(binding.selectorCheque, binding.textFieldCheque),
-            PaymentSelector(binding.selectorPrepaid, binding.textFieldPrepaid),
-            PaymentSelector(binding.selectorCardPayment, binding.textFieldCardPayment),
-            PaymentSelector(binding.selectorBankTransfer, binding.textFieldBankTransfer),
-            PaymentSelector(binding.selectorInterPay, binding.textFieldInterPay),
-            PaymentSelector(binding.selectorNearPay, binding.textFieldNearPay),
-            PaymentSelector(binding.selectorClickPay, binding.textFieldClickPay)
-        )
-
-        paymentSelectors.forEach { paymentSelector ->
-            paymentSelector.selector.setOnClickListener {
-                handlePaymentSelection(
-                    paymentSelector.selector,
-                    paymentSelector.editText,
-                    paymentSelectors
-                )
-            }
-
-            // Add TextWatcher to update the payment amount when text changes
-            paymentSelector.editText.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {
-                }
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-                override fun afterTextChanged(s: Editable?) {
-                    var newSum = 0.0
-                    paymentSelectors.forEach { selector ->
-                        val fieldValue = selector.editText.text.toString().toDoubleOrNull() ?: 0.0
-                        newSum += fieldValue
-                    }
-
-                    if (newSum > packageCodToPay) {
-                        val currentFieldValue =
-                            paymentSelector.editText.text.toString().toDoubleOrNull() ?: 0.0
-                        newSum -= currentFieldValue
-                        paymentSelector.editText.removeTextChangedListener(this)
-                        paymentSelector.editText.setText("")
-                        paymentSelector.editText.addTextChangedListener(this)
-
-                        Helper.showErrorMessage(
-                            this@PackageDeliveryActivity,
-                            getString(R.string.error_can_not_exceed_cod)
-                        )
-                    } else {
-                        sum = newSum
-                    }
-
-                    sum = newSum
-                    binding.textPaymentAmount.text = "${sum?.format()}/${packageCodToPay.format()}"
-                    val amount = paymentSelector.editText.text.toString().toDoubleOrNull()
-                    if (amount == null || amount == 0.0) {
-                        paymentDataList.removeAll { it.paymentType == paymentSelector.selector.enumValue }
-                    } else {
-                        // Update or add the new amount for this paymentTypeId
-                        val paymentData = PayMultiWayRequestBody(
-                            paymentSelector.selector.enumValue.toString(),
-                            null,
-                            amount = amount
-                        )
-                        paymentDataList.removeAll { it.paymentType == paymentSelector.selector.enumValue }
-                        paymentDataList.add(paymentData)
-                    }
-
-                    Log.d("paymentDataList", "${paymentDataList.toString()}")
-
-                    Log.d("sum", "${sum?.format()}/${packageCodToPay.format()}")
-                }
-            })
-
-            paymentSelector.editText.setOnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    val amount = paymentSelector.editText.text.toString().toDoubleOrNull() ?: 0.0
-                    if (amount > 0) {
-                        val paymentData = PayMultiWayRequestBody(
-                            paymentType = paymentSelector.selector.enumValue.toString()
-                                .takeIf { paymentTypeId == null },
-                            null,
-                            amount = amount
-                        )
-                        paymentDataList.add(paymentData)
-                    }
-                }
-                Log.d("paymentDataList", "${paymentDataList.toString()}")
-                val lastPaymentDataList = paymentDataList
-                    .groupBy { it.paymentType }
-                    .map { (_, entries) -> entries.last() }
-
-                paymentDataList = lastPaymentDataList.toMutableList()
-            }
-        }
-    }
-
-    private fun handlePaymentSelection(selectedSelector: StatusSelector, selectedEditText: EditText, paymentSelectors: List<PaymentSelector>) {
-        selectedPaymentType?.makeUnselected()
-
-        selectedSelector.makeSelected()
-        selectedPaymentType = selectedSelector
-
-        selectedEditText.isEnabled = true
-        selectedEditText.requestFocus()
-        showKeyboard(selectedEditText)
-
-        paymentSelectors.forEach { paymentSelector ->
-            if (paymentSelector.editText != selectedEditText) {
-                paymentSelector.editText.isEnabled = false
-                paymentSelector.selector.makeUnselected()
-            }
-        }
-    }
-
-    private fun showKeyboard(view: View) {
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
     }
 
     //Apis
@@ -1711,13 +1584,13 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response =
-                        ApiAdapter.apiClient.getPaymentMethods()
+                        ApiAdapter.apiClient.getPaymentMethods(pkg?.customerId!!)
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
                     if (response.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            setPaymentMethods(response.body()!!.data!!)
+                            setPaymentMethods(response.body()!!)
                         }
                     } else {
                         try {
@@ -1850,7 +1723,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                             false
                         }
                     }
-                } else if (companyConfigurations?.isEnableDeliveryVerificationPinCodeForPkgsWithCodGreaterThan != null && (pkg?.cod
+                } else if (companyConfigurations?.isEnableDeliveryVerificationPinCodeForPkgsWithCodGreaterThan!! > -1 && (pkg?.cod
                         ?: 0.0) >= companyConfigurations!!.isEnableDeliveryVerificationPinCodeForPkgsWithCodGreaterThan!!
                 ) {
                     return when (pkg?.verificationStatus) {

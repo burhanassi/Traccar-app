@@ -44,7 +44,7 @@ class MyLocationService : Service() {
     private var myProfile: User? = null
     var factor = 1000.0
 
-    private val MIN_DISTANCE_CHANGE_FOR_UPDATES = 20
+    private val MIN_DISTANCE_CHANGE_FOR_UPDATES = 1000
 
     private var loginResponse = SharedPreferenceWrapper.getLoginResponse()
     override fun onBind(p0: Intent?): IBinder? {
