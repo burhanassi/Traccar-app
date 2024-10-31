@@ -973,10 +973,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
                 override fun afterTextChanged(s: Editable?) {
-                    // Calculate the new total sum
                     var newSum = 0.0
-
-                    // Iterate over each payment selector and accumulate values
                     paymentSelectors.forEach { selector ->
                         val fieldValue = selector.editText.text.toString().toDoubleOrNull() ?: 0.0
                         newSum += fieldValue
@@ -996,19 +993,15 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     sum = newSum
                     binding.textPaymentAmount.text = "${sum?.format()}/${packageCodToPay.format()}"
 
-
-                    // Remove item if text field is empty
                     val amount = paymentSelector.editText.text.toString().toDoubleOrNull()
                     if (amount == null || amount == 0.0) {
                         paymentDataList.removeAll { it.paymentType == paymentSelector.selector.enumValue.toString() }
                     } else {
-                        // Update or add the new amount for this paymentTypeId
                         val paymentData = PayMultiWayRequestBody(
                             paymentSelector.selector.enumValue.toString(),
                             null,
                             amount = amount
                         )
-                        paymentDataList.removeAll { it.paymentType == paymentSelector.selector.enumValue.toString() }
                         paymentDataList.add(paymentData)
                     }
 
@@ -1023,7 +1016,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     val amount = paymentSelector.editText.text.toString().toDoubleOrNull() ?: 0.0
                     if (amount > 0) {
                         val paymentData = PayMultiWayRequestBody(
-                            paymentType = paymentSelector.selector.enumValue.toString().takeIf { paymentTypeId == null },
+                            paymentType = paymentSelector.selector.enumValue.toString(),
                             null,
                             amount = amount
                         )
@@ -1032,7 +1025,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 }
                 Log.d("paymentDataList", "${paymentDataList.toString()}")
                 val lastPaymentDataList = paymentDataList
-                    .groupBy { it.paymentTypeId }
+                    .groupBy { it.paymentType }
                     .map { (_, entries) -> entries.last() }
 
                 paymentDataList = lastPaymentDataList.toMutableList()
