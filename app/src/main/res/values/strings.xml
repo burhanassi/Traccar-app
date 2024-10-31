@@ -401,4 +401,6 @@
     <string name="title_switch_is_deliver_to_sender">Is to deliver to sender</string>
     <string name="error_date_must_be_in_future">Date must be in future</string>
     <string name="other">Other</string>
+    <string name="error_pay_all_cod">Cannot be delivered! Please pay all COD</string>
+    <string name="error_can_not_exceed_cod">Cannot exceed COD</string>
 </resources>
