@@ -197,32 +197,57 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="12dp"
-                                android:layout_marginTop="12dp"
+                                android:layout_marginTop="0dp"
                                 android:layout_marginEnd="12dp"
                                 android:orientation="horizontal">
 
-                                <com.logestechs.driver.utils.customViews.StatusSelector
-                                    android:id="@+id/selector_cash"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginEnd="8dp"
-                                    android:layout_weight="1"
-                                    app:textStatus="@string/payment_type_cash" />
+                            <com.logestechs.driver.utils.customViews.StatusSelector
+                                android:id="@+id/selector_cash"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="3"
+                                app:textStatus="@string/payment_type_cash" />
 
-                                <com.logestechs.driver.utils.customViews.StatusSelector
-                                    android:id="@+id/selector_digital_wallet"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    app:textStatus="@string/payment_type_digital_wallet" />
-
+                            <EditText
+                                android:id="@+id/text_field_cash"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="@string/hint_value"
+                                android:inputType="numberDecimal"
+                                android:enabled="false" />
                             </LinearLayout>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="12dp"
-                                android:layout_marginTop="12dp"
+                                android:layout_marginTop="0dp"
+                                android:layout_marginEnd="12dp"
+                                android:orientation="horizontal">
+
+                                <com.logestechs.driver.utils.customViews.StatusSelector
+                                    android:id="@+id/selector_digital_wallet"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="3"
+                                    app:textStatus="@string/payment_type_digital_wallet" />
+
+                                <EditText
+                                    android:id="@+id/text_field_digital_wallet"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:hint="@string/hint_value"
+                                    android:inputType="numberDecimal"
+                                    android:enabled="false" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:layout_marginTop="0dp"
                                 android:layout_marginEnd="12dp"
                                 android:orientation="horizontal">
 
@@ -230,24 +255,49 @@
                                     android:id="@+id/selector_cheque"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginEnd="8dp"
-                                    android:layout_weight="1"
+                                    android:layout_weight="3"
                                     app:textStatus="@string/payment_type_cheque" />
 
-                                <com.logestechs.driver.utils.customViews.StatusSelector
-                                    android:id="@+id/selector_prepaid"
+                                <EditText
+                                    android:id="@+id/text_field_cheque"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    app:textStatus="@string/payment_type_prepaid" />
-
+                                    android:hint="@string/hint_value"
+                                    android:inputType="numberDecimal"
+                                    android:enabled="false" />
                             </LinearLayout>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="12dp"
-                                android:layout_marginTop="12dp"
+                                android:layout_marginTop="0dp"
+                                android:layout_marginEnd="12dp"
+                                android:orientation="horizontal">
+
+                                <com.logestechs.driver.utils.customViews.StatusSelector
+                                    android:id="@+id/selector_prepaid"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="3"
+                                    app:textStatus="@string/payment_type_prepaid" />
+
+                                <EditText
+                                    android:id="@+id/text_field_prepaid"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:hint="@string/hint_value"
+                                    android:inputType="numberDecimal"
+                                    android:enabled="false" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:layout_marginTop="0dp"
                                 android:layout_marginEnd="12dp"
                                 android:orientation="horizontal">
 
@@ -255,55 +305,126 @@
                                     android:id="@+id/selector_card_payment"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginEnd="8dp"
-                                    android:layout_weight="1"
+                                    android:layout_weight="3"
                                     app:textStatus="@string/payment_type_card_payment" />
+
+                                <EditText
+                                    android:id="@+id/text_field_card_payment"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:hint="@string/hint_value"
+                                    android:inputType="numberDecimal"
+                                    android:enabled="false" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:layout_marginTop="0dp"
+                                android:layout_marginEnd="12dp"
+                                android:orientation="horizontal">
 
                                 <com.logestechs.driver.utils.customViews.StatusSelector
                                     android:id="@+id/selector_bank_transfer"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
-                                    android:layout_weight="1"
+                                    android:layout_weight="3"
                                     app:textStatus="@string/payment_type_bank_transfer" />
 
+                                <EditText
+                                    android:id="@+id/text_field_bank_transfer"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:hint="@string/hint_value"
+                                    android:inputType="numberDecimal"
+                                    android:enabled="false" />
                             </LinearLayout>
 
+                        </LinearLayout>
                             <LinearLayout
                                 android:id="@+id/container_payment_gateways"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="12dp"
-                                android:layout_marginTop="12dp"
-                                android:layout_marginEnd="12dp"
-                                android:orientation="horizontal"
+                                android:orientation="vertical"
                                 android:visibility="gone">
 
-                                <com.logestechs.driver.utils.customViews.StatusSelector
-                                    android:id="@+id/selector_inter_pay"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    app:textStatus="@string/payment_type_inter_pay" />
 
-                                <com.logestechs.driver.utils.customViews.StatusSelector
-                                    android:id="@+id/selector_near_pay"
-                                    android:layout_width="0dp"
+                                <LinearLayout
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginStart="8dp"
-                                    android:layout_weight="1"
-                                    app:textStatus="@string/payment_type_near_pay" />
+                                    android:layout_marginStart="12dp"
+                                    android:layout_marginTop="0dp"
+                                    android:layout_marginEnd="12dp"
+                                    android:orientation="horizontal">
 
-                                <com.logestechs.driver.utils.customViews.StatusSelector
-                                    android:id="@+id/selector_click_pay"
-                                    android:layout_width="0dp"
+                                    <com.logestechs.driver.utils.customViews.StatusSelector
+                                        android:id="@+id/selector_inter_pay"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="3"
+                                        app:textStatus="@string/payment_type_inter_pay" />
+
+                                    <EditText
+                                        android:id="@+id/text_field_inter_pay"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:hint="@string/hint_value"
+                                        android:inputType="numberDecimal"
+                                        android:enabled="false" />
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginStart="8dp"
-                                    android:layout_weight="1"
-                                    app:textStatus="@string/payment_type_click_pay" />
+                                    android:layout_marginStart="12dp"
+                                    android:layout_marginTop="0dp"
+                                    android:layout_marginEnd="12dp"
+                                    android:orientation="horizontal">
 
+                                    <com.logestechs.driver.utils.customViews.StatusSelector
+                                        android:id="@+id/selector_near_pay"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="3"
+                                        app:textStatus="@string/payment_type_near_pay" />
+
+                                    <EditText
+                                        android:id="@+id/text_field_near_pay"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:hint="@string/hint_value"
+                                        android:inputType="numberDecimal"
+                                        android:enabled="false" />
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="12dp"
+                                    android:layout_marginTop="0dp"
+                                    android:layout_marginEnd="12dp"
+                                    android:orientation="horizontal">
+
+                                    <com.logestechs.driver.utils.customViews.StatusSelector
+                                        android:id="@+id/selector_click_pay"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="3"
+                                        app:textStatus="@string/payment_type_click_pay" />
+
+                                    <EditText
+                                        android:id="@+id/text_field_click_pay"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:hint="@string/hint_value"
+                                        android:inputType="numberDecimal"
+                                        android:enabled="false" />
+                                </LinearLayout>
                             </LinearLayout>
-
-                        </LinearLayout>
 
                         <LinearLayout
                             android:id="@+id/container_dynamic_payment_methods"

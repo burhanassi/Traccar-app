@@ -371,4 +371,6 @@
     <string name="show_note">الملاحظات</string>
     <string name="error_transaction_failed">Transaction Failed</string>
     <string name="error_transaction_failed_by_bank">Transaction Failed By Bank</string>
+    <string name="error_pay_all_cod">لا يمكن توصيل الطرد! الرجاء دفع مبلغ التحصيل كاملًا</string>
+    <string name="error_can_not_exceed_cod">لا يمكن تجاوز قيمة مبلغ التحصيل</string>
 </resources>

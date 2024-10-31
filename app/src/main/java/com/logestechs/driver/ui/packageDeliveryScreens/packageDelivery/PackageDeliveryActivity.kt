@@ -106,6 +106,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.UUID
+import android.util.TypedValue
 
 
 class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, ThumbnailsListListener,
@@ -147,7 +148,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     private var notes: String? = null
 
     private var sum: Double? = 0.0
-    private val paymentDataList = mutableListOf<PayMultiWayRequestBody>()
+    private var paymentDataList = mutableListOf<PayMultiWayRequestBody>()
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -410,8 +411,6 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             binding.containerDynamicPaymentMethods.visibility = View.GONE
             binding.containerStaticPaymentMethods.visibility = View.VISIBLE
 
-            binding.selectorCash.makeSelected()
-            selectedPaymentType = binding.selectorCash
             binding.selectorCash.enumValue = PaymentType.CASH
             binding.selectorDigitalWallet.enumValue = PaymentType.DIGITAL_WALLET
             binding.selectorCheque.enumValue = PaymentType.CHEQUE
@@ -421,6 +420,48 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             binding.selectorNearPay.enumValue = PaymentType.NEAR_PAY
             binding.selectorClickPay.enumValue = PaymentType.CLICK_PAY
             binding.selectorBankTransfer.enumValue = PaymentType.BANK_TRANSFER
+            val bottomMarginInPixels = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                6f,
+                resources.displayMetrics
+            ).toInt()
+            if (companyConfigurations?.isEnableDeliverByMultiPaymentTypes == true) {
+                binding.textPaymentAmount.visibility = View.VISIBLE
+                binding.textFieldCash.visibility = View.VISIBLE
+                binding.textFieldCardPayment.visibility = View.VISIBLE
+                binding.textFieldInterPay.visibility = View.VISIBLE
+                binding.textFieldNearPay.visibility = View.VISIBLE
+                binding.textFieldClickPay.visibility = View.VISIBLE
+                binding.textFieldBankTransfer.visibility = View.VISIBLE
+                binding.textFieldDigitalWallet.visibility = View.VISIBLE
+                binding.textFieldCheque.visibility = View.VISIBLE
+                binding.textFieldPrepaid.visibility = View.VISIBLE
+                setupPaymentMethodSelectors()
+            } else {
+                binding.textPaymentAmount.visibility = View.GONE
+                binding.textFieldCash.visibility = View.GONE
+                binding.textFieldCardPayment.visibility = View.GONE
+                binding.textFieldInterPay.visibility = View.GONE
+                binding.textFieldNearPay.visibility = View.GONE
+                binding.textFieldClickPay.visibility = View.GONE
+                binding.textFieldBankTransfer.visibility = View.GONE
+                binding.textFieldDigitalWallet.visibility = View.GONE
+                binding.textFieldCheque.visibility = View.GONE
+                binding.textFieldPrepaid.visibility = View.GONE
+
+                val statusParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
+                    setMargins(0, 0, 0, bottomMarginInPixels)
+                    }
+                binding.selectorCash.layoutParams = statusParams
+                binding.selectorDigitalWallet.layoutParams = statusParams
+                binding.selectorCheque.layoutParams = statusParams
+                binding.selectorPrepaid.layoutParams = statusParams
+                binding.selectorCardPayment.layoutParams = statusParams
+                binding.selectorInterPay.layoutParams = statusParams
+                binding.selectorNearPay.layoutParams = statusParams
+                binding.selectorClickPay.layoutParams = statusParams
+                binding.selectorBankTransfer.layoutParams = statusParams
+            }
         }
     }
 
@@ -786,7 +827,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 layoutParams = LinearLayout.LayoutParams(
                     0,
                     LinearLayout.LayoutParams.WRAP_CONTENT,
-                    0.5f
+                    1f
                 )
                 inputType = InputType.TYPE_CLASS_NUMBER
                 isEnabled = false
@@ -798,13 +839,27 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             val statusLayoutParams = LinearLayout.LayoutParams(
                 0,
                 LinearLayout.LayoutParams.WRAP_CONTENT,
-                1f
+                3f
             )
             statusLayoutParams.setMargins(0, 12, 0, 0)
             statusSelector.layoutParams = statusLayoutParams
+            val bottomMarginInPixels = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                6f,
+                resources.displayMetrics
+            ).toInt()
+            val statusParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
+                setMargins(0, 0, 0, bottomMarginInPixels)
+            }
 
-            horizontalLayout.addView(statusSelector)
-            horizontalLayout.addView(textField)
+            if (companyConfigurations?.isEnableDeliverByMultiPaymentTypes == true) {
+                horizontalLayout.addView(statusSelector)
+                horizontalLayout.addView(textField)
+            } else {
+                horizontalLayout.removeView(textField)
+                statusSelector.layoutParams = statusParams
+                horizontalLayout.addView(statusSelector)
+            }
             container.addView(horizontalLayout)
             statusSelector.setOnClickListener {
                 selectedPaymentType?.makeUnselected()
@@ -843,11 +898,28 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                             textField.setText("")
                             textField.addTextChangedListener(this)
 
-                            Helper.showErrorMessage(this@PackageDeliveryActivity, "Sum cannot exceed ${packageCodToPay.format()}")
+                            Helper.showErrorMessage(this@PackageDeliveryActivity, getString(R.string.error_can_not_exceed_cod))
                         }
 
                         sum = newSum
                         binding.textPaymentAmount.text = "${sum?.format()}/${packageCodToPay.format()}"
+
+                        // Remove item if text field is empty
+                        val amount = textField.text.toString().toDoubleOrNull()
+                        if (amount == null || amount == 0.0) {
+                            paymentDataList.removeAll { it.paymentTypeId == paymentType.id }
+                        } else {
+                            // Update or add the new amount for this paymentTypeId
+                            val paymentData = PayMultiWayRequestBody(
+                                paymentType.name,
+                                paymentTypeId = paymentType.id,
+                                amount = amount
+                            )
+                            paymentDataList.removeAll { it.paymentTypeId == paymentType.id }
+                            paymentDataList.add(paymentData)
+                        }
+
+                        Log.d("paymentDataList", "${paymentDataList.toString()}")
 
                         Log.d("sum", "${sum?.format()}/${packageCodToPay.format()}")
                     }
@@ -858,20 +930,151 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                         val amount = textField.text.toString().toDoubleOrNull() ?: 0.0
                         if (amount > 0) {
                             val paymentData = PayMultiWayRequestBody(
-                                paymentType = paymentType.name,
-                                paymentTypeId = paymentType.id,
+                                paymentType = paymentType.name.takeIf { paymentTypeId == null },
+                                paymentTypeId = paymentTypeId ?: paymentType.id,
                                 amount = amount
                             )
                             paymentDataList.add(paymentData)
-                            Log.d("paymentData", "${paymentData}")
-                            Log.d("paymentDataList", "${paymentDataList.toString()}")
-
                         }
                     }
+                    Log.d("paymentDataList", "${paymentDataList.toString()}")
+                    val lastPaymentDataList = paymentDataList
+                        .groupBy { it.paymentTypeId }
+                        .map { (_, entries) -> entries.last() }
+
+                    paymentDataList = lastPaymentDataList.toMutableList()
+                    Log.d("lastPaymentDataList", lastPaymentDataList.toString())
+                    Log.d("paymentDataList", "${paymentDataList.toString()}")
                 }
                 Log.d("sum", "${sum?.format()}")
             }
             Log.d("paymentDataList", "${paymentDataList.toString()}")
+        }
+    }
+
+    // Define a data class to hold the status selector and the associated EditText
+    data class PaymentSelector(
+        val selector: StatusSelector,
+        val editText: EditText
+    )
+
+    private fun setupPaymentMethodSelectors() {
+        val paymentSelectors = listOf(
+            PaymentSelector(binding.selectorCash, binding.textFieldCash),
+            PaymentSelector(binding.selectorDigitalWallet, binding.textFieldDigitalWallet),
+            PaymentSelector(binding.selectorCheque, binding.textFieldCheque),
+            PaymentSelector(binding.selectorPrepaid, binding.textFieldPrepaid),
+            PaymentSelector(binding.selectorCardPayment, binding.textFieldCardPayment),
+            PaymentSelector(binding.selectorBankTransfer, binding.textFieldBankTransfer),
+            PaymentSelector(binding.selectorInterPay, binding.textFieldInterPay),
+            PaymentSelector(binding.selectorNearPay, binding.textFieldNearPay),
+            PaymentSelector(binding.selectorClickPay, binding.textFieldClickPay)
+        )
+
+        paymentSelectors.forEach { paymentSelector ->
+            paymentSelector.selector.setOnClickListener {
+                handlePaymentSelection(
+                    paymentSelector.selector,
+                    paymentSelector.editText,
+                    paymentSelectors
+                )
+            }
+
+            // Add TextWatcher to update the payment amount when text changes
+            paymentSelector.editText.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+                override fun afterTextChanged(s: Editable?) {
+                    var newSum = 0.0
+                    paymentSelectors.forEach { selector ->
+                        val fieldValue = selector.editText.text.toString().toDoubleOrNull() ?: 0.0
+                        newSum += fieldValue
+                    }
+
+                    if (newSum > packageCodToPay) {
+                        val currentFieldValue =
+                            paymentSelector.editText.text.toString().toDoubleOrNull() ?: 0.0
+                        newSum -= currentFieldValue
+                        paymentSelector.editText.removeTextChangedListener(this)
+                        paymentSelector.editText.setText("")
+                        paymentSelector.editText.addTextChangedListener(this)
+
+                        Helper.showErrorMessage(
+                            this@PackageDeliveryActivity,
+                            getString(R.string.error_can_not_exceed_cod)
+                        )
+                    } else {
+                        sum = newSum
+                    }
+
+                    sum = newSum
+                    binding.textPaymentAmount.text = "${sum?.format()}/${packageCodToPay.format()}"
+                    val amount = paymentSelector.editText.text.toString().toDoubleOrNull()
+                    if (amount == null || amount == 0.0) {
+                        paymentDataList.removeAll { it.paymentType == paymentSelector.selector.enumValue }
+                    } else {
+                        // Update or add the new amount for this paymentTypeId
+                        val paymentData = PayMultiWayRequestBody(
+                            paymentSelector.selector.enumValue.toString(),
+                            null,
+                            amount = amount
+                        )
+                        paymentDataList.removeAll { it.paymentType == paymentSelector.selector.enumValue }
+                        paymentDataList.add(paymentData)
+                    }
+
+                    Log.d("paymentDataList", "${paymentDataList.toString()}")
+
+                    Log.d("sum", "${sum?.format()}/${packageCodToPay.format()}")
+                }
+            })
+
+            paymentSelector.editText.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    val amount = paymentSelector.editText.text.toString().toDoubleOrNull() ?: 0.0
+                    if (amount > 0) {
+                        val paymentData = PayMultiWayRequestBody(
+                            paymentType = paymentSelector.selector.enumValue.toString()
+                                .takeIf { paymentTypeId == null },
+                            null,
+                            amount = amount
+                        )
+                        paymentDataList.add(paymentData)
+                    }
+                }
+                Log.d("paymentDataList", "${paymentDataList.toString()}")
+                val lastPaymentDataList = paymentDataList
+                    .groupBy { it.paymentType }
+                    .map { (_, entries) -> entries.last() }
+
+                paymentDataList = lastPaymentDataList.toMutableList()
+            }
+        }
+    }
+
+    private fun handlePaymentSelection(selectedSelector: StatusSelector, selectedEditText: EditText, paymentSelectors: List<PaymentSelector>) {
+        selectedPaymentType?.makeUnselected()
+
+        selectedSelector.makeSelected()
+        selectedPaymentType = selectedSelector
+
+        selectedEditText.isEnabled = true
+        selectedEditText.requestFocus()
+        showKeyboard(selectedEditText)
+
+        paymentSelectors.forEach { paymentSelector ->
+            if (paymentSelector.editText != selectedEditText) {
+                paymentSelector.editText.isEnabled = false
+                paymentSelector.selector.makeUnselected()
+            }
         }
     }
 
@@ -1458,7 +1661,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
                             if (companyConfigurations?.isEnableDeliverByMultiPaymentTypes == true) {
-                                callPayMultiWay()
+                                submitValues()
                             } else {
                                 makePackageDelivery()
                             }
@@ -1563,11 +1766,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     val response =
                         ApiAdapter.apiClient.payMultiWay(
                             pkg?.id,
-                            PayMultiWayRequestBody(
-                                (selectedPaymentType?.enumValue as PaymentType).name,
-                                paymentTypeId,
-                                packageValueToPay
-                            )
+                            paymentDataList
                         )
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
@@ -1579,9 +1778,9 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                                 paymentTypeId = null
                                 makePackageDelivery()
                             } else {
-                                Helper.showSuccessMessage(
+                                Helper.showErrorMessage(
                                     super.getContext(),
-                                    getString(R.string.success_operation_completed)
+                                    getString(R.string.error_pay_all_cod)
                                 )
                             }
                         }
@@ -1965,7 +2164,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             handlePackageDelivery()
         } else if (action == ConfirmationDialogAction.DELIVER_PACKAGE) {
             if (companyConfigurations?.isEnableDeliverByMultiPaymentTypes == true) {
-                PaymentTypeValueDialog(super.getContext(), this, selectedPaymentType, paymentTypeId).showDialog()
+                submitValues()
             } else {
                 if (selectedPaymentType?.textView?.text == PaymentType.INTER_PAY.englishLabel) {
                     if (isAppInstalled(packageManager, AppConstants.SOFTPOS_PACKAGE_NAME)) {
@@ -2016,6 +2215,42 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             startNearPay(packageCodToPay)
         } else {
             callPayMultiWay()
+        }
+    }
+
+    private fun submitValues() {
+        for (paymentData in paymentDataList) {
+            when (paymentData.paymentType) {
+                PaymentType.INTER_PAY.englishLabel -> {
+                    if (isAppInstalled(packageManager, AppConstants.SOFTPOS_PACKAGE_NAME)) {
+                        paymentDataList = paymentDataList.filter {
+                            it.paymentType != PaymentType.INTER_PAY.englishLabel
+                        }.toMutableList()
+                        startSoftposApp(packageCodToPay.format())
+                        continue
+                    } else {
+                        Helper.showErrorMessage(
+                            super.getContext(),
+                            getString(R.string.error_app_is_not_installed)
+                        )
+                    }
+                }
+                PaymentType.NEAR_PAY.englishLabel -> {
+                    paymentDataList = paymentDataList.filter {
+                        it.paymentType != PaymentType.NEAR_PAY.englishLabel
+                    }.toMutableList()
+                    startNearPay(packageCodToPay)
+                }
+                else -> {}
+            }
+        }
+        if (paymentDataList.isNotEmpty() && sum == packageCodToPay){
+            callPayMultiWay()
+        } else {
+            Helper.showErrorMessage(
+                super.getContext(),
+                getString(R.string.error_pay_all_cod)
+            )
         }
     }
 }
