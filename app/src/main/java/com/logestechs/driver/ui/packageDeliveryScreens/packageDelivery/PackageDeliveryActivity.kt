@@ -802,7 +802,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     }
 
     @SuppressLint("SetTextI18n")
-    private fun setPaymentMethods(paymentTypes: List<PaymentTypeModel>) {
+    private fun setPaymentMethods(paymentTypes: List<CodCollectionMethod>) {
         binding.containerDynamicPaymentMethods.visibility = View.VISIBLE
         binding.containerStaticPaymentMethods.visibility = View.GONE
         binding.textPaymentAmount.visibility = View.VISIBLE
@@ -811,14 +811,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         val textFieldIds = mutableListOf<Int>()
 
         for (paymentType in paymentTypes) {
-            val statusSelector = StatusSelector(this).apply {
-                id = View.generateViewId()
-                if (Lingver.getInstance().getLocale().toString() == AppLanguages.ARABIC.value) {
-                    setTextStatus(paymentType.arabicName)
-                } else {
-                    setTextStatus(paymentType.name)
-                }
-            }
+            val statusSelector = StatusSelector(this)
+            statusSelector.setTextStatus(paymentType.paymentTypeName)
 
             val horizontalLayout = LinearLayout(this).apply {
                 orientation = LinearLayout.HORIZONTAL
@@ -875,8 +869,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 }
                 statusSelector.makeSelected()
                 selectedPaymentType = statusSelector
-                paymentTypeId = paymentType.id
-
+                paymentTypeId = paymentType.id.toLong()
                 textField.isEnabled = true
                 textField.requestFocus()
                 showKeyboard(textField)
@@ -909,15 +902,15 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                         // Remove item if text field is empty
                         val amount = textField.text.toString().toDoubleOrNull()
                         if (amount == null || amount == 0.0) {
-                            paymentDataList.removeAll { it.paymentTypeId == paymentType.id }
+                            paymentDataList.removeAll { it.paymentTypeId == paymentType.id.toLong() }
                         } else {
                             // Update or add the new amount for this paymentTypeId
                             val paymentData = PayMultiWayRequestBody(
-                                paymentType.name,
-                                paymentTypeId = paymentType.id,
+                                paymentType.paymentTypeName,
+                                paymentTypeId = paymentType.id.toLong(),
                                 amount = amount
                             )
-                            paymentDataList.removeAll { it.paymentTypeId == paymentType.id }
+                            paymentDataList.removeAll { it.paymentTypeId == paymentType.id.toLong() }
                             paymentDataList.add(paymentData)
                         }
 
@@ -932,8 +925,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                         val amount = textField.text.toString().toDoubleOrNull() ?: 0.0
                         if (amount > 0) {
                             val paymentData = PayMultiWayRequestBody(
-                                paymentType = paymentType.name.takeIf { paymentTypeId == null },
-                                paymentTypeId = paymentTypeId ?: paymentType.id,
+                                paymentType = paymentType.paymentTypeName.takeIf { paymentTypeId == null },
+                                paymentTypeId = paymentTypeId ?: paymentType.id.toLong(),
                                 amount = amount
                             )
                             paymentDataList.add(paymentData)
@@ -1076,6 +1069,131 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             if (paymentSelector.editText != selectedEditText) {
                 paymentSelector.editText.isEnabled = false
                 paymentSelector.selector.makeUnselected()
+            }
+        }
+    }
+
+    private fun showKeyboard(view: View) {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+    }
+
+    class PaymentSelector(val selector: StatusSelector, val editText: EditText)
+
+    private fun setupPaymentMethodSelectors() {
+        val paymentSelectors = listOf(
+            PaymentSelector(binding.selectorCash, binding.textFieldCash),
+            PaymentSelector(binding.selectorDigitalWallet, binding.textFieldDigitalWallet),
+            PaymentSelector(binding.selectorCheque, binding.textFieldCheque),
+            PaymentSelector(binding.selectorPrepaid, binding.textFieldPrepaid),
+            PaymentSelector(binding.selectorCardPayment, binding.textFieldCardPayment),
+            PaymentSelector(binding.selectorBankTransfer, binding.textFieldBankTransfer),
+            PaymentSelector(binding.selectorInterPay, binding.textFieldInterPay),
+            PaymentSelector(binding.selectorNearPay, binding.textFieldNearPay),
+            PaymentSelector(binding.selectorClickPay, binding.textFieldClickPay)
+        )
+
+        paymentSelectors.forEach { paymentSelector ->
+            paymentSelector.selector.setOnClickListener {
+                handlePaymentSelection(paymentSelector.selector, paymentSelector.editText, paymentSelectors)
+            }
+
+            // Add TextWatcher to update the payment amount when text changes
+            paymentSelector.editText.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+                override fun afterTextChanged(s: Editable?) {
+                    // Calculate the new total sum
+                    var newSum = 0.0
+
+                    // Iterate over each payment selector and accumulate values
+                    paymentSelectors.forEach { selector ->
+                        val fieldValue = selector.editText.text.toString().toDoubleOrNull() ?: 0.0
+                        newSum += fieldValue
+                    }
+                    if (newSum > packageCodToPay) {
+                        val currentFieldValue = paymentSelector.editText.text.toString().toDoubleOrNull() ?: 0.0
+                        newSum -= currentFieldValue
+                        paymentSelector.editText.removeTextChangedListener(this)
+                        paymentSelector.editText.setText("")
+                        paymentSelector.editText.addTextChangedListener(this)
+
+                        Helper.showErrorMessage(this@PackageDeliveryActivity, getString(R.string.error_can_not_exceed_cod))
+                    } else {
+                        sum = newSum
+                    }
+
+                    sum = newSum
+                    binding.textPaymentAmount.text = "${sum?.format()}/${packageCodToPay.format()}"
+
+
+                    // Remove item if text field is empty
+                    val amount = paymentSelector.editText.text.toString().toDoubleOrNull()
+                    if (amount == null || amount == 0.0) {
+                        paymentDataList.removeAll { it.paymentType == paymentSelector.selector.enumValue.toString() }
+                    } else {
+                        // Update or add the new amount for this paymentTypeId
+                        val paymentData = PayMultiWayRequestBody(
+                            paymentSelector.selector.enumValue.toString(),
+                            null,
+                            amount = amount
+                        )
+                        paymentDataList.removeAll { it.paymentType == paymentSelector.selector.enumValue.toString() }
+                        paymentDataList.add(paymentData)
+                    }
+
+                    Log.d("paymentDataList", "${paymentDataList.toString()}")
+
+                    Log.d("sum", "${sum?.format()}/${packageCodToPay.format()}")
+                }
+            })
+
+            paymentSelector.editText.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    val amount = paymentSelector.editText.text.toString().toDoubleOrNull() ?: 0.0
+                    if (amount > 0) {
+                        val paymentData = PayMultiWayRequestBody(
+                            paymentType = paymentSelector.selector.enumValue.toString().takeIf { paymentTypeId == null },
+                            null,
+                            amount = amount
+                        )
+                        paymentDataList.add(paymentData)
+                    }
+                }
+                Log.d("paymentDataList", "${paymentDataList.toString()}")
+                val lastPaymentDataList = paymentDataList
+                    .groupBy { it.paymentTypeId }
+                    .map { (_, entries) -> entries.last() }
+
+                paymentDataList = lastPaymentDataList.toMutableList()
+                Log.d("lastPaymentDataList", lastPaymentDataList.toString())
+                Log.d("paymentDataList", "${paymentDataList.toString()}")
+            }
+            Log.d("sum", "${sum?.format()}")
+        }
+        Log.d("paymentDataList", "${paymentDataList.toString()}")
+    }
+
+    private fun handlePaymentSelection(selectedSelector: StatusSelector, selectedEditText: EditText, paymentSelectors: List<PaymentSelector>) {
+        // Deselect the previously selected payment type
+        selectedPaymentType?.makeUnselected()
+
+        // Select the current selector
+        selectedSelector.makeSelected()
+        selectedPaymentType = selectedSelector
+
+        // Enable the corresponding EditText and request focus
+        selectedEditText.isEnabled = true
+        selectedEditText.requestFocus()
+        showKeyboard(selectedEditText)
+
+        // Disable all other EditTexts and reset their appearance
+        paymentSelectors.forEach { paymentSelector ->
+            if (paymentSelector.editText != selectedEditText) {
+                paymentSelector.editText.isEnabled = false
+                paymentSelector.selector.makeUnselected() // Deselect other selectors
             }
         }
     }
