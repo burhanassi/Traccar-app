@@ -366,6 +366,31 @@ class Helper {
                             number
                         }
                     }
+                    AppCurrency.KWD.value -> {
+                        return if (number.startsWith("+") || number.startsWith("00")) {
+                            number
+                        } else if (number.length == 8) {
+                            number = "+965$number"
+                            number
+                        } else if (number.length == 9) {
+                            number = number.drop(1)
+                            number = "+965$number"
+                            number
+                        } else if (number.length == 11) {
+                            number = "+$number"
+                            number
+                        } else if (number.length == 12) {
+                            number = number.drop(1)
+                            number = "+$number"
+                            number
+                        } else if (number.length == 13) {
+                            number = number.drop(2)
+                            number = "+$number"
+                            number
+                        } else {
+                            number
+                        }
+                    }
                 }
             }
             return number
