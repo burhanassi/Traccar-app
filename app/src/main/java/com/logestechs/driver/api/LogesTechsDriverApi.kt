@@ -748,7 +748,8 @@ interface LogesTechsDriverApi {
     @PUT("handler/hub/locations/{locationBarcode}/bin/sort")
     suspend fun scanNewLocationForChange (
         @Path("locationBarcode") locationBarcode: String,
-        @Query("barcode") barcode: String
+        @Query("barcode") barcode: String,
+        @Query("customerId") customerId: Long?
     ): Response<ResponseBody?>?
 
     @GET("handler/customers/{customerId}/locations")
