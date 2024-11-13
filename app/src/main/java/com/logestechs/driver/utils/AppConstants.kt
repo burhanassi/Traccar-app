@@ -96,6 +96,45 @@ enum class AppCurrency(val value: String) {
     EGP("EGP")
 }
 
+enum class CountriesCode(val code: String) {
+    NIS("PS"),
+    JOD("JO"),
+    KWD("KW"),
+    BHD("BH"),
+    IQD("IQ"),
+    SAR("SA"),
+    EGP("EG"),
+    TRY("TR"),
+    OMR("OM"),
+    LYD("LY"),
+    USD("US"),
+    QAR("QA"),
+    AED("AE"),
+    SYP("SY"),
+    LBP("LB"),
+    EUR("FR"),
+    GBP("GB"),
+    SDG("SD"),
+    SSP("SS"),
+    MAD("MA"),
+    YER("YE"),
+    DZD("DZ"),
+    ARS("AR"),
+    AUD("AU"),
+    BRL("BR"),
+    BGN("BG"),
+    CAD("CA"),
+    CNY("CN"),
+    CYP("CY"),
+    INR("IN"),
+    MYR("MY"),
+    MXN("MX"),
+    SGD("SG"),
+    SEK("SE"),
+    CHF("CH"),
+    TND("TN")
+}
+
 enum class DraftPickupStatus {
     ASSIGNED_TO_DRIVER,
     ACCEPTED_BY_DRIVER,
