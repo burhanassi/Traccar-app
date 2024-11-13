@@ -96,7 +96,7 @@ enum class AppCurrency(val value: String) {
     EGP("EGP")
 }
 
-enum class CountriesCode(val code: String) {
+enum class CountriesCode(val value: String) {
     NIS("PS"),
     JOD("JO"),
     KWD("KW"),
