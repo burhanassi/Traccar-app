@@ -498,8 +498,10 @@ interface LogesTechsDriverApi {
         @Body body: ModifyProfileRequestBody
     ): Response<ResponseBody?>?
 
-    @GET("driver/payment-type")
-    suspend fun getPaymentMethods (): Response<GetPaymentTypeResponse>
+    @GET("driver/payment-types")
+    suspend fun getPaymentMethods (
+        @Query("customerId") id: Long,
+    ): Response<ArrayList<CodCollectionMethod>>
 
     @POST("driver/packages/{packageId}/call-duration")
     suspend fun saveCallDuration (
@@ -746,7 +748,8 @@ interface LogesTechsDriverApi {
     @PUT("handler/hub/locations/{locationBarcode}/bin/sort")
     suspend fun scanNewLocationForChange (
         @Path("locationBarcode") locationBarcode: String,
-        @Query("barcode") barcode: String
+        @Query("barcode") barcode: String,
+        @Query("customerId") customerId: Long?
     ): Response<ResponseBody?>?
 
     @GET("handler/customers/{customerId}/locations")

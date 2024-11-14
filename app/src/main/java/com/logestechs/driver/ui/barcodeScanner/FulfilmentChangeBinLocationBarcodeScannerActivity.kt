@@ -341,7 +341,8 @@ class FulfilmentChangeBinLocationBarcodeScannerActivity: LogesTechsActivity(), V
                 try {
                     val response = ApiAdapter.apiClient.scanNewLocationForChange(
                         barcode!!,
-                        scannedBin
+                        scannedBin,
+                        customerId
                     )
 
                     withContext(Dispatchers.Main) {
