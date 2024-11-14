@@ -224,6 +224,15 @@ class Helper {
             }
         }
 
+        fun getCountryCode(): String {
+            val currency = SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations?.countryCode
+            return if (currency == "NIS") {
+                AppCurrency.NIS.value
+            } else {
+                currency ?: ""
+            }
+        }
+
         fun isLogesTechsDriver(): Boolean {
             return BuildConfig.company_id.toLong() == 0L
         }
@@ -290,8 +299,8 @@ class Helper {
                     number
                 }
             } else {
-                when (getCompanyCurrency()) {
-                    AppCurrency.NIS.value -> {
+                when (getCountryCode()) {
+                    CountriesCode.NIS.value -> {
                         return if (number.length == 10) {
                             number = number.drop(1)
                             number = "+970$number"
@@ -306,7 +315,7 @@ class Helper {
                             number
                         }
                     }
-                    AppCurrency.JOD.value -> {
+                    CountriesCode.JOD.value -> {
                         return if (number.length == 9) {
                             number = "+962$number"
                             number
@@ -329,7 +338,7 @@ class Helper {
                             number
                         }
                     }
-                    AppCurrency.SAR.value -> {
+                    CountriesCode.SAR.value -> {
                         return if (number.startsWith("+") || number.startsWith("00")) {
                             number
                         } else if (number.length == 9) {
@@ -354,13 +363,38 @@ class Helper {
                             number
                         }
                     }
-                    AppCurrency.EGP.value -> {
+                    CountriesCode.EGP.value -> {
                         return if (number.length == 11) {
                             number = number.drop(1)
                             number = "+20$number"
                             number
                         } else if (number.length == 10 && number[0] == '1') {
                             number = "+20$number"
+                            number
+                        } else {
+                            number
+                        }
+                    }
+                    CountriesCode.KWD.value -> {
+                        return if (number.startsWith("+") || number.startsWith("00")) {
+                            number
+                        } else if (number.length == 8) {
+                            number = "+965$number"
+                            number
+                        } else if (number.length == 9) {
+                            number = number.drop(1)
+                            number = "+965$number"
+                            number
+                        } else if (number.length == 11) {
+                            number = "+$number"
+                            number
+                        } else if (number.length == 12) {
+                            number = number.drop(1)
+                            number = "+$number"
+                            number
+                        } else if (number.length == 13) {
+                            number = number.drop(2)
+                            number = "+$number"
                             number
                         } else {
                             number
