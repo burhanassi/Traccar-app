@@ -96,6 +96,7 @@ interface LogesTechsDriverApi {
     @GET("driver/packages")
     suspend fun getDeliveredPackages(
         @Query("status") status: String = "delivered",
+        @Query("delivered-status") deliveredStatus: String? = null,
     ): Response<GetDeliveredPackagesResponse?>?
 
     @GET("admin/customers/with-returned")

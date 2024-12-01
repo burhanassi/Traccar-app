@@ -679,6 +679,28 @@ class Helper {
             }
         }
 
+        fun getLocalizedDeliveredStatus(
+            context: Context?,
+            deliveredStatus: DeliveredPackageStatus
+        ): String {
+            when (deliveredStatus) {
+                DeliveredPackageStatus.PARTIALLY_DELIVERED -> {
+                    return context?.getString(R.string.delivered_status_partially_delivered) ?: ""
+                }
+
+                DeliveredPackageStatus.ALL -> {
+                    return context?.getString(R.string.delivered_status_all) ?: ""
+                }
+
+                DeliveredPackageStatus.DELIVERED -> {
+                    return context?.getString(R.string.delivered_status_delivered) ?: ""
+                }
+                else -> {
+                    return ""
+                }
+            }
+        }
+
         fun copyTextToClipboard(context: Context?, text: String?) {
             val clipboardManager =
                 context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
