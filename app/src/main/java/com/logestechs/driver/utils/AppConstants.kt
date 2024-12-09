@@ -247,6 +247,7 @@ enum class SmsTemplateTag(val arabicTag: String, val englishTag: String) {
     hubName("<اسم الفرع>", "<Hub Name>"),
     company("<اسم الشركة>", "<Company Name>"),
     storeName("<اسم المتجر>", "<Business Name>"),
+    senderName("<اسم المرسل>", "<Sender Name>"),
     shareLocationUrl("<رابط مشاركة الموقع>", "<Sharing Location URL>"),
     postponeDate("<تاريخ التأجيل>", "<Date Postponed>"),
     expectedDeliveryDate("<تاريخ التوصيل المتوقع>", "<Expected Delivery Date>"),
