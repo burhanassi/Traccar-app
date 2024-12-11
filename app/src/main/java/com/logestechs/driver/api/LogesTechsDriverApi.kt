@@ -96,6 +96,7 @@ interface LogesTechsDriverApi {
     @GET("driver/packages")
     suspend fun getDeliveredPackages(
         @Query("status") status: String = "delivered",
+        @Query("delivered-status") deliveredStatus: String? = null,
     ): Response<GetDeliveredPackagesResponse?>?
 
     @GET("admin/customers/with-returned")
@@ -748,7 +749,8 @@ interface LogesTechsDriverApi {
     @PUT("handler/hub/locations/{locationBarcode}/bin/sort")
     suspend fun scanNewLocationForChange (
         @Path("locationBarcode") locationBarcode: String,
-        @Query("barcode") barcode: String
+        @Query("barcode") barcode: String,
+        @Query("customerId") customerId: Long?
     ): Response<ResponseBody?>?
 
     @GET("handler/customers/{customerId}/locations")

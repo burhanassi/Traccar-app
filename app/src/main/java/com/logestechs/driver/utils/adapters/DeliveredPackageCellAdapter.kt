@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.logestechs.driver.R
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemDeliveredPackageBinding
 import com.logestechs.driver.utils.AppCurrency
@@ -217,6 +218,11 @@ class DeliveredPackageCellAdapter(
             if (pkg?.destinationAddress != null) {
                 if (pkg.destinationAddress!!.latitude != 0.0 || pkg.destinationAddress!!.longitude != 0.0) {
                     binding.imageViewReceiverLocation.visibility = View.VISIBLE
+                    if (pkg.destinationAddress!!.locatedByReceiver == true) {
+                        binding.imageViewReceiverLocation.setImageResource(R.drawable.ic_live_location)
+                    } else {
+                        binding.imageViewReceiverLocation.setImageResource(R.drawable.ic_location_pin)
+                    }
                     binding.imageViewReceiverLocation.setOnClickListener {
                         if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
                             (mAdapter.context as LogesTechsActivity).showLocationInGoogleMaps(pkg.destinationAddress)

@@ -271,6 +271,11 @@ class InCarPackageCellAdapter(
             if (pkg?.destinationAddress != null) {
                 if (pkg.destinationAddress!!.latitude != 0.0 || pkg.destinationAddress!!.longitude != 0.0) {
                     binding.imageViewReceiverLocation.visibility = View.VISIBLE
+                    if (pkg.destinationAddress!!.locatedByReceiver == true) {
+                        binding.imageViewReceiverLocation.setImageResource(R.drawable.ic_live_location)
+                    } else {
+                        binding.imageViewReceiverLocation.setImageResource(R.drawable.ic_location_pin)
+                    }
                     binding.imageViewReceiverLocation.setOnClickListener {
                         if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
                             (mAdapter.context as LogesTechsActivity).showNavigationOptionsDialog(
