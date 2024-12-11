@@ -196,6 +196,12 @@ enum class InCarPackageStatus(val value: String) {
     TO_DELIVER_DELIVERY("TO_DELIVER_DELIVERY")
 }
 
+enum class DeliveredPackageStatus(val value: String) {
+    ALL("ALL"),
+    PARTIALLY_DELIVERED("PARTIALLY_DELIVERED"),
+    DELIVERED("DELIVERED")
+}
+
 enum class ReturnedPackageStatus(val value: String) {
     ALL("ALL"),
     PARTIALLY_DELIVERED("PARTIALLY_DELIVERED"),
