@@ -339,7 +339,7 @@ class Helper {
                         }
                     }
                     CountriesCode.SAR.value -> {
-                        return if (number.startsWith("+") || number.startsWith("00")) {
+                        return if (number.startsWith("+")) {
                             number
                         } else if (number.length == 9) {
                             number = "+966$number"
@@ -355,7 +355,7 @@ class Helper {
                             number = number.drop(1)
                             number = "+$number"
                             number
-                        } else if (number.length == 14) {
+                        } else if (number.length == 14  || number.startsWith("00")) {
                             number = number.drop(2)
                             number = "+$number"
                             number
@@ -673,6 +673,28 @@ class Helper {
                     return context?.getString(R.string.returned_status_swapped) ?: ""
                 }
 
+                else -> {
+                    return ""
+                }
+            }
+        }
+
+        fun getLocalizedDeliveredStatus(
+            context: Context?,
+            deliveredStatus: DeliveredPackageStatus
+        ): String {
+            when (deliveredStatus) {
+                DeliveredPackageStatus.PARTIALLY_DELIVERED -> {
+                    return context?.getString(R.string.delivered_status_partially_delivered) ?: ""
+                }
+
+                DeliveredPackageStatus.ALL -> {
+                    return context?.getString(R.string.delivered_status_all) ?: ""
+                }
+
+                DeliveredPackageStatus.DELIVERED -> {
+                    return context?.getString(R.string.delivered_status_delivered) ?: ""
+                }
                 else -> {
                     return ""
                 }

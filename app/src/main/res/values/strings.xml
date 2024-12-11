@@ -275,6 +275,9 @@
     <string name="in_car_status_delivery">Delivery</string>
     <string name="in_car_status_pickup_and_delivery">Pickup and Delivery</string>
     <string name="in_car_status_pickup_and_delivery_sprint">Pickup and Delivery</string>
+    <string name="delivered_status_all">All</string>
+    <string name="delivered_status_delivered">Delivered</string>
+    <string name="delivered_status_partially_delivered">Partially Delivered</string>
     <string name="enter_verification_code">Enter Verification Code</string>
     <string name="verification_code">Verification Code</string>
     <string name="change_phone_number">Change mobile number</string>
@@ -374,4 +377,6 @@
     <string name="show_note">Notes</string>
     <string name="error_transaction_failed">Transaction Failed</string>
     <string name="error_transaction_failed_by_bank">Transaction Failed By Bank</string>
+    <string name="error_pay_all_cod">Cannot be delivered! Please pay all COD</string>
+    <string name="error_can_not_exceed_cod">Cannot exceed COD</string>
 </resources>

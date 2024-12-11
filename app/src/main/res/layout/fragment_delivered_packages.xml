@@ -17,13 +17,31 @@
             <TextView
                 android:id="@+id/text_title"
                 style="@style/LogesTechsBold"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:textColor="@color/fontTrackHint"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/text_selected_status"
+                style="@style/LogesTechsBold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="7dp"
+                android:layout_marginEnd="5dp"
                 android:textColor="@color/fontTrackHint"
                 android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/button_status_filter"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="14dp"
+                android:src="@drawable/ic_status_filter"
+                tools:ignore="ContentDescription" />
         </LinearLayout>
 
         <FrameLayout

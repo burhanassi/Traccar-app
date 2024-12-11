@@ -96,6 +96,7 @@ interface LogesTechsDriverApi {
     @GET("driver/packages")
     suspend fun getDeliveredPackages(
         @Query("status") status: String = "delivered",
+        @Query("delivered-status") deliveredStatus: String? = null,
     ): Response<GetDeliveredPackagesResponse?>?
 
     @GET("admin/customers/with-returned")
@@ -518,7 +519,7 @@ interface LogesTechsDriverApi {
     @PUT("driver/packages/{packageId}/paymentType/deliver")
     suspend fun payMultiWay(
         @Path("packageId") packageId: Long?,
-        @Body body: PayMultiWayRequestBody?,
+        @Body body: List<PayMultiWayRequestBody?>,
     ): Response<PayMultiWayResponse?>?
 
     @Multipart
