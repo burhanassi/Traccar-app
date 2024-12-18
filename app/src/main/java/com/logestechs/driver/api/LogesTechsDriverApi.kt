@@ -600,7 +600,8 @@ interface LogesTechsDriverApi {
         @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
         @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
         @Query("status") status: String?,
-        @Query("statuses") statuses: List<String>? = null
+        @Query("statuses") statuses: List<String>? = null,
+        @Query("pkgStatus") pkgStatus: String? = null
     ): Response<GetFulfilmentOrdersResponse?>?
 
     @GET("handler/orders/returned")
@@ -807,4 +808,9 @@ interface LogesTechsDriverApi {
     suspend fun getPackageByInvoiceNumber(
         @Query("invoiceNumber") invoiceNumber: String
     ): Response<Package>?
+
+    @PUT("handler/fulfilment/orders/receive-in-warehouse")
+    suspend fun deliverToWarehouse(
+        @Body body: DeliverToWarehouseRequestBody?
+    ): Response<ResponseBody>?
 }
