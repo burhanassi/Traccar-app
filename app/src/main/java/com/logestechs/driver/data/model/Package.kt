@@ -114,7 +114,7 @@ data class Package(
     var paymentTypeName: String? = null,
     var partnerPackageId: Long? = null,
     var notificationTemplate: String? = null,
-    var thirdPartyTrackingNo: Long? = null,
+    var thirdPartyTrackingNo: String? = null,
     var isFingerprintRequired: Boolean? = null,
     var thirdPartyBarcode: String? = null,
     var accountReferenceNumber: String? = null,
