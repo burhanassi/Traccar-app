@@ -36,4 +36,8 @@
         android:id="@+id/action_show_package_content"
         android:title="@string/show_package_content" />
 
+    <item
+        android:id="@+id/show_telecom_package_details"
+        android:title="@string/show_telecom_package_details" />
+
 </menu>

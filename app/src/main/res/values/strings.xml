@@ -377,4 +377,12 @@
     <string name="show_note">Notes</string>
     <string name="error_transaction_failed">Transaction Failed</string>
     <string name="error_transaction_failed_by_bank">Transaction Failed By Bank</string>
+    <string name="show_telecom_package_details">Show Telecom Details</string>
+    <string name="supplier_invoice">Customer Reference Number : </string>
+    <string name="third_party_tracking_no">Order Number : </string>
+    <string name="is_fingerprint_required">FP Requirement : </string>
+    <string name="third_party_barcode">CPR Number : </string>
+    <string name="account_reference_number">Account/ Ref Number : </string>
+    <string name="msisdn">MSISDN : </string>
+    <string name="sim_number">Sim Number : </string>
 </resources>

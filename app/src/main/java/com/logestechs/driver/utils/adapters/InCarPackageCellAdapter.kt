@@ -357,6 +357,10 @@ class InCarPackageCellAdapter(
                             R.id.action_show_package_content -> {
                                 ShowPackageContentDialog(mAdapter.context!!, pkg?.description).showDialog()
                             }
+
+                            R.id.show_telecom_package_details -> {
+                                ShowTelecomInfoDialog(mAdapter.context!!, pkg).showDialog()
+                            }
                         }
                     }
                     true
@@ -382,6 +386,9 @@ class InCarPackageCellAdapter(
                     popup.menu.findItem(R.id.action_edit_package_type).title =
                         mAdapter.context!!.getString(R.string.change_package_type_sprint)
                     popup.menu.findItem(R.id.action_add_note).isVisible = false
+                }
+                if (mAdapter.loginResponse?.user?.isAllowAddingTelecomeDevices != true) {
+                    popup.menu.findItem(R.id.show_telecom_package_details).isVisible = false
                 }
                 popup.show()
             }

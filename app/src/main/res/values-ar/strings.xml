@@ -374,4 +374,12 @@
     <string name="show_note">الملاحظات</string>
     <string name="error_transaction_failed">Transaction Failed</string>
     <string name="error_transaction_failed_by_bank">Transaction Failed By Bank</string>
+    <string name="show_telecom_package_details">عرض تفاصيل الاتصال</string>
+    <string name="supplier_invoice">الرقم المرجعي للعميل : </string>
+    <string name="third_party_tracking_no">رقم الطلب : </string>
+    <string name="is_fingerprint_required">بصمة : </string>
+    <string name="third_party_barcode">رقم البطاقة السكانية : </string>
+    <string name="account_reference_number">رقم الحساب -المرجع : </string>
+    <string name="msisdn">MSISDN : </string>
+    <string name="sim_number"> رقم الشريحة : </string>
 </resources>
