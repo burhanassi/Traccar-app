@@ -377,4 +377,8 @@
     <string name="show_note">Notes</string>
     <string name="error_transaction_failed">Transaction Failed</string>
     <string name="error_transaction_failed_by_bank">Transaction Failed By Bank</string>
+    <string name="dashboard_check_out">Check-Out</string>
+    <string name="dashboard_check_in">Check-In</string>
+    <string name="success_check_out">Hub Check-Out Successfully</string>
+    <string name="success_check_in">Hub Check-In Successfully</string>
 </resources>

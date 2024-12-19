@@ -451,6 +451,38 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/container_check_in_check_out"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="24dp"
+                    android:baselineAligned="false"
+                    android:clipChildren="false">
+
+                    <include
+                        android:id="@+id/dash_entry_check_in"
+                        layout="@layout/item_dashboard_entry"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="14dp"
+                        android:layout_weight="1"
+                        app:isCountHidden="@{true}"
+                        app:iconSrc="@{@drawable/ic_check_in_dashboard}"
+                        app:titleText="@{@string/dashboard_check_in}"/>
+                    <include
+                        android:id="@+id/dash_entry_check_out"
+                        layout="@layout/item_dashboard_entry"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:isCountHidden="@{true}"
+                        app:iconSrc="@{@drawable/ic_check_out}"
+                        app:titleText="@{@string/dashboard_check_out}"/>
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/container_warehouse_packages"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

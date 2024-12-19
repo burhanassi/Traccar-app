@@ -264,6 +264,14 @@
             android:exported="false"
             android:theme="@style/AppTheme" />
         <activity
+            android:name=".ui.barcodeScanner.BarcodeScannerCheckInActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.barcodeScanner.BarcodeScannerCheckOutActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".ui.driverPackagesByStatusViewPager.DriverPackagesByStatusViewPagerActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />

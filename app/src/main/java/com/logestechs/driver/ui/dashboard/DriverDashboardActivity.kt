@@ -27,10 +27,13 @@ import com.logestechs.driver.api.requests.ChangeWorkLogStatusRequestBody
 import com.logestechs.driver.api.requests.LogExceptionRequestBody
 import com.logestechs.driver.api.requests.UpdateLocationRequestBody
 import com.logestechs.driver.api.responses.GetDashboardInfoResponse
+import com.logestechs.driver.data.model.CompanyInfo
 import com.logestechs.driver.data.model.Device
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.databinding.ActivityDriverDashboardBinding
 import com.logestechs.driver.ui.barcodeScanner.BarcodeScannerActivity
+import com.logestechs.driver.ui.barcodeScanner.BarcodeScannerCheckInActivity
+import com.logestechs.driver.ui.barcodeScanner.BarcodeScannerCheckOutActivity
 import com.logestechs.driver.ui.broughtPackages.BroughtPackagesActivity
 import com.logestechs.driver.ui.checkInActivity.CheckInActivity
 import com.logestechs.driver.ui.driverDraftPickupsByStatusViewPager.DriverDraftPickupsByStatusViewPagerActivity
@@ -62,7 +65,6 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
     private val loginResponse = SharedPreferenceWrapper.getLoginResponse()
     private var companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
-
     private var mFusedLocationClient: FusedLocationProviderClient? = null
     private var mLocationManager: LocationManager? = null
 
@@ -167,7 +169,11 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
             binding.dashSubEntryReturnedPackages.titleText =
                 getString(R.string.title_returned_packages)
         }
-
+        if (companyConfigurations?.isEnableDriverHubWorkTracking == true) {
+            binding.containerCheckInCheckOut.visibility = View.VISIBLE
+        } else {
+            binding.containerCheckInCheckOut.visibility = View.GONE
+        }
     }
 
     private fun initOnClickListeners() {
@@ -177,6 +183,8 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
         binding.dashEntryAcceptedPackages.root.setOnClickListener(this)
         binding.dashEntryInCarPackages.root.setOnClickListener(this)
         binding.dashEntryScanPackages.root.setOnClickListener(this)
+        binding.dashEntryCheckIn.root.setOnClickListener(this)
+        binding.dashEntryCheckOut.root.setOnClickListener(this)
         binding.dashSubEntryBroughtPackages.root.setOnClickListener(this)
         binding.dashSubEntryReturnedPackages.root.setOnClickListener(this)
         binding.dashSubEntryMassCodReports.root.setOnClickListener(this)
@@ -318,6 +326,16 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
 
             R.id.dash_entry_scan_packages -> {
                 val mIntent = Intent(this, BarcodeScannerActivity::class.java)
+                startActivity(mIntent)
+            }
+
+            R.id.dash_entry_check_in -> {
+                val mIntent = Intent(this, BarcodeScannerCheckInActivity::class.java)
+                startActivity(mIntent)
+            }
+
+            R.id.dash_entry_check_out -> {
+                val mIntent = Intent(this, BarcodeScannerCheckOutActivity::class.java)
                 startActivity(mIntent)
             }
 
