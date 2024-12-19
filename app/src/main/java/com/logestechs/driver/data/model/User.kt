@@ -87,6 +87,5 @@ data class User(
     val companyID: Long?,
     val andoidAdminAppMinVersion: String? = null,
     var isHideSenderInfo: Boolean? = null,
-    var isShowSenderPhone: Boolean? = null,
-    var isAllowAddingTelecomeDevices: Boolean? = null
+    var isShowSenderPhone: Boolean? = null
 ) : Parcelable

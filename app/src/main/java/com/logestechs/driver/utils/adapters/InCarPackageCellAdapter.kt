@@ -12,6 +12,7 @@ import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.api.requests.*
+import com.logestechs.driver.data.model.CompanyInfo
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemInCarPackageCellBinding
@@ -34,6 +35,9 @@ class InCarPackageCellAdapter(
     ChangePackageTypeDialogListener,
     ChangeCodDialogListener,
     ChangePackageWeightDialogListener {
+
+        val companyInfo: CompanyInfo? =
+            SharedPreferenceWrapper.getCompanyInfo()
 
     val companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
@@ -387,7 +391,7 @@ class InCarPackageCellAdapter(
                         mAdapter.context!!.getString(R.string.change_package_type_sprint)
                     popup.menu.findItem(R.id.action_add_note).isVisible = false
                 }
-                if (mAdapter.loginResponse?.user?.isAllowAddingTelecomeDevices != true) {
+                if (mAdapter.companyInfo?.isAllowAddingTelecomeDevices != true) {
                     popup.menu.findItem(R.id.show_telecom_package_details).isVisible = false
                 }
                 popup.show()

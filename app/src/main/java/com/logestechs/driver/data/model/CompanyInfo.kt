@@ -33,5 +33,6 @@ data class CompanyInfo(
     var hasRouteOptimization: Boolean? = null,
     var currency: String? = null,
     var logo: String? = null,
-    var isDriverSignupEnabled: Boolean? = null
+    var isDriverSignupEnabled: Boolean? = null,
+    var isAllowAddingTelecomeDevices: Boolean? = null
 ) : Parcelable

@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.logestechs.driver.api.responses.ChangeWorkLogStatusResponse
 import com.logestechs.driver.api.responses.GetDriverCompanySettingsResponse
 import com.logestechs.driver.api.responses.LoginResponse
+import com.logestechs.driver.data.model.CompanyInfo
 import com.logestechs.driver.data.model.LatLng
 import com.logestechs.driver.utils.LogesTechsApp.Companion.prefs
 
@@ -29,6 +30,22 @@ class SharedPreferenceWrapper {
 
         fun deleteLoginResponse() {
             prefs.push(SharedPrefsKeys.LOGIN_RESPONSE.value, "")
+        }
+
+        //company info
+        fun saveCompanyInfo(companyInfo: CompanyInfo?) {
+            val json = Gson().toJson(companyInfo)
+            prefs.push(SharedPrefsKeys.COMPANY_INFO.value, json)
+        }
+
+        fun getCompanyInfo(): CompanyInfo? {
+            val json = prefs.pull(SharedPrefsKeys.COMPANY_INFO.value, "")
+
+            return if (json.isEmpty()) {
+                return null
+            } else {
+                Gson().fromJson(json, CompanyInfo::class.java)
+            }
         }
 
         //UUID
@@ -167,6 +184,7 @@ class SharedPreferenceWrapper {
 private enum class SharedPrefsKeys(val value: String) {
     LOGIN_RESPONSE("login_response"),
     UUID_KEY("uuid_key"),
+    COMPANY_INFO("company_info"),
     DRIVER_COMPANY_SETTINGS_KEY("driver_company_settings_key"),
     LAST_SYNC_LOCATION_KEY("last_sync_location_key"),
     WORK_LOG_ID_KEY("work_log_key_id"),

@@ -227,6 +227,7 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
                         SharedPreferenceWrapper.saveLoginResponse(body)
                         withContext(Dispatchers.Main) {
                             callGetDriverCompanySettings(loginResponse = body)
+                            getCompanyInfo()
                         }
                     } else {
                         withContext(Dispatchers.Main) {
@@ -267,6 +268,20 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
             Helper.showErrorMessage(
                 this, getString(R.string.error_check_internet_connection)
             )
+        }
+    }
+
+    private fun getCompanyInfo() {
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                val response = ApiAdapter.apiClient.getCompanyInfo()
+                if (response!!.isSuccessful && response.body() != null) {
+                    SharedPreferenceWrapper.saveCompanyInfo(response.body()!!)
+                }
+            } catch (e: Exception) {
+                Helper.logException(e, Throwable().stackTraceToString())
+                e.printStackTrace()
+            }
         }
     }
 

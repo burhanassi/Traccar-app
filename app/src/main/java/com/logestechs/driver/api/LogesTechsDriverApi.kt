@@ -12,6 +12,7 @@ import retrofit2.Response
 import retrofit2.http.*
 import java.util.*
 import kotlin.collections.ArrayList
+import com.logestechs.driver.utils.Helper
 
 interface LogesTechsDriverApi {
     @POST("auth/user/mobile-login")
@@ -350,6 +351,9 @@ interface LogesTechsDriverApi {
         @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
         @Query("search") search: String
     ): Response<GetVillagesResponse>
+
+    @GET("guests/companies/info-by-domain")
+    suspend fun getCompanyInfo(@Query("id") domain: String = Helper.getCompanyId().toString()): Response<CompanyInfo?>?
 
     @GET("guests/companies/info-by-domain")
     suspend fun getCompanyInfoByName(@Query("name") name: String): Response<CompanyInfo?>?
