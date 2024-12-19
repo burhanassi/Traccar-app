@@ -45,5 +45,6 @@ data class DriverCompanyConfigurations(
     var isEnableMaxCapacityLocationForProducts: Boolean? = null,
     var isShowReceiverInfoForDriverPendingShipments: Boolean? = null,
     var isDriverEarningEnabled: Boolean? = null,
-    var countryCode: String? = null
+    var countryCode: String? = null,
+    var isForceDriversToSelectIncompleteDeliveryReason: Boolean? = null
 )
