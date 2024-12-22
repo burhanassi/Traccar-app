@@ -40,7 +40,6 @@ class SplashActivity : LogesTechsActivity() {
 
         hideStatusBar()
         handleNotificationToken()
-        getCompanyInfo()
         getMinVersion("https://play.google.com/store/apps/details?id=com.logestechs.driver")
     }
 
@@ -144,29 +143,6 @@ class SplashActivity : LogesTechsActivity() {
                 } catch (e: Exception) {
                     Helper.logException(e, Throwable().stackTraceToString())
                 }
-            }
-        }
-    }
-
-    private fun getCompanyInfo() {
-        GlobalScope.launch(Dispatchers.IO) {
-            try {
-                val response = ApiAdapter.apiClient.getCompanyInfo()
-                if (response!!.isSuccessful && response.body() != null) {
-                    SharedPreferenceWrapper.saveCompanyInfo(response.body()!!)
-                } else {
-                    if (Helper.isBackendDriver()) {
-                        SharedPreferenceWrapper.clearData()
-                        SharedPreferenceWrapper.saveSelectedServerIp("")
-                    }
-                }
-            } catch (e: Exception) {
-                if (Helper.isBackendDriver()) {
-                    SharedPreferenceWrapper.clearData()
-                    SharedPreferenceWrapper.saveSelectedServerIp("")
-                }
-                Helper.logException(e, Throwable().stackTraceToString())
-                e.printStackTrace()
             }
         }
     }
