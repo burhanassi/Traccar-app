@@ -4,7 +4,6 @@ import com.google.gson.Gson
 import com.logestechs.driver.api.responses.ChangeWorkLogStatusResponse
 import com.logestechs.driver.api.responses.GetDriverCompanySettingsResponse
 import com.logestechs.driver.api.responses.LoginResponse
-import com.logestechs.driver.data.model.CompanyInfo
 import com.logestechs.driver.data.model.LatLng
 import com.logestechs.driver.utils.LogesTechsApp.Companion.prefs
 

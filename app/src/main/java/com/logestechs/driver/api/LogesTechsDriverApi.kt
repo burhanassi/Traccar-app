@@ -350,7 +350,7 @@ interface LogesTechsDriverApi {
         @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
         @Query("search") search: String
     ): Response<GetVillagesResponse>
-    
+
     @GET("guests/companies/info-by-domain")
     suspend fun getCompanyInfoByName(@Query("name") name: String): Response<CompanyInfo?>?
 
