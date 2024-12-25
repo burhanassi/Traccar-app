@@ -165,7 +165,7 @@
                 android:layout_marginBottom="4dp"
                 android:background="@drawable/background_logestechs_button"
                 android:minWidth="115dp"
-                android:text="@string/deliver_to_warehouse"
+                android:text="@string/button_deliver_order"
                 android:textAllCaps="false"
                 android:textColor="#fff" />
         </LinearLayout>

@@ -70,7 +70,7 @@
                         android:paddingTop="4dp"
                         android:paddingBottom="80dp"
                         android:scrollbars="vertical"
-                        tools:listitem="@layout/item_returned_fulfilment_order" />
+                        tools:listitem="@layout/item_packed_fulfilment_order" />
                 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
             </FrameLayout>
         </LinearLayout>
