@@ -117,7 +117,7 @@ class OrderDeliverToWarehouseActivity : LogesTechsActivity(), View.OnClickListen
     private fun initData() {
         binding.itemReceiverName.textItem.text = order?.receiverName
         binding.itemReceiverAddress.textItem.text = order?.receiverAddress?.toStringAddress()
-        binding.itemPackageBarcode.textItem.text = order?.barcode
+        binding.itemOrderBarcode.textItem.text = order?.barcode
         binding.textCod.text = order?.cod?.format()
 
         if (order?.notes?.trim().isNullOrEmpty()) {
@@ -161,7 +161,7 @@ class OrderDeliverToWarehouseActivity : LogesTechsActivity(), View.OnClickListen
             }
         })
 
-        binding.itemPackageBarcode.buttonCopy.setOnClickListener {
+        binding.itemOrderBarcode.buttonCopy.setOnClickListener {
             Helper.copyTextToClipboard(this, order?.barcode)
         }
 
@@ -341,7 +341,7 @@ class OrderDeliverToWarehouseActivity : LogesTechsActivity(), View.OnClickListen
                 if (resultCode == RESULT_OK) {
                     val verificationStatus = data?.getBooleanExtra("verificationStatus", false)
                     if (verificationStatus == true) {
-                        handlePackageDelivery()
+                        handleOrderDelivery()
                     } else {
                         Helper.showErrorMessage(
                             super.getContext(),
@@ -394,7 +394,7 @@ class OrderDeliverToWarehouseActivity : LogesTechsActivity(), View.OnClickListen
                 ) {
                     Helper.showAndRequestStorageDialog(this)
                 } else {
-                    uploadPackageSignature()
+                    uploadOrderSignature()
                 }
             } else {
                 if (Helper.shouldShowStoragePermissionDialog(this)) {
@@ -409,7 +409,7 @@ class OrderDeliverToWarehouseActivity : LogesTechsActivity(), View.OnClickListen
         }
     }
 
-    private fun uploadPackageSignature() {
+    private fun uploadOrderSignature() {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
@@ -449,7 +449,7 @@ class OrderDeliverToWarehouseActivity : LogesTechsActivity(), View.OnClickListen
                     )
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            callDeliverPackage()
+                            callDeliverOrder()
                         }
                     } else {
                         hideWaitDialog()
@@ -641,7 +641,7 @@ class OrderDeliverToWarehouseActivity : LogesTechsActivity(), View.OnClickListen
     }
 
     //Apis
-    private fun callDeliverPackage() {
+    private fun callDeliverOrder() {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
@@ -705,11 +705,11 @@ class OrderDeliverToWarehouseActivity : LogesTechsActivity(), View.OnClickListen
         }
     }
 
-    private fun handlePackageDelivery() {
+    private fun handleOrderDelivery() {
         if (Helper.isStoragePermissionNeeded(this)) {
             Helper.showAndRequestStorageDialog(this)
         } else {
-            callDeliverPackage()
+            callDeliverOrder()
         }
     }
 
@@ -769,7 +769,7 @@ class OrderDeliverToWarehouseActivity : LogesTechsActivity(), View.OnClickListen
 
     override fun confirmAction(data: Any?, action: ConfirmationDialogAction) {
         if (action == ConfirmationDialogAction.DELIVER_TO_WAREHOUSE) {
-            callDeliverPackage()
+            callDeliverOrder()
         }
 
     }
