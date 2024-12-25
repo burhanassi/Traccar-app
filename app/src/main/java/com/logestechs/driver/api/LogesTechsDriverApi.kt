@@ -813,4 +813,19 @@ interface LogesTechsDriverApi {
     suspend fun deliverToWarehouse(
         @Body body: DeliverToWarehouseRequestBody?
     ): Response<ResponseBody>?
+
+    @Multipart
+    @POST("handler/image")
+    suspend fun uploadPackedOrderImage(
+        @Part upload_form: MultipartBody.Part?
+    ): Response<UploadImageResponse?>?
+
+    @Multipart
+    @POST("handler/signature")
+    suspend fun uploadPackedOrderSignature(
+        @Part upload_form: MultipartBody.Part?
+    ): Response<UploadImageResponse?>?
+
+    @HTTP(method = "DELETE", path = "handler/image", hasBody = true)
+    suspend fun deletePackedOrderImage(@Body body: DeleteImageRequestBody?): Response<ResponseBody?>?
 }

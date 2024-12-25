@@ -27,6 +27,7 @@ import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.DeleteImageRequestBody
+import com.logestechs.driver.api.requests.DeliverMassCodReportRequestBody
 import com.logestechs.driver.api.requests.DeliverToWarehouseRequestBody
 import com.logestechs.driver.data.model.FulfilmentOrder
 import com.logestechs.driver.data.model.LoadedImage
@@ -41,6 +42,7 @@ import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
+import com.logestechs.driver.utils.dialogs.DeliveryCodeVerificationDialog
 import com.logestechs.driver.utils.interfaces.ConfirmationDialogActionListener
 import com.logestechs.driver.utils.interfaces.ThumbnailsListListener
 import kotlinx.coroutines.Dispatchers
@@ -67,6 +69,7 @@ class OrderDeliverToWarehouseActivity : LogesTechsActivity(), View.OnClickListen
 
     private var path: String? = null
     private var file: File? = null
+    private var bitmap: Bitmap? = null
     private var gestureTouch = false
     private var order: FulfilmentOrder? = null
 
@@ -411,45 +414,72 @@ class OrderDeliverToWarehouseActivity : LogesTechsActivity(), View.OnClickListen
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    // Create bitmap from gesture view
-                    val bitmap = Bitmap.createBitmap(
+                    bitmap = Bitmap.createBitmap(
                         binding.gestureViewSignature.width,
                         binding.gestureViewSignature.height,
                         Bitmap.Config.ARGB_8888
-                    ).apply {
-                        val canvas = Canvas(this)
-                        binding.gestureViewSignature.draw(canvas)
-                    }
-
-                    // Save the bitmap to a file
+                    )
+                    val canvas = Canvas(bitmap!!)
+                    binding.gestureViewSignature.draw(canvas)
                     file?.createNewFile()
-                    FileOutputStream(file).use { fos ->
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+                    val fos = FileOutputStream(file)
+                    bitmap?.compress(Bitmap.CompressFormat.PNG, 100, fos)
+                    fos.close()
+
+                    // resize and compress to reasonable size
+                    val bytes = ByteArrayOutputStream()
+                    bitmap?.compress(
+                        Bitmap.CompressFormat.JPEG,
+                        AppConstants.IMAGE_FULL_QUALITY,
+                        bytes
+                    )
+
+                    val reqFile: RequestBody =
+                        bytes.toByteArray().toRequestBody("image/jpeg".toMediaTypeOrNull())
+                    val body: MultipartBody.Part = MultipartBody.Part.createFormData(
+                        "file",
+                        order?.id.toString() +
+                                "__signature_image" +
+                                "_" + System.currentTimeMillis() +
+                                ".jpg", reqFile
+                    )
+
+                    val response = ApiAdapter.apiClient.uploadPackedOrderSignature(
+                        body
+                    )
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            callDeliverPackage()
+                        }
+                    } else {
+                        hideWaitDialog()
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
                     }
-
-                    // Resize and compress the bitmap to reasonable size
-                    val bytes = ByteArrayOutputStream().apply {
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, AppConstants.IMAGE_FULL_QUALITY, this)
-                    }
-
-                    val fileName = "${order?.id}__signature_image_${System.currentTimeMillis()}.jpg"
-                    val fileUrl = "file://${file?.absolutePath}/$fileName"
-
-                    hideWaitDialog()
-
-                    // Create a LoadedImage object and append it to the list
-                    val loadedImage = LoadedImage(imageUri = Uri.parse(fileUrl), imageUrl = fileUrl)
-                    loadedImagesList.add(loadedImage)
-
                 } catch (e: Exception) {
                     hideWaitDialog()
                     Helper.logException(e, Throwable().stackTraceToString())
-
                     withContext(Dispatchers.Main) {
-                        Helper.showErrorMessage(
-                            super.getContext(),
-                            e.message?.takeIf { it.isNotEmpty() } ?: getString(R.string.error_general)
-                        )
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
                     }
                 }
             }
@@ -482,20 +512,49 @@ class OrderDeliverToWarehouseActivity : LogesTechsActivity(), View.OnClickListen
                         bytes
                     )
 
+                    val reqFile: RequestBody =
+                        bytes.toByteArray().toRequestBody("image/jpeg".toMediaTypeOrNull())
+
                     val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale("en")).format(Date())
-                    val imageFileName = "JPEG_$timeStamp"
+                    val imageFileName = "JPEG_" + timeStamp + "_"
 
-                    val fileUrl = "file://${file.absolutePath}/$imageFileName.jpeg"
+                    val body: MultipartBody.Part = MultipartBody.Part.createFormData(
+                        "file",
+                        "$imageFileName.jpeg", reqFile
+                    )
 
-                    hideWaitDialog()
+                    val response = ApiAdapter.apiClient.uploadPackedOrderImage(
+                        body
+                    )
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            hideWaitDialog()
+                            loadedImagesList[loadedImagesList.size - 1].imageUrl =
+                                response.body()?.fileUrl
+                            (binding.rvThumbnails.adapter as ThumbnailsAdapter).updateItem(
+                                loadedImagesList.size - 1
+                            )
+                            binding.containerThumbnails.visibility = View.VISIBLE
+                        }
+                    } else {
+                        hideWaitDialog()
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
 
-                    // Update the LoadedImage object and adapter
-                    withContext(Dispatchers.Main) {
-                        loadedImagesList[loadedImagesList.size - 1].imageUrl = fileUrl
-                        (binding.rvThumbnails.adapter as ThumbnailsAdapter).updateItem(
-                            loadedImagesList.size - 1
-                        )
-                        binding.containerThumbnails.visibility = View.VISIBLE
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
                     }
                 } catch (e: Exception) {
                     hideWaitDialog()
@@ -522,12 +581,43 @@ class OrderDeliverToWarehouseActivity : LogesTechsActivity(), View.OnClickListen
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
+                    val response =
+                        ApiAdapter.apiClient.deletePackedOrderImage(DeleteImageRequestBody(loadedImagesList[position].imageUrl))
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
-                        loadedImagesList.removeAt(position)
-                        (binding.rvThumbnails.adapter as ThumbnailsAdapter).deleteItem(position)
-                        if (loadedImagesList.isEmpty()) {
-                            binding.containerThumbnails.visibility = View.GONE
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            loadedImagesList.removeAt(position)
+                            (binding.rvThumbnails.adapter as ThumbnailsAdapter).deleteItem(
+                                position
+                            )
+                            if (loadedImagesList.isEmpty()) {
+                                binding.containerThumbnails.visibility =
+                                    View.GONE
+                            }
+                            Helper.showSuccessMessage(
+                                super.getContext(),
+                                getString(R.string.success_operation_completed)
+                            )
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
                         }
                     }
                 } catch (e: Exception) {
