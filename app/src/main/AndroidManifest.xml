@@ -74,7 +74,13 @@
             android:name=".ui.barcodeScanner.FulfilmentReturnOrderBarcodeScannerActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.deliverToWarehouse.DeliverToWarehouseActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.returnedFulfilmentOrders.ReturnedFulfillmentOrdersActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.deliverToWarehouse.deliverOrderToWarehouseScreen.OrderDeliverToWarehouseActivity"
             android:exported="false" />
         <activity
             android:name=".ui.barcodeScanner.FulfilmentChangeBinLocationBarcodeScannerActivity"

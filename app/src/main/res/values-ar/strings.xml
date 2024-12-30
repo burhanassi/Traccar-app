@@ -378,4 +378,7 @@
     <string name="dashboard_check_in">تسجيل دخول</string>
     <string name="success_check_in">تم تسجيل الدخول للفرع بنجاح</string>
     <string name="success_check_out">تم تسجيل الخروج من الفرع بنجاح</string>
+    <string name="deliver_to_warehouse">توصيل للمخزن</string>
+    <string name="packed_orders_to_deliver_in_warehouse">طلبات يمكن توصيلها لمخزن</string>
+    <string name="button_deliver_order">توصيل الطلب</string>
 </resources>
