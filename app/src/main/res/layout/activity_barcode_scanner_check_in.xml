@@ -97,7 +97,7 @@
                             android:layout_gravity="center_vertical"
                             android:textColor="@color/white"
                             android:textSize="15sp"
-                            android:text="@string/please_scan_hub_barcodeـfor_check_in"
+                            android:text="@string/please_scan_hub_barcode_for_check_in"
                             tools:ignore="RtlCompat" />
                     <Button
                         android:id="@+id/button_insert_barcode"
