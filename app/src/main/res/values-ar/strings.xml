@@ -374,4 +374,8 @@
     <string name="show_note">الملاحظات</string>
     <string name="error_transaction_failed">Transaction Failed</string>
     <string name="error_transaction_failed_by_bank">Transaction Failed By Bank</string>
+    <string name="dashboard_check_out">تسجيل خروج</string>
+    <string name="dashboard_check_in">تسجيل دخول</string>
+    <string name="success_check_in">تم تسجيل الدخول للفرع بنجاح</string>
+    <string name="success_check_out">تم تسجيل الخروج من الفرع بنجاح</string>
 </resources>
