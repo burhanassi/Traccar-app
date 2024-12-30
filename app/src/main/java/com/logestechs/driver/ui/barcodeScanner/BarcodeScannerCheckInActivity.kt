@@ -272,7 +272,9 @@ class BarcodeScannerCheckInActivity : LogesTechsActivity(), View.OnClickListener
 
     //APIs
     private fun callCheckInApi(barcode: String) {
-        showWaitDialog()
+        this.runOnUiThread {
+            showWaitDialog()
+        }
         if (Helper.isInternetAvailable(this)) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
