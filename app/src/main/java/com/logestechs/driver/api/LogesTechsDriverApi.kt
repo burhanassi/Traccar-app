@@ -809,6 +809,18 @@ interface LogesTechsDriverApi {
         @Query("invoiceNumber") invoiceNumber: String
     ): Response<Package>?
 
+    @POST("driver/hub/check-in")
+    suspend fun checkInHub(
+        @Query("barcode") barcode: String,
+        @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString()
+    ): Response<ResponseBody?>?
+
+    @POST("driver/hub/check-out")
+    suspend fun checkOutHub(
+        @Query("barcode") barcode: String,
+        @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString()
+    ): Response<ResponseBody?>?
+
     @PUT("handler/fulfilment/orders/receive-in-warehouse")
     suspend fun deliverToWarehouse(
         @Body body: DeliverToWarehouseRequestBody?

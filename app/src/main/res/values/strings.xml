@@ -377,6 +377,10 @@
     <string name="show_note">Notes</string>
     <string name="error_transaction_failed">Transaction Failed</string>
     <string name="error_transaction_failed_by_bank">Transaction Failed By Bank</string>
+    <string name="dashboard_check_out">Check-Out</string>
+    <string name="dashboard_check_in">Check-In</string>
+    <string name="success_check_out">Hub Check-Out Successfully</string>
+    <string name="success_check_in">Hub Check-In Successfully</string>
     <string name="deliver_to_warehouse">Deliver to Warehouse</string>
     <string name="packed_orders_to_deliver_in_warehouse">Packed Orders Can Deliver To Warehouse</string>
     <string name="button_deliver_order">Deliver Order</string>
