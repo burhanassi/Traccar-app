@@ -22,7 +22,6 @@ import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.data.model.Package
-import com.logestechs.driver.databinding.ActivityBarcodeScannerCheckInBinding
 import com.logestechs.driver.databinding.ActivityBarcodeScannerCheckOutBinding
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.dialogs.InsertBarcodeDialog
@@ -273,7 +272,9 @@ class BarcodeScannerCheckOutActivity : LogesTechsActivity(), View.OnClickListene
 
     //APIs
     private fun callCheckOutApi(barcode: String) {
-        showWaitDialog()
+        this.runOnUiThread {
+            showWaitDialog()
+        }
         if (Helper.isInternetAvailable(this)) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
