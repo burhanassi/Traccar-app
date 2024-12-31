@@ -190,13 +190,6 @@ class OrderDeliverToWarehouseActivity : LogesTechsActivity(), View.OnClickListen
             Helper.showErrorMessage(this, getString(R.string.error_enter_signature))
             return false
         }
-        if (loadedImagesList.isEmpty()) {
-            Helper.showErrorMessage(
-                this,
-                getString(R.string.error_add_attachments)
-            )
-            return false
-        }
         return true
     }
 
