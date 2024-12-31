@@ -112,6 +112,14 @@ class FailDeliveryDialog(
     }
 
     private fun validateInput(): Boolean {
+        if ((binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem() == null && companyConfigurations?.isForceDriversToSelectIncompleteDeliveryReason == true) {
+            Helper.showErrorMessage(
+                context,
+                getStringForFragment(R.string.title_please_select_reason)
+            )
+            return  false
+        }
+
         if (binding.etReason.text.isEmpty()) {
             Helper.showErrorMessage(
                 context,

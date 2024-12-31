@@ -384,4 +384,6 @@
     <string name="deliver_to_warehouse">Deliver to Warehouse</string>
     <string name="packed_orders_to_deliver_in_warehouse">Packed Orders Can Deliver To Warehouse</string>
     <string name="button_deliver_order">Deliver Order</string>
+    <string name="please_scan_hub_barcode_for_check_in">Please Scan Hub Barcode For Check-In</string>
+    <string name="please_scan_hub_barcode_for_check_out">Please Scan Hub Barcode For Check-Out</string>
 </resources>
