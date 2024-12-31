@@ -1,77 +1,88 @@
 package com.logestechs.driver.utils.adapters
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.logestechs.driver.R
 import com.logestechs.driver.databinding.ItemRadioGroupListBinding
 import com.logestechs.driver.utils.interfaces.RadioGroupListListener
 
-
 class RadioGroupListAdapter(
-    var list: LinkedHashMap<String, String>?,
-    var listener: RadioGroupListListener?
-) :
-    RecyclerView.Adapter<RadioGroupListAdapter.RadioGroupListViewHolder>() {
+    private var list: LinkedHashMap<String, String>?,
+    private val listener: RadioGroupListListener?,
+    private val showOtherOption: Boolean = false,
+    private val reasonOther: String = ""
+) : RecyclerView.Adapter<RadioGroupListAdapter.RadioGroupListViewHolder>() {
 
-    private lateinit var mContext: Context
-    var selectedPosition: Int? = null
+    private var selectedPosition: Int? = null
+
+    // Filter out the "Other" option if not needed
+    private val filteredItems: List<MutableMap.MutableEntry<String, String>> = list?.entries?.let {
+        if (showOtherOption) it.toList() else it.filter { entry -> entry.value != reasonOther }
+    } ?: emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RadioGroupListViewHolder {
-        mContext = parent.context
-
-        val inflater =
-            ItemRadioGroupListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return RadioGroupListViewHolder(inflater, parent, this)
+        val binding = ItemRadioGroupListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return RadioGroupListViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: RadioGroupListViewHolder, position: Int) {
-        val item: MutableMap.MutableEntry<String, String>? = list?.entries?.elementAt(position)
-        holder.bind(item)
+        // Handle "Other" option separately if needed
+        if (position == filteredItems.size) {
+            holder.bindOther()
+        } else {
+            val item = filteredItems[position]
+            holder.bind(item)
+        }
     }
 
-    override fun getItemCount(): Int = list?.size ?: 0
+    override fun getItemCount(): Int = filteredItems.size + if (showOtherOption) 1 else 0
 
+    // Apply selection and notify any changes in the selection
     fun applySelection(position: Int) {
         val previousPosition = selectedPosition
         selectedPosition = position
-        if (previousPosition != null) {
-            notifyItemChanged(previousPosition)
-        }
-        if (selectedPosition != null) {
-            notifyItemChanged(selectedPosition!!)
-        }
+        if (previousPosition != null) notifyItemChanged(previousPosition)
+        if (selectedPosition != null) notifyItemChanged(selectedPosition!!)
     }
 
     fun getSelectedItem(): String? {
-        return if (selectedPosition != null) {
-            list?.entries?.elementAt(selectedPosition!!)?.key
+        return if (selectedPosition != null && selectedPosition!! < filteredItems.size) {
+            filteredItems[selectedPosition!!].key
         } else {
             null
         }
     }
 
+    // Select item at a given position
     fun selectItem(position: Int) {
-        selectedPosition = position
-        notifyItemChanged(position)
+        applySelection(position)
     }
 
-    class RadioGroupListViewHolder(
-        private val binding: ItemRadioGroupListBinding,
-        private var parent: ViewGroup,
-        private var mAdapter: RadioGroupListAdapter
-    ) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class RadioGroupListViewHolder(
+        private val binding: ItemRadioGroupListBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
+        // Bind regular items (not the "Other" option)
         fun bind(item: MutableMap.MutableEntry<String, String>?) {
             binding.radioButton.text = item?.value
-            binding.radioButton.isChecked = adapterPosition == mAdapter.selectedPosition
+            binding.radioButton.isChecked = adapterPosition == selectedPosition
 
             binding.radioButton.setOnClickListener {
-                mAdapter.applySelection(adapterPosition)
-                mAdapter.listener?.onItemSelected(item?.value)
+                applySelection(adapterPosition)
+                listener?.onItemSelected(item?.value)
             }
+        }
 
+        // Bind the "Other" option
+        fun bindOther() {
+            binding.radioButton.text = itemView.context.getString(R.string.reason_other)
+            binding.radioButton.isChecked = adapterPosition == selectedPosition
+
+            binding.radioButton.setOnClickListener {
+                applySelection(adapterPosition)
+                listener?.onItemSelected(itemView.context.getString(R.string.reason_other))
+            }
         }
     }
 }

@@ -62,9 +62,7 @@ class FailDeliveryDialog(
             alertDialog.dismiss()
         }
 
-        if (Helper.getCompanyId() == AppConstants.PROLO_COMPANY_ID.toLong()){
-            binding.etReason.visibility = android.view.View.GONE
-        }
+        binding.etReason.visibility = android.view.View.GONE
 
         binding.rvThumbnails.apply {
             layoutManager =
@@ -98,7 +96,9 @@ class FailDeliveryDialog(
             layoutManager = LinearLayoutManager(context)
             adapter = RadioGroupListAdapter(
                 SharedPreferenceWrapper.getDriverCompanySettings()?.failureReasons?.fail,
-                this@FailDeliveryDialog
+                this@FailDeliveryDialog,
+                true,
+                getStringForFragment(R.string.reason_other)
             )
         }
 
@@ -123,7 +123,7 @@ class FailDeliveryDialog(
         if (binding.etReason.text.isEmpty()) {
             Helper.showErrorMessage(
                 context,
-                getStringForFragment(R.string.error_insert_message_text)
+                getStringForFragment(R.string.title_please_select_reason)
             )
             return  false
         }
@@ -136,7 +136,6 @@ class FailDeliveryDialog(
                 )
                 return  false
             }
-
         }
         return true
     }
@@ -165,7 +164,15 @@ class FailDeliveryDialog(
     }
 
     override fun onItemSelected(title: String?) {
-        binding.etReason.setText(title)
+        if (title == getStringForFragment(R.string.reason_other)) {
+            binding.etReason.visibility = android.view.View.VISIBLE
+            binding.etReason.setText("")
+            binding.etReason.requestFocus()
+        } else {
+            // Hide the EditText for other options
+            binding.etReason.visibility = android.view.View.GONE
+            binding.etReason.setText(title)
+        }
         clearFocus()
     }
 

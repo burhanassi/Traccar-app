@@ -27,7 +27,7 @@ class AddPackageNoteDialog(
     var pkg: Package?,
     var loadedImagesList: ArrayList<LoadedImage>,
     var isFromHandler: Boolean = false
-) : RadioGroupListListener, ThumbnailsListListener {
+) : ThumbnailsListListener {
 
     lateinit var binding: DialogAddPackageNoteBinding
     lateinit var alertDialog: AlertDialog
@@ -116,11 +116,6 @@ class AddPackageNoteDialog(
             context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
         binding.etReason.clearFocus()
-    }
-
-    override fun onItemSelected(title: String?) {
-        binding.etReason.setText(title)
-        clearFocus()
     }
 
     override fun onDeleteImage(position: Int) {
