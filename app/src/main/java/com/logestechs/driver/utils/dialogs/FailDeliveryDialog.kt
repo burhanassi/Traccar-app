@@ -96,9 +96,7 @@ class FailDeliveryDialog(
             layoutManager = LinearLayoutManager(context)
             adapter = RadioGroupListAdapter(
                 SharedPreferenceWrapper.getDriverCompanySettings()?.failureReasons?.fail,
-                this@FailDeliveryDialog,
-                true,
-                getStringForFragment(R.string.reason_other)
+                this@FailDeliveryDialog
             )
         }
 
@@ -164,7 +162,7 @@ class FailDeliveryDialog(
     }
 
     override fun onItemSelected(title: String?) {
-        if (title == getStringForFragment(R.string.reason_other)) {
+        if (title == getStringForFragment(R.string.other_reason)) {
             binding.etReason.visibility = android.view.View.VISIBLE
             binding.etReason.setText("")
             binding.etReason.requestFocus()

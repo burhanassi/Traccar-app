@@ -383,4 +383,5 @@
     <string name="button_deliver_order">توصيل الطلب</string>
     <string name="please_scan_hub_barcode_for_check_in">الرجاء مسح باركود الفرع لتسجيل الدخول</string>
     <string name="please_scan_hub_barcode_for_check_out">الرجاء مسح باركود الفرع لتسجيل الخروج</string>
+    <string name="other_reason">أخرى</string>
 </resources>
