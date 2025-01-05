@@ -22,6 +22,7 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.logestechs.driver.BuildConfig
 import com.logestechs.driver.R
@@ -441,6 +442,13 @@ class OrderDeliverToWarehouseActivity : LogesTechsActivity(), View.OnClickListen
                         body
                     )
                     if (response?.isSuccessful == true && response.body() != null) {
+                        val uploadedImageUrl = response.body()?.fileUrl
+                        loadedImagesList.add(
+                            LoadedImage(
+                                imageUri = file?.toUri(),
+                                imageUrl = uploadedImageUrl
+                            )
+                        )
                         withContext(Dispatchers.Main) {
                             callDeliverOrder()
                         }
@@ -702,7 +710,7 @@ class OrderDeliverToWarehouseActivity : LogesTechsActivity(), View.OnClickListen
         if (Helper.isStoragePermissionNeeded(this)) {
             Helper.showAndRequestStorageDialog(this)
         } else {
-            callDeliverOrder()
+            uploadOrderSignature()
         }
     }
 
@@ -762,7 +770,7 @@ class OrderDeliverToWarehouseActivity : LogesTechsActivity(), View.OnClickListen
 
     override fun confirmAction(data: Any?, action: ConfirmationDialogAction) {
         if (action == ConfirmationDialogAction.DELIVER_TO_WAREHOUSE) {
-            callDeliverOrder()
+            uploadOrderSignature()
         }
 
     }
