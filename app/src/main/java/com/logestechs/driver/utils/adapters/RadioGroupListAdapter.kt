@@ -15,6 +15,7 @@ class RadioGroupListAdapter(
     RecyclerView.Adapter<RadioGroupListAdapter.RadioGroupListViewHolder>() {
 
     private lateinit var mContext: Context
+    private var sortedList: List<Map.Entry<String, String>> = reorderList(list)
     var selectedPosition: Int? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RadioGroupListViewHolder {
@@ -26,11 +27,11 @@ class RadioGroupListAdapter(
     }
 
     override fun onBindViewHolder(holder: RadioGroupListViewHolder, position: Int) {
-        val item: MutableMap.MutableEntry<String, String>? = list?.entries?.elementAt(position)
+        val item = sortedList[position]
         holder.bind(item)
     }
 
-    override fun getItemCount(): Int = list?.size ?: 0
+    override fun getItemCount(): Int = sortedList.size
 
     fun applySelection(position: Int) {
         val previousPosition = selectedPosition
@@ -45,7 +46,7 @@ class RadioGroupListAdapter(
 
     fun getSelectedItem(): String? {
         return if (selectedPosition != null) {
-            list?.entries?.elementAt(selectedPosition!!)?.key
+            sortedList[selectedPosition!!].key
         } else {
             null
         }
@@ -56,6 +57,23 @@ class RadioGroupListAdapter(
         notifyItemChanged(position)
     }
 
+    private fun reorderList(originalList: LinkedHashMap<String, String>?): List<Map.Entry<String, String>> {
+        if (originalList == null) return emptyList()
+        val otherReasonEntry = originalList.entries.find { it.key == "OTHER_REASON" }
+        val filteredEntries = originalList.entries.filter { it.key != "OTHER_REASON" }
+        return if (otherReasonEntry != null) {
+            filteredEntries + otherReasonEntry
+        } else {
+            filteredEntries
+        }
+    }
+
+    fun updateList(newList: LinkedHashMap<String, String>?) {
+        list = newList
+        sortedList = reorderList(newList)
+        notifyDataSetChanged()
+    }
+
     class RadioGroupListViewHolder(
         private val binding: ItemRadioGroupListBinding,
         private var parent: ViewGroup,
@@ -63,15 +81,14 @@ class RadioGroupListAdapter(
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: MutableMap.MutableEntry<String, String>?) {
-            binding.radioButton.text = item?.value
+        fun bind(item: Map.Entry<String, String>) {
+            binding.radioButton.text = item.value
             binding.radioButton.isChecked = adapterPosition == mAdapter.selectedPosition
 
             binding.radioButton.setOnClickListener {
                 mAdapter.applySelection(adapterPosition)
-                mAdapter.listener?.onItemSelected(item?.value)
+                mAdapter.listener?.onItemSelected(item.value)
             }
-
         }
     }
 }
