@@ -387,4 +387,5 @@
     <string name="please_scan_hub_barcode_for_check_in">Please Scan Hub Barcode For Check-In</string>
     <string name="please_scan_hub_barcode_for_check_out">Please Scan Hub Barcode For Check-Out</string>
     <string name="other_reason">Other Reason</string>
+    <string name="please_add_fail_notes">Please add notes</string>
 </resources>

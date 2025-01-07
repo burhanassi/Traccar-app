@@ -75,7 +75,7 @@ class FailDeliveryDialog(
                 alertDialog.dismiss()
                 listener?.onFailDelivery(
                     FailDeliveryRequestBody(
-                        binding.etReason.text.toString(),
+                        if (binding.etReason.text.toString().isNullOrEmpty()) " " else binding.etReason.text.toString(),
                         (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
                         getPodImagesUrls(),
                         pkg?.id
@@ -110,7 +110,16 @@ class FailDeliveryDialog(
     }
 
     private fun validateInput(): Boolean {
-        if ((binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem() == null && companyConfigurations?.isForceDriversToSelectIncompleteDeliveryReason == true) {
+        if (companyConfigurations?.isForceDriversToSelectIncompleteDeliveryReason == true) {
+            if ((binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem() == null) {
+                Helper.showErrorMessage(
+                    context,
+                    getStringForFragment(R.string.title_please_select_reason)
+                )
+            }
+        }
+
+        if ((binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem() == null) {
             Helper.showErrorMessage(
                 context,
                 getStringForFragment(R.string.title_please_select_reason)
@@ -118,10 +127,10 @@ class FailDeliveryDialog(
             return  false
         }
 
-        if (binding.etReason.text.isEmpty()) {
+        if ((binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem() == "OTHER_REASON" && binding.etReason.text.isEmpty()) {
             Helper.showErrorMessage(
                 context,
-                getStringForFragment(R.string.title_please_select_reason)
+                getStringForFragment(R.string.please_add_fail_notes)
             )
             return  false
         }

@@ -384,4 +384,5 @@
     <string name="please_scan_hub_barcode_for_check_in">الرجاء مسح باركود الفرع لتسجيل الدخول</string>
     <string name="please_scan_hub_barcode_for_check_out">الرجاء مسح باركود الفرع لتسجيل الخروج</string>
     <string name="other_reason">أخرى</string>
+    <string name="please_add_fail_notes">يرجى إدخال ملاحظات</string>
 </resources>
