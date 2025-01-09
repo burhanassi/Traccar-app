@@ -197,9 +197,14 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                     if (driverCompanyConfigurations?.isScanAllPackageAwbCopiesByDriver == true ) {
                         if (!scannedBarcode.contains(":") && isJustOneParentPackage) {
                             callPickupPackage(scannedBarcode)
-                        } else if (scannedBarcode.contains(":") &&
-                            scannedBarcode.contains(parentBarcode)) {
-                            callPickupPackage(scannedBarcode)
+                        } else if (scannedBarcode.contains(":")) {
+                            val parentBarcode = scannedBarcode?.split(":")?.get(0) ?: ""
+                            if ((binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).totalQuantityScanned == 0) {
+                                callPickupPackage(barcode = parentBarcode)
+                                callPickupPackage(barcode = scannedBarcode)
+                            } else {
+                                callPickupPackage(barcode = scannedBarcode)
+                            }
                         } else {
                             Helper.showErrorMessage(
                                 this@BarcodeScannerActivity,
@@ -319,9 +324,14 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
             if (driverCompanyConfigurations?.isScanAllPackageAwbCopiesByDriver == true ) {
                 if (!barcode.contains(":") && isJustOneParentPackage) {
                     callPickupPackage(barcode)
-                } else if (barcode.contains(":") &&
-                    barcode.contains(parentBarcode)) {
-                    callPickupPackage(barcode)
+                } else if (barcode.contains(":")) {
+                    val parentBarcode = barcode?.split(":")?.get(0) ?: ""
+                    if ((binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).totalQuantityScanned == 0) {
+                        callPickupPackage(barcode = parentBarcode)
+                        callPickupPackage(barcode = barcode)
+                    } else {
+                        callPickupPackage(barcode = barcode)
+                    }
                 } else {
                     Helper.showErrorMessage(
                         this@BarcodeScannerActivity,
@@ -670,9 +680,14 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                     callPickupPackage(barcode)
                     isJustOneParentPackage = false
                     parentBarcode = barcode
-                } else if (barcode.contains(":") &&
-                    barcode.contains(parentBarcode)) {
-                    callPickupPackage(barcode)
+                } else if (barcode.contains(":")) {
+                    val parentBarcode = barcode?.split(":")?.get(0) ?: ""
+                    if ((binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).totalQuantityScanned == 0) {
+                        callPickupPackage(barcode = parentBarcode)
+                        callPickupPackage(barcode = barcode)
+                    } else {
+                        callPickupPackage(barcode = barcode)
+                    }
                 } else {
                     Helper.showErrorMessage(
                         this@BarcodeScannerActivity,
