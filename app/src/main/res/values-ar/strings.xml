@@ -374,6 +374,17 @@
     <string name="show_note">الملاحظات</string>
     <string name="error_transaction_failed">Transaction Failed</string>
     <string name="error_transaction_failed_by_bank">Transaction Failed By Bank</string>
+    <string name="dashboard_check_out">تسجيل خروج</string>
+    <string name="dashboard_check_in">تسجيل دخول</string>
+    <string name="success_check_in">تم تسجيل الدخول للفرع بنجاح</string>
+    <string name="success_check_out">تم تسجيل الخروج من الفرع بنجاح</string>
+    <string name="deliver_to_warehouse">توصيل للمخزن</string>
+    <string name="packed_orders_to_deliver_in_warehouse">طلبات يمكن توصيلها لمخزن</string>
+    <string name="button_deliver_order">توصيل الطلب</string>
+    <string name="please_scan_hub_barcode_for_check_in">الرجاء مسح باركود الفرع لتسجيل الدخول</string>
+    <string name="please_scan_hub_barcode_for_check_out">الرجاء مسح باركود الفرع لتسجيل الخروج</string>
+    <string name="other_reason">أخرى</string>
+    <string name="please_add_fail_notes">يرجى إدخال ملاحظات</string>
     <string name="show_telecom_package_details">عرض تفاصيل الاتصال</string>
     <string name="supplier_invoice">الرقم المرجعي للعميل : </string>
     <string name="third_party_tracking_no">رقم الطلب : </string>

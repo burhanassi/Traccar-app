@@ -192,12 +192,31 @@
                         layout="@layout/item_dashboard_entry"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="14dp"
                         android:layout_weight="1"
                         app:iconSrc="@{@drawable/ic_return_order}"
                         app:isCountHidden="@{true}"
                         app:titleText="@{@string/dashboard_returned_orders}" />
 
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginEnd="24dp"
+                    android:clipChildren="false">
+
+                    <include
+                        android:id="@+id/dash_entry_deliver_to_warehouse"
+                        layout="@layout/item_dashboard_entry"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="14dp"
+                        android:layout_weight="1"
+                        app:iconSrc="@{@drawable/ic_deliver_to_warehouse}"
+                        app:isCountHidden="@{true}"
+                        app:titleText="@{@string/deliver_to_warehouse}" />
                 </LinearLayout>
 
                 <View

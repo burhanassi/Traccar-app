@@ -377,6 +377,17 @@
     <string name="show_note">Notes</string>
     <string name="error_transaction_failed">Transaction Failed</string>
     <string name="error_transaction_failed_by_bank">Transaction Failed By Bank</string>
+    <string name="dashboard_check_out">Check-Out</string>
+    <string name="dashboard_check_in">Check-In</string>
+    <string name="success_check_out">Hub Check-Out Successfully</string>
+    <string name="success_check_in">Hub Check-In Successfully</string>
+    <string name="deliver_to_warehouse">Deliver to Warehouse</string>
+    <string name="packed_orders_to_deliver_in_warehouse">Packed Orders Can Deliver To Warehouse</string>
+    <string name="button_deliver_order">Deliver Order</string>
+    <string name="please_scan_hub_barcode_for_check_in">Please Scan Hub Barcode For Check-In</string>
+    <string name="please_scan_hub_barcode_for_check_out">Please Scan Hub Barcode For Check-Out</string>
+    <string name="other_reason">Other Reason</string>
+    <string name="please_add_fail_notes">Please add notes</string>
     <string name="show_telecom_package_details">Show Telecom Details</string>
     <string name="supplier_invoice">Customer Reference Number : </string>
     <string name="third_party_tracking_no">Order Number : </string>

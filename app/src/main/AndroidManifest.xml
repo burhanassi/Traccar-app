@@ -74,7 +74,13 @@
             android:name=".ui.barcodeScanner.FulfilmentReturnOrderBarcodeScannerActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.deliverToWarehouse.DeliverToWarehouseActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.returnedFulfilmentOrders.ReturnedFulfillmentOrdersActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.deliverToWarehouse.deliverOrderToWarehouseScreen.OrderDeliverToWarehouseActivity"
             android:exported="false" />
         <activity
             android:name=".ui.barcodeScanner.FulfilmentChangeBinLocationBarcodeScannerActivity"
@@ -261,6 +267,14 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".ui.barcodeScanner.BarcodeScannerActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.barcodeScanner.BarcodeScannerCheckInActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.barcodeScanner.BarcodeScannerCheckOutActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />
         <activity

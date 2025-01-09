@@ -24,7 +24,7 @@ class ChangeCodDialog(
     var context: Context,
     var listener: ChangeCodDialogListener?,
     var pkg: Package?
-) : RadioGroupListListener {
+) {
 
     lateinit var binding: DialogEditPackageCodBinding
     lateinit var alertDialog: AlertDialog
@@ -91,8 +91,5 @@ class ChangeCodDialog(
 
     private fun getStringForFragment(resId: Int): String {
         return LogesTechsApp.instance.resources.getString(resId)
-    }
-
-    override fun onItemSelected(title: String?) {
     }
 }

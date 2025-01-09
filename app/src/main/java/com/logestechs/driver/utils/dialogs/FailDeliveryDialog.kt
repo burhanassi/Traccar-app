@@ -62,9 +62,7 @@ class FailDeliveryDialog(
             alertDialog.dismiss()
         }
 
-        if (Helper.getCompanyId() == AppConstants.PROLO_COMPANY_ID.toLong()){
-            binding.etReason.visibility = android.view.View.GONE
-        }
+        binding.etReason.visibility = android.view.View.GONE
 
         binding.rvThumbnails.apply {
             layoutManager =
@@ -77,7 +75,7 @@ class FailDeliveryDialog(
                 alertDialog.dismiss()
                 listener?.onFailDelivery(
                     FailDeliveryRequestBody(
-                        binding.etReason.text.toString(),
+                        if (binding.etReason.text.toString().isNullOrEmpty()) " " else binding.etReason.text.toString(),
                         (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
                         getPodImagesUrls(),
                         pkg?.id
@@ -112,10 +110,27 @@ class FailDeliveryDialog(
     }
 
     private fun validateInput(): Boolean {
-        if (binding.etReason.text.isEmpty()) {
+        if (companyConfigurations?.isForceDriversToSelectIncompleteDeliveryReason == true) {
+            if ((binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem() == null) {
+                Helper.showErrorMessage(
+                    context,
+                    getStringForFragment(R.string.title_please_select_reason)
+                )
+            }
+        }
+
+        if ((binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem() == null) {
             Helper.showErrorMessage(
                 context,
-                getStringForFragment(R.string.error_insert_message_text)
+                getStringForFragment(R.string.title_please_select_reason)
+            )
+            return  false
+        }
+
+        if ((binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem() == "OTHER_REASON" && binding.etReason.text.isEmpty()) {
+            Helper.showErrorMessage(
+                context,
+                getStringForFragment(R.string.please_add_fail_notes)
             )
             return  false
         }
@@ -128,7 +143,6 @@ class FailDeliveryDialog(
                 )
                 return  false
             }
-
         }
         return true
     }
@@ -157,7 +171,15 @@ class FailDeliveryDialog(
     }
 
     override fun onItemSelected(title: String?) {
-        binding.etReason.setText(title)
+        if (title == getStringForFragment(R.string.other_reason)) {
+            binding.etReason.visibility = android.view.View.VISIBLE
+            binding.etReason.setText("")
+            binding.etReason.requestFocus()
+        } else {
+            // Hide the EditText for other options
+            binding.etReason.visibility = android.view.View.GONE
+            binding.etReason.setText(title)
+        }
         clearFocus()
     }
 
