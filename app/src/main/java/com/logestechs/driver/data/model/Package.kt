@@ -82,6 +82,7 @@ data class Package(
     //customer
     var customerId: Long? = null,
     var customerName: String? = null,
+    var customer: Customer? = null,
 
     var isShowSenderAddressInReport: Boolean? = null,
 
