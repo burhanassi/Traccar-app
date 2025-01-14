@@ -196,6 +196,12 @@ enum class InCarPackageStatus(val value: String) {
     TO_DELIVER_DELIVERY("TO_DELIVER_DELIVERY")
 }
 
+enum class DeliveredPackageStatus(val value: String) {
+    ALL("ALL"),
+    PARTIALLY_DELIVERED("PARTIALLY_DELIVERED"),
+    DELIVERED("DELIVERED")
+}
+
 enum class ReturnedPackageStatus(val value: String) {
     ALL("ALL"),
     PARTIALLY_DELIVERED("PARTIALLY_DELIVERED"),
@@ -214,7 +220,8 @@ enum class ConfirmationDialogAction {
     CLICKPAY_PAYMENT,
     CLICKPAY_RESULT,
     DELIVER_PACKAGE,
-    PACKAGE_NOTE
+    PACKAGE_NOTE,
+    DELIVER_TO_WAREHOUSE
 }
 
 enum class PaymentGatewayType {
@@ -247,6 +254,7 @@ enum class SmsTemplateTag(val arabicTag: String, val englishTag: String) {
     hubName("<اسم الفرع>", "<Hub Name>"),
     company("<اسم الشركة>", "<Company Name>"),
     storeName("<اسم المتجر>", "<Business Name>"),
+    senderName("<اسم المرسل>", "<Sender Name>"),
     shareLocationUrl("<رابط مشاركة الموقع>", "<Sharing Location URL>"),
     postponeDate("<تاريخ التأجيل>", "<Date Postponed>"),
     expectedDeliveryDate("<تاريخ التوصيل المتوقع>", "<Expected Delivery Date>"),

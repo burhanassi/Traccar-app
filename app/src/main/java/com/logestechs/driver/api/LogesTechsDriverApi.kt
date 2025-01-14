@@ -96,6 +96,7 @@ interface LogesTechsDriverApi {
     @GET("driver/packages")
     suspend fun getDeliveredPackages(
         @Query("status") status: String = "delivered",
+        @Query("delivered-status") deliveredStatus: String? = null,
     ): Response<GetDeliveredPackagesResponse?>?
 
     @GET("admin/customers/with-returned")
@@ -599,7 +600,8 @@ interface LogesTechsDriverApi {
         @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
         @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
         @Query("status") status: String?,
-        @Query("statuses") statuses: List<String>? = null
+        @Query("statuses") statuses: List<String>? = null,
+        @Query("pkgStatus") pkgStatus: String? = null
     ): Response<GetFulfilmentOrdersResponse?>?
 
     @GET("handler/orders/returned")
@@ -806,4 +808,36 @@ interface LogesTechsDriverApi {
     suspend fun getPackageByInvoiceNumber(
         @Query("invoiceNumber") invoiceNumber: String
     ): Response<Package>?
+
+    @POST("driver/hub/check-in")
+    suspend fun checkInHub(
+        @Query("barcode") barcode: String,
+        @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString()
+    ): Response<ResponseBody?>?
+
+    @POST("driver/hub/check-out")
+    suspend fun checkOutHub(
+        @Query("barcode") barcode: String,
+        @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString()
+    ): Response<ResponseBody?>?
+
+    @PUT("handler/fulfilment/orders/receive-in-warehouse")
+    suspend fun deliverToWarehouse(
+        @Body body: DeliverToWarehouseRequestBody?
+    ): Response<ResponseBody>?
+
+    @Multipart
+    @POST("handler/image")
+    suspend fun uploadPackedOrderImage(
+        @Part upload_form: MultipartBody.Part?
+    ): Response<UploadImageResponse?>?
+
+    @Multipart
+    @POST("handler/signature")
+    suspend fun uploadPackedOrderSignature(
+        @Part upload_form: MultipartBody.Part?
+    ): Response<UploadImageResponse?>?
+
+    @HTTP(method = "DELETE", path = "handler/image", hasBody = true)
+    suspend fun deletePackedOrderImage(@Body body: DeleteImageRequestBody?): Response<ResponseBody?>?
 }

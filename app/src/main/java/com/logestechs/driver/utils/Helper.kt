@@ -339,7 +339,7 @@ class Helper {
                         }
                     }
                     CountriesCode.SAR.value -> {
-                        return if (number.startsWith("+") || number.startsWith("00")) {
+                        return if (number.startsWith("+")) {
                             number
                         } else if (number.length == 9) {
                             number = "+966$number"
@@ -355,7 +355,7 @@ class Helper {
                             number = number.drop(1)
                             number = "+$number"
                             number
-                        } else if (number.length == 14) {
+                        } else if (number.length == 14  || number.startsWith("00")) {
                             number = number.drop(2)
                             number = "+$number"
                             number
@@ -679,6 +679,28 @@ class Helper {
             }
         }
 
+        fun getLocalizedDeliveredStatus(
+            context: Context?,
+            deliveredStatus: DeliveredPackageStatus
+        ): String {
+            when (deliveredStatus) {
+                DeliveredPackageStatus.PARTIALLY_DELIVERED -> {
+                    return context?.getString(R.string.delivered_status_partially_delivered) ?: ""
+                }
+
+                DeliveredPackageStatus.ALL -> {
+                    return context?.getString(R.string.delivered_status_all) ?: ""
+                }
+
+                DeliveredPackageStatus.DELIVERED -> {
+                    return context?.getString(R.string.delivered_status_delivered) ?: ""
+                }
+                else -> {
+                    return ""
+                }
+            }
+        }
+
         fun copyTextToClipboard(context: Context?, text: String?) {
             val clipboardManager =
                 context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -720,6 +742,7 @@ class Helper {
             val companyDomain: String? =
                 SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations?.companyDomain
             var cod: String? = ""
+            var senderName: String? = ""
             var senderPhone2: String? = ""
             var expectedDeliveryDate = ""
             var postponeDate: String? = ""
@@ -740,6 +763,7 @@ class Helper {
                 businessSenderName = pkg.originalBusinessSenderName
                 cod = pkg.cod?.format()
                 senderPhone2 = pkg.senderPhone2
+                senderName = if (pkg.senderMiddleName != null ) "${pkg.senderFirstName} ${pkg.senderMiddleName} ${pkg.senderLastName}" else "${pkg.senderFirstName} ${pkg.senderLastName}"
 
                 if (pkg.expectedDeliveryDate != null) {
                     expectedDeliveryDate = formatServerDate(
@@ -1017,6 +1041,29 @@ class Helper {
                 )
                 template =
                     template?.replace(SmsTemplateTag.postponeDate.englishTag.toRegex(), "")
+            }
+            if (senderName != null && senderName.isNotEmpty()) {
+                template = template?.replace(
+                    SmsTemplateTag.senderName.arabicTag.toRegex(),
+                    senderName
+                )
+                template = template?.replace(
+                    SmsTemplateTag.senderName.englishTag.toRegex(),
+                    senderName
+                )
+            } else {
+                template = template?.replace(
+                    " " + SmsTemplateTag.senderName.arabicTag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.senderName.arabicTag.toRegex(), "")
+                template = template?.replace(
+                    " " + SmsTemplateTag.senderName.englishTag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.senderName.englishTag.toRegex(), "")
             }
             if (!expectedDeliveryDate.isEmpty()) {
                 template = template?.replace(
@@ -1308,6 +1355,29 @@ class Helper {
                 )
                 template =
                     template?.replace(SmsTemplateTag.postponeDate.englishTag.toRegex(), "")
+            }
+            if (senderName != null && senderName.isNotEmpty()) {
+                template = template?.replace(
+                    SmsTemplateTag.senderName.arabicTag.toRegex(),
+                    senderName
+                )
+                template = template?.replace(
+                    SmsTemplateTag.senderName.englishTag.toRegex(),
+                    senderName
+                )
+            } else {
+                template = template?.replace(
+                    " " + SmsTemplateTag.senderName.arabicTag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.senderName.arabicTag.toRegex(), "")
+                template = template?.replace(
+                    " " + SmsTemplateTag.senderName.englishTag.toRegex(),
+                    ""
+                )
+                template =
+                    template?.replace(SmsTemplateTag.senderName.englishTag.toRegex(), "")
             }
             if (!expectedDeliveryDate.isEmpty()) {
                 template = template?.replace(

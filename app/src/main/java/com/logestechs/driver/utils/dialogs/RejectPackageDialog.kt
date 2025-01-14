@@ -18,7 +18,7 @@ import com.logestechs.driver.utils.interfaces.RejectPackageDialogListener
 class RejectPackageDialog(
     private val context: Context,
     private val listener: RejectPackageDialogListener?
-) : RadioGroupListListener {
+) {
 
     private lateinit var binding: DialogRejectPackageBinding
     private lateinit var alertDialog: AlertDialog
@@ -75,10 +75,5 @@ class RejectPackageDialog(
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
         binding.etReason.clearFocus()
-    }
-
-    override fun onItemSelected(title: String?) {
-        binding.etReason.setText(title)
-        clearFocus()
     }
 }

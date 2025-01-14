@@ -210,9 +210,11 @@
                             android:layout_marginEnd="16dp"
                             android:background="@drawable/background_card_shape_white"
                             android:gravity="top"
-                            android:inputType="textFilter"
+                            android:inputType="textMultiLine"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
                             android:padding="10dp"
-                            android:saveEnabled="false"
+                            android:saveEnabled="true"
                             android:textColor="@color/fontTitleBlack"
                             android:textSize="14sp"
                             tools:text="يرجى التسليم بسرعة والانتباه عند التحميل" />

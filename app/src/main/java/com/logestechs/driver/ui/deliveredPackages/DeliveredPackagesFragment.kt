@@ -10,10 +10,13 @@ import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.databinding.FragmentDeliveredPackagesBinding
 import com.logestechs.driver.utils.AppConstants
+import com.logestechs.driver.utils.DeliveredPackageStatus
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsApp
 import com.logestechs.driver.utils.LogesTechsFragment
 import com.logestechs.driver.utils.adapters.DeliveredPackageCellAdapter
+import com.logestechs.driver.utils.dialogs.DeliveredStatusFilterDialog
+import com.logestechs.driver.utils.interfaces.DeliveredStatusFilterDialogListener
 import com.logestechs.driver.utils.interfaces.ViewPagerCountValuesDelegate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -22,11 +25,12 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 
-class DeliveredPackagesFragment : LogesTechsFragment() {
+class DeliveredPackagesFragment : LogesTechsFragment(), DeliveredStatusFilterDialogListener, View.OnClickListener {
     private var _binding: FragmentDeliveredPackagesBinding? = null
     private val binding get() = _binding!!
 
     private var activityDelegate: ViewPagerCountValuesDelegate? = null
+    private var selectedStatus: DeliveredPackageStatus = DeliveredPackageStatus.ALL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +57,8 @@ class DeliveredPackagesFragment : LogesTechsFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.textSelectedStatus.text =
+            "(${Helper.getLocalizedDeliveredStatus(super.getContext(), DeliveredPackageStatus.ALL)})"
         initRecycler()
         initListeners()
         activityDelegate = activity as ViewPagerCountValuesDelegate
@@ -62,14 +68,15 @@ class DeliveredPackagesFragment : LogesTechsFragment() {
     override fun onResume() {
         super.onResume()
         if (!LogesTechsApp.isInBackground) {
-            callGetDeliveredPackages()
+            callGetDeliveredPackages(selectedStatus)
         }
     }
 
     private fun initListeners() {
         binding.refreshLayoutPackages.setOnRefreshListener {
-            callGetDeliveredPackages()
+            callGetDeliveredPackages(selectedStatus)
         }
+        binding.buttonStatusFilter.setOnClickListener(this)
     }
 
     private fun initRecycler() {
@@ -103,13 +110,13 @@ class DeliveredPackagesFragment : LogesTechsFragment() {
     }
 
     //apis
-    private fun callGetDeliveredPackages() {
+    private fun callGetDeliveredPackages(selectedStatus: DeliveredPackageStatus) {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response =
-                        ApiAdapter.apiClient.getDeliveredPackages()
+                        ApiAdapter.apiClient.getDeliveredPackages(deliveredStatus = selectedStatus.value)
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
@@ -158,6 +165,21 @@ class DeliveredPackagesFragment : LogesTechsFragment() {
             Helper.showErrorMessage(
                 super.getContext(), getString(R.string.error_check_internet_connection)
             )
+        }
+    }
+
+    override fun onStatusChanged(selectedStatus: DeliveredPackageStatus) {
+        this.selectedStatus = selectedStatus
+        binding.textSelectedStatus.text =
+            "(${Helper.getLocalizedDeliveredStatus(super.getContext(), selectedStatus)})"
+        callGetDeliveredPackages(selectedStatus)
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.button_status_filter -> {
+                DeliveredStatusFilterDialog(context = requireContext(), this, selectedStatus).showDialog()
+            }
         }
     }
 
