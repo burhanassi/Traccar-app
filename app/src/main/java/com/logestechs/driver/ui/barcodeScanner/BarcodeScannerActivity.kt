@@ -424,7 +424,7 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                                 )
                                 if (driverCompanyConfigurations?.isScanAllPackageAwbCopiesByDriver == true) {
                                     if (!barcode.contains(":")) {
-                                        totalQuantityNeeded += response.body()?.quantity ?: 0
+                                        totalQuantityNeeded = response.body()?.quantity ?: 0
                                         binding.buttonDone.background = getDrawable(R.drawable.background_oval_gray)
                                         binding.buttonDone.setTextColor(resources.getColor(R.color.floating_message_background))
                                         isBackButtonEnabled = false
