@@ -6,18 +6,9 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import androidx.databinding.DataBindingUtil
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.logestechs.driver.R
-import com.logestechs.driver.api.requests.ChangePackageTypeRequestBody
 import com.logestechs.driver.data.model.Package
-import com.logestechs.driver.databinding.DialogChangePackageTypeBinding
 import com.logestechs.driver.databinding.DialogShowTelecomInfoBinding
-import com.logestechs.driver.utils.Helper
-import com.logestechs.driver.utils.LogesTechsApp
-import com.logestechs.driver.utils.PackageType
-import com.logestechs.driver.utils.adapters.RadioGroupListAdapter
-import com.logestechs.driver.utils.interfaces.ChangePackageTypeDialogListener
-import com.logestechs.driver.utils.interfaces.RadioGroupListListener
 
 class ShowTelecomInfoDialog(
     var context: Context,

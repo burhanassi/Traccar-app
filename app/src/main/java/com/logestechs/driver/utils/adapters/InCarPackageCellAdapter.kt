@@ -387,7 +387,7 @@ class InCarPackageCellAdapter(
                         mAdapter.context!!.getString(R.string.change_package_type_sprint)
                     popup.menu.findItem(R.id.action_add_note).isVisible = false
                 }
-                if (mAdapter.companyConfigurations?.isAllowAddingTelecomeDevices != true) {
+                if (mAdapter.companyConfigurations?.isAllowAddingTelecomeDevices == false || pkg?.customer?.isTelecom == false) {
                     popup.menu.findItem(R.id.show_telecom_package_details).isVisible = false
                 }
                 popup.show()
