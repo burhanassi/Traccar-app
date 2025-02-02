@@ -13,6 +13,5 @@ data class LoginResponse(
     val businessName: String?,
     val email: String?,
     val authToken: String?,
-    val driverCategoryName: String?,
 
     ) : Parcelable
