@@ -44,6 +44,8 @@ class ProfileActivity : LogesTechsActivity(), View.OnClickListener, ChangeProfil
         binding.textMobileNumber.text = loginResponse?.user?.phone
         binding.switchIsWhatsappBusiness.isChecked = SharedPreferenceWrapper.getIsWhatsappBusiness()
         Picasso.get().load(loginResponse?.user?.barcodeImage).into(binding.imageDriverBarcode)
+        binding.driverIdLabel.text = loginResponse?.user?.id.toString()
+        binding.categoryLabel.text = loginResponse?.user?.driverCategoryName
     }
 
     private fun initListeners() {
