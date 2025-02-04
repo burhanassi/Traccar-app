@@ -723,7 +723,7 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
                                     Helper.getInterpretedMessageFromTemplate(
                                         pkg,
                                         false,
-                                        messageTemplates?.distribution,
+                                        messageTemplates?.pickupTemplate,
                                         body?.name
                                     )
                                 )
@@ -735,7 +735,7 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
                                     ), Helper.getInterpretedMessageFromTemplate(
                                         pkg,
                                         false,
-                                        messageTemplates?.distribution,
+                                        messageTemplates?.pickupTemplate,
                                         body?.name
                                     )
                                 )
@@ -1005,7 +1005,7 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
                 ), Helper.getInterpretedMessageFromTemplate(
                     pkg,
                     false,
-                    messageTemplates?.distribution
+                    messageTemplates?.pickupTemplate
                 )
             )
         }
@@ -1021,7 +1021,7 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
                 Helper.getInterpretedMessageFromTemplate(
                     pkg,
                     false,
-                    messageTemplates?.distribution,
+                    messageTemplates?.pickupTemplate,
                 )
             )
         }

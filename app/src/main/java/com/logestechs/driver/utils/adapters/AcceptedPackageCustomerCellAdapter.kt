@@ -78,6 +78,8 @@ class AcceptedPackageCustomerCellAdapter(
         private var mAdapter: AcceptedPackageCustomerCellAdapter
     ) :
         RecyclerView.ViewHolder(binding.root) {
+        private val messageTemplates = SharedPreferenceWrapper.getDriverCompanySettings()?.messageTemplates
+
         fun bind(customer: Customer?) {
             binding.itemSenderName.textItem.text = customer?.getFullName()
             binding.itemSenderAddress.textItem.text = customer?.address?.toStringAddress()
@@ -93,7 +95,11 @@ class AcceptedPackageCustomerCellAdapter(
                 if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
                     (mAdapter.context as LogesTechsActivity).sendSms(
                         customer?.phone,
-                        ""
+                        Helper.getInterpretedMessageFromTemplate(
+                            data = null,
+                            false,
+                            messageTemplate = messageTemplates?.pickupTemplate
+                        )
                     )
                 }
             }
@@ -103,7 +109,11 @@ class AcceptedPackageCustomerCellAdapter(
                     (mAdapter.context as LogesTechsActivity).sendWhatsAppMessage(
                         Helper.formatNumberForWhatsApp(
                             customer?.phone
-                        ), ""
+                        ), Helper.getInterpretedMessageFromTemplate(
+                            data = null,
+                            false,
+                            messageTemplate = messageTemplates?.pickupTemplate
+                        )
                     )
                 }
             }
@@ -116,7 +126,11 @@ class AcceptedPackageCustomerCellAdapter(
                             Helper.formatNumberForWhatsApp(
                                 customer?.phone,
                                 true
-                            ), ""
+                            ),  Helper.getInterpretedMessageFromTemplate(
+                                data = null,
+                                false,
+                                messageTemplate = messageTemplates?.pickupTemplate
+                            )
                         )
                     }
                 }
