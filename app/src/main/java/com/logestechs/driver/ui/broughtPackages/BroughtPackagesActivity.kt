@@ -35,6 +35,7 @@ import com.logestechs.driver.utils.InCarPackageStatus
 import com.logestechs.driver.utils.InCarPackagesViewMode
 import com.logestechs.driver.utils.IntentExtrasKeys
 import com.logestechs.driver.utils.LogesTechsActivity
+import com.logestechs.driver.utils.PackageType
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.InCarPackageGroupedCellAdapter
 import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
@@ -723,7 +724,7 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
                                     Helper.getInterpretedMessageFromTemplate(
                                         pkg,
                                         false,
-                                        messageTemplates?.pickupTemplate,
+                                        if (pkg?.shipmentType == PackageType.BRING.name){messageTemplates?.pickupTemplate}else{messageTemplates?.distribution},
                                         body?.name
                                     )
                                 )
@@ -735,7 +736,7 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
                                     ), Helper.getInterpretedMessageFromTemplate(
                                         pkg,
                                         false,
-                                        messageTemplates?.pickupTemplate,
+                                        if (pkg?.shipmentType == PackageType.BRING.name){messageTemplates?.pickupTemplate}else{messageTemplates?.distribution},
                                         body?.name
                                     )
                                 )
@@ -1005,7 +1006,7 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
                 ), Helper.getInterpretedMessageFromTemplate(
                     pkg,
                     false,
-                    messageTemplates?.pickupTemplate
+                    if (pkg?.shipmentType == PackageType.BRING.name){messageTemplates?.pickupTemplate}else{messageTemplates?.distribution},
                 )
             )
         }
@@ -1021,7 +1022,7 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
                 Helper.getInterpretedMessageFromTemplate(
                     pkg,
                     false,
-                    messageTemplates?.pickupTemplate,
+                    if (pkg?.shipmentType == PackageType.BRING.name){messageTemplates?.pickupTemplate}else{messageTemplates?.distribution},
                 )
             )
         }
