@@ -56,6 +56,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
 
     private var returnedPackagesList: ArrayList<Customer?> = ArrayList()
 
+    private var isReturnBundlesTap = false
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -181,6 +182,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
 
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_returned_by_customer))
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_returned_by_driver))
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_returned_bundles))
 
         tabLayout.tabIconTint = getColorStateList(R.color.tab_text_color_selector)
 
@@ -194,11 +196,42 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
                         isDeliverToCustomer = true
                         binding.textTitle.text =
                             getString(R.string.title_returned_packages_to_customer)
+                        binding.textSelectedStatus.visibility = View.VISIBLE
+                        binding.buttonStatusFilter.visibility = View.VISIBLE
+                        isReturnBundlesTap = false
+                        initRecycler()
+                        initListeners()
                     }
 
                     1 -> {
                         isDeliverToCustomer = false
                         binding.textTitle.text = getString(R.string.title_returned_packages_to_hub)
+                        binding.textSelectedStatus.visibility = View.VISIBLE
+                        binding.buttonStatusFilter.visibility = View.VISIBLE
+                        isReturnBundlesTap = false
+                        initRecycler()
+                        initListeners()
+                    }
+
+                    2 -> {
+                        binding.textTitle.text = getText(R.string.title_returned_bundles)
+                        binding.textSelectedStatus.visibility = View.GONE
+                        binding.buttonStatusFilter.visibility = View.GONE
+                        isReturnBundlesTap = true
+                        initRecycler()
+                        initListeners()
+
+                        val layoutManager = LinearLayoutManager(
+                            getContext()
+                        )
+
+                        binding.rvCustomers.adapter = ReturnedBundlesCustomerCellAdapter(
+                            ArrayList(), getContext(), listener = this@ReturnedPackagesActivity
+                        )
+                        binding.rvCustomers.layoutManager = layoutManager
+
+                        returnedPackagesList.clear()
+                        callGetCustomersWithReturnedBundles()
                     }
 
                     else -> null
@@ -536,7 +569,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
 
     override fun getCustomerPackages(parentIndex: Int) {
 
-        if (companyConfigurations?.isSupportLineHaulBundles!!) {
+        if (companyConfigurations?.isSupportLineHaulBundles!! || isReturnBundlesTap) {
             val bundle =
                 (binding.rvCustomers.adapter as ReturnedBundlesCustomerCellAdapter).bundlesList[parentIndex]
             callGetCustomerReturnedBundles(
