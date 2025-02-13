@@ -393,4 +393,5 @@
     <string name="account_reference_number">رقم الحساب -المرجع : </string>
     <string name="msisdn">MSISDN : </string>
     <string name="sim_number"> رقم الشريحة : </string>
+    <string name="no_category">لا يوجد تصنيف</string>
 </resources>
