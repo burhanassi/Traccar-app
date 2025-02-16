@@ -64,13 +64,13 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         setContentView(binding.root)
         binding.textSelectedStatus.text =
             "(${Helper.getLocalizedReturnedStatus(super.getContext(), selectedStatus)})"
-        if (companyConfigurations?.isSupportLineHaulBundles!!) {
+        if (!companyConfigurations?.isSupportLineHaulBundles!!) {
             binding.textTitle.text = getText(R.string.title_returned_bundles)
             binding.textSelectedStatus.visibility = View.GONE
             binding.buttonStatusFilter.visibility = View.GONE
-            binding.tabLayoutReturned.visibility = View.GONE
             initRecycler()
             initListeners()
+            initTapLayout()
         } else {
             initTapLayout()
         }
@@ -80,7 +80,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         super.onResume()
         currentPageIndex = 1
         if (doesUpdateData) {
-            if (companyConfigurations?.isSupportLineHaulBundles!!) {
+            if (isReturnBundlesTap) {
                 callGetCustomersWithReturnedBundles()
             } else {
                 callGetCustomersWithReturnedPackages()
@@ -107,7 +107,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
                 super.getContext(),
                 getString(R.string.success_operation_completed)
             )
-            if (companyConfigurations?.isSupportLineHaulBundles!!) {
+            if (isReturnBundlesTap) {
                 callGetCustomersWithReturnedBundles()
             } else {
                 returnedPackagesList.clear()
@@ -121,7 +121,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         val layoutManager = LinearLayoutManager(
             super.getContext()
         )
-        if (companyConfigurations?.isSupportLineHaulBundles!!) {
+        if (isReturnBundlesTap) {
             binding.rvCustomers.adapter = ReturnedBundlesCustomerCellAdapter(
                 ArrayList(), super.getContext(), listener = this
             )
@@ -160,7 +160,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
             binding.textSelectedStatus.text =
                 "(${Helper.getLocalizedReturnedStatus(super.getContext(), selectedStatus)})"
             returnedPackagesList.clear()
-            if (companyConfigurations?.isSupportLineHaulBundles!!) {
+            if (isReturnBundlesTap) {
                 callGetCustomersWithReturnedBundles()
             } else {
                 callGetCustomersWithReturnedPackages()
@@ -181,79 +181,120 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         val tabLayout: TabLayout = findViewById(R.id.tab_layout_returned)
 
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_returned_by_customer))
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_returned_by_driver))
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_returned_bundles))
+        if (!companyConfigurations?.isSupportLineHaulBundles!!) {
+            tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_returned_by_driver))
+            tabLayout.tabIconTint = getColorStateList(R.color.tab_text_color_selector)
 
-        tabLayout.tabIconTint = getColorStateList(R.color.tab_text_color_selector)
+            initRecycler()
+            initListeners()
+            tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
 
-        initRecycler()
-        initListeners()
-        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                override fun onTabSelected(tab: TabLayout.Tab) {
+                    when (tab.position) {
+                        0 -> {
+                            isDeliverToCustomer = true
+                            binding.textTitle.text =
+                                getString(R.string.title_returned_packages_to_customer)
+                            binding.textSelectedStatus.visibility = View.VISIBLE
+                            binding.buttonStatusFilter.visibility = View.VISIBLE
+                            isReturnBundlesTap = false
+                            initRecycler()
+                            initListeners()
+                        }
 
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                when (tab.position) {
-                    0 -> {
-                        isDeliverToCustomer = true
-                        binding.textTitle.text =
-                            getString(R.string.title_returned_packages_to_customer)
-                        binding.textSelectedStatus.visibility = View.VISIBLE
-                        binding.buttonStatusFilter.visibility = View.VISIBLE
-                        isReturnBundlesTap = false
-                        initRecycler()
-                        initListeners()
+                        1 -> {
+                            isDeliverToCustomer = false
+                            binding.textTitle.text = getString(R.string.title_returned_packages_to_hub)
+                            binding.textSelectedStatus.visibility = View.VISIBLE
+                            binding.buttonStatusFilter.visibility = View.VISIBLE
+                            isReturnBundlesTap = false
+                            initRecycler()
+                            initListeners()
+                        }
+
+                        else -> null
                     }
 
-                    1 -> {
-                        isDeliverToCustomer = false
-                        binding.textTitle.text = getString(R.string.title_returned_packages_to_hub)
-                        binding.textSelectedStatus.visibility = View.VISIBLE
-                        binding.buttonStatusFilter.visibility = View.VISIBLE
-                        isReturnBundlesTap = false
-                        initRecycler()
-                        initListeners()
-                    }
+                    currentPageIndex = 1
+                    returnedPackagesList.clear()
 
-                    2 -> {
-                        binding.textTitle.text = getText(R.string.title_returned_bundles)
-                        binding.textSelectedStatus.visibility = View.GONE
-                        binding.buttonStatusFilter.visibility = View.GONE
-                        isReturnBundlesTap = true
-                        initRecycler()
-                        initListeners()
-
-                        val layoutManager = LinearLayoutManager(
-                            getContext()
-                        )
-
-                        binding.rvCustomers.adapter = ReturnedBundlesCustomerCellAdapter(
-                            ArrayList(), getContext(), listener = this@ReturnedPackagesActivity
-                        )
-                        binding.rvCustomers.layoutManager = layoutManager
-
-                        returnedPackagesList.clear()
-                        callGetCustomersWithReturnedBundles()
-                    }
-
-                    else -> null
+                    callGetCustomersWithReturnedPackages()
                 }
 
-                currentPageIndex = 1
-                returnedPackagesList.clear()
+                override fun onTabUnselected(tab: TabLayout.Tab) {
+                    // Handle tab unselection here if needed
+                }
 
-                callGetCustomersWithReturnedPackages()
-            }
+                override fun onTabReselected(tab: TabLayout.Tab) {
+                    // Handle tab reselection here if needed
+                }
 
-            override fun onTabUnselected(tab: TabLayout.Tab) {
-                // Handle tab unselection here if needed
-            }
+            })
+            binding.textTitle.text = getString(R.string.title_returned_packages_to_customer)
+            tabLayout.getTabAt(0)?.select()
+        } else {
+            tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_returned_bundles))
+            tabLayout.tabIconTint = getColorStateList(R.color.tab_text_color_selector)
 
-            override fun onTabReselected(tab: TabLayout.Tab) {
-                // Handle tab reselection here if needed
-            }
+            initRecycler()
+            initListeners()
+            tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
 
-        })
-        binding.textTitle.text = getString(R.string.title_returned_packages_to_customer)
-        tabLayout.getTabAt(0)?.select()
+                override fun onTabSelected(tab: TabLayout.Tab) {
+                    when (tab.position) {
+                        0 -> {
+                            isDeliverToCustomer = true
+                            binding.textTitle.text =
+                                getString(R.string.title_returned_packages_to_customer)
+                            binding.textSelectedStatus.visibility = View.VISIBLE
+                            binding.buttonStatusFilter.visibility = View.VISIBLE
+                            isReturnBundlesTap = false
+                            initRecycler()
+                            initListeners()
+                        }
+
+                        1 -> {
+                            binding.textTitle.text = getText(R.string.title_returned_bundles)
+                            binding.textSelectedStatus.visibility = View.GONE
+                            binding.buttonStatusFilter.visibility = View.GONE
+                            isReturnBundlesTap = true
+                            initRecycler()
+                            initListeners()
+
+                            val layoutManager = LinearLayoutManager(
+                                getContext()
+                            )
+
+                            binding.rvCustomers.adapter = ReturnedBundlesCustomerCellAdapter(
+                                ArrayList(), getContext(), listener = this@ReturnedPackagesActivity
+                            )
+                            binding.rvCustomers.layoutManager = layoutManager
+
+                            returnedPackagesList.clear()
+                            callGetCustomersWithReturnedBundles()
+                        }
+
+                        else -> null
+                    }
+
+                    currentPageIndex = 1
+                    returnedPackagesList.clear()
+
+                    callGetCustomersWithReturnedPackages()
+                }
+
+                override fun onTabUnselected(tab: TabLayout.Tab) {
+                    // Handle tab unselection here if needed
+                }
+
+                override fun onTabReselected(tab: TabLayout.Tab) {
+                    // Handle tab reselection here if needed
+                }
+
+            })
+            binding.textTitle.text = getString(R.string.title_returned_packages_to_customer)
+            tabLayout.getTabAt(0)?.select()
+        }
     }
 
     private fun handleNoPackagesLabelVisibility(count: Int) {
@@ -552,7 +593,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
     }
 
     override fun deliverCustomerPackages(parentIndex: Int) {
-        if (companyConfigurations?.isSupportLineHaulBundles!!) {
+        if (isReturnBundlesTap) {
             val bundle =
                 (binding.rvCustomers.adapter as ReturnedBundlesCustomerCellAdapter).bundlesList[parentIndex]
             val mIntent = Intent(this, ReturnedPackageDeliveryActivity::class.java)
@@ -569,7 +610,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
 
     override fun getCustomerPackages(parentIndex: Int) {
 
-        if (companyConfigurations?.isSupportLineHaulBundles!! || isReturnBundlesTap) {
+        if (isReturnBundlesTap) {
             val bundle =
                 (binding.rvCustomers.adapter as ReturnedBundlesCustomerCellAdapter).bundlesList[parentIndex]
             callGetCustomerReturnedBundles(
@@ -607,7 +648,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         this.selectedStatus = selectedStatus
         binding.textSelectedStatus.text =
             "(${Helper.getLocalizedReturnedStatus(super.getContext(), selectedStatus)})"
-        if (companyConfigurations?.isSupportLineHaulBundles!!) {
+        if (isReturnBundlesTap) {
             callGetCustomersWithReturnedBundles()
         } else {
             returnedPackagesList.clear()
