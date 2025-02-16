@@ -66,8 +66,6 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
             "(${Helper.getLocalizedReturnedStatus(super.getContext(), selectedStatus)})"
         if (!companyConfigurations?.isSupportLineHaulBundles!!) {
             binding.textTitle.text = getText(R.string.title_returned_bundles)
-            binding.textSelectedStatus.visibility = View.GONE
-            binding.buttonStatusFilter.visibility = View.GONE
             initRecycler()
             initListeners()
             initTapLayout()
