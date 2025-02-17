@@ -88,5 +88,6 @@ data class User(
     val andoidAdminAppMinVersion: String? = null,
     var isHideSenderInfo: Boolean? = null,
     var isShowSenderPhone: Boolean? = null,
-    val driverCategoryName: String? = null
+    val driverCategoryName: String? = null,
+    val optionalNumber: String? = null
 ) : Parcelable
