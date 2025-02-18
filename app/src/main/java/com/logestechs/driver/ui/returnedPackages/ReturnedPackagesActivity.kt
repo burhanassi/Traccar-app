@@ -47,7 +47,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
     private var companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
-    private var isDeliverToCustomer: Boolean = true
+    private var isDeliverToCustomer: Boolean = false
 
     //pagination fields
     private var isLoading = false
@@ -241,7 +241,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
                 override fun onTabSelected(tab: TabLayout.Tab) {
                     when (tab.position) {
                         0 -> {
-                            isDeliverToCustomer = true
+                            isDeliverToCustomer = false
                             binding.textTitle.text =
                                 getString(R.string.title_returned_packages_to_customer)
                             binding.textSelectedStatus.visibility = View.VISIBLE
@@ -252,6 +252,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
                         }
 
                         1 -> {
+                            isDeliverToCustomer = false
                             binding.textTitle.text = getText(R.string.title_returned_bundles)
                             binding.textSelectedStatus.visibility = View.GONE
                             binding.buttonStatusFilter.visibility = View.GONE
