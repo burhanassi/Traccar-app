@@ -82,6 +82,7 @@ data class Package(
     //customer
     var customerId: Long? = null,
     var customerName: String? = null,
+    var customer: Customer? = null,
 
     var isShowSenderAddressInReport: Boolean? = null,
 
@@ -113,7 +114,13 @@ data class Package(
     var paymentTypeId: Long? = null,
     var paymentTypeName: String? = null,
     var partnerPackageId: Long? = null,
-    var notificationTemplate: String? = null
+    var notificationTemplate: String? = null,
+    var thirdPartyTrackingNo: String? = null,
+    var isFingerprintRequired: Boolean? = null,
+    var thirdPartyBarcode: String? = null,
+    var accountReferenceNumber: String? = null,
+    var msisdn: String? = null,
+    var simNumber: String? = null,
 
 ) : Parcelable {
     fun getFullSenderName(): String {

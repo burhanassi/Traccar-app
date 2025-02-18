@@ -308,6 +308,46 @@ class InCarPackageCellAdapter(
                 binding.imageViewReceiverLocationKsa.visibility = View.GONE
             }
 
+            if (pkg?.originAddress != null) {
+                if (pkg.originAddress!!.latitude != 0.0 || pkg.originAddress!!.longitude != 0.0) {
+                    binding.imageViewSenderLocation.visibility = View.VISIBLE
+                    if (pkg.originAddress!!.locatedByReceiver == true) {
+                        binding.imageViewSenderLocation.setImageResource(R.drawable.ic_live_location)
+                    } else {
+                        binding.imageViewSenderLocation.setImageResource(R.drawable.ic_location_pin)
+                    }
+                    binding.imageViewSenderLocation.setOnClickListener {
+                        if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                            (mAdapter.context as LogesTechsActivity).showNavigationOptionsDialog(
+                                mAdapter.context as LogesTechsActivity,
+                                pkg.originAddress
+                            )
+                        }
+                    }
+                } else {
+                    binding.imageViewSenderLocation.visibility = View.GONE
+                }
+                if (Helper.getCompanyCurrency() == AppCurrency.SAR.value &&
+                    pkg.originAddress!!.nationalAddress != null &&
+                    pkg.originAddress!!.nationalAddress?.isNotEmpty()!!) {
+                    binding.imageViewSenderLocationKsa.visibility = View.VISIBLE
+                    binding.imageViewSenderLocationKsa.setOnClickListener {
+                        if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
+                            (mAdapter.context as LogesTechsActivity).showNavigationOptionsDialog(
+                                mAdapter.context as LogesTechsActivity,
+                                pkg.originAddress,
+                                true
+                            )
+                        }
+                    }
+                } else {
+                    binding.imageViewSenderLocationKsa.visibility = View.GONE
+                }
+            } else {
+                binding.imageViewSenderLocation.visibility = View.GONE
+                binding.imageViewSenderLocationKsa.visibility = View.GONE
+            }
+
             binding.buttonContextMenu.setOnClickListener {
                 val popup = PopupMenu(mAdapter.context, binding.buttonContextMenu)
                 popup.inflate(R.menu.in_car_package_context_menu)
@@ -357,6 +397,10 @@ class InCarPackageCellAdapter(
                             R.id.action_show_package_content -> {
                                 ShowPackageContentDialog(mAdapter.context!!, pkg?.description).showDialog()
                             }
+
+                            R.id.show_telecom_package_details -> {
+                                ShowTelecomInfoDialog(mAdapter.context!!, pkg).showDialog()
+                            }
                         }
                     }
                     true
@@ -382,6 +426,9 @@ class InCarPackageCellAdapter(
                     popup.menu.findItem(R.id.action_edit_package_type).title =
                         mAdapter.context!!.getString(R.string.change_package_type_sprint)
                     popup.menu.findItem(R.id.action_add_note).isVisible = false
+                }
+                if (mAdapter.companyConfigurations?.isAllowAddingTelecomeDevices == false || pkg?.customer?.isTelecom == false) {
+                    popup.menu.findItem(R.id.show_telecom_package_details).isVisible = false
                 }
                 popup.show()
             }

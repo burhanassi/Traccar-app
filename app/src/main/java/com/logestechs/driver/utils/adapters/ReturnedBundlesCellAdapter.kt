@@ -76,6 +76,7 @@ class ReturnedBundlesCellAdapter(
             binding.itemPackageBarcode.buttonCopy.setOnClickListener {
                 Helper.copyTextToClipboard(mAdapter.context, pkg?.barcode)
             }
+            binding.itemPackageStatus.root.visibility = View.GONE
 
         }
     }

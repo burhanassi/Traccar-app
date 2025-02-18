@@ -385,4 +385,13 @@
     <string name="please_scan_hub_barcode_for_check_out">الرجاء مسح باركود الفرع لتسجيل الخروج</string>
     <string name="other_reason">أخرى</string>
     <string name="please_add_fail_notes">يرجى إدخال ملاحظات</string>
+    <string name="show_telecom_package_details">عرض تفاصيل الاجهزة</string>
+    <string name="supplier_invoice">الرقم المرجعي للعميل : </string>
+    <string name="third_party_tracking_no">رقم الطلب : </string>
+    <string name="is_fingerprint_required">بصمة : </string>
+    <string name="third_party_barcode">رقم البطاقة السكانية : </string>
+    <string name="account_reference_number">رقم الحساب -المرجع : </string>
+    <string name="msisdn">MSISDN : </string>
+    <string name="sim_number"> رقم الشريحة : </string>
+    <string name="no_category">لا يوجد تصنيف</string>
 </resources>

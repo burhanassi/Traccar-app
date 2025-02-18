@@ -388,4 +388,13 @@
     <string name="please_scan_hub_barcode_for_check_out">Please Scan Hub Barcode For Check-Out</string>
     <string name="other_reason">Other Reason</string>
     <string name="please_add_fail_notes">Please add notes</string>
+    <string name="show_telecom_package_details">Show Telecom Details</string>
+    <string name="supplier_invoice">Customer Reference Number : </string>
+    <string name="third_party_tracking_no">Order Number : </string>
+    <string name="is_fingerprint_required">FP Requirement : </string>
+    <string name="third_party_barcode">CPR Number : </string>
+    <string name="account_reference_number">Account/ Ref Number : </string>
+    <string name="msisdn">MSISDN : </string>
+    <string name="sim_number">Sim Number : </string>
+    <string name="no_category">No Category</string>
 </resources>
