@@ -48,5 +48,6 @@ data class DriverCompanyConfigurations(
     var countryCode: String? = null,
     var isEnableDriverHubWorkTracking: Boolean? = null,
     var isForceDriversToSelectIncompleteDeliveryReason: Boolean? = null,
-    var isAllowAddingTelecomeDevices: Boolean? = null
+    var isAllowAddingTelecomeDevices: Boolean? = null,
+    var isAllowDriverChangePackageType: Boolean? = null,
 )

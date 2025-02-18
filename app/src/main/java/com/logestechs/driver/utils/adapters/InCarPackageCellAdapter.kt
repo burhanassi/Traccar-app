@@ -422,10 +422,22 @@ class InCarPackageCellAdapter(
                     ) {
                     popup.menu.findItem(R.id.action_show_package_content).isVisible = false
                 }
+
+                if (mAdapter.companyConfigurations?.isAllowDriverChangePackageType == false) {
+                    popup.menu.findItem(R.id.action_edit_package_type).isVisible = false
+                } else {
+                    popup.menu.findItem(R.id.action_edit_package_type).isVisible = true
+                }
+
                 if (mAdapter.isSprint) {
-                    popup.menu.findItem(R.id.action_edit_package_type).title =
-                        mAdapter.context!!.getString(R.string.change_package_type_sprint)
-                    popup.menu.findItem(R.id.action_add_note).isVisible = false
+                    if (mAdapter.companyConfigurations?.isAllowDriverChangePackageType == false) {
+                        popup.menu.findItem(R.id.action_edit_package_type).isVisible = false
+                    } else {
+                        popup.menu.findItem(R.id.action_edit_package_type).isVisible = true
+                        popup.menu.findItem(R.id.action_edit_package_type).title =
+                            mAdapter.context!!.getString(R.string.change_package_type_sprint)
+                        popup.menu.findItem(R.id.action_add_note).isVisible = false
+                    }
                 }
                 if (mAdapter.companyConfigurations?.isAllowAddingTelecomeDevices == false || pkg?.customer?.isTelecom == false) {
                     popup.menu.findItem(R.id.show_telecom_package_details).isVisible = false
