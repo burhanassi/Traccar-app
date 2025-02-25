@@ -217,10 +217,10 @@ class Helper {
 
         fun getCompanyCurrency(): String {
             val currency = SharedPreferenceWrapper.getLoginResponse()?.user?.currency
-            return if (currency == "NIS") {
-                AppCurrency.NIS.value
-            } else {
-                currency ?: ""
+            return when (currency) {
+                "NIS" -> AppCurrency.NIS.value
+                "SAR" -> "\uFBC2"  // Use the escape sequence for U+FBC2
+                else -> currency ?: ""
             }
         }
 
@@ -384,6 +384,31 @@ class Helper {
                         } else if (number.length == 9) {
                             number = number.drop(1)
                             number = "+965$number"
+                            number
+                        } else if (number.length == 11) {
+                            number = "+$number"
+                            number
+                        } else if (number.length == 12) {
+                            number = number.drop(1)
+                            number = "+$number"
+                            number
+                        } else if (number.length == 13) {
+                            number = number.drop(2)
+                            number = "+$number"
+                            number
+                        } else {
+                            number
+                        }
+                    }
+                    CountriesCode.QAR.value -> {
+                        return if (number.startsWith("+") || number.startsWith("00")) {
+                            number
+                        } else if (number.length == 8) {
+                            number = "+974$number"
+                            number
+                        } else if (number.length == 9) {
+                            number = number.drop(1)
+                            number = "+974$number"
                             number
                         } else if (number.length == 11) {
                             number = "+$number"
