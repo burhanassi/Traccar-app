@@ -475,6 +475,12 @@ class InCarPackageCellAdapter(
                 binding.textPackageStatus.visibility = View.GONE
             }
 
+            if (pkg?.receiverAuthorizedGovRegistrationNumber != null && pkg.receiverAuthorizedGovRegistrationNumber!!.isNotEmpty()) {
+                binding.itemRegNumber.root.visibility = View.VISIBLE
+                binding.itemRegNumber.textItem.text = pkg.receiverAuthorizedGovRegistrationNumber
+            } else {
+                binding.itemRegNumber.root.visibility = View.GONE
+            }
         }
     }
 
