@@ -217,10 +217,10 @@ class Helper {
 
         fun getCompanyCurrency(): String {
             val currency = SharedPreferenceWrapper.getLoginResponse()?.user?.currency
-            return if (currency == "NIS") {
-                AppCurrency.NIS.value
-            } else {
-                currency ?: ""
+            return when (currency) {
+                "NIS" -> AppCurrency.NIS.value
+                "SAR" -> "\uFBC2"  // Use the escape sequence for U+FBC2
+                else -> currency ?: ""
             }
         }
 
