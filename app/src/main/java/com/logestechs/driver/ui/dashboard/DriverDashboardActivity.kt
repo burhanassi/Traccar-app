@@ -124,6 +124,10 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
             binding.containerDriverEarnings.visibility = View.VISIBLE
         }
 
+        if (companyConfigurations?.isEnableDriverDeficitBalance == true) {
+            binding.containerDeficitBalance.visibility = View.VISIBLE
+        }
+
         createLocationRequest()
 
         if (Helper.isLogesTechsDriver()) {
@@ -226,6 +230,8 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
             serviceStatusReferenceDate = null
             makeOutOfService()
         }
+
+        callGetDeficitBalance()
     }
 
     private fun handleNotificationToken() {
@@ -523,6 +529,58 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
                         val data = response.body()
                         withContext(Dispatchers.Main) {
                             bindDashboardData(data)
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()?.string() ?: "")
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
+    private fun callGetDeficitBalance() {
+        if (Helper.isInternetAvailable(this)) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.getDeficitBalance()
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        val data = response.body()
+                        withContext(Dispatchers.Main) {
+                            binding.textDriverDeficit.text = data?.amount.toString()
                         }
                     } else {
                         try {

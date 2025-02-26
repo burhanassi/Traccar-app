@@ -397,4 +397,5 @@
     <string name="msisdn">MSISDN : </string>
     <string name="sim_number">Sim Number : </string>
     <string name="no_category">No Category</string>
+    <string name="title_driver_deficient">Driver deficiency</string>
 </resources>
