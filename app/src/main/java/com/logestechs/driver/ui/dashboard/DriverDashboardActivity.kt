@@ -580,7 +580,7 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
                     if (response?.isSuccessful == true && response.body() != null) {
                         val data = response.body()
                         withContext(Dispatchers.Main) {
-                            binding.textDriverDeficit.text = data?.amount.toString()
+                            binding.textDriverDeficit.text =  "${Helper.getCompanyCurrency()} ${data?.amount.toString()}"
                         }
                     } else {
                         try {
