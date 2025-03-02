@@ -66,10 +66,16 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
             "(${Helper.getLocalizedReturnedStatus(super.getContext(), selectedStatus)})"
         if (!companyConfigurations?.isSupportLineHaulBundles!!) {
             binding.textTitle.text = getText(R.string.title_returned_bundles)
+            binding.containerSwitchIsToDeliverToSender.visibility = View.GONE
+            isDeliverToCustomer = true
+            callGetCustomersWithReturnedPackages()
             initRecycler()
             initListeners()
             initTapLayout()
         } else {
+            isDeliverToCustomer = binding.switchIsDeliverToSender.isChecked
+            initRecycler()
+            initListeners()
             initTapLayout()
         }
     }
@@ -165,6 +171,12 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
             }
         }
 
+        binding.switchIsDeliverToSender.setOnCheckedChangeListener { _, isChecked ->
+            isDeliverToCustomer = isChecked
+            returnedPackagesList.clear()
+            callGetCustomersWithReturnedPackages()
+        }
+
         binding.toolbarMain.buttonBack.setOnClickListener(this)
         binding.toolbarMain.buttonNotifications.setOnClickListener(this)
         binding.buttonStatusFilter.setOnClickListener(this)
@@ -195,9 +207,15 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
                                 getString(R.string.title_returned_packages_to_customer)
                             binding.textSelectedStatus.visibility = View.VISIBLE
                             binding.buttonStatusFilter.visibility = View.VISIBLE
+                            binding.containerSwitchIsToDeliverToSender.visibility = View.GONE
                             isReturnBundlesTap = false
                             initRecycler()
                             initListeners()
+
+                            currentPageIndex = 1
+                            returnedPackagesList.clear()
+
+                            callGetCustomersWithReturnedPackages()
                         }
 
                         1 -> {
@@ -205,18 +223,19 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
                             binding.textTitle.text = getString(R.string.title_returned_packages_to_hub)
                             binding.textSelectedStatus.visibility = View.VISIBLE
                             binding.buttonStatusFilter.visibility = View.VISIBLE
+                            binding.containerSwitchIsToDeliverToSender.visibility = View.GONE
                             isReturnBundlesTap = false
                             initRecycler()
                             initListeners()
+
+                            currentPageIndex = 1
+                            returnedPackagesList.clear()
+
+                            callGetCustomersWithReturnedPackages()
                         }
 
                         else -> null
                     }
-
-                    currentPageIndex = 1
-                    returnedPackagesList.clear()
-
-                    callGetCustomersWithReturnedPackages()
                 }
 
                 override fun onTabUnselected(tab: TabLayout.Tab) {
@@ -241,14 +260,18 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
                 override fun onTabSelected(tab: TabLayout.Tab) {
                     when (tab.position) {
                         0 -> {
-                            isDeliverToCustomer = false
                             binding.textTitle.text =
                                 getString(R.string.title_returned_packages_to_customer)
                             binding.textSelectedStatus.visibility = View.VISIBLE
                             binding.buttonStatusFilter.visibility = View.VISIBLE
+                            binding.containerSwitchIsToDeliverToSender.visibility = View.VISIBLE
+                            isDeliverToCustomer = binding.switchIsDeliverToSender.isChecked
                             isReturnBundlesTap = false
                             initRecycler()
                             initListeners()
+
+                            returnedPackagesList.clear()
+                            callGetCustomersWithReturnedPackages()
                         }
 
                         1 -> {
@@ -256,6 +279,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
                             binding.textTitle.text = getText(R.string.title_returned_bundles)
                             binding.textSelectedStatus.visibility = View.GONE
                             binding.buttonStatusFilter.visibility = View.GONE
+                            binding.containerSwitchIsToDeliverToSender.visibility = View.GONE
                             isReturnBundlesTap = true
                             initRecycler()
                             initListeners()
@@ -275,11 +299,6 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
 
                         else -> null
                     }
-
-                    currentPageIndex = 1
-                    returnedPackagesList.clear()
-
-                    callGetCustomersWithReturnedPackages()
                 }
 
                 override fun onTabUnselected(tab: TabLayout.Tab) {

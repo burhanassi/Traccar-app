@@ -431,6 +431,15 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             bind:itemSrc="@{@drawable/ic_first_pickup_date}" />
+
+                        <include
+                            android:id="@+id/item_reg_number"
+                            layout="@layout/item_card_row"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            bind:isCopyVisible="@{true}"
+                            bind:itemSrc="@{@drawable/ic_reg}"/>
                     </LinearLayout>
                 </LinearLayout>
 
