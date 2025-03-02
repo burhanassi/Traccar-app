@@ -334,19 +334,22 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/container_driver_earnings"
+                    android:id="@+id/container_driver_earnings_deficit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="24dp"
-                    android:visibility="gone">
+                    android:visibility="visible">
                     <LinearLayout
+                        android:id="@+id/container_driver_earnings"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
+                        android:layout_marginEnd="12dp"
                         android:background="@drawable/background_dashboard_entry"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
                         <TextView
                             android:id="@+id/text_driver_earnings_sum"
@@ -374,6 +377,44 @@
                             android:layout_marginBottom="8dp"
                             android:gravity="center"
                             android:text="@string/dashboard_driver_earnings_sum"
+                            android:textColor="@color/fontTitleLight"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/container_deficit_balance"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/background_dashboard_entry"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/text_driver_deficit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:fontFamily="@font/roboto_bold"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textColor="@color/fontTitleLight"
+                            android:textDirection="ltr"
+                            android:textSize="30sp"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
+                            style="@style/LogesTechsMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:gravity="center"
+                            android:text="@string/title_driver_deficient"
                             android:textColor="@color/fontTitleLight"
                             android:textSize="16sp" />
                     </LinearLayout>
