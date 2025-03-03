@@ -92,7 +92,6 @@
                 android:layout_height="match_parent"
                 android:layout_marginEnd="8dp"
                 android:gravity="center_vertical"
-                android:text="@string/title_switch_is_deliver_to_sender"
                 android:textColor="@color/fontTrackHint"
                 android:textSize="12sp" />
         </LinearLayout>
