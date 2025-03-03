@@ -1149,13 +1149,23 @@ class ReturnedPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListen
                     if (validateInput()) {
                         if (isBulkDelivery) {
                             if (isBundleDelivery) {
-                                requestPinCodeSms()
-                                DeliveryCodeVerificationDialog(
-                                    super.getContext(),
-                                    this,
-                                    isBundle = true,
-                                    bundles = bundles
-                                ).showDialog()
+                                if (companyConfigurations?.isEnableDeliveryVerificationPinCodeForReturnedBundles!!) {
+                                    requestPinCodeSms()
+                                    DeliveryCodeVerificationDialog(
+                                        super.getContext(),
+                                        this@ReturnedPackageDeliveryActivity,
+                                        isBundle = true,
+                                        bundles = bundles
+                                    ).showDialog()
+                                } else {
+                                    callDeliverReturnedBundlesToSender(
+                                        DeliverMassReturnedPackagesToSenderRequestBody(
+                                            bundles?.barcode,
+                                            null,
+                                            getPodImagesUrls()
+                                        )
+                                    )
+                                }
                             } else {
                                 if (companyConfigurations?.isEnablePinCodeForMassCodReportsAndMassReturnedPackages!! &&
                                     customer?.massReturnedPackagesReportBarcode != null) {
