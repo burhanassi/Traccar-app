@@ -840,4 +840,7 @@ interface LogesTechsDriverApi {
 
     @HTTP(method = "DELETE", path = "handler/image", hasBody = true)
     suspend fun deletePackedOrderImage(@Body body: DeleteImageRequestBody?): Response<ResponseBody?>?
+
+    @GET("driver/deficit/balance")
+    suspend fun getDeficitBalance(): Response<GetDeficitBalanceResponse>?
 }

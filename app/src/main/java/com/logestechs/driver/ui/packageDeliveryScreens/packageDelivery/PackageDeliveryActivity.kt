@@ -769,6 +769,9 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 selectedPaymentType?.makeUnselected()
                 statusSelector.makeSelected()
                 selectedPaymentType = statusSelector
+                if (companyConfigurations?.isEnableDeliverByMultiPaymentTypes == true) {
+                    selectedPaymentType!!.enumValue = paymentType.paymentTypeName
+                }
                 paymentTypeId = paymentType.id.toLong()
             }
             container.addView(statusSelector)
@@ -1459,7 +1462,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                         ApiAdapter.apiClient.payMultiWay(
                             pkg?.id,
                             PayMultiWayRequestBody(
-                                (selectedPaymentType?.enumValue as PaymentType).name,
+                                selectedPaymentType?.enumValue.toString(),
                                 paymentTypeId,
                                 packageValueToPay
                             )

@@ -67,6 +67,36 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/container_switch_is_to_deliver_to_sender"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@color/peach_orange_tab_pager_bar">
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_is_deliver_to_sender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="13dp"
+                android:saveEnabled="false"
+                android:scaleX="1.2"
+                android:scaleY="1.2"
+                android:theme="@style/ColorSwitchStyle" />
+
+            <TextView
+                style="@style/LogesTechsLight"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="8dp"
+                android:gravity="center_vertical"
+                android:text="@string/title_switch_is_deliver_to_sender"
+                android:textColor="@color/fontTrackHint"
+                android:textSize="12sp" />
+        </LinearLayout>
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
