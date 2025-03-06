@@ -184,6 +184,13 @@ class InCarPackageCellAdapter(
                 )
             }
 
+            if (pkg?.receiverAuthorizedGovRegistrationNumber != null && pkg.receiverAuthorizedGovRegistrationNumber!!.isNotEmpty()) {
+                binding.itemRegNumber.root.visibility = View.VISIBLE
+                binding.itemRegNumber.textItem.text = pkg.receiverAuthorizedGovRegistrationNumber
+            } else {
+                binding.itemRegNumber.root.visibility = View.GONE
+            }
+
             //Sender Contact Actions
             binding.imageViewSenderCall.setOnClickListener {
                 if (mAdapter.context != null && mAdapter.context is LogesTechsActivity) {
@@ -461,13 +468,6 @@ class InCarPackageCellAdapter(
                 binding.textPackageStatus.setText(R.string.in_car_status_failed)
             } else {
                 binding.textPackageStatus.visibility = View.GONE
-            }
-
-            if (pkg?.receiverAuthorizedGovRegistrationNumber != null && pkg.receiverAuthorizedGovRegistrationNumber!!.isNotEmpty()) {
-                binding.itemRegNumber.root.visibility = View.VISIBLE
-                binding.itemRegNumber.textItem.text = pkg.receiverAuthorizedGovRegistrationNumber
-            } else {
-                binding.itemRegNumber.root.visibility = View.GONE
             }
         }
     }
