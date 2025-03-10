@@ -53,6 +53,7 @@ import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.AppCurrency
 import com.logestechs.driver.utils.AppLanguages
 import com.logestechs.driver.utils.ConfirmationDialogAction
+import com.logestechs.driver.utils.CountriesCode
 import com.logestechs.driver.utils.DeliveryType
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.Helper.Companion.format
@@ -188,7 +189,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 binding.containerPaymentType.visibility = View.GONE
             }
 
-            if (Helper.getCompanyCurrency() == AppCurrency.SAR.value) {
+            if (Helper.getCountryCode() == CountriesCode.SAR.value) {
                 binding.containerPaymentGateways.visibility = View.VISIBLE
             }
         }
