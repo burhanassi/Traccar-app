@@ -395,4 +395,5 @@
     <string name="sim_number"> رقم الشريحة : </string>
     <string name="no_category">لا يوجد تصنيف</string>
     <string name="title_driver_deficient">عجز السائق</string>
+    <string name="title_switch_is_deliver_to_sender">للتوصيل للمرسل</string>
 </resources>
