@@ -396,4 +396,6 @@
     <string name="no_category">لا يوجد تصنيف</string>
     <string name="title_driver_deficient">عجز السائق</string>
     <string name="title_switch_is_deliver_to_sender">للتوصيل للمرسل</string>
+    <string name="error_date_must_be_in_future">التاريخ يجب ان يكون في المستقبل</string>
+    <string name="other">أخرى</string>
 </resources>

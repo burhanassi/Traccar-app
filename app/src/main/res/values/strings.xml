@@ -399,4 +399,6 @@
     <string name="no_category">No Category</string>
     <string name="title_driver_deficient">Driver deficient</string>
     <string name="title_switch_is_deliver_to_sender">Is to deliver to sender</string>
+    <string name="error_date_must_be_in_future">Date must be in future</string>
+    <string name="other">Other</string>
 </resources>

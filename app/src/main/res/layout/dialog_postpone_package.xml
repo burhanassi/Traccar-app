@@ -73,7 +73,7 @@
                             android:fontFamily="@font/roboto_light"
                             android:gravity="center_vertical"
                             android:textColor="@color/fontTrackHint"
-                            android:textSize="14sp" />
+                            android:textSize="12sp" />
 
 
                     </LinearLayout>

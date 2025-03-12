@@ -59,8 +59,8 @@ class RadioGroupListAdapter(
 
     private fun reorderList(originalList: LinkedHashMap<String, String>?): List<Map.Entry<String, String>> {
         if (originalList == null) return emptyList()
-        val otherReasonEntry = originalList.entries.find { it.key == "OTHER_REASON" }
-        val filteredEntries = originalList.entries.filter { it.key != "OTHER_REASON" }
+        val otherReasonEntry = originalList.entries.find { it.key == "OTHER_REASON"  || it.key == "OTHER" }
+        val filteredEntries = originalList.entries.filter { it.key != "OTHER_REASON" && it.key != "OTHER" }
         return if (otherReasonEntry != null) {
             filteredEntries + otherReasonEntry
         } else {

@@ -3,6 +3,7 @@ package com.logestechs.driver.utils.dialogs
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -28,6 +29,7 @@ import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
 import com.logestechs.driver.utils.interfaces.PostponePackageDialogListener
 import com.logestechs.driver.utils.interfaces.RadioGroupListListener
 import com.logestechs.driver.utils.interfaces.ThumbnailsListListener
+import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -49,7 +51,7 @@ class PostponePackageDialog(
 
     private var companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
-
+    private val loginResponse = SharedPreferenceWrapper.getLoginResponse()
     @SuppressLint("MissingPermission")
     fun showDialog() {
         val dialogBuilder = AlertDialog.Builder(context, 0)
@@ -70,6 +72,7 @@ class PostponePackageDialog(
                 LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = ThumbnailsAdapter(loadedImagesList, this@PostponePackageDialog)
         }
+        binding.etReason.visibility = android.view.View.GONE
 
         binding.buttonDone.setOnClickListener {
             if (validateInput()) {
@@ -79,11 +82,11 @@ class PostponePackageDialog(
                         if (location != null) {
                             listener?.onPackagePostponed(
                                 PostponePackageRequestBody(
+                                    loginResponse?.user?.id,
+                                    convertToIsoFormat(binding.textDate.text.toString()),
                                     binding.etReason.text.toString(),
-                                    (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
-                                    location.longitude,
-                                    location.latitude,
-                                    binding.textDate.text.toString(),
+                                    null,
+                                    null,
                                     getPodImagesUrls(),
                                     pkg?.id
                                 )
@@ -91,11 +94,11 @@ class PostponePackageDialog(
                         } else {
                             listener?.onPackagePostponed(
                                 PostponePackageRequestBody(
+                                    loginResponse?.user?.id,
+                                    convertToIsoFormat(binding.textDate.text.toString()),
                                     binding.etReason.text.toString(),
-                                    (binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem(),
                                     null,
                                     null,
-                                    binding.textDate.text.toString(),
                                     getPodImagesUrls(),
                                     pkg?.id
                                 )
@@ -106,29 +109,46 @@ class PostponePackageDialog(
         }
 
         binding.containerDatePicker.setOnClickListener {
-            val date =
-                DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                    myCalendar[Calendar.YEAR] = year
-                    myCalendar[Calendar.MONTH] = monthOfYear
-                    myCalendar[Calendar.DAY_OF_MONTH] = dayOfMonth
+            val date = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                myCalendar.set(Calendar.YEAR, year)
+                myCalendar.set(Calendar.MONTH, monthOfYear)
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+                val time = TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+                    myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                    myCalendar.set(Calendar.MINUTE, minute)
+
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        binding.textDate.text =
-                            myCalendar.time.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-                                .format(DateTimeFormatter.ofPattern(DateFormats.DEFAULT_FORMAT.value))
-                        Helper.changeImageStrokeColor(
-                            binding.imageViewCalendar,
-                            R.color.fontTrackHint,
-                            context
-                        )
+                        val formattedDateTime = myCalendar.time.toInstant()
+                            .atZone(ZoneId.systemDefault())
+                            .format(DateTimeFormatter.ofPattern("${DateFormats.DEFAULT_FORMAT.value} HH:mm")) // Add time format
+                        binding.textDate.text = formattedDateTime
+                    } else {
+                        val sdf = SimpleDateFormat("${DateFormats.DEFAULT_FORMAT.value} HH:mm", Locale.getDefault())
+                        binding.textDate.text = sdf.format(myCalendar.time)
                     }
+                    Helper.changeImageStrokeColor(
+                        binding.imageViewCalendar,
+                        R.color.fontTrackHint,
+                        context
+                    )
                 }
 
-            val datePickerDialog = DatePickerDialog(
-                context, date, myCalendar[Calendar.YEAR],
-                myCalendar[Calendar.MONTH],
-                myCalendar[Calendar.DAY_OF_MONTH],
-            )
+                val timePickerDialog = TimePickerDialog(
+                    context,
+                    time,
+                    myCalendar.get(Calendar.HOUR_OF_DAY),
+                    myCalendar.get(Calendar.MINUTE),
+                    true
+                )
+                timePickerDialog.show()
+            }
 
+            val datePickerDialog = DatePickerDialog(
+                context, date, myCalendar.get(Calendar.YEAR),
+                myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH)
+            )
             datePickerDialog.datePicker.minDate = System.currentTimeMillis()
             datePickerDialog.show()
         }
@@ -159,6 +179,13 @@ class PostponePackageDialog(
     }
 
     private fun validateInput(): Boolean {
+        if ((binding.rvReasons.adapter as RadioGroupListAdapter).getSelectedItem() == null) {
+            Helper.showErrorMessage(
+                context,
+                getStringForFragment(R.string.title_please_select_reason)
+            )
+        }
+
         if (binding.etReason.text.isEmpty()) {
             Helper.showErrorMessage(
                 context,
@@ -178,6 +205,23 @@ class PostponePackageDialog(
                 context
             )
             return false
+        } else {
+            val selectedDateTimeString = binding.textDate.text.toString()
+            val dateFormat = SimpleDateFormat("${DateFormats.DEFAULT_FORMAT.value} HH:mm", Locale.getDefault())
+            val selectedDateTime = dateFormat.parse(selectedDateTimeString)
+            val currentDateTime = Calendar.getInstance().time
+            if (selectedDateTime != null && selectedDateTime.before(currentDateTime)) {
+                Helper.showErrorMessage(
+                    context,
+                    getStringForFragment(R.string.error_date_must_be_in_future)
+                )
+                Helper.changeImageStrokeColor(
+                    binding.imageViewCalendar,
+                    R.color.red_flamingo,
+                    context
+                )
+                return false
+            }
         }
 
         if (companyConfigurations?.isForceDriversToAddAttachments == true) {
@@ -216,8 +260,30 @@ class PostponePackageDialog(
         binding.etReason.clearFocus()
     }
 
+    fun convertToIsoFormat(input: String): String {
+        // Define the input format
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+
+        // Parse the input string
+        val date = inputFormat.parse(input)
+
+        // Define the output format
+        val outputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        outputFormat.timeZone = TimeZone.getTimeZone("UTC") // Set timezone to UTC
+
+        // Format the date into the desired output
+        return outputFormat.format(date)
+    }
+
     override fun onItemSelected(title: String?) {
-        binding.etReason.setText(title)
+        if (title == getStringForFragment(R.string.other)) {
+            binding.etReason.visibility = android.view.View.VISIBLE
+            binding.etReason.setText("")
+            binding.etReason.requestFocus()
+        } else {
+            binding.etReason.visibility = android.view.View.GONE
+            binding.etReason.setText(title)
+        }
         clearFocus()
     }
 
