@@ -50,5 +50,6 @@ data class DriverCompanyConfigurations(
     var isForceDriversToSelectIncompleteDeliveryReason: Boolean? = null,
     var isAllowAddingTelecomeDevices: Boolean? = null,
     var isAllowDriverChangePackageType: Boolean? = null,
-    var isEnableDriverDeficitBalance: Boolean? = null
+    var isEnableDriverDeficitBalance: Boolean? = null,
+    var proofOfDeliveryShipmentTypes: List<String>? = null
 )

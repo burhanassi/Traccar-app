@@ -1617,7 +1617,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
     private fun makePackageDelivery() {
         if (!needsPinVerification()) {
-            if (companyConfigurations?.isDriverProveDeliveryByScanBarcode!!) {
+            if (companyConfigurations?.isDriverProveDeliveryByScanBarcode!! && companyConfigurations?.proofOfDeliveryShipmentTypes?.contains(pkg?.shipmentType)!!) {
                 val mIntent = Intent(
                     super.getContext(),
                     VerifyPackageDeliveryActivity::class.java
