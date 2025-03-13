@@ -1830,7 +1830,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     }
                     if (response.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
-                            setPaymentMethods(response.body()!!.data!!)
+                            setPaymentMethods(response.body()!!)
                         }
                     } else {
                         try {
