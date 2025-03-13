@@ -1078,124 +1078,6 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
     }
 
-    class PaymentSelector(val selector: StatusSelector, val editText: EditText)
-
-    private fun setupPaymentMethodSelectors() {
-        val paymentSelectors = listOf(
-            PaymentSelector(binding.selectorCash, binding.textFieldCash),
-            PaymentSelector(binding.selectorDigitalWallet, binding.textFieldDigitalWallet),
-            PaymentSelector(binding.selectorCheque, binding.textFieldCheque),
-            PaymentSelector(binding.selectorPrepaid, binding.textFieldPrepaid),
-            PaymentSelector(binding.selectorCardPayment, binding.textFieldCardPayment),
-            PaymentSelector(binding.selectorBankTransfer, binding.textFieldBankTransfer),
-            PaymentSelector(binding.selectorInterPay, binding.textFieldInterPay),
-            PaymentSelector(binding.selectorNearPay, binding.textFieldNearPay),
-            PaymentSelector(binding.selectorClickPay, binding.textFieldClickPay)
-        )
-
-        paymentSelectors.forEach { paymentSelector ->
-            paymentSelector.selector.setOnClickListener {
-                handlePaymentSelection(paymentSelector.selector, paymentSelector.editText, paymentSelectors)
-            }
-
-            // Add TextWatcher to update the payment amount when text changes
-            paymentSelector.editText.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-                override fun afterTextChanged(s: Editable?) {
-                    var newSum = 0.0
-                    paymentSelectors.forEach { selector ->
-                        val fieldValue = selector.editText.text.toString().toDoubleOrNull() ?: 0.0
-                        newSum += fieldValue
-                    }
-                    if (newSum > packageCodToPay) {
-                        val currentFieldValue = paymentSelector.editText.text.toString().toDoubleOrNull() ?: 0.0
-                        newSum -= currentFieldValue
-                        paymentSelector.editText.removeTextChangedListener(this)
-                        paymentSelector.editText.setText("")
-                        paymentSelector.editText.addTextChangedListener(this)
-
-                        Helper.showErrorMessage(this@PackageDeliveryActivity, getString(R.string.error_can_not_exceed_cod))
-                    } else {
-                        sum = newSum
-                    }
-
-                    sum = newSum
-                    binding.textPaymentAmount.text = "${sum?.format()}/${packageCodToPay.format()}"
-
-                    val amount = paymentSelector.editText.text.toString().toDoubleOrNull()
-                    if (amount == null || amount == 0.0) {
-                        paymentDataList.removeAll { it.paymentType == paymentSelector.selector.enumValue.toString() }
-                    } else {
-                        val paymentData = PayMultiWayRequestBody(
-                            paymentSelector.selector.enumValue.toString(),
-                            null,
-                            amount = amount
-                        )
-                        paymentDataList.add(paymentData)
-                    }
-
-                    Log.d("paymentDataList", "${paymentDataList.toString()}")
-
-                    Log.d("sum", "${sum?.format()}/${packageCodToPay.format()}")
-                }
-            })
-
-            paymentSelector.editText.setOnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    val amount = paymentSelector.editText.text.toString().toDoubleOrNull() ?: 0.0
-                    if (amount > 0) {
-                        val paymentData = PayMultiWayRequestBody(
-                            paymentType = paymentSelector.selector.enumValue.toString(),
-                            null,
-                            amount = amount
-                        )
-                        paymentDataList.add(paymentData)
-                    }
-                }
-                Log.d("paymentDataList", "${paymentDataList.toString()}")
-                val lastPaymentDataList = paymentDataList
-                    .groupBy { it.paymentType }
-                    .map { (_, entries) -> entries.last() }
-
-                paymentDataList = lastPaymentDataList.toMutableList()
-                Log.d("lastPaymentDataList", lastPaymentDataList.toString())
-                Log.d("paymentDataList", "${paymentDataList.toString()}")
-            }
-            Log.d("sum", "${sum?.format()}")
-        }
-        Log.d("paymentDataList", "${paymentDataList.toString()}")
-    }
-
-    private fun handlePaymentSelection(selectedSelector: StatusSelector, selectedEditText: EditText, paymentSelectors: List<PaymentSelector>) {
-        // Deselect the previously selected payment type
-        selectedPaymentType?.makeUnselected()
-
-        // Select the current selector
-        selectedSelector.makeSelected()
-        selectedPaymentType = selectedSelector
-
-        // Enable the corresponding EditText and request focus
-        selectedEditText.isEnabled = true
-        selectedEditText.requestFocus()
-        showKeyboard(selectedEditText)
-
-        // Disable all other EditTexts and reset their appearance
-        paymentSelectors.forEach { paymentSelector ->
-            if (paymentSelector.editText != selectedEditText) {
-                paymentSelector.editText.isEnabled = false
-                paymentSelector.selector.makeUnselected() // Deselect other selectors
-            }
-        }
-    }
-
-    private fun showKeyboard(view: View) {
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
-    }
-
     //Apis
     private fun uploadPackageSignature() {
         showWaitDialog()
@@ -1824,7 +1706,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response =
-                        ApiAdapter.apiClient.getPaymentMethods()
+                        ApiAdapter.apiClient.getPaymentMethods(pkg?.customerId!!)
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
