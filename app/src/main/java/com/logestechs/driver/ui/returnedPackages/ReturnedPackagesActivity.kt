@@ -68,6 +68,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
             binding.textTitle.text = getText(R.string.title_returned_bundles)
             binding.containerSwitchIsToDeliverToSender.visibility = View.GONE
             isDeliverToCustomer = true
+            returnedPackagesList.clear()
             callGetCustomersWithReturnedPackages()
             initRecycler()
             initListeners()
@@ -85,8 +86,10 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         currentPageIndex = 1
         if (doesUpdateData) {
             if (isReturnBundlesTap) {
+                returnedPackagesList.clear()
                 callGetCustomersWithReturnedBundles()
             } else {
+                returnedPackagesList.clear()
                 callGetCustomersWithReturnedPackages()
             }
         } else {
@@ -112,6 +115,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
                 getString(R.string.success_operation_completed)
             )
             if (isReturnBundlesTap) {
+                returnedPackagesList.clear()
                 callGetCustomersWithReturnedBundles()
             } else {
                 returnedPackagesList.clear()
@@ -362,6 +366,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
                             isLastPage = false
                         }
                         withContext(Dispatchers.Main) {
+                            returnedPackagesList.clear()
                             returnedPackagesList.addAll(body?.customers!!)
                             binding.rvCustomers.adapter?.notifyDataSetChanged()
                             handleNoPackagesLabelVisibility(body.customers?.size ?: 0)
@@ -667,6 +672,7 @@ class ReturnedPackagesActivity : LogesTechsActivity(), ReturnedPackagesCardListe
         binding.textSelectedStatus.text =
             "(${Helper.getLocalizedReturnedStatus(super.getContext(), selectedStatus)})"
         if (isReturnBundlesTap) {
+            returnedPackagesList.clear()
             callGetCustomersWithReturnedBundles()
         } else {
             returnedPackagesList.clear()
