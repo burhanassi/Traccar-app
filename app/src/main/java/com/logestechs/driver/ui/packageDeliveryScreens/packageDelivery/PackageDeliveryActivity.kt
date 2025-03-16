@@ -1759,7 +1759,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response =
-                        ApiAdapter.apiClient.payMultiWay(
+                        ApiAdapter.apiClient.payMultiWayNew(
                             pkg?.id,
                             paymentDataList
                         )

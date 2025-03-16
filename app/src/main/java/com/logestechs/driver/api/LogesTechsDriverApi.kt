@@ -519,6 +519,12 @@ interface LogesTechsDriverApi {
     @PUT("driver/packages/{packageId}/paymentType/deliver")
     suspend fun payMultiWay(
         @Path("packageId") packageId: Long?,
+        @Body body: PayMultiWayRequestBody?,
+    ): Response<PayMultiWayResponse?>?
+
+    @PUT("driver/packages/{packageId}/paymentType/deliver/multi-way")
+    suspend fun payMultiWayNew(
+        @Path("packageId") packageId: Long?,
         @Body body: List<PayMultiWayRequestBody?>,
     ): Response<PayMultiWayResponse?>?
 
