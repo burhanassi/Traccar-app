@@ -403,4 +403,7 @@
     <string name="other">Other</string>
     <string name="error_pay_all_cod">Cannot be delivered! Please pay all COD</string>
     <string name="error_can_not_exceed_cod">Cannot exceed COD</string>
+    <string name="set_time">Do you want to set the postpone time?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

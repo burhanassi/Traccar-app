@@ -400,4 +400,7 @@
     <string name="other">أخرى</string>
     <string name="error_pay_all_cod">لا يمكن توصيل الطرد! الرجاء دفع مبلغ التحصيل كاملًا</string>
     <string name="error_can_not_exceed_cod">لا يمكن تجاوز قيمة مبلغ التحصيل</string>
+    <string name="set_time">هل تريد اختيار وقت التأجيل؟</string>
+    <string name="yes">نعم</string>
+    <string name="no">لا</string>
 </resources>

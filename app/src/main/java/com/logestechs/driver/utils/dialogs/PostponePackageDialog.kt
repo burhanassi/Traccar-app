@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -30,7 +31,10 @@ import com.logestechs.driver.utils.interfaces.PostponePackageDialogListener
 import com.logestechs.driver.utils.interfaces.RadioGroupListListener
 import com.logestechs.driver.utils.interfaces.ThumbnailsListListener
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -52,6 +56,7 @@ class PostponePackageDialog(
     private var companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
     private val loginResponse = SharedPreferenceWrapper.getLoginResponse()
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingPermission")
     fun showDialog() {
         val dialogBuilder = AlertDialog.Builder(context, 0)
@@ -79,15 +84,17 @@ class PostponePackageDialog(
                 alertDialog.dismiss()
                 fusedLocationClient.lastLocation
                     .addOnSuccessListener { location ->
+                        val utcTime = convertToUTCAndUpdateUI(binding.textDate.text.toString())
                         if (location != null) {
                             listener?.onPackagePostponed(
                                 PostponePackageRequestBody(
                                     loginResponse?.user?.id,
-                                    convertToIsoFormat(binding.textDate.text.toString()),
+                                    utcTime.toString(),
                                     binding.etReason.text.toString(),
                                     null,
                                     null,
                                     getPodImagesUrls(),
+                                    TimeZone.getDefault().id.toString(),
                                     pkg?.id
                                 )
                             )
@@ -95,11 +102,12 @@ class PostponePackageDialog(
                             listener?.onPackagePostponed(
                                 PostponePackageRequestBody(
                                     loginResponse?.user?.id,
-                                    convertToIsoFormat(binding.textDate.text.toString()),
+                                    utcTime.toString(),
                                     binding.etReason.text.toString(),
                                     null,
                                     null,
                                     getPodImagesUrls(),
+                                    TimeZone.getDefault().id.toString(),
                                     pkg?.id
                                 )
                             )
@@ -109,43 +117,41 @@ class PostponePackageDialog(
         }
 
         binding.containerDatePicker.setOnClickListener {
-            val date = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+            val dateListener = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
                 myCalendar.set(Calendar.YEAR, year)
                 myCalendar.set(Calendar.MONTH, monthOfYear)
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-                val time = TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
-                    myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                    myCalendar.set(Calendar.MINUTE, minute)
+                // Ask the user if they want to set the time
+                AlertDialog.Builder(context)
+                    .setMessage(getStringForFragment(R.string.set_time))
+                    .setPositiveButton(getStringForFragment(R.string.yes)) { _, _ ->
+                        val timeListener = TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+                            myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                            myCalendar.set(Calendar.MINUTE, minute)
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        val formattedDateTime = myCalendar.time.toInstant()
-                            .atZone(ZoneId.systemDefault())
-                            .format(DateTimeFormatter.ofPattern("${DateFormats.DEFAULT_FORMAT.value} HH:mm")) // Add time format
-                        binding.textDate.text = formattedDateTime
-                    } else {
-                        val sdf = SimpleDateFormat("${DateFormats.DEFAULT_FORMAT.value} HH:mm", Locale.getDefault())
-                        binding.textDate.text = sdf.format(myCalendar.time)
+                            updateDateTimeText()
+                        }
+
+                        val timePickerDialog = TimePickerDialog(
+                            context,
+                            timeListener,
+                            myCalendar.get(Calendar.HOUR_OF_DAY),
+                            myCalendar.get(Calendar.MINUTE),
+                            true
+                        )
+                        timePickerDialog.show()
                     }
-                    Helper.changeImageStrokeColor(
-                        binding.imageViewCalendar,
-                        R.color.fontTrackHint,
-                        context
-                    )
-                }
-
-                val timePickerDialog = TimePickerDialog(
-                    context,
-                    time,
-                    myCalendar.get(Calendar.HOUR_OF_DAY),
-                    myCalendar.get(Calendar.MINUTE),
-                    true
-                )
-                timePickerDialog.show()
+                    .setNegativeButton(getStringForFragment(R.string.no)) { _, _ ->
+                        myCalendar.set(Calendar.HOUR_OF_DAY, 0)
+                        myCalendar.set(Calendar.MINUTE, 0)
+                        updateDateTimeText()
+                    }
+                    .show()
             }
 
             val datePickerDialog = DatePickerDialog(
-                context, date, myCalendar.get(Calendar.YEAR),
+                context, dateListener, myCalendar.get(Calendar.YEAR),
                 myCalendar.get(Calendar.MONTH),
                 myCalendar.get(Calendar.DAY_OF_MONTH)
             )
@@ -176,6 +182,48 @@ class PostponePackageDialog(
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.setCanceledOnTouchOutside(false)
         alertDialog.show()
+    }
+
+    private fun updateDateTimeText() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val formattedDateTime = myCalendar.time.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("${DateFormats.DEFAULT_FORMAT.value} HH:mm"))
+            binding.textDate.text = formattedDateTime
+        } else {
+            val sdf = SimpleDateFormat("${DateFormats.DEFAULT_FORMAT.value} HH:mm", Locale.getDefault())
+            binding.textDate.text = sdf.format(myCalendar.time)
+        }
+        Helper.changeImageStrokeColor(
+            binding.imageViewCalendar,
+            R.color.fontTrackHint,
+            context
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun convertToUTCAndUpdateUI(utcTimeString: String): String? {
+        return try {
+            // Step 1: Define the formatter for the input string
+            val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+
+            // Step 2: Parse the input string into a LocalDateTime
+            val localDateTime = LocalDateTime.parse(utcTimeString, inputFormatter)
+
+            // Step 3: Convert LocalDateTime to ZonedDateTime (assuming the input is in the system's default time zone)
+            val zonedDateTime = localDateTime.atZone(ZoneId.systemDefault())
+
+            // Step 4: Convert to UTC
+            val utcZonedDateTime = zonedDateTime.withZoneSameInstant(ZoneId.of("UTC"))
+
+            // Step 5: Format the output
+            val outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+            utcZonedDateTime.format(outputFormatter)
+        } catch (e: Exception) {
+            // Handle parsing or formatting errors
+            e.printStackTrace()
+            null // Return null in case of an error
+        }
     }
 
     private fun validateInput(): Boolean {

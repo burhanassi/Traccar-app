@@ -2,6 +2,7 @@ package com.logestechs.driver.api.requests
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import java.util.TimeZone
 
 @Parcelize
 data class PostponePackageRequestBody(
@@ -11,6 +12,7 @@ data class PostponePackageRequestBody(
     val longitude: Double? = null,
     val latitude: Double? = null,
     val deliveryProofUrlList: List<String?>?,
+    val timeZone: String? = TimeZone.getDefault().id.toString(),
     @Transient
     val packageId: Long?
 ) : Parcelable
