@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.inputmethod.InputMethodManager
+import android.widget.TimePicker
 import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -135,11 +136,25 @@ class PostponePackageDialog(
 
                         val timePickerDialog = TimePickerDialog(
                             context,
+                            TimePickerDialog.THEME_HOLO_LIGHT, // Ensures spinner mode compatibility
                             timeListener,
                             myCalendar.get(Calendar.HOUR_OF_DAY),
                             myCalendar.get(Calendar.MINUTE),
-                            true
+                            false // Set false to allow AM/PM mode if needed
                         )
+
+                        // Force spinner mode to allow numeric keyboard input
+                        try {
+                            val timePickerField = TimePickerDialog::class.java.getDeclaredField("mTimePicker")
+                            timePickerField.isAccessible = true
+                            val timePicker = timePickerField.get(timePickerDialog) as TimePicker
+                            val modeField = timePicker.javaClass.getDeclaredField("mMode")
+                            modeField.isAccessible = true
+                            modeField.setInt(timePicker, TimePicker.SCROLLBAR_POSITION_LEFT)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+
                         timePickerDialog.show()
                     }
                     .setNegativeButton(getStringForFragment(R.string.no)) { _, _ ->
@@ -150,13 +165,14 @@ class PostponePackageDialog(
                     .show()
             }
 
-            val datePickerDialog = DatePickerDialog(
-                context, dateListener, myCalendar.get(Calendar.YEAR),
+            // Show the DatePicker dialog
+            DatePickerDialog(
+                context,
+                dateListener,
+                myCalendar.get(Calendar.YEAR),
                 myCalendar.get(Calendar.MONTH),
                 myCalendar.get(Calendar.DAY_OF_MONTH)
-            )
-            datePickerDialog.datePicker.minDate = System.currentTimeMillis()
-            datePickerDialog.show()
+            ).show()
         }
 
         binding.rvReasons.apply {
