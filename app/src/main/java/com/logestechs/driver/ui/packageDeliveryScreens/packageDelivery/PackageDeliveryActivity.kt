@@ -805,7 +805,11 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     private fun setPaymentMethods(paymentTypes: List<CodCollectionMethod>) {
         binding.containerDynamicPaymentMethods.visibility = View.VISIBLE
         binding.containerStaticPaymentMethods.visibility = View.GONE
-        binding.textPaymentAmount.visibility = View.VISIBLE
+        if (companyConfigurations?.isEnableDeliverByMultiPaymentTypes == true) {
+            binding.textPaymentAmount.visibility = View.VISIBLE
+        } else {
+            binding.textPaymentAmount.visibility = View.GONE
+        }
 
         val container = findViewById<LinearLayout>(R.id.container_dynamic_payment_methods)
         val textFieldIds = mutableListOf<Int>()
