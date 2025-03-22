@@ -98,6 +98,9 @@ class InCarPackageCellAdapter(
             pkg: Package?,
             position: Int
         ) {
+            if (pkg?.shipmentType == PackageType.COD.name) {
+                binding.inCarCellContainer.setBackgroundResource(R.drawable.ic_cod)
+            }
             binding.itemSenderName.textItem.text = pkg?.getFullSenderName()
             binding.itemSenderAddress.textItem.text = pkg?.originAddress?.toStringAddress()
             if (pkg?.serviceTypeName != null && pkg.serviceTypeName!!.isNotEmpty()) {
