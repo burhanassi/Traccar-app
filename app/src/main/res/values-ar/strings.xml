@@ -403,4 +403,5 @@
     <string name="set_time">هل تريد اختيار وقت التأجيل؟</string>
     <string name="yes">نعم</string>
     <string name="no">لا</string>
+    <string name="history_driver_deficient">حركات العجز</string>
 </resources>

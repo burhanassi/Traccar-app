@@ -406,4 +406,5 @@
     <string name="set_time">Do you want to set the postpone time?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="history_driver_deficient">Deficient History</string>
 </resources>

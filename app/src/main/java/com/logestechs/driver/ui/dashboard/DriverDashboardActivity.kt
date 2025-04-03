@@ -45,6 +45,7 @@ import com.logestechs.driver.ui.returnedPackages.ReturnedPackagesActivity
 import com.logestechs.driver.ui.warehousePackagesByStatusViewPager.WarehousePackagesByStatusViewPagerActivity
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.Helper.Companion.format
+import com.logestechs.driver.utils.bottomSheets.DeficitHistoryBottomSheet
 import com.logestechs.driver.utils.bottomSheets.PackageTrackBottomSheet
 import com.logestechs.driver.utils.location.AlarmReceiver
 import com.logestechs.driver.utils.location.LocationListener
@@ -199,6 +200,7 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
         binding.dashSubEntryPostponedPackages.root.setOnClickListener(this)
         binding.containerServiceTypeView.setOnClickListener(this)
         binding.dashEntryWarehousePackages.root.setOnClickListener(this)
+        binding.containerDeficitBalance.setOnClickListener(this)
     }
 
     @SuppressLint("SetTextI18n")
@@ -403,6 +405,11 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
             R.id.dash_entry_warehouse_packages -> {
                 val mIntent = Intent(this, WarehousePackagesByStatusViewPagerActivity::class.java)
                 startActivity(mIntent)
+            }
+
+            R.id.container_deficit_balance -> {
+                val bottomSheet = DeficitHistoryBottomSheet()
+                bottomSheet.show(supportFragmentManager, "exampleBottomSheet")
             }
         }
     }
