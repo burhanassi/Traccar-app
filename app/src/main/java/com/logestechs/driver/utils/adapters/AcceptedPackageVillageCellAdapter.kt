@@ -95,6 +95,7 @@ class AcceptedPackageVillageCellAdapter(
 
             val childItemAdapter = AcceptedPackageCustomerCellAdapter(
                 village?.customers ?: ArrayList<Customer>(),
+                village!!,
                 mAdapter.context,
                 mAdapter.fragmentManager,
                 mAdapter.listener,
