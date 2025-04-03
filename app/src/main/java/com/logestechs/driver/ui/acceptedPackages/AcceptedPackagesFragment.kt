@@ -257,7 +257,7 @@ class AcceptedPackagesFragment(
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response =
-                        ApiAdapter.apiClient.getAcceptedPackagesByCustomer(customerId = customer?.id, village?.id)
+                        ApiAdapter.apiClient.getAcceptedPackagesByCustomer(customerId = customer?.id, village?.id, "${customer?.firstName} ${customer?.lastName}")
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
