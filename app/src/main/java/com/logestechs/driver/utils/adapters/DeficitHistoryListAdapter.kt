@@ -2,14 +2,18 @@ package com.logestechs.driver.utils.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.data.model.DeficitBalanceHistory
 import com.logestechs.driver.databinding.ItemDeficitsHistoryBinding
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 
 class DeficitHistoryListAdapter(
@@ -66,10 +70,27 @@ class DeficitHistoryListAdapter(
             mReadMark = itemView.findViewById(R.id.read_mark)
         }
 
+        @RequiresApi(Build.VERSION_CODES.O)
         fun bind(notification: DeficitBalanceHistory) {
             binding.textBy.text = notification.updatedBy
             binding.textTitle.text = notification.msg
-            binding.textDate.text = notification.updatedAt
+            binding.textDate.text = formatDateTime(notification.updatedAt)
+            if (notification.type == "INCREASE") {
+                binding.itemImage.setImageResource(R.drawable.ic_up)
+            } else {
+                binding.itemImage.setImageResource(R.drawable.ic_down)
+            }
+        }
+
+        @RequiresApi(Build.VERSION_CODES.O)
+        fun formatDateTime(input: String): String {
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+            val dateTime = ZonedDateTime.parse(input, formatter)
+
+            val dayFormatter = DateTimeFormatter.ofPattern("EEEE") // Full day name
+            val dayOfWeek = dateTime.format(dayFormatter)
+
+            return "${dateTime.toLocalDate()} ${dateTime.toLocalTime()} $dayOfWeek"
         }
     }
 }

@@ -59,7 +59,7 @@ import org.json.JSONObject
 import java.sql.Timestamp
 import java.util.*
 
-
+var deficitId: Long = -1
 class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
 
     private lateinit var binding: ActivityDriverDashboardBinding
@@ -586,6 +586,7 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
                     val response = ApiAdapter.apiClient.getDeficitBalance()
                     if (response?.isSuccessful == true && response.body() != null) {
                         val data = response.body()
+                        deficitId = data?.id!!
                         withContext(Dispatchers.Main) {
                             binding.textDriverDeficit.text =  "${Helper.getCompanyCurrency()} ${data?.amount.toString()}"
                         }

@@ -854,9 +854,9 @@ interface LogesTechsDriverApi {
     @GET("driver/deficit/balance")
     suspend fun getDeficitBalance(): Response<GetDeficitBalanceResponse>?
 
-    @GET("accountant/driver/deficit/balance/{driverId}/transaction")
+    @GET("driver/deficit/balance/{id}/transaction")
     suspend fun getDeficitBalanceHistory(
-        @Path("driverId") driverId: Long?,
+        @Path("id") id: Long?,
         @Query("pageSize") pageSize: Int? = AppConstants.DEFAULT_PAGE_SIZE,
         @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
         @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString()

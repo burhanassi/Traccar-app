@@ -10,18 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.data.model.DeficitBalanceHistory
-import com.logestechs.driver.data.model.Notification
 import com.logestechs.driver.databinding.BottomSheetDeficitsHistoryBinding
-import com.logestechs.driver.databinding.BottomSheetNotificationsBinding
+import com.logestechs.driver.ui.dashboard.deficitId
 import com.logestechs.driver.utils.AppConstants
-import com.logestechs.driver.utils.BundleKeys
 import com.logestechs.driver.utils.Helper
-import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.LogesTechsBottomSheetFragment
 import com.logestechs.driver.utils.SharedPreferenceWrapper
 import com.logestechs.driver.utils.adapters.DeficitHistoryListAdapter
-import com.logestechs.driver.utils.adapters.NotificationsListAdapter
-import com.logestechs.driver.utils.interfaces.NotificationBottomSheetListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -65,7 +60,7 @@ class DeficitHistoryBottomSheet(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getNotifications()
+        getHistory()
         binding.rvHistory.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = DeficitHistoryListAdapter(notificationsList, requireContext())
@@ -89,19 +84,19 @@ class DeficitHistoryBottomSheet(
 
                 if (!isLoading && !isLastPage) {
                     if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount >= AppConstants.DEFAULT_PAGE_SIZE) {
-                        getNotifications()
+                        getHistory()
                     }
                 }
             }
         }
 
-    fun getNotifications() {
+    fun getHistory() {
         showWaitDialog()
         if (Helper.isInternetAvailable(requireContext())) {
             isLoading = true
             GlobalScope.launch(Dispatchers.IO) {
                 try {
-                    val response = ApiAdapter.apiClient.getDeficitBalanceHistory(loginResponse?.user?.id)
+                    val response = ApiAdapter.apiClient.getDeficitBalanceHistory(deficitId)
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
