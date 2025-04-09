@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.data.model.Customer
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
+import com.logestechs.driver.data.model.Village
 import com.logestechs.driver.databinding.ItemAcceptedPackageCustomerCellBinding
 import com.logestechs.driver.utils.AppCurrency
 import com.logestechs.driver.utils.BundleKeys
@@ -26,6 +27,7 @@ import kotlin.contracts.contract
 
 class AcceptedPackageCustomerCellAdapter(
     var customersList: List<Customer?>,
+    var village: Village,
     var context: Context?,
     var fragmentManager: FragmentManager,
     var listener: AcceptedPackagesCardListener?,
@@ -61,7 +63,7 @@ class AcceptedPackageCustomerCellAdapter(
     ) {
         val customer: Customer? = customersList[position]
         AcceptedPackageCustomerCellViewHolder.setIsRecyclable(false)
-        AcceptedPackageCustomerCellViewHolder.bind(customer)
+        AcceptedPackageCustomerCellViewHolder.bind(customersList[position], village)
     }
 
     override fun getItemCount(): Int {
@@ -80,7 +82,7 @@ class AcceptedPackageCustomerCellAdapter(
         RecyclerView.ViewHolder(binding.root) {
         private val messageTemplates = SharedPreferenceWrapper.getDriverCompanySettings()?.messageTemplates
 
-        fun bind(customer: Customer?) {
+        fun bind(customer: Customer?, village: Village?) {
             binding.itemSenderName.textItem.text = customer?.getFullName()
             binding.itemSenderAddress.textItem.text = customer?.address?.toStringAddress()
             binding.textCount.text = customer?.packagesNo.toString()
@@ -176,7 +178,7 @@ class AcceptedPackageCustomerCellAdapter(
                     if (mAdapter.context != null) {
                         when (item?.itemId) {
                             R.id.action_show_packages -> {
-                                mAdapter.listener?.getAcceptedPackages(customer)
+                                mAdapter.listener?.getAcceptedPackages(customer, village)
                             }
 
                             R.id.action_print -> {

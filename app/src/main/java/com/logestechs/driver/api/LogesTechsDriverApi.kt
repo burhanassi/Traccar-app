@@ -63,6 +63,10 @@ interface LogesTechsDriverApi {
     @GET("driver/customers/{customerId}/packages/accepted")
     suspend fun getAcceptedPackagesByCustomer(
         @Path("customerId") customerId: Long?,
+        @Query("villageId") villageId: Long?,
+        @Query("name") name: String?,
+        @Query("pageSize") pageSize: Int = 30,
+        @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
     ): Response<List<Package>?>?
 
     @GET("driver/packages/in-car/by-villages")

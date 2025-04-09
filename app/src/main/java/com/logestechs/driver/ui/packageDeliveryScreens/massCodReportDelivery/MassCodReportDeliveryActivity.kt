@@ -194,6 +194,15 @@ class MassCodReportDeliveryActivity : LogesTechsActivity(), View.OnClickListener
     }
 
     private fun validateInput(): Boolean {
+        if (companyConfigurations?.isForceDriversToAddAttachments == true) {
+            if (loadedImagesList.isEmpty()) {
+                Helper.showErrorMessage(
+                    this,
+                    getString(R.string.error_add_attachments)
+                )
+                return false
+            }
+        }
         return true
     }
 

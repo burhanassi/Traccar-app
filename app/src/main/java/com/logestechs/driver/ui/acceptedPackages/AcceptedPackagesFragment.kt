@@ -251,13 +251,13 @@ class AcceptedPackagesFragment(
         }
     }
 
-    private fun callGetAcceptedPackagesByCustomer(customer: Customer?) {
+    private fun callGetAcceptedPackagesByCustomer(customer: Customer?, village: Village?) {
         showWaitDialog()
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val response =
-                        ApiAdapter.apiClient.getAcceptedPackagesByCustomer(customerId = customer?.id)
+                        ApiAdapter.apiClient.getAcceptedPackagesByCustomer(customerId = customer?.id, village?.id, "${customer?.firstName} ${customer?.lastName}")
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                     }
@@ -484,8 +484,8 @@ class AcceptedPackagesFragment(
         startActivity(mIntent)
     }
 
-    override fun getAcceptedPackages(customer: Customer?) {
-        callGetAcceptedPackagesByCustomer(customer)
+    override fun getAcceptedPackages(customer: Customer?, village: Village?) {
+        callGetAcceptedPackagesByCustomer(customer, village)
     }
 
     override fun printAwb(customer: Customer?) {

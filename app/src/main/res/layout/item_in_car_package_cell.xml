@@ -179,7 +179,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:animateLayoutChanges="true"
-                    android:background="@color/beige_bridal_heath2"
+                    android:background="#80FFFBF5"
                     android:orientation="vertical"
                     tools:ignore="UselessParent">
 
