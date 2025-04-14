@@ -2249,6 +2249,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
         if (paymentDataList.isNotEmpty() && sum == packageCodToPay){
             callPayMultiWay()
+        } else if (pkg?.shipmentType == PackageType.REGULAR.name) {
+            makePackageDelivery()
         } else {
             Helper.showErrorMessage(
                 super.getContext(),
