@@ -204,6 +204,10 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             binding.textPaymentAmount.visibility = View.GONE
         }
 
+        if (pkg?.shipmentType == PackageType.REGULAR.name) {
+            binding.containerPaymentType.visibility = View.GONE
+        }
+
         handleWarningText()
     }
 
