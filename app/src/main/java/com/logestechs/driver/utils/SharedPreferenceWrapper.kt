@@ -114,6 +114,14 @@ class SharedPreferenceWrapper {
             return prefs.pull(SharedPrefsKeys.IS_WHATSAPP_BUSINESS.value, false)
         }
 
+        fun saveSubpackagesQuantity(quantity: Int?) {
+            prefs.push(SharedPrefsKeys.QUANTITY.value, quantity ?: 0)
+        }
+
+        fun getSubpackagesQuantity(): Int {
+            return prefs.pull(SharedPrefsKeys.QUANTITY.value, 0)
+        }
+
         //Driver Company Settings
         fun saveSelectedServerIp(selectedServerIp: String) {
             prefs.push(SharedPrefsKeys.SELECTED_SERVER_IP.value, selectedServerIp)
@@ -174,5 +182,6 @@ private enum class SharedPrefsKeys(val value: String) {
     SELECTED_SERVER_IP("selected_server_ip"),
     NOTIFICATIONS_COUNT("notifications_count"),
     SCAN_WAY("scan_way"),
-    INVOICE_NUMBER_FOR_DEEP_LINK("invoice_number_for_deep_link")
+    INVOICE_NUMBER_FOR_DEEP_LINK("invoice_number_for_deep_link"),
+    QUANTITY("quantity")
 }

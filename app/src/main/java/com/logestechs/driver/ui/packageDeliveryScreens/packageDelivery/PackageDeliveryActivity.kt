@@ -110,7 +110,6 @@ import java.util.Locale
 import java.util.UUID
 import android.util.TypedValue
 
-
 class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, ThumbnailsListListener,
     ConfirmationDialogActionListener,
     VerificationCodeDialogListener,
@@ -1927,6 +1926,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 )
                 mIntent.putExtra("barcode", pkg?.barcode)
                 mIntent.putExtra("invoice", pkg?.invoiceNumber)
+                SharedPreferenceWrapper.saveSubpackagesQuantity(pkg?.quantity ?: 0)
                 startActivityForResult(mIntent, AppConstants.REQUEST_VERIFY_PACKAGE)
             } else {
                 handlePackageDelivery()

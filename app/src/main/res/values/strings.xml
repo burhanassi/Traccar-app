@@ -407,4 +407,6 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="history_driver_deficient">Deficient History</string>
+    <string name="confirmed">Confirmed</string>
+    <string name="of">of</string>
 </resources>

@@ -11,6 +11,8 @@ import android.media.AudioManager
 import android.media.ToneGenerator
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
@@ -19,6 +21,7 @@ import android.view.SurfaceHolder
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
@@ -30,6 +33,8 @@ import com.logestechs.driver.utils.AppConstants
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsActivity
 import com.logestechs.driver.utils.SharedPreferenceWrapper
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.IOException
 
 @Suppress("DEPRECATION")
@@ -41,6 +46,10 @@ class VerifyPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener
 
     private var packageBarcode: String? = null
     private var invoiceBarcode: String? = null
+
+    private val scannedSubpackagesBarcodes = hashSetOf<String>()
+    private var quantity: Int = 0
+    private var counter: Int = 0
 
     private var scannedItemsHashMap: HashMap<String, String> = HashMap()
     var customer: Customer? = null
@@ -54,6 +63,7 @@ class VerifyPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener
     private var flashMode: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        quantity = SharedPreferenceWrapper.getSubpackagesQuantity()
         getExtras()
         binding = ActivityVerifyPackageDeliveryBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -154,29 +164,95 @@ class VerifyPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun handleDetectedBarcode(barcode: String) {
-        scannedItemsHashMap.clear()
-        if (!scannedItemsHashMap.containsKey(barcode)) {
-            scannedItemsHashMap[barcode] = barcode
-            toneGen1?.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
-            vibrate()
+        if (scannedItemsHashMap.containsKey(barcode)) return
+
+        scannedItemsHashMap[barcode] = barcode
+        toneGen1?.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
+        vibrate()
+
+        // Coroutine with 2-second delay (non-blocking)
+        lifecycleScope.launch { // Uses Activity's lifecycleScope
+            delay(2000) // 2 seconds delay
             executeBarcodeAction(barcode)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun executeBarcodeAction(barcode: String?) {
-        if (barcode == packageBarcode || barcode == invoiceBarcode) {
+        if (quantity != counter) {
+            if (quantity <= 1) {
+                if (barcode == packageBarcode || barcode == invoiceBarcode) {
+                    val resultIntent = Intent()
+                    resultIntent.putExtra("verificationStatus", true)
+                    setResult(RESULT_OK, resultIntent)
+                    finish()
+                } else {
+                    runOnUiThread {
+                        Helper.showErrorMessage(
+                            super.getContext(),
+                            getString(R.string.error_wrong_package)
+                        )
+                    }
+                }
+            } else {
+                if (barcode!!.contains(":")) {
+                    val parentBarcode = barcode.split(":")[0]
+                    if (parentBarcode == packageBarcode) {
+                        if (scannedSubpackagesBarcodes.contains(barcode)) {
+                            runOnUiThread {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_barcode_already_scanned)
+                                )
+                            }
+                        } else {
+                            scannedSubpackagesBarcodes.add(barcode)
+                            counter++
+                            runOnUiThread {
+                                Helper.showSuccessMessage(
+                                    super.getContext(),
+                                    "${getString(R.string.confirmed)} $counter ${getString(R.string.of)} $quantity"
+                                )
+                            }
+                        }
+                    } else {
+                        runOnUiThread {
+                            Helper.showErrorMessage(
+                                super.getContext(),
+                                getString(R.string.error_wrong_package)
+                            )
+                        }
+                    }
+                } else {
+                    if (barcode == packageBarcode) {
+                        runOnUiThread {
+                            Helper.showErrorMessage(
+                                this@VerifyPackageDeliveryActivity,
+                                getString(R.string.error_scan_all_items)
+                            )
+                        }
+                    } else {
+                        runOnUiThread {
+                            Helper.showErrorMessage(
+                                super.getContext(),
+                                getString(R.string.error_wrong_package)
+                            )
+                        }
+                    }
+                }
+            }
+        } else {
             val resultIntent = Intent()
             resultIntent.putExtra("verificationStatus", true)
             setResult(RESULT_OK, resultIntent)
             finish()
-        } else {
-            runOnUiThread {
-                Helper.showErrorMessage(
-                    super.getContext(),
-                    getString(R.string.error_wrong_package)
-                )
-            }
+        }
+
+        if (quantity == counter) {
+            val resultIntent = Intent()
+            resultIntent.putExtra("verificationStatus", true)
+            setResult(RESULT_OK, resultIntent)
+            finish()
         }
     }
 

@@ -404,4 +404,6 @@
     <string name="yes">نعم</string>
     <string name="no">لا</string>
     <string name="history_driver_deficient">حركات العجز</string>
+    <string name="confirmed">تم تأكيد</string>
+    <string name="of">من</string>
 </resources>
