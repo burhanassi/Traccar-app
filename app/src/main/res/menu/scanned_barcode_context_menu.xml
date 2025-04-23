@@ -3,4 +3,9 @@
     <item
         android:id="@+id/action_cancel_pickup"
         android:title="@string/cancel_pickup" />
+
+    <item
+        android:id="@+id/action_show_not_scanned_subpackages"
+        android:title="@string/show_not_scanned_subpackages"
+        />
 </menu>

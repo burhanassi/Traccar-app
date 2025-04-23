@@ -122,7 +122,8 @@ class ScannedBarcodeViewHolder(
     private var mAdapter: ScannedBarcodeCellAdapter
 ) :
     RecyclerView.ViewHolder(binding.root) {
-
+    val driverCompanyConfigurations =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
     fun bind(scannedItem: ScannedItem?) {
         if (scannedItem?.barcodeScanType == BarcodeScanType.PACKAGE_PICKUP) {
             val pkg = scannedItem.data as Package
@@ -186,6 +187,7 @@ class ScannedBarcodeViewHolder(
             binding.buttonContextMenu.setOnClickListener {
                 val popup = PopupMenu(mAdapter.context, binding.buttonContextMenu)
                 popup.inflate(R.menu.scanned_barcode_context_menu)
+                popup.menu.findItem(R.id.action_show_not_scanned_subpackages).isVisible = (scannedItem.data as Package).quantity!! > 1 && driverCompanyConfigurations?.isScanAllPackageAwbCopiesByDriver == true
                 popup.setOnMenuItemClickListener { item: MenuItem? ->
 
                     if (mAdapter.context != null) {
@@ -193,6 +195,12 @@ class ScannedBarcodeViewHolder(
                             R.id.action_cancel_pickup -> {
                                 mAdapter.listener?.onCancelPickup(
                                     adapterPosition,
+                                    scannedItem.data as Package
+                                )
+                            }
+
+                            R.id.action_show_not_scanned_subpackages -> {
+                                mAdapter.listener?.onShowSubpackages(
                                     scannedItem.data as Package
                                 )
                             }
