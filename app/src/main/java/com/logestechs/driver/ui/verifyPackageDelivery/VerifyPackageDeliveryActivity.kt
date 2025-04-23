@@ -53,6 +53,8 @@ class VerifyPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener
 
     private var scannedItemsHashMap: HashMap<String, String> = HashMap()
     var customer: Customer? = null
+    val driverCompanyConfigurations =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
     private var currentBarcodeRead: String? = null
     private val confirmTarget = 3
@@ -180,7 +182,7 @@ class VerifyPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener
     @RequiresApi(Build.VERSION_CODES.M)
     private fun executeBarcodeAction(barcode: String?) {
         if (quantity != counter) {
-            if (quantity <= 1) {
+            if (quantity <= 1 || driverCompanyConfigurations?.isScanAllPackageAwbCopiesByDriver == false) {
                 if (barcode == packageBarcode || barcode == invoiceBarcode) {
                     val resultIntent = Intent()
                     resultIntent.putExtra("verificationStatus", true)
