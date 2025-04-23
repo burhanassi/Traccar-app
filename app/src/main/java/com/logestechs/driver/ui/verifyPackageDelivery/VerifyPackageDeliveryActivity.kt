@@ -183,7 +183,15 @@ class VerifyPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener
     private fun executeBarcodeAction(barcode: String?) {
         if (quantity != counter) {
             if (quantity <= 1 || driverCompanyConfigurations?.isScanAllPackageAwbCopiesByDriver == false) {
-                if (barcode == packageBarcode || barcode == invoiceBarcode) {
+                if (barcode!!.contains(":")) {
+                    val parentBarcode = barcode.split(":")[0]
+                    if (parentBarcode == packageBarcode) {
+                        val resultIntent = Intent()
+                        resultIntent.putExtra("verificationStatus", true)
+                        setResult(RESULT_OK, resultIntent)
+                        finish()
+                    }
+                } else if (barcode == packageBarcode || barcode == invoiceBarcode) {
                     val resultIntent = Intent()
                     resultIntent.putExtra("verificationStatus", true)
                     setResult(RESULT_OK, resultIntent)
