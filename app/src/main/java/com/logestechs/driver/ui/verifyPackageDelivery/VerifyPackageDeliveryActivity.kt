@@ -190,6 +190,13 @@ class VerifyPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                         resultIntent.putExtra("verificationStatus", true)
                         setResult(RESULT_OK, resultIntent)
                         finish()
+                    } else {
+                        runOnUiThread {
+                            Helper.showErrorMessage(
+                                super.getContext(),
+                                getString(R.string.error_wrong_package)
+                            )
+                        }
                     }
                 } else if (barcode == packageBarcode || barcode == invoiceBarcode) {
                     val resultIntent = Intent()
