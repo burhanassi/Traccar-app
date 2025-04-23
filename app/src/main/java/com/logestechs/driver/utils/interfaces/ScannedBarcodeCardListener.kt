@@ -7,4 +7,8 @@ interface ScannedBarcodeCardListener {
         position: Int,
         pkg: Package
     )
+
+    fun onShowSubpackages(
+        pkg: Package
+    )
 }

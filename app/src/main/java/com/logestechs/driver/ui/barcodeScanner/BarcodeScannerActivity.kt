@@ -27,6 +27,7 @@ import com.logestechs.driver.databinding.ActivityBarcodeScannerBinding
 import com.logestechs.driver.utils.*
 import com.logestechs.driver.utils.adapters.ScannedBarcodeCellAdapter
 import com.logestechs.driver.utils.dialogs.InsertBarcodeDialog
+import com.logestechs.driver.utils.dialogs.NotScannedSubPackagesDialog
 import com.logestechs.driver.utils.dialogs.ShowPackageNoteDialog
 import com.logestechs.driver.utils.interfaces.InsertBarcodeDialogListener
 import com.logestechs.driver.utils.interfaces.ScannedBarcodeCardListener
@@ -71,6 +72,10 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
     private var isBackButtonEnabled: Boolean = true
     private var isJustOneParentPackage: Boolean = true
     private var parentBarcode: String = ""
+
+    private var notScannedSubPackages = mutableListOf<String>()
+    private var scannedSubPackages = mutableListOf<String>()
+    var notScannedSubPackagesDialog: NotScannedSubPackagesDialog? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBarcodeScannerBinding.inflate(layoutInflater)
@@ -202,8 +207,10 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                             if ((binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).totalQuantityScanned == 0) {
                                 callPickupPackage(barcode = parentBarcode)
                                 callPickupPackage(barcode = scannedBarcode)
+                                scannedSubPackages.add(scannedBarcode)
                             } else {
                                 callPickupPackage(barcode = scannedBarcode)
+                                scannedSubPackages.add(scannedBarcode)
                             }
                         }
                     } else {
@@ -324,8 +331,10 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                     if ((binding.rvScannedBarcodes.adapter as ScannedBarcodeCellAdapter).totalQuantityScanned == 0) {
                         callPickupPackage(barcode = parentBarcode)
                         callPickupPackage(barcode = barcode)
+                        scannedSubPackages.add(barcode)
                     } else {
                         callPickupPackage(barcode = barcode)
+                        scannedSubPackages.add(barcode)
                     }
                 }
             } else {
@@ -511,6 +520,8 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
                                 position
                             )
                             scannedItemsHashMap.remove(pkg?.barcode)
+                            scannedSubPackages.clear()
+                            notScannedSubPackages.clear()
                             binding.buttonDone.background = getDrawable(R.drawable.background_logestechs_button)
                             binding.buttonDone.setTextColor(resources.getColor(R.color.white))
                             isBackButtonEnabled = true
@@ -617,6 +628,23 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
         }
     }
 
+    private fun fillNotScannedSubpackages(pkg: Package) {
+        val quantity = pkg.quantity
+        if (quantity != null && quantity > 1 && pkg.subPackages == null) {
+            for (index in 1..quantity) {
+                val barcode = "${pkg.barcode}:0${index.toString().padStart(2, '0')}"
+                notScannedSubPackages.add(barcode)
+            }
+        } else {
+            for (item in pkg.subPackages!!) {
+                item.barcode?.let { notScannedSubPackages.add(it) }
+            }
+        }
+        notScannedSubPackages.removeAll(scannedSubPackages)
+        notScannedSubPackagesDialog = NotScannedSubPackagesDialog(this@BarcodeScannerActivity, notScannedSubPackages)
+        notScannedSubPackagesDialog?.showDialog()
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_done -> {
@@ -688,5 +716,9 @@ class BarcodeScannerActivity : LogesTechsActivity(), View.OnClickListener,
         } else {
             callCancelPickup(position, pkg)
         }
+    }
+
+    override fun onShowSubpackages(pkg: Package) {
+        fillNotScannedSubpackages(pkg)
     }
 }
