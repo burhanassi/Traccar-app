@@ -9,8 +9,10 @@ import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.api.requests.RejectPackageRequestBody
+import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemPendingPackageCellBinding
+import com.logestechs.driver.utils.AppCurrency
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.Helper.Companion.format
 import com.logestechs.driver.utils.SharedPreferenceWrapper
@@ -23,8 +25,8 @@ class PendingPackageCellAdapter(
     var packagesList: List<Package?>,
     var context: Context?,
     var listener: PendingPackagesCardListener?,
-    var rejectPackageDialogListener: RejectPackageDialogListener?,
-    var parentIndex: Int
+    var parentIndex: Int,
+    var loadedImagesList: ArrayList<LoadedImage>
 ) :
     RecyclerView.Adapter<PendingPackageCellAdapter.PendingPackageViewHolder>(), RejectPackageDialogListener {
     val companyConfigurations =
@@ -97,11 +99,9 @@ class PendingPackageCellAdapter(
                     when (item?.itemId) {
                         R.id.action_reject_package -> {
                             mAdapter.rejectedPackagePosition = adapterPosition
-                            RejectPackageDialog(
-                                mAdapter.context!!,
-                                mAdapter
-                            ).showDialog()
-
+                            if (mAdapter != null) {
+                                mAdapter.listener?.onShowRejectPackageDialog(mAdapter.parentIndex, adapterPosition)
+                            }
                         }
                     }
                     true
@@ -126,6 +126,37 @@ class PendingPackageCellAdapter(
             } else {
                 binding.containerReceiverInfo.visibility = View.GONE
                 binding.containerCod.visibility = View.GONE
+            }
+
+            //Receiver Contact Actions
+            binding.imageViewReceiverCall.setOnClickListener {
+                mAdapter.listener?.onCallReceiver(pkg, pkg?.receiverPhone)
+            }
+
+            binding.imageViewReceiverSms.setOnClickListener {
+                mAdapter.listener?.onSendSmsMessage(pkg)
+            }
+
+            binding.imageViewReceiverWhatsApp.setOnClickListener {
+                mAdapter.listener?.onSendWhatsAppMessage(pkg)
+            }
+
+            if (Helper.getCompanyCurrency() == AppCurrency.NIS.value) {
+                binding.imageViewReceiverWhatsAppSecondary.visibility = View.VISIBLE
+                binding.imageViewReceiverWhatsAppSecondary.setOnClickListener {
+                    mAdapter.listener?.onSendWhatsAppMessage(pkg, true)
+                }
+            } else {
+                binding.imageViewReceiverWhatsAppSecondary.visibility = View.GONE
+            }
+
+            if (pkg?.receiverPhone2?.isNotEmpty() == true) {
+                binding.imageViewReceiverCallSecondary.visibility = View.VISIBLE
+                binding.imageViewReceiverCallSecondary.setOnClickListener {
+                    mAdapter.listener?.onCallReceiver(pkg, pkg.receiverPhone2)
+                }
+            } else {
+                binding.imageViewReceiverCallSecondary.visibility = View.GONE
             }
         }
     }

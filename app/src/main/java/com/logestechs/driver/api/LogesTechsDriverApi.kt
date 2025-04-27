@@ -533,6 +533,12 @@ interface LogesTechsDriverApi {
     ): Response<PayMultiWayResponse?>?
 
     @Multipart
+    @POST("driver/attachment")
+    suspend fun uploadAttachmentImage(
+        @Part file: MultipartBody.Part?
+    ): Response<UploadImageResponse?>?
+
+    @Multipart
     @POST("handler/item/image/upload")
     suspend fun uploadPodImageForRejectedItem(
         @Query("barcode") barcode: String,

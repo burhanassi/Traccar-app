@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.logestechs.driver.R
 import com.logestechs.driver.api.requests.RejectPackageRequestBody
 import com.logestechs.driver.data.model.Customer
+import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.data.model.Package
 import com.logestechs.driver.databinding.ItemPendingPackageCustomerCellBinding
 import com.logestechs.driver.utils.SharedPreferenceWrapper
@@ -26,7 +27,8 @@ class PendingPackageCustomerCellAdapter(
     var customersList: ArrayList<Customer?>,
     var context: Context?,
     var listener: PendingPackagesCardListener?,
-    var rejectPackageDialogListener: RejectPackageDialogListener?
+    var rejectPackageDialogListener: RejectPackageDialogListener?,
+    var loadedImagesList: ArrayList<LoadedImage>
 ) :
     RecyclerView.Adapter<PendingPackageCustomerCellAdapter.CustomerViewHolder>(), RejectPackageDialogListener {
 
@@ -74,6 +76,7 @@ class PendingPackageCustomerCellAdapter(
     override fun onPackageRejected(rejectPackageRequestBody: RejectPackageRequestBody) {
         listener?.rejectCustomerPackages(rejectedPackagePosition, rejectPackageRequestBody)
     }
+
     class CustomerViewHolder(
         var binding: ItemPendingPackageCustomerCellBinding,
         private var parent: ViewGroup,
@@ -106,10 +109,7 @@ class PendingPackageCustomerCellAdapter(
                         R.id.action_reject_customer_packages -> {
 //                            mAdapter.listener?.rejectCustomerPackages(adapterPosition)
                             mAdapter.rejectedPackagePosition = adapterPosition
-                            RejectPackageDialog(
-                                mAdapter.context!!,
-                                mAdapter
-                            ).showDialog()
+                            mAdapter.listener?.onShowRejectCustomerPkgsDialog()
                         }
                     }
                     true
@@ -130,8 +130,8 @@ class PendingPackageCustomerCellAdapter(
                 customer?.packages ?: ArrayList<Package>(),
                 mAdapter.context,
                 mAdapter.listener,
-                null,
-                adapterPosition
+                adapterPosition,
+                mAdapter.loadedImagesList
             )
             binding.rvPackages.layoutManager = layoutManager
             binding.rvPackages.adapter = childItemAdapter
@@ -202,7 +202,5 @@ class PendingPackageCustomerCellAdapter(
             }
         }
     }
-
-
 }
 

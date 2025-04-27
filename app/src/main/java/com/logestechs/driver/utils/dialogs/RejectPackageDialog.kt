@@ -7,20 +7,27 @@ import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.inputmethod.InputMethodManager
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.logestechs.driver.R
 import com.logestechs.driver.api.requests.RejectPackageRequestBody
+import com.logestechs.driver.data.model.LoadedImage
 import com.logestechs.driver.databinding.DialogRejectPackageBinding
 import com.logestechs.driver.utils.Helper
 import com.logestechs.driver.utils.LogesTechsApp
+import com.logestechs.driver.utils.adapters.ThumbnailsAdapter
+import com.logestechs.driver.utils.interfaces.ImageActionListener
 import com.logestechs.driver.utils.interfaces.RadioGroupListListener
 import com.logestechs.driver.utils.interfaces.RejectPackageDialogListener
+import com.logestechs.driver.utils.interfaces.ThumbnailsListListener
 
 class RejectPackageDialog(
     private val context: Context,
-    private val listener: RejectPackageDialogListener?
-) {
+    private val listener: RejectPackageDialogListener?,
+    private val imageActionListener: ImageActionListener?,
+    var loadedImagesList: ArrayList<LoadedImage>,
+): ThumbnailsListListener {
 
-    private lateinit var binding: DialogRejectPackageBinding
+    lateinit var binding: DialogRejectPackageBinding
     private lateinit var alertDialog: AlertDialog
 
 
@@ -36,6 +43,12 @@ class RejectPackageDialog(
         val alertDialog = dialogBuilder.create()
         this.binding = binding
 
+        binding.rvThumbnails.apply {
+            layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = ThumbnailsAdapter(loadedImagesList, this@RejectPackageDialog)
+        }
+
         binding.buttonCancel.setOnClickListener {
             alertDialog.dismiss()
         }
@@ -45,7 +58,8 @@ class RejectPackageDialog(
                 alertDialog.dismiss()
                 listener?.onPackageRejected(
                     RejectPackageRequestBody(
-                        binding.etReason.text.toString()
+                        binding.etReason.text.toString(),
+                        getPodImagesUrls()
                     )
                 )
             } else {
@@ -56,6 +70,13 @@ class RejectPackageDialog(
             }
         }
 
+        binding.buttonCaptureImage.setOnClickListener {
+            imageActionListener?.onCaptureImage()
+        }
+
+        binding.buttonLoadImage.setOnClickListener {
+            imageActionListener?.onLoadImage()
+        }
 
         binding.root.setOnClickListener {
             clearFocus()
@@ -64,6 +85,18 @@ class RejectPackageDialog(
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.setCanceledOnTouchOutside(false)
         alertDialog.show()
+    }
+
+    private fun getPodImagesUrls(): List<String?>? {
+        return if (loadedImagesList.isNotEmpty()) {
+            val list: ArrayList<String?> = ArrayList()
+            for (item in loadedImagesList) {
+                list.add(item.imageUrl)
+            }
+            list
+        } else {
+            null
+        }
     }
 
 
@@ -75,5 +108,9 @@ class RejectPackageDialog(
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
         binding.etReason.clearFocus()
+    }
+
+    override fun onDeleteImage(position: Int) {
+        imageActionListener?.onDeleteImage(position)
     }
 }
