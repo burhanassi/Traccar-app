@@ -47,7 +47,7 @@ class VerifyPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener
     private var packageBarcode: String? = null
     private var invoiceBarcode: String? = null
 
-    private val scannedSubpackagesBarcodes = hashSetOf<String>()
+    private var scannedSubpackagesBarcodes: List<String> = emptyList()
     private var quantity: Int = 0
     private var counter: Int = 0
 
@@ -63,6 +63,8 @@ class VerifyPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener
     private var toneGen1: ToneGenerator? = null
 
     private var flashMode: Boolean = false
+
+    private var isPartiallyDelivered: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         quantity = SharedPreferenceWrapper.getSubpackagesQuantity()
@@ -79,6 +81,11 @@ class VerifyPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener
         initListeners()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        SharedPreferenceWrapper.resetIsPartiallyDelivered()
+    }
+
     private fun getExtras() {
         val extras = intent.extras
         if (extras != null) {
@@ -89,10 +96,12 @@ class VerifyPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener
 
     private fun initUi() {
         binding.textTitle.text = getText(R.string.please_scan_package_barcode)
+        binding.buttonDoneDeliver.visibility = View.GONE
     }
 
     private fun initListeners() {
         binding.buttonTorch.setOnClickListener(this)
+        binding.buttonDoneDeliver.setOnClickListener(this)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -223,13 +232,17 @@ class VerifyPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener
                                 )
                             }
                         } else {
-                            scannedSubpackagesBarcodes.add(barcode)
+                            scannedSubpackagesBarcodes = scannedSubpackagesBarcodes + barcode
                             counter++
                             runOnUiThread {
                                 Helper.showSuccessMessage(
                                     super.getContext(),
                                     "${getString(R.string.confirmed)} $counter ${getString(R.string.of)} $quantity"
                                 )
+                            }
+                            isPartiallyDelivered = SharedPreferenceWrapper.getIsPartiallyDelivered()
+                            if (isPartiallyDelivered) {
+                                binding.buttonDoneDeliver.visibility = View.VISIBLE
                             }
                         }
                     } else {
@@ -326,6 +339,15 @@ class VerifyPackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener
         when (v?.id) {
             R.id.button_torch -> {
                 openFlashLight()
+            }
+
+            R.id.button_done_deliver -> {
+                val resultIntent = Intent()
+                resultIntent.putExtra("verificationStatus", true)
+                val barcodes = scannedSubpackagesBarcodes
+                resultIntent.putExtra("subpackagesBarcodes", ArrayList(barcodes))
+                setResult(RESULT_OK, resultIntent)
+                finish()
             }
         }
     }

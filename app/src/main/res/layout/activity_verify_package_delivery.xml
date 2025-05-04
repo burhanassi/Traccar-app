@@ -109,6 +109,20 @@
                     android:layout_marginBottom="24dp"
                     android:src="@drawable/ic_torch_off"
                     tools:ignore="ContentDescription" />
+                <Button
+                    android:id="@+id/button_done_deliver"
+                    style="@style/LogesTechsMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_gravity="start|bottom"
+                    android:layout_marginStart="160dp"
+                    android:layout_marginBottom="24dp"
+                    android:background="@drawable/background_logestechs_button"
+                    android:textAllCaps="false"
+                    android:paddingStart="32dp"
+                    android:paddingEnd="32dp"
+                    android:text="@string/button_done"
+                    android:textColor="#fff" />
 
             </FrameLayout>
         </LinearLayout>

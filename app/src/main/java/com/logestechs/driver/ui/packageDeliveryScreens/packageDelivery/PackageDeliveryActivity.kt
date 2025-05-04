@@ -151,6 +151,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     private var sum: Double? = 0.0
     private var paymentDataList = mutableListOf<PayMultiWayRequestBody>()
 
+    private var scannedSubpackagesBarcodes: List<String> = emptyList()
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -180,28 +181,26 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             adapter = ThumbnailsAdapter(loadedImagesList, this@PackageDeliveryActivity)
         }
 
-        if (companyConfigurations?.isAddingPaymentTypesEnabled == false) {
-            if (companyConfigurations?.isPartialDeliveryEnabled == true) {
-                binding.containerPartialDeliveryControls.visibility = View.VISIBLE
-            }
-
-            if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true) {
-                binding.containerSignature.visibility = View.GONE
-            }
-
-            if (companyConfigurations?.isShowPaymentTypesWhenDriverDeliver == false) {
-                binding.containerPaymentType.visibility = View.GONE
-            }
-
-            if (pkg?.shipmentType == PackageType.REGULAR.name) {
-                binding.containerPaymentType.visibility = View.GONE
-            }
-
-            if (Helper.getCountryCode() == CountriesCode.SAR.value) {
-                binding.containerPaymentGateways.visibility = View.VISIBLE
-            }
-            binding.textPaymentAmount.visibility = View.GONE
+        if (companyConfigurations?.isPartialDeliveryEnabled == true) {
+            binding.containerPartialDeliveryControls.visibility = View.VISIBLE
         }
+
+        if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true) {
+            binding.containerSignature.visibility = View.GONE
+        }
+
+        if (companyConfigurations?.isShowPaymentTypesWhenDriverDeliver == false) {
+            binding.containerPaymentType.visibility = View.GONE
+        }
+
+        if (pkg?.shipmentType == PackageType.REGULAR.name) {
+            binding.containerPaymentType.visibility = View.GONE
+        }
+
+        if (Helper.getCountryCode() == CountriesCode.SAR.value) {
+            binding.containerPaymentGateways.visibility = View.VISIBLE
+        }
+        binding.textPaymentAmount.visibility = View.GONE
 
         if (pkg?.shipmentType == PackageType.REGULAR.name) {
             binding.containerPaymentType.visibility = View.GONE
@@ -696,6 +695,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             AppConstants.REQUEST_VERIFY_PACKAGE -> {
                 if (resultCode == RESULT_OK) {
                     val verificationStatus = data?.getBooleanExtra("verificationStatus", false)
+                    val barcodes = data?.getStringArrayListExtra("subpackagesBarcodes") ?: emptyList()
+                    scannedSubpackagesBarcodes = barcodes
                     if (verificationStatus == true) {
                         handlePackageDelivery()
                     } else {
@@ -1347,8 +1348,10 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     var note: String? = null
+                    var subPackgesBarCode: List<String?>? = null
                     if (selectedDeliveryType == DeliveryType.PARTIAL) {
                         note = binding.etPartialDeliveryNote.text.toString()
+                        subPackgesBarCode = scannedSubpackagesBarcodes.toList()
                     }
                     val response = ApiAdapter.apiClient.deliverPackage(
                         pkg?.barcode,
@@ -1366,7 +1369,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                             null,
                             paymentType,
                             paymentTypeId,
-                            items
+                            items,
+                            subPackgesBarCode
                         )
                     )
                     withContext(Dispatchers.Main) {
@@ -1927,6 +1931,11 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 mIntent.putExtra("barcode", pkg?.barcode)
                 mIntent.putExtra("invoice", pkg?.invoiceNumber)
                 SharedPreferenceWrapper.saveSubpackagesQuantity(pkg?.quantity ?: 0)
+                if (binding.radioButtonFullDelivery.isChecked) {
+                    SharedPreferenceWrapper.resetIsPartiallyDelivered()
+                } else if (binding.radioButtonPartialDelivery.isChecked) {
+                    SharedPreferenceWrapper.saveIsPartiallyDelivered(true)
+                }
                 startActivityForResult(mIntent, AppConstants.REQUEST_VERIFY_PACKAGE)
             } else {
                 handlePackageDelivery()
@@ -1963,7 +1972,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             .locale(Locale.getDefault())
             .networkConfiguration(NetworkConfiguration.SIM_PREFERRED)
             .uiPosition(UIPosition.CENTER_BOTTOM)
-            .paymentText(PaymentText("يرجى تمرير الطاقة", "please tap your card"))
+            .paymentText(PaymentText("يرجى تمرير البطاقة", "please tap your card"))
             .loadingUi(true)
             .build()
 
