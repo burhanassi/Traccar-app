@@ -821,6 +821,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         for (paymentType in paymentTypes) {
             val statusSelector = StatusSelector(this)
             statusSelector.setTextStatus(paymentType.paymentTypeName)
+            statusSelector.enumValue = paymentType.staticPaymentTypeName
 
             val horizontalLayout = LinearLayout(this).apply {
                 orientation = LinearLayout.HORIZONTAL
@@ -1886,7 +1887,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     }
 
     private fun handlePackageDelivery() {
-        if (selectedPaymentType?.textView?.text == PaymentType.CLICK_PAY.englishLabel) {
+        if (selectedPaymentType?.textView?.text == PaymentType.CLICK_PAY.englishLabel || selectedPaymentType?.enumValue == PaymentType.CLICK_PAY.name) {
             if (isClickPayVerified) {
                 if (companyConfigurations?.isSignatureOnPackageDeliveryDisabled == true) {
                     callDeliverPackage(null)
@@ -2169,7 +2170,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             if (companyConfigurations?.isEnableDeliverByMultiPaymentTypes == true) {
                 submitValues()
             } else {
-                if (selectedPaymentType?.textView?.text == PaymentType.INTER_PAY.englishLabel) {
+                if (selectedPaymentType?.textView?.text == PaymentType.INTER_PAY.englishLabel || selectedPaymentType?.enumValue == PaymentType.INTER_PAY.name) {
                     if (isAppInstalled(packageManager, AppConstants.SOFTPOS_PACKAGE_NAME)) {
                         startSoftposApp(pkg?.cod?.format()!!)
                         return
@@ -2178,9 +2179,9 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                             super.getContext(), getString(R.string.error_app_is_not_installed)
                         )
                     }
-                } else if (selectedPaymentType?.textView?.text == PaymentType.CLICK_PAY.englishLabel) {
+                } else if (selectedPaymentType?.textView?.text == PaymentType.CLICK_PAY.englishLabel || selectedPaymentType?.enumValue == PaymentType.CLICK_PAY.name) {
                     callVerifyClickPay()
-                } else if (selectedPaymentType?.textView?.text == PaymentType.NEAR_PAY.englishLabel) {
+                } else if (selectedPaymentType?.textView?.text == PaymentType.NEAR_PAY.englishLabel || selectedPaymentType?.enumValue == PaymentType.NEAR_PAY.name) {
                     startNearPay(pkg?.cod!!)
                 } else {
                     makePackageDelivery()
@@ -2205,7 +2206,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         this.selectedPaymentType = selectedPaymentType
         this.paymentTypeId = paymentTypeId
 
-        if (selectedPaymentType?.textView?.text == PaymentType.INTER_PAY.englishLabel) {
+        if (selectedPaymentType?.textView?.text == PaymentType.INTER_PAY.englishLabel || selectedPaymentType?.enumValue == PaymentType.INTER_PAY.name) {
             if (isAppInstalled(packageManager, AppConstants.SOFTPOS_PACKAGE_NAME)) {
                 startSoftposApp(packageCodToPay.format())
                 return
@@ -2214,7 +2215,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     super.getContext(), getString(R.string.error_app_is_not_installed)
                 )
             }
-        } else if (selectedPaymentType?.textView?.text == PaymentType.NEAR_PAY.englishLabel) {
+        } else if (selectedPaymentType?.textView?.text == PaymentType.NEAR_PAY.englishLabel || selectedPaymentType?.enumValue == PaymentType.NEAR_PAY.name) {
             startNearPay(packageCodToPay)
         } else {
             callPayMultiWay()
