@@ -1034,6 +1034,11 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     val amount = paymentSelector.editText.text.toString().toDoubleOrNull()
                     if (amount == null || amount == 0.0) {
                         paymentDataList.removeAll { it.paymentType == paymentSelector.selector.enumValue }
+                        if (paymentDataList.size > 3) {
+                            paymentDataList.removeLast()
+                            Helper.showErrorMessage(this@PackageDeliveryActivity, getString(R.string.error_max_payment_methods_selected))
+                            paymentSelector.editText.setText("")
+                        }
                     } else {
                         // Update or add the new amount for this paymentTypeId
                         val paymentData = PayMultiWayRequestBody(
@@ -1043,6 +1048,11 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                         )
                         paymentDataList.removeAll { it.paymentType == paymentSelector.selector.enumValue }
                         paymentDataList.add(paymentData)
+                        if (paymentDataList.size > 3) {
+                            paymentDataList.removeLast()
+                            Helper.showErrorMessage(this@PackageDeliveryActivity, getString(R.string.error_max_payment_methods_selected))
+                            paymentSelector.editText.setText("")
+                        }
                     }
 
                     Log.d("paymentDataList", "${paymentDataList.toString()}")
