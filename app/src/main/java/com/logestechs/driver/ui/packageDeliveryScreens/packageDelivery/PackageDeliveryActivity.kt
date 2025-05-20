@@ -199,6 +199,11 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
         if (Helper.getCountryCode() == CountriesCode.SAR.value) {
             binding.containerPaymentGateways.visibility = View.VISIBLE
+            if (companyConfigurations?.isEnableDeliverByMultiPaymentTypes != true) {
+                binding.textFieldClickPay.visibility = View.GONE
+                binding.textFieldInterPay.visibility = View.GONE
+                binding.textFieldNearPay.visibility =View.GONE
+            }
         }
         binding.textPaymentAmount.visibility = View.GONE
 
@@ -939,6 +944,11 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                                 amount = amount
                             )
                             paymentDataList.add(paymentData)
+                        }
+                        if (paymentDataList.size > 4) {
+                            paymentDataList.removeLast()
+                            Helper.showErrorMessage(this@PackageDeliveryActivity, getString(R.string.error_max_payment_methods_selected))
+                            textField.setText("")
                         }
                     }
                     Log.d("paymentDataList", "${paymentDataList.toString()}")
