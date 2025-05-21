@@ -51,5 +51,6 @@ data class DriverCompanyConfigurations(
     var isAllowAddingTelecomeDevices: Boolean? = null,
     var isAllowDriverChangePackageType: Boolean? = null,
     var isEnableDriverDeficitBalance: Boolean? = null,
-    var proofOfDeliveryShipmentTypes: List<String>? = null
+    var proofOfDeliveryShipmentTypes: List<String>? = null,
+    var isEnableSkipScanLocationWhenPickingItems: Boolean? = null
 )

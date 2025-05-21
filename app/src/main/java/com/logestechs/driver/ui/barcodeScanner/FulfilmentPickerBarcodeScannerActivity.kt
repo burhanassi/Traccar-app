@@ -80,6 +80,9 @@ class FulfilmentPickerBarcodeScannerActivity :
     private var isBarcodeScanningAllowed = true
     private var isPickWithoutTote: Boolean? = null
 
+    private var companyConfigurations: DriverCompanyConfigurations? =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFulfilmentPickerBarcodeScannerBinding.inflate(layoutInflater)
@@ -348,13 +351,18 @@ class FulfilmentPickerBarcodeScannerActivity :
                     productId = productBarcodes[barcode]
                     scannedProductBarcode = barcode
                     stopBarcodeScanning()
-                    this.runOnUiThread {
-                        ChooseLocationDialog(
-                            this@FulfilmentPickerBarcodeScannerActivity,
-                            this@FulfilmentPickerBarcodeScannerActivity,
-                            selectedFulfilmentOrder?.customerId!!,
-                            productId!!
-                        ).showDialog()
+                    if (companyConfigurations?.isEnableSkipScanLocationWhenPickingItems == false) {
+                        this.runOnUiThread {
+                            ChooseLocationDialog(
+                                this@FulfilmentPickerBarcodeScannerActivity,
+                                this@FulfilmentPickerBarcodeScannerActivity,
+                                selectedFulfilmentOrder?.customerId!!,
+                                productId!!
+                            ).showDialog()
+                        }
+                    } else {
+                        resumeBarcodeScanning()
+                        callGetMaxQuantity()
                     }
                 } else {
                     callScanItemIntoTote(barcode)
