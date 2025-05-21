@@ -6,5 +6,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class GetDeficitBalanceResponse(
     var id: Long,
-    var amount: Int? = null,
+    var amount: Double? = null,
 ) : Parcelable
