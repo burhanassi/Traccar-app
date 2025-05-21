@@ -36,10 +36,10 @@ data class Customer(
     var isExpanded: Boolean = false
 ) : Parcelable {
     fun getFullName(): String {
-        return if (middleName?.trim().isNullOrEmpty()) {
-            "$firstName $lastName"
+        return if (lastName?.trim().isNullOrEmpty()) {
+            "${firstName?.trim()} (${businessName?.trim()})"
         } else {
-            "$firstName $middleName $lastName"
+            "${firstName?.trim()} ${lastName?.trim()}(${businessName?.trim()})"
         }
     }
 }
