@@ -197,7 +197,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             binding.containerPaymentType.visibility = View.GONE
         }
 
-        if (Helper.getCountryCode() == CountriesCode.SAR.value) {
+        if (Helper.getCountryCode() == CountriesCode.SAR.value && companyConfigurations?.isAddingPaymentTypesEnabled == false) {
             binding.containerPaymentGateways.visibility = View.VISIBLE
             if (companyConfigurations?.isEnableDeliverByMultiPaymentTypes != true) {
                 binding.textFieldClickPay.visibility = View.GONE
