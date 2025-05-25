@@ -37,9 +37,15 @@ data class Customer(
 ) : Parcelable {
     fun getFullName(): String {
         return if (lastName?.trim().isNullOrEmpty()) {
-            "${firstName?.trim()} (${businessName?.trim()})"
-        } else {
+            if (!businessName?.trim().isNullOrEmpty()) {
+                "${firstName?.trim()} (${businessName?.trim()})"
+            } else {
+                "${firstName?.trim()}"
+            }
+        } else if (!businessName?.trim().isNullOrEmpty()){
             "${firstName?.trim()} ${lastName?.trim()}(${businessName?.trim()})"
+        } else {
+            "${firstName?.trim()} ${lastName?.trim()}"
         }
     }
 }
