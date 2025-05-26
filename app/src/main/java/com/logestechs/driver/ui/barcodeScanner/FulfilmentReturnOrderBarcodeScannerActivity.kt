@@ -417,6 +417,7 @@ class FulfilmentReturnOrderBarcodeScannerActivity :
 
     private fun initListeners() {
         binding.buttonSwitchBinAndLocation.setOnClickListener(this)
+        binding.buttonDone.setOnClickListener(this)
     }
 
     private fun initUI() {
@@ -486,6 +487,7 @@ class FulfilmentReturnOrderBarcodeScannerActivity :
 
     private fun showScannedItemsContainer() {
         binding.containerScannedItems.visibility = View.VISIBLE
+        binding.buttonDone.visibility = View.VISIBLE
     }
 
     private fun hideScannedItemsContainer() {
@@ -934,6 +936,10 @@ class FulfilmentReturnOrderBarcodeScannerActivity :
                 } else {
                     binding.textTitle.text = getString(R.string.please_scan_location_barcode)
                 }
+            }
+
+            R.id.button_done -> {
+                onBackPressed()
             }
         }
 

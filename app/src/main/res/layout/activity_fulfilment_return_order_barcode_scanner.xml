@@ -112,6 +112,20 @@
                     android:overScrollMode="never"
                     tools:listitem="@layout/item_pending_package_customer_cell" />
             </LinearLayout>
+            <Button
+                android:id="@+id/button_done"
+                style="@style/LogesTechsMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/background_logestechs_button"
+                android:minWidth="115dp"
+                android:text="@string/done"
+                android:layout_gravity="center"
+                android:textAllCaps="false"
+                android:visibility="gone"
+                android:textColor="#fff" />
         </LinearLayout>
 
     </FrameLayout>
