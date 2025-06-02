@@ -92,6 +92,7 @@ class FulfilmentPackerBarcodeScannerActivity :
         initRecycler()
         initListeners()
         initUi()
+        callGetPickedItems()
     }
 
     private fun handleSelectedScanMode() {
@@ -143,6 +144,14 @@ class FulfilmentPackerBarcodeScannerActivity :
 
     private fun initRecycler() {
         binding.rvScannedBarcodes.apply {
+            layoutManager = LinearLayoutManager(this@FulfilmentPackerBarcodeScannerActivity)
+            adapter =
+                FulfilmentOrderItemToPackCellAdapter(
+                    ArrayList(),
+                    this@FulfilmentPackerBarcodeScannerActivity
+                )
+        }
+        binding.rvPickedItems.apply {
             layoutManager = LinearLayoutManager(this@FulfilmentPackerBarcodeScannerActivity)
             adapter =
                 FulfilmentOrderItemToPackCellAdapter(
@@ -388,6 +397,62 @@ class FulfilmentPackerBarcodeScannerActivity :
                     }
                 } catch (e: Exception) {
                     scannedItemsHashMap.remove(barcode)
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            this.runOnUiThread {
+                hideWaitDialog()
+                Helper.showErrorMessage(
+                    super.getContext(), getString(R.string.error_check_internet_connection)
+                )
+            }
+        }
+    }
+
+    private fun callGetPickedItems() {
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    var response = ApiAdapter.apiClient.getPickedItems(
+                        fulfilmentOrder?.id!!
+                    )
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            val body = response.body()
+                            for (item in body?.data!!) {
+                                (binding.rvPickedItems.adapter as FulfilmentOrderItemToPackCellAdapter)
+                                    .insertItem(item)
+                            }
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
                     hideWaitDialog()
                     Helper.logException(e, Throwable().stackTraceToString())
                     withContext(Dispatchers.Main) {

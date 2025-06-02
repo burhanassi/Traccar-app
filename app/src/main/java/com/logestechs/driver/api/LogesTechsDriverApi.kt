@@ -867,4 +867,9 @@ interface LogesTechsDriverApi {
         @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
         @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString()
     ): Response<GetDeficitBalanceHistoryResponse>?
+
+    @GET("handler/fulfillment/orders/{orderId}/picked-items")
+    suspend fun getPickedItems(
+        @Path("orderId") orderId: Long?
+    ): Response<GetPickedItemsResponse>?
 }
