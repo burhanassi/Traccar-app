@@ -147,6 +147,12 @@ class InCarPackageCellAdapter(
                 binding.itemShipmentType.root.visibility = View.GONE
             }
 
+            if (pkg?.isPackageHasDeliveryNote == true) {
+                binding.itemDeliveryNote.textItem.text = mAdapter.context?.getString(R.string.has_delivery_note)
+            } else {
+                binding.itemDeliveryNote.textItem.text = mAdapter.context?.getString(R.string.no_delivery_note)
+            }
+
             binding.itemPackageBarcode.textItem.text = pkg?.barcode
 
             if (pkg?.notes?.trim().isNullOrEmpty()) {

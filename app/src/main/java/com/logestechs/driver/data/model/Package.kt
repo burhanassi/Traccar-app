@@ -122,6 +122,7 @@ data class Package(
     var msisdn: String? = null,
     var simNumber: String? = null,
     val subPackages: ArrayList<SubPackage>? = null,
+    val isPackageHasDeliveryNote: Boolean? = null,
 ) : Parcelable {
     fun getFullSenderName(): String {
         return if (senderMiddleName?.trim().isNullOrEmpty()) {
