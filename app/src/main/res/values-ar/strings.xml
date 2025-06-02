@@ -410,6 +410,6 @@
     <string name="not_scanned_subpackages">الطرود الفرعية غير الممسوحة</string>
     <string name="all_subpackages_scanned">تم مسح جميع الطرود الفرعية</string>
     <string name="error_max_payment_methods_selected">يمكنك اختيار ثلاث طرق فقط</string>
-    <string name="has_delivery_note">يوجد ملاحظة توصيل</string>
-    <string name="no_delivery_note">لا يوجد ملاحظة توصيل</string>
+    <string name="has_delivery_note">يوجد وصل استلام</string>
+    <string name="no_delivery_note">لا يوجد وصل استلام</string>
 </resources>
