@@ -415,4 +415,7 @@
     <string name="error_max_payment_methods_selected">Only 3 ways can be selected</string>
     <string name="has_delivery_note">Has delivery note</string>
     <string name="no_delivery_note">No delivery note</string>
+    <string name="account_manager_name">Account Manager Name : </string>
+    <string name="account_manager_contact_number">Account Manager Contact Number : </string>
+    <string name="cr_number">CR : </string>
 </resources>

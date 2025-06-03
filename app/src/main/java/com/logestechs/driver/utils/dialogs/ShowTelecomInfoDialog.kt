@@ -72,6 +72,24 @@ class ShowTelecomInfoDialog(
             binding.etSimNumber.text = "N/A"
         }
 
+        if (pkg?.accountManagerName != null) {
+            binding.etAccountManagerName.text = pkg?.accountManagerName
+        } else {
+            binding.etAccountManagerName.text = "N/A"
+        }
+
+        if (pkg?.accountManagerContactNumber != null) {
+            binding.etAccountManagerNumber.text = pkg?.accountManagerContactNumber
+        } else {
+            binding.etAccountManagerNumber.text = "N/A"
+        }
+
+        if (pkg?.crNumber != null) {
+            binding.etCr.text = pkg?.crNumber
+        } else {
+            binding.etCr.text = "N/A"
+        }
+
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.setCanceledOnTouchOutside(false)
         alertDialog.show()
