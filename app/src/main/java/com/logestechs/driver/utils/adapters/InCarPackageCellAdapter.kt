@@ -153,6 +153,13 @@ class InCarPackageCellAdapter(
                 binding.itemDeliveryNote.textItem.text = mAdapter.context?.getString(R.string.no_delivery_note)
             }
 
+            if (!pkg?.nationalAddress.isNullOrEmpty()) {
+                binding.itemNationalAddress.root.visibility = View.VISIBLE
+                binding.itemNationalAddress.textItem.text = pkg?.nationalAddress
+            } else {
+                binding.itemNationalAddress.root.visibility = View.GONE
+            }
+
             binding.itemPackageBarcode.textItem.text = pkg?.barcode
 
             if (pkg?.notes?.trim().isNullOrEmpty()) {

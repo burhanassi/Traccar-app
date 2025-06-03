@@ -50,6 +50,7 @@ data class Package(
     //addresses
     var originAddress: Address? = null,
     var destinationAddress: Address? = null,
+    var nationalAddress: String? = null,
 
     @SerializedName("originAddressId")
     var originAddressID: Long? = null,
