@@ -125,6 +125,9 @@ data class Package(
     val subPackages: ArrayList<SubPackage>? = null,
     val isPackageHasDeliveryNote: Boolean? = null,
 
+    val accountManagerName: String? = null,
+    val accountManagerContactNumber: String? = null,
+    val crNumber: String? = null,
 ) : Parcelable {
     fun getFullSenderName(): String {
         return if (senderMiddleName?.trim().isNullOrEmpty()) {

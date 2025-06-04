@@ -7,12 +7,13 @@ import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import androidx.databinding.DataBindingUtil
 import com.logestechs.driver.R
-import com.logestechs.driver.data.model.Package
+import com.logestechs.driver.api.responses.GetTelecomInfoResponse
 import com.logestechs.driver.databinding.DialogShowTelecomInfoBinding
+import retrofit2.Response
 
 class ShowTelecomInfoDialog(
     var context: Context,
-    var pkg: Package?
+    var response: GetTelecomInfoResponse?
 ) {
 
     lateinit var binding: DialogShowTelecomInfoBinding
@@ -32,44 +33,62 @@ class ShowTelecomInfoDialog(
             alertDialog.dismiss()
         }
 
-        if (pkg?.invoiceNumber != null) {
-            binding.etSupplierInvoice.text = pkg?.invoiceNumber
+        if (response?.supplierInvoice != null) {
+            binding.etSupplierInvoice.text = response?.supplierInvoice
         } else {
             binding.etSupplierInvoice.text = "N/A"
         }
 
-        if (pkg?.thirdPartyTrackingNo != null) {
-            binding.etThirdPartyTrackingNo.text = pkg?.thirdPartyTrackingNo.toString()
+        if (response?.thirdPartyTrackingNo != null) {
+            binding.etThirdPartyTrackingNo.text = response?.thirdPartyTrackingNo.toString()
         } else {
             binding.etThirdPartyTrackingNo.text = "N/A"
         }
 
-        if (pkg?.isFingerprintRequired != null) {
-            binding.etIsFingerprintRequired.text = if (pkg?.isFingerprintRequired == true) { "YES"} else { "NO"}
+        if (response?.isFingerprintRequired != null) {
+            binding.etIsFingerprintRequired.text = if (response?.isFingerprintRequired == true) { "YES"} else { "NO"}
         }
 
-        if (pkg?.thirdPartyBarcode != null) {
-            binding.etThirdPartyBarcode.text = pkg?.thirdPartyBarcode
+        if (response?.thirdPartyBarcode != null) {
+            binding.etThirdPartyBarcode.text = response?.thirdPartyBarcode
         } else {
             binding.etThirdPartyBarcode.text = "N/A"
         }
 
-        if (pkg?.accountReferenceNumber != null) {
-            binding.etAccountReferenceNumber.text = pkg?.accountReferenceNumber
+        if (response?.accountReferenceNumber != null) {
+            binding.etAccountReferenceNumber.text = response?.accountReferenceNumber
         } else {
             binding.etAccountReferenceNumber.text = "N/A"
         }
 
-        if (pkg?.msisdn != null) {
-            binding.etMsisdn.text = pkg?.msisdn
+        if (response?.msisdn != null) {
+            binding.etMsisdn.text = response?.msisdn
         } else {
             binding.etMsisdn.text = "N/A"
         }
 
-        if (pkg?.simNumber != null) {
-            binding.etSimNumber.text = pkg?.simNumber
+        if (response?.simNumber != null) {
+            binding.etSimNumber.text = response?.simNumber
         } else {
             binding.etSimNumber.text = "N/A"
+        }
+
+        if (response?.accountManagerName != null) {
+            binding.etAccountManagerName.text = response?.accountManagerName
+        } else {
+            binding.etAccountManagerName.text = "N/A"
+        }
+
+        if (response?.accountManagerNumber != null) {
+            binding.etAccountManagerNumber.text = response?.accountManagerNumber
+        } else {
+            binding.etAccountManagerNumber.text = "N/A"
+        }
+
+        if (response?.cr != null) {
+            binding.etCr.text = response?.cr
+        } else {
+            binding.etCr.text = "N/A"
         }
 
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))

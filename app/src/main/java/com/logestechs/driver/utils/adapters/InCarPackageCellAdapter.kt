@@ -2,8 +2,6 @@ package com.logestechs.driver.utils.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -145,6 +143,19 @@ class InCarPackageCellAdapter(
                 }
             } else {
                 binding.itemShipmentType.root.visibility = View.GONE
+            }
+
+            if (pkg?.isPackageHasDeliveryNote == true) {
+                binding.itemDeliveryNote.textItem.text = mAdapter.context?.getString(R.string.has_delivery_note)
+            } else {
+                binding.itemDeliveryNote.textItem.text = mAdapter.context?.getString(R.string.no_delivery_note)
+            }
+
+            if (!pkg?.nationalAddress.isNullOrEmpty()) {
+                binding.itemNationalAddress.root.visibility = View.VISIBLE
+                binding.itemNationalAddress.textItem.text = pkg?.nationalAddress
+            } else {
+                binding.itemNationalAddress.root.visibility = View.GONE
             }
 
             binding.itemPackageBarcode.textItem.text = pkg?.barcode
@@ -409,7 +420,7 @@ class InCarPackageCellAdapter(
                             }
 
                             R.id.show_telecom_package_details -> {
-                                ShowTelecomInfoDialog(mAdapter.context!!, pkg).showDialog()
+                                mAdapter.listener?.onShowTelecomInfoDialog(pkg?.id)
                             }
                         }
                     }

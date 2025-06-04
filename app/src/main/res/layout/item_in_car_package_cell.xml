@@ -215,6 +215,15 @@
                                 android:layout_marginTop="8dp"
                                 bind:isIconCircleVisible="@{true}"
                                 bind:itemSrc="@{@drawable/ic_location_pin_gray}" />
+
+                            <include
+                                android:id="@+id/item_national_address"
+                                layout="@layout/item_card_row"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                bind:isIconCircleVisible="@{true}"
+                                bind:itemSrc="@{@drawable/ic_ksa_location_na}" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -440,6 +449,14 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             bind:itemSrc="@{@drawable/ic_reg}"/>
+
+                        <include
+                            android:id="@+id/item_delivery_note"
+                            layout="@layout/item_card_row"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            bind:itemSrc="@{@drawable/ic_delivery_note}"/>
                     </LinearLayout>
                 </LinearLayout>
 
