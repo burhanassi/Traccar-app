@@ -114,6 +114,7 @@
                             tools:text="يرجى التسليم بسرعة والانتباه عند التحميل" />
 
                         <LinearLayout
+                            android:id="@+id/switch_receiver_paid_costs_container"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="16dp"
