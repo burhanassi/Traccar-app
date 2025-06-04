@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -67,6 +68,7 @@ import com.logestechs.driver.utils.dialogs.PostponePackageDialog
 import com.logestechs.driver.utils.dialogs.ReturnPackageDialog
 import com.logestechs.driver.utils.dialogs.SearchPackagesDialog
 import com.logestechs.driver.utils.dialogs.ShowAttachmentsDialog
+import com.logestechs.driver.utils.dialogs.ShowTelecomInfoDialog
 import com.logestechs.driver.utils.interfaces.AddPackageNoteDialogListener
 import com.logestechs.driver.utils.interfaces.CallDurationListener
 import com.logestechs.driver.utils.interfaces.ConfirmationDialogActionListener
@@ -1590,6 +1592,60 @@ class InCarPackagesFragment(
         }
     }
 
+    private fun callGetTelecomInfo(packageId: Long?) {
+        showWaitDialog()
+        if (Helper.isInternetAvailable(super.getContext())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = ApiAdapter.apiClient.getTelecomInfo(
+                        packageId
+                    )
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                    }
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            ShowTelecomInfoDialog(requireContext(), response.body()).showDialog()
+                        }
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response?.errorBody()!!.string())
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    jObjError.optString(AppConstants.ERROR_KEY)
+                                )
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            withContext(Dispatchers.Main) {
+                                Helper.showErrorMessage(
+                                    super.getContext(),
+                                    getString(R.string.error_general)
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    hideWaitDialog()
+                    Helper.logException(e, Throwable().stackTraceToString())
+                    withContext(Dispatchers.Main) {
+                        if (e.message != null && e.message!!.isNotEmpty()) {
+                            Helper.showErrorMessage(super.getContext(), e.message)
+                        } else {
+                            Helper.showErrorMessage(super.getContext(), e.stackTraceToString())
+                        }
+                    }
+                }
+            }
+        } else {
+            hideWaitDialog()
+            Helper.showErrorMessage(
+                super.getContext(), getString(R.string.error_check_internet_connection)
+            )
+        }
+    }
+
     override fun onViewModeChanged(selectedViewMode: InCarPackagesViewMode) {
         this.selectedViewMode = selectedViewMode
         getPackagesBySelectedMode()
@@ -1629,6 +1685,10 @@ class InCarPackagesFragment(
         } else {
             returnPackageDialog?.showDialog()
         }
+    }
+
+    override fun onShowTelecomInfoDialog(packageId: Long?) {
+        callGetTelecomInfo(packageId)
     }
 
     override fun onShowAttachmentsDialog(pkg: Package?){
@@ -1672,6 +1732,7 @@ class InCarPackagesFragment(
         postponePackageDialog = null
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onShowPostponePackageDialog(pkg: Package?) {
         loadedImagesList.clear()
         postponePackageDialog = PostponePackageDialog(requireContext(), this, pkg, loadedImagesList)

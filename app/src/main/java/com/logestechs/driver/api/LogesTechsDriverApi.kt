@@ -867,4 +867,9 @@ interface LogesTechsDriverApi {
         @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
         @Query("timezone") timezone: String? = TimeZone.getDefault().id.toString()
     ): Response<GetDeficitBalanceHistoryResponse>?
+
+    @GET("driver/package/{packageId}/telecom-info")
+    suspend fun getTelecomInfo(
+        @Path("packageId") packageId: Long?
+    ): Response<GetTelecomInfoResponse>?
 }

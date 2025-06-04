@@ -912,6 +912,10 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
         }
     }
 
+    override fun onShowTelecomInfoDialog(packageId: Long?) {
+
+    }
+
     override fun onShowAttachmentsDialog(pkg: Package?) {
         if(pkg?.isAttachmentExist == true){
             callGetAttachments(pkg.id)
