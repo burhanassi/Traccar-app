@@ -412,8 +412,8 @@
     <string name="error_max_payment_methods_selected">يمكنك اختيار ثلاث طرق فقط</string>
     <string name="has_delivery_note">يوجد وصل استلام</string>
     <string name="no_delivery_note">لا يوجد وصل استلام</string>
-    <string name="account_manager_name">مسؤول متابعة الزبائن</string>
-    <string name="account_manager_contact_number">رقم مسؤول متابعة الزبائن</string>
+    <string name="account_manager_name">مسؤول متابعة الزبائن : </string>
+    <string name="account_manager_contact_number">رقم مسؤول متابعة الزبائن : </string>
     <string name="cr_number">CR : </string>
     <string name="picked_items">العناصر المحملة</string>
 </resources>
