@@ -413,4 +413,5 @@
     <string name="not_scanned_subpackages">Not Scanned SubPackages</string>
     <string name="all_subpackages_scanned">All SubPackages have been scanned</string>
     <string name="error_max_payment_methods_selected">Only 3 ways can be selected</string>
+    <string name="picked_items">Picked Items</string>
 </resources>

@@ -25,6 +25,7 @@ import com.logestechs.driver.api.requests.BarcodeRequestBody
 import com.logestechs.driver.api.responses.SortItemIntoToteResponse
 import com.logestechs.driver.data.model.Bin
 import com.logestechs.driver.data.model.Customer
+import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.FulfilmentOrder
 import com.logestechs.driver.data.model.ProductItem
 import com.logestechs.driver.databinding.ActivityFulfilmentPackerBarcodeScannerBinding
@@ -77,6 +78,8 @@ class FulfilmentPackerBarcodeScannerActivity :
     private var selectedScanMode: FulfilmentPackerScanMode? = FulfilmentPackerScanMode.ITEM_INTO_TOTE
 
     private var fulfilmentOrder: FulfilmentOrder? = null
+    private var companyConfigurations: DriverCompanyConfigurations? =
+        SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFulfilmentPackerBarcodeScannerBinding.inflate(layoutInflater)
@@ -92,7 +95,9 @@ class FulfilmentPackerBarcodeScannerActivity :
         initRecycler()
         initListeners()
         initUi()
-        callGetPickedItems()
+        if (companyConfigurations?.isEnableShowAllPickedItemsIndividualDuringPacking == true) {
+            callGetPickedItems()
+        }
     }
 
     private fun handleSelectedScanMode() {
@@ -120,6 +125,11 @@ class FulfilmentPackerBarcodeScannerActivity :
 
     private fun showScannedItemsContainer() {
         binding.containerDetails.visibility = View.VISIBLE
+        if (companyConfigurations?.isEnableShowAllPickedItemsIndividualDuringPacking == true) {
+            binding.containerPickedItems.visibility = View.VISIBLE
+        } else {
+            binding.containerPickedItems.visibility = View.GONE
+        }
     }
 
     private fun hideScannedItemsContainer() {

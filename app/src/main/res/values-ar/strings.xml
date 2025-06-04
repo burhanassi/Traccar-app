@@ -410,4 +410,5 @@
     <string name="not_scanned_subpackages">الطرود الفرعية غير الممسوحة</string>
     <string name="all_subpackages_scanned">تم مسح جميع الطرود الفرعية</string>
     <string name="error_max_payment_methods_selected">يمكنك اختيار ثلاث طرق فقط</string>
+    <string name="picked_items">العناصر المحملة</string>
 </resources>

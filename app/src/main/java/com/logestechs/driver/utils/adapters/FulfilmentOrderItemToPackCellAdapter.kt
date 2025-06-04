@@ -84,10 +84,10 @@ class FulfilmentOrderItemToPackCellAdapter(
             binding.itemProductName.textItem.text = productItem?.productName
             binding.itemProductSku.textItem.text = productItem?.sku
             binding.itemProductBarcode.textItem.text = productItem?.barcode
-            if (productItem?.productImageUrl != null) {
-                Picasso.get()
-                    .load(productItem.productImageUrl)
-                    .into(binding.itemImage)
+            if (!productItem?.productImageUrl.isNullOrEmpty()) {
+                Picasso.get().load(productItem?.productImageUrl).into(binding.itemImage)
+            } else {
+                binding.itemImage.setImageResource(R.drawable.ic_item)
             }
             if (productItem?.isCustomPackaging == true && productItem?.parcelTypeName != null) {
                 binding.itemNotes.textItem.text = mAdapter.context?.getString(R.string.order_type) +

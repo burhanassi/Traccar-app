@@ -52,5 +52,6 @@ data class DriverCompanyConfigurations(
     var isAllowDriverChangePackageType: Boolean? = null,
     var isEnableDriverDeficitBalance: Boolean? = null,
     var proofOfDeliveryShipmentTypes: List<String>? = null,
-    var isEnableSkipScanLocationWhenPickingItems: Boolean? = null
+    var isEnableSkipScanLocationWhenPickingItems: Boolean? = null,
+    var isEnableShowAllPickedItemsIndividualDuringPacking: Boolean? = null,
 )
