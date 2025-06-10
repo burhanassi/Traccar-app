@@ -58,7 +58,7 @@ class ReturnPackageDialog(
         val alertDialog = dialogBuilder.create()
         this.binding = binding
 
-        if (companyInfo?.driverCompanyConfigurations?.id == 397.toLong()) {
+        if (companyInfo?.driverCompanyConfigurations?.companyId == 397.toLong()) {
             binding.switchReceiverPaidCostsContainer.visibility = View.GONE
         } else {
             binding.switchReceiverPaidCostsContainer.visibility = View.VISIBLE
