@@ -2,7 +2,7 @@ package com.logestechs.driver.data.model
 
 
 data class DriverCompanyConfigurations(
-    var id: Long? = null,
+    var companyId: Long? = null,
     var currency: String? = null,
     var isPartialDeliveryEnabled: Boolean? = null,
     var companyDomain: String? = null,
