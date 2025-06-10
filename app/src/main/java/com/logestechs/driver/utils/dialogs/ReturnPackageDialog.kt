@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.logestechs.driver.R
 import com.logestechs.driver.api.ApiAdapter
 import com.logestechs.driver.api.requests.ReturnPackageRequestBody
+import com.logestechs.driver.api.responses.GetDriverCompanySettingsResponse
 import com.logestechs.driver.data.model.CompanyInfo
 import com.logestechs.driver.data.model.DriverCompanyConfigurations
 import com.logestechs.driver.data.model.LoadedImage
@@ -42,7 +43,7 @@ class ReturnPackageDialog(
 
     lateinit var binding: DialogReturnPackageBinding
     lateinit var alertDialog: AlertDialog
-    private var companyInfo: CompanyInfo? = SharedPreferenceWrapper.getDriverCompanyInfo()
+    private var companyInfo: GetDriverCompanySettingsResponse? = SharedPreferenceWrapper.getDriverCompanySettings()
     private var companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
 
@@ -57,7 +58,7 @@ class ReturnPackageDialog(
         val alertDialog = dialogBuilder.create()
         this.binding = binding
 
-        if (companyInfo?.id == 397.toLong()) {
+        if (companyInfo?.driverCompanyConfigurations?.id == 397.toLong()) {
             binding.switchReceiverPaidCostsContainer.visibility = View.GONE
         } else {
             binding.switchReceiverPaidCostsContainer.visibility = View.VISIBLE
