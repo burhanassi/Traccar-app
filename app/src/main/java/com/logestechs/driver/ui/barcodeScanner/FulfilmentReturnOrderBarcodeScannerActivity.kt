@@ -721,6 +721,10 @@ class FulfilmentReturnOrderBarcodeScannerActivity :
                             ) {
                                 onBackPressed()
                             }
+                            Helper.showSuccessMessage(
+                                super.getContext(),
+                                getString(R.string.success_operation_completed)
+                            )
                         }
                     } else {
                         scannedItemsHashMap.remove(barcode)
