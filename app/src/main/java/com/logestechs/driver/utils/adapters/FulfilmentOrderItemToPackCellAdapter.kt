@@ -73,6 +73,12 @@ class FulfilmentOrderItemToPackCellAdapter(
         notifyItemInserted(0)
     }
 
+    fun clearAllItems() {
+        val itemCount = productItemsList.size
+        productItemsList.clear()
+        notifyItemRangeRemoved(0, itemCount)
+    }
+
     class FulfilmentOrderItemToPackCellViewHolder(
         private var binding: ItemFulfilmentOrderItemToPackCellBinding,
         private var parent: ViewGroup,

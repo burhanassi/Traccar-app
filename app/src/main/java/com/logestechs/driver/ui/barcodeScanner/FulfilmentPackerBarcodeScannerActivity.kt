@@ -96,7 +96,12 @@ class FulfilmentPackerBarcodeScannerActivity :
         initListeners()
         initUi()
         if (companyConfigurations?.isEnableShowAllPickedItemsIndividualDuringPacking == true) {
+            binding.rvPickedItems.visibility = View.VISIBLE
+            binding.textPickedItems.visibility = View.VISIBLE
             callGetPickedItems()
+        } else {
+            binding.rvPickedItems.visibility = View.GONE
+            binding.textPickedItems.visibility = View.GONE
         }
     }
 
@@ -384,6 +389,9 @@ class FulfilmentPackerBarcodeScannerActivity :
                                     super.getContext(), getString(R.string.success_operation_completed)
                                 )
                             }
+                            if (companyConfigurations?.isEnableShowAllPickedItemsIndividualDuringPacking == true) {
+                                callGetPickedItems()
+                            }
                         } else {
                             scannedItemsHashMap.remove(barcode)
                             try {
@@ -437,6 +445,7 @@ class FulfilmentPackerBarcodeScannerActivity :
                     )
                     if (response?.isSuccessful == true && response.body() != null) {
                         withContext(Dispatchers.Main) {
+                            (binding.rvPickedItems.adapter as FulfilmentOrderItemToPackCellAdapter).clearAllItems()
                             val body = response.body()
                             for (item in body?.data!!) {
                                 (binding.rvPickedItems.adapter as FulfilmentOrderItemToPackCellAdapter)
