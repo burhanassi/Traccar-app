@@ -552,6 +552,36 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/button_take_video"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/background_add_pod_container">
+
+                            <ImageView
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:src="@drawable/ic_capture_image"
+                                tools:ignore="ContentDescription" />
+
+                            <TextView
+                                style="@style/LogesTechsMedium"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginStart="12dp"
+                                android:layout_marginEnd="8dp"
+                                android:text="take video"
+                                android:textColor="@color/fontTrackHint"
+                                android:textSize="15sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
                             android:id="@+id/button_load_image"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"

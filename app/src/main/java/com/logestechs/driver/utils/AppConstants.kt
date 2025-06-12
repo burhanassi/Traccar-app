@@ -23,6 +23,7 @@ class AppConstants {
         //request codes
         const val REQUEST_TAKE_PHOTO = 4001
         const val REQUEST_LOAD_PHOTO = 4002
+        const val REQUEST_TAKE_VIDEO = 1003
         const val REQUEST_SCAN_BARCODE = 4003
         const val REQUEST_CAMERA_AND_STORAGE_PERMISSION = 5001
         const val REQUEST_STORAGE_PERMISSION = 5002

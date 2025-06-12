@@ -1548,6 +1548,16 @@ class Helper {
             )
         }
 
+        @Throws(IOException::class)
+        fun createVideoFile(context: Context): File {
+            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_MOVIES) ?: context.filesDir
+
+            return File(storageDir, "VID_${timeStamp}.mp4").apply {
+                createNewFile() // Explicitly create the file
+            }
+        }
+
         fun isStorageAndCameraPermissionNeeded(mActivity: Activity): Boolean {
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 ContextCompat.checkSelfPermission(
