@@ -871,7 +871,7 @@ interface LogesTechsDriverApi {
     @GET("handler/fulfillment/orders/{orderId}/picked-items")
     suspend fun getPickedItems(
         @Path("orderId") orderId: Long?
-    ): Response<GetPickedItemsResponse>?
+    ): Response<List<ProductItem>>?
 
     @GET("driver/package/{packageId}/telecom-info")
     suspend fun getTelecomInfo(
