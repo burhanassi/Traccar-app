@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.logestechs.driver.api.responses.ChangeWorkLogStatusResponse
 import com.logestechs.driver.api.responses.GetDriverCompanySettingsResponse
 import com.logestechs.driver.api.responses.LoginResponse
+import com.logestechs.driver.data.model.CompanyInfo
 import com.logestechs.driver.data.model.LatLng
 import com.logestechs.driver.utils.LogesTechsApp.Companion.prefs
 
@@ -60,6 +61,24 @@ class SharedPreferenceWrapper {
 
         fun deleteDriverCompanySettings() {
             prefs.push(SharedPrefsKeys.DRIVER_COMPANY_SETTINGS_KEY.value, "")
+        }
+
+        //company info
+        fun saveDriverCompanyInfo(companyInfo: CompanyInfo?) {
+            if (companyInfo != null) {
+                val json = Gson().toJson(companyInfo)
+                prefs.push(SharedPrefsKeys.DRIVER_COMPANY_INFO.value, json)
+            }
+        }
+
+        fun getDriverCompanyInfo(): CompanyInfo? {
+            val json = prefs.pull(SharedPrefsKeys.DRIVER_COMPANY_INFO.value, "")
+
+            return if (json.isEmpty()) {
+                return null
+            } else {
+                Gson().fromJson(json, CompanyInfo::class.java)
+            }
         }
 
         //work log id
@@ -197,5 +216,6 @@ private enum class SharedPrefsKeys(val value: String) {
     SCAN_WAY("scan_way"),
     INVOICE_NUMBER_FOR_DEEP_LINK("invoice_number_for_deep_link"),
     QUANTITY("quantity"),
-    IS_PARTIALLY_DELIVERED("is_partially_delivered")
+    IS_PARTIALLY_DELIVERED("is_partially_delivered"),
+    DRIVER_COMPANY_INFO("driver_company_info"),
 }

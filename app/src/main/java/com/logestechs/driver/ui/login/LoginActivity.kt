@@ -339,6 +339,7 @@ class LoginActivity : LogesTechsActivity(), View.OnClickListener {
                             if (data?.isDriverSignupEnabled == true) {
                                 val mIntent = Intent(this@LoginActivity, SignUpActivity::class.java)
                                 mIntent.putExtra(BundleKeys.COMPANY_INFO.name, data)
+                                SharedPreferenceWrapper.saveDriverCompanyInfo(data)
                                 startActivity(mIntent)
                             } else {
                                 Helper.showErrorMessage(
