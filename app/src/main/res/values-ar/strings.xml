@@ -416,4 +416,7 @@
     <string name="account_manager_contact_number">رقم مسؤول متابعة الزبائن : </string>
     <string name="cr_number">CR : </string>
     <string name="picked_items">العناصر المحملة</string>
+    <string name="error_video_capture_failed">فشل في التقاط الفيديو</string>
+    <string name="success_upload_video">تم تحميل الفيديو بنجاح</string>
+    <string name="button_take_video">التقاط فيديو</string>
 </resources>

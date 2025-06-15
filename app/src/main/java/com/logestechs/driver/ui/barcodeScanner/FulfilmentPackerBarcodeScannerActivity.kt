@@ -447,7 +447,7 @@ class FulfilmentPackerBarcodeScannerActivity :
                         withContext(Dispatchers.Main) {
                             (binding.rvPickedItems.adapter as FulfilmentOrderItemToPackCellAdapter).clearAllItems()
                             val body = response.body()
-                            for (item in body?.data!!) {
+                            for (item in body!!) {
                                 (binding.rvPickedItems.adapter as FulfilmentOrderItemToPackCellAdapter)
                                     .insertItem(item)
                             }

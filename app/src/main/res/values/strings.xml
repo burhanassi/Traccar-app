@@ -419,4 +419,7 @@
     <string name="account_manager_contact_number">Account Manager Contact Number : </string>
     <string name="cr_number">CR : </string>
     <string name="picked_items">Picked Items</string>
+    <string name="error_video_capture_failed">Video capture failed</string>
+    <string name="success_upload_video">Video Uploaded Successfully</string>
+    <string name="button_take_video">Take Video</string>
 </resources>

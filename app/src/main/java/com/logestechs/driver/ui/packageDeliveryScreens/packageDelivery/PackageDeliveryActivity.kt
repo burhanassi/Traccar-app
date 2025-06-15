@@ -1389,7 +1389,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             try {
                 val requestFile = videoFile.readBytes().toRequestBody("video/mp4".toMediaTypeOrNull())
                 val body = MultipartBody.Part.createFormData(
-                    "video",
+                    "file",
                     videoFile.name,
                     requestFile
                 )
@@ -1403,17 +1403,17 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                 withContext(Dispatchers.Main) {
                     hideWaitDialog()
                     if (response?.isSuccessful == true && response.body() != null) {
-                        // Handle successful upload
-                        Toast.makeText(
-                            applicationContext,
-                            getString(R.string.success_operation_completed),
-                            Toast.LENGTH_LONG
-                        ).show()
+                        withContext(Dispatchers.Main) {
+                            Helper.showSuccessMessage(
+                                super.getContext(),
+                                getString(R.string.success_upload_video)
+                            )
+                        }
                     } else {
                         // Handle error
                         Helper.showErrorMessage(
                             super.getContext(),
-                            getString(R.string.error_image_capture_failed)
+                            getString(R.string.error_video_capture_failed)
                         )
                     }
                 }
@@ -1422,7 +1422,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     hideWaitDialog()
                     Helper.showErrorMessage(
                         super.getContext(),
-                        getString(R.string.error_image_capture_failed)
+                        getString(R.string.error_video_capture_failed)
                     )
                 }
                 Helper.logException(e, Throwable().stackTraceToString())
