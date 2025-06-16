@@ -160,6 +160,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     private var paymentDataList = mutableListOf<PayMultiWayRequestBody>()
 
     private var scannedSubpackagesBarcodes: List<String> = emptyList()
+    private var videoUrl: String = ""
+
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -578,6 +580,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             for (item in loadedImagesList) {
                 list.add(item.imageUrl)
             }
+            list.add(videoUrl)
             list
         } else {
             null
@@ -598,7 +601,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         val intent = if (isVideo) {
             // Video capture intent
             Intent(MediaStore.ACTION_VIDEO_CAPTURE).apply {
-                putExtra(MediaStore.EXTRA_DURATION_LIMIT, 15) // 15-second limit
+                putExtra(MediaStore.EXTRA_DURATION_LIMIT, 14) // 15-second limit
                 putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0) // 0 for low quality (~240p)
             }
         } else {
@@ -649,17 +652,15 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
         GlobalScope.launch(Dispatchers.IO) {
             try {
-                // Get video file
                 val videoPath = Helper.getRealPathFromURI(super.getContext(), videoUri) ?: ""
                 val videoFile = File(videoPath)
 
-                // Validate video duration (15 seconds max)
                 val retriever = MediaMetadataRetriever()
                 retriever.setDataSource(super.getContext(), videoUri)
                 val duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong() ?: 0
                 retriever.release()
 
-                if (duration > 15000) { // 15 seconds in milliseconds
+                if (duration > 15000) {
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                         Toast.makeText(
@@ -671,10 +672,8 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     return@launch
                 }
 
-                // Compress video to 240p
                 val compressedVideoFile = compressVideo(videoFile)
 
-                // Upload the compressed video
                 uploadVideoFile(compressedVideoFile)
 
             } catch (e: Exception) {
@@ -1408,6 +1407,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                                 super.getContext(),
                                 getString(R.string.success_upload_video)
                             )
+                            videoUrl = response.body()!!.fileUrl.toString()
                         }
                     } else {
                         // Handle error
