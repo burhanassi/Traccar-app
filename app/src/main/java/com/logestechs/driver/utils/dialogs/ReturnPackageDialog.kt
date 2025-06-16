@@ -38,7 +38,9 @@ class ReturnPackageDialog(
     var context: Context?,
     var listener: ReturnPackageDialogListener?,
     var pkg: Package?,
-    var loadedImagesList: ArrayList<LoadedImage>
+    var loadedImagesList: ArrayList<LoadedImage>,
+    var takeVideoEnable: Boolean = false,
+    var videoUrl: String = ""
 ) : RadioGroupListListener , ThumbnailsListListener{
 
     lateinit var binding: DialogReturnPackageBinding
@@ -58,6 +60,12 @@ class ReturnPackageDialog(
         val alertDialog = dialogBuilder.create()
         this.binding = binding
 
+        if (takeVideoEnable) {
+            binding.buttonTakeVideo.visibility = View.VISIBLE
+        } else {
+            binding.buttonTakeVideo.visibility = View.GONE
+        }
+
         if (companyInfo?.driverCompanyConfigurations?.companyId == 397.toLong()) {
             binding.switchReceiverPaidCostsContainer.visibility = View.GONE
         } else {
@@ -72,6 +80,10 @@ class ReturnPackageDialog(
 
         binding.buttonCancel.setOnClickListener {
             alertDialog.dismiss()
+        }
+
+        binding.buttonTakeVideo.setOnClickListener {
+            listener?.onTakeVideo()
         }
 
         binding.buttonDone.setOnClickListener {
@@ -211,11 +223,12 @@ class ReturnPackageDialog(
     }
 
     private fun getPodImagesUrls(): List<String?>? {
-        return if (loadedImagesList.isNotEmpty()) {
+        return if (loadedImagesList.isNotEmpty()  || videoUrl.isNotEmpty()) {
             val list: ArrayList<String?> = ArrayList()
             for (item in loadedImagesList) {
                 list.add(item.imageUrl)
             }
+            list.add(videoUrl)
             list
         } else {
             null

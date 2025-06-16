@@ -5,6 +5,7 @@ import com.logestechs.driver.api.requests.FailDeliveryRequestBody
 interface FailDeliveryDialogListener {
     fun onFailDelivery(body: FailDeliveryRequestBody?)
     fun onCaptureImage()
+    fun onTakeVideo()
     fun onLoadImage()
     fun onDeleteImage(position: Int)
 }

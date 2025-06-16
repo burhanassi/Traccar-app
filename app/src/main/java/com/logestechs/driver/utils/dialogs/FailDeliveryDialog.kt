@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.provider.MediaStore
 import android.view.LayoutInflater
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
@@ -36,7 +37,9 @@ class FailDeliveryDialog(
     var context: Context,
     var listener: FailDeliveryDialogListener?,
     var pkg: Package?,
-    var loadedImagesList: ArrayList<LoadedImage>
+    var loadedImagesList: ArrayList<LoadedImage>,
+    var takeVideoEnable: Boolean = false,
+    var videoUrl: String = ""
 ) : RadioGroupListListener, ThumbnailsListListener {
 
     lateinit var binding: DialogFailDeliveryBinding
@@ -57,6 +60,12 @@ class FailDeliveryDialog(
         dialogBuilder.setView(binding.root)
         val alertDialog = dialogBuilder.create()
         this.binding = binding
+
+        if (takeVideoEnable) {
+            binding.buttonTakeVideo.visibility = View.VISIBLE
+        } else {
+            binding.buttonTakeVideo.visibility = View.GONE
+        }
 
         binding.buttonCancel.setOnClickListener {
             alertDialog.dismiss()
@@ -86,6 +95,10 @@ class FailDeliveryDialog(
 
         binding.buttonCaptureImage.setOnClickListener {
             listener?.onCaptureImage()
+        }
+
+        binding.buttonTakeVideo.setOnClickListener {
+            listener?.onTakeVideo()
         }
 
         binding.buttonLoadImage.setOnClickListener {
@@ -148,11 +161,12 @@ class FailDeliveryDialog(
     }
 
     private fun getPodImagesUrls(): List<String?>? {
-        return if (loadedImagesList.isNotEmpty()) {
+        return if (loadedImagesList.isNotEmpty() || videoUrl.isNotEmpty()) {
             val list: ArrayList<String?> = ArrayList()
             for (item in loadedImagesList) {
                 list.add(item.imageUrl)
             }
+            list.add(videoUrl)
             list
         } else {
             null

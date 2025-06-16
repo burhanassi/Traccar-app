@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.view.LayoutInflater
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.TimePicker
 import androidx.annotation.RequiresApi
@@ -44,7 +45,9 @@ class PostponePackageDialog(
     var context: Context,
     var listener: PostponePackageDialogListener?,
     var pkg: Package?,
-    var loadedImagesList: ArrayList<LoadedImage>
+    var loadedImagesList: ArrayList<LoadedImage>,
+    var takeVideoEnable: Boolean = false,
+    var videoUrl: String = ""
 ) : RadioGroupListListener, ThumbnailsListListener {
 
     lateinit var binding: DialogPostponePackageBinding
@@ -69,6 +72,13 @@ class PostponePackageDialog(
         dialogBuilder.setView(binding.root)
         val alertDialog = dialogBuilder.create()
         this.binding = binding
+
+        if (takeVideoEnable) {
+            binding.buttonTakeVideo.visibility = View.VISIBLE
+        } else {
+            binding.buttonTakeVideo.visibility = View.GONE
+        }
+
         binding.buttonCancel.setOnClickListener {
             alertDialog.dismiss()
         }
@@ -187,6 +197,10 @@ class PostponePackageDialog(
             listener?.onCaptureImage()
         }
 
+        binding.buttonTakeVideo.setOnClickListener {
+            listener?.onTakeVideo()
+        }
+
         binding.buttonLoadImage.setOnClickListener {
             listener?.onLoadImage()
         }
@@ -302,11 +316,12 @@ class PostponePackageDialog(
     }
 
     private fun getPodImagesUrls(): List<String?>? {
-        return if (loadedImagesList.isNotEmpty()) {
+        return if (loadedImagesList.isNotEmpty() || videoUrl.isNotEmpty()) {
             val list: ArrayList<String?> = ArrayList()
             for (item in loadedImagesList) {
                 list.add(item.imageUrl)
             }
+            list.add(videoUrl)
             list
         } else {
             null

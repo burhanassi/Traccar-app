@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -79,6 +80,7 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
     private val messageTemplates = companyConfigurations?.messageTemplates
     private var isCameraAction = false
     var mCurrentPhotoPath: String? = null
+    var mCurrentVideoPath: String? = null
 
     var failDeliveryDialog: FailDeliveryDialog? = null
     var postponePackageDialog: PostponePackageDialog? = null
@@ -886,6 +888,41 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
         }
         return ""
     }
+
+    private fun openCameraForVideo(): String? {
+        val takeVideoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+        if (takeVideoIntent.resolveActivity(this@BroughtPackagesActivity.packageManager) != null) {
+            val videoFile: File? = try {
+                Helper.createVideoFile(this as LogesTechsActivity)  // You need to implement this method
+            } catch (ex: IOException) {
+                return ""
+            }
+
+            if (videoFile != null) {
+                val videoURI = FileProvider.getUriForFile(
+                    this@BroughtPackagesActivity.applicationContext,
+                    "${BuildConfig.APPLICATION_ID}.fileprovider",
+                    videoFile
+                )
+                val mCurrentVideoPath = "file:" + videoFile.absolutePath
+                takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoURI)
+
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
+                    takeVideoIntent.clipData = ClipData.newRawUri("", videoURI)
+                    takeVideoIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+
+                this.startActivityForResult(
+                    takeVideoIntent,
+                    AppConstants.REQUEST_TAKE_VIDEO  // Define this request code if you haven't
+                )
+                return mCurrentVideoPath
+            }
+            return ""
+        }
+        return ""
+    }
+
     private fun openGallery() {
         val pickPhoto = Intent(Intent.ACTION_PICK)
         pickPhoto.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
@@ -954,6 +991,7 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
         failDeliveryDialog?.showDialog()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onShowPostponePackageDialog(pkg: Package?) {
         loadedImagesList.clear()
         postponePackageDialog = PostponePackageDialog(this, this, pkg, loadedImagesList)
@@ -966,6 +1004,15 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
             Helper.showAndRequestCameraAndStorageDialog(this)
         } else {
             mCurrentPhotoPath = openCamera()
+        }
+    }
+
+    override fun onTakeVideo() {
+        isCameraAction = true
+        if (Helper.isStorageAndCameraPermissionNeeded(this as LogesTechsActivity)) {
+            Helper.showAndRequestCameraAndStorageDialog(this)
+        } else {
+            mCurrentVideoPath = openCameraForVideo()
         }
     }
 

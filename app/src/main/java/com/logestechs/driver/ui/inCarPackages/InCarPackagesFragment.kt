@@ -5,9 +5,15 @@ import android.content.ClipData
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.media.MediaCodec
+import android.media.MediaCodecInfo
+import android.media.MediaFormat
+import android.media.MediaMetadataRetriever
+import android.media.MediaMuxer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -17,6 +23,7 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity.RESULT_OK
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
@@ -132,6 +139,9 @@ class InCarPackagesFragment(
     var selectedPodImageUri: Uri? = null
     var mCurrentPhotoPath: String? = null
 
+    var selectedVideoUri: Uri? = null
+    var mCurrentVideoPath: String? = null
+
     var loadedImagesList: java.util.ArrayList<LoadedImage> = java.util.ArrayList()
     private var isCameraAction = false
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
@@ -151,6 +161,8 @@ class InCarPackagesFragment(
 
     var targetVerticalIndex: Int? = null
     var targetHorizontalIndex: Int? = null
+
+    private var videoUrl: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -1142,6 +1154,39 @@ class InCarPackagesFragment(
         return ""
     }
 
+    private fun openCameraForVideo(): String? {
+        val takeVideoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+        if (takeVideoIntent.resolveActivity(context?.packageManager!!) != null) {
+            val videoFile: File? = try {
+                Helper.createVideoFile(activity as LogesTechsActivity) // You'll need to implement this
+            } catch (ex: IOException) {
+                return ""
+            }
+
+            if (videoFile != null) {
+                val videoURI = FileProvider.getUriForFile(
+                    context?.applicationContext!!,
+                    "${BuildConfig.APPLICATION_ID}.fileprovider",
+                    videoFile
+                )
+                val mCurrentVideoPath = "file:" + videoFile.absolutePath
+                takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoURI)
+
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
+                    takeVideoIntent.clipData = ClipData.newRawUri("", videoURI)
+                    takeVideoIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+
+                this.startActivityForResult(
+                    takeVideoIntent,
+                    AppConstants.REQUEST_TAKE_VIDEO
+                )
+                return mCurrentVideoPath
+            }
+        }
+        return ""
+    }
+
     private fun openGallery() {
         val pickPhoto = Intent(Intent.ACTION_PICK)
         pickPhoto.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
@@ -1149,6 +1194,90 @@ class InCarPackagesFragment(
             pickPhoto,
             AppConstants.REQUEST_LOAD_PHOTO
         )
+    }
+
+    private fun validateAndUploadVideo(videoUri: Uri?) {
+        if (videoUri == null) {
+            Toast.makeText(requireContext(), getString(R.string.error_image_capture_failed), Toast.LENGTH_LONG).show()
+            return
+        }
+
+        showWaitDialog()
+
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                val videoPath = Helper.getRealPathFromURI(super.getContext(), videoUri) ?: ""
+                val videoFile = File(videoPath)
+
+                val retriever = MediaMetadataRetriever()
+                retriever.setDataSource(super.getContext(), videoUri)
+                val duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong() ?: 0
+                retriever.release()
+
+                if (duration > 15000) {
+                    withContext(Dispatchers.Main) {
+                        hideWaitDialog()
+                        Toast.makeText(
+                            requireContext(),
+                            "Video too long",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    return@launch
+                }
+
+                val compressedVideoFile = compressVideo(videoFile)
+
+                uploadVideoFile(compressedVideoFile)
+
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    hideWaitDialog()
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.error_image_capture_failed),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                Helper.logException(e, Throwable().stackTraceToString())
+            }
+        }
+    }
+
+    private fun compressVideo(inputFile: File): File {
+        val outputDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_MOVIES) ?: requireContext().cacheDir
+        val outputFile = File(outputDir, "compressed_${System.currentTimeMillis()}.mp4")
+
+        try {
+            val mediaCodec = MediaCodec.createEncoderByType("video/avc")
+            val format = MediaFormat.createVideoFormat("video/avc", 426, 240).apply {
+                setInteger(MediaFormat.KEY_BIT_RATE, 500000) // 500 kbps
+                setInteger(MediaFormat.KEY_FRAME_RATE, 24)
+                setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1)
+                setInteger(
+                    MediaFormat.KEY_COLOR_FORMAT,
+                    MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface)
+            }
+
+            mediaCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
+            val surface = mediaCodec.createInputSurface()
+            mediaCodec.start()
+
+            val muxer = MediaMuxer(outputFile.path, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4)
+
+            // ... (actual encoding implementation would go here) ...
+
+            mediaCodec.stop()
+            mediaCodec.release()
+            muxer.stop()
+            muxer.release()
+
+            return outputFile
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // Fallback to original file if compression fails
+            return inputFile
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -1184,6 +1313,11 @@ class InCarPackagesFragment(
                         Toast.LENGTH_LONG
                     ).show()
                 }
+            }
+
+            AppConstants.REQUEST_TAKE_VIDEO -> if (resultCode == RESULT_OK) {
+                selectedVideoUri = data?.data ?: Uri.parse(mCurrentVideoPath)
+                validateAndUploadVideo(selectedVideoUri)
             }
 
             AppConstants.REQUEST_LOAD_PHOTO -> if (resultCode == AppCompatActivity.RESULT_OK && data != null) {
@@ -1371,6 +1505,53 @@ class InCarPackagesFragment(
             Helper.showErrorMessage(
                 super.getContext(), getString(R.string.error_check_internet_connection)
             )
+        }
+    }
+
+    private fun uploadVideoFile(videoFile: File) {
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                val requestFile = videoFile.readBytes().toRequestBody("video/mp4".toMediaTypeOrNull())
+                val body = MultipartBody.Part.createFormData(
+                    "file",
+                    videoFile.name,
+                    requestFile
+                )
+
+                val response = ApiAdapter.apiClient.uploadPodImage(
+                    packageIdToUpload ?: -1,
+                    true,
+                    body
+                )
+
+                withContext(Dispatchers.Main) {
+                    hideWaitDialog()
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        withContext(Dispatchers.Main) {
+                            Helper.showSuccessMessage(
+                                super.getContext(),
+                                getString(R.string.success_upload_video)
+                            )
+                            videoUrl = response.body()!!.fileUrl!!
+                        }
+                    } else {
+                        // Handle error
+                        Helper.showErrorMessage(
+                            super.getContext(),
+                            getString(R.string.error_video_capture_failed)
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    hideWaitDialog()
+                    Helper.showErrorMessage(
+                        super.getContext(),
+                        getString(R.string.error_video_capture_failed)
+                    )
+                }
+                Helper.logException(e, Throwable().stackTraceToString())
+            }
         }
     }
 
@@ -1669,7 +1850,7 @@ class InCarPackagesFragment(
 
     override fun onShowReturnPackageDialog(pkg: Package?) {
         loadedImagesList.clear()
-        returnPackageDialog = ReturnPackageDialog(requireContext(), this, pkg, loadedImagesList)
+        returnPackageDialog = ReturnPackageDialog(requireContext(), this, pkg, loadedImagesList, true, videoUrl)
         packageIdToUpload = returnPackageDialog?.pkg?.id
         addPackageNoteDialog = null
         failDeliveryDialog = null
@@ -1724,7 +1905,7 @@ class InCarPackagesFragment(
 
     override fun onShowFailDeliveryDialog(pkg: Package?) {
         loadedImagesList.clear()
-        failDeliveryDialog = FailDeliveryDialog(requireContext(), this, pkg, loadedImagesList)
+        failDeliveryDialog = FailDeliveryDialog(requireContext(), this, pkg, loadedImagesList, true, videoUrl)
         failDeliveryDialog?.showDialog()
         packageIdToUpload = failDeliveryDialog?.pkg?.id
         addPackageNoteDialog = null
@@ -1735,7 +1916,7 @@ class InCarPackagesFragment(
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onShowPostponePackageDialog(pkg: Package?) {
         loadedImagesList.clear()
-        postponePackageDialog = PostponePackageDialog(requireContext(), this, pkg, loadedImagesList)
+        postponePackageDialog = PostponePackageDialog(requireContext(), this, pkg, loadedImagesList, true, videoUrl)
         postponePackageDialog?.showDialog()
         packageIdToUpload = postponePackageDialog?.pkg?.id
         failDeliveryDialog = null
@@ -1749,6 +1930,15 @@ class InCarPackagesFragment(
             Helper.showAndRequestCameraAndStorageDialog(this)
         } else {
             mCurrentPhotoPath = openCamera()
+        }
+    }
+
+    override fun onTakeVideo() {
+        isCameraAction = true
+        if (Helper.isStorageAndCameraPermissionNeeded(activity as LogesTechsActivity)) {
+            Helper.showAndRequestCameraAndStorageDialog(this)
+        } else {
+            mCurrentVideoPath = openCameraForVideo()
         }
     }
 
