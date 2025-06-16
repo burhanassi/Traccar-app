@@ -575,7 +575,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
     }
 
     private fun getPodImagesUrls(): List<String?>? {
-        return if (loadedImagesList.isNotEmpty()) {
+        return if (loadedImagesList.isNotEmpty() || videoUrl.isNotEmpty()) {
             val list: ArrayList<String?> = ArrayList()
             for (item in loadedImagesList) {
                 list.add(item.imageUrl)
@@ -1407,7 +1407,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                                 super.getContext(),
                                 getString(R.string.success_upload_video)
                             )
-                            videoUrl = response.body()!!.fileUrl.toString()
+                            videoUrl = response.body()!!.fileUrl!!
                         }
                     } else {
                         // Handle error
