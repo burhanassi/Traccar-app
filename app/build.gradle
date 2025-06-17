@@ -26,8 +26,8 @@ android {
         applicationId "com.logestechs.driver"
         minSdk 21
         targetSdk 34
-        versionCode 156
-        versionName "1.5.15"
+        versionCode 102
+        versionName "1.5.44"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -57,11 +57,8 @@ android {
         }
     }
 
-    dexOptions {
-        javaMaxHeapSize "8g"
-    }
-
     buildFeatures {
+        buildConfig true
         viewBinding true
         dataBinding true
     }

@@ -1171,6 +1171,9 @@ class InCarPackagesFragment(
                 )
                 val mCurrentVideoPath = "file:" + videoFile.absolutePath
                 takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoURI)
+                takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0) // Low quality
+                takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 14)
+                takeVideoIntent.putExtra(MediaStore.EXTRA_SIZE_LIMIT, 10_485_760L)
 
                 if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
                     takeVideoIntent.clipData = ClipData.newRawUri("", videoURI)

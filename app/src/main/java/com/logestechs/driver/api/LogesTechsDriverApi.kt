@@ -58,13 +58,14 @@ interface LogesTechsDriverApi {
     @GET("driver/customers/accepted")
     suspend fun getAcceptedPackages(
         @Query("is-grouped") isGrouped: Boolean = true,
+        @Query("isNewVersion") isNewVersion: Boolean = true,
     ): Response<GetAcceptedPackagesResponse?>?
 
     @GET("driver/customers/{customerId}/packages/accepted")
     suspend fun getAcceptedPackagesByCustomer(
         @Path("customerId") customerId: Long?,
         @Query("villageId") villageId: Long?,
-        @Query("name") name: String?,
+        @Query("customerName") name: String?,
         @Query("pageSize") pageSize: Int = 30,
         @Query("page") page: Int = AppConstants.DEFAULT_PAGE,
     ): Response<List<Package>?>?
