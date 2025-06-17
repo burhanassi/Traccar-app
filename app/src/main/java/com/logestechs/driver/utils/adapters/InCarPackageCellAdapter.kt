@@ -151,9 +151,9 @@ class InCarPackageCellAdapter(
                 binding.itemDeliveryNote.textItem.text = mAdapter.context?.getString(R.string.no_delivery_note)
             }
 
-            if (!pkg?.nationalAddress.isNullOrEmpty()) {
+            if (!pkg?.destinationAddress?.nationalAddress.isNullOrEmpty()) {
                 binding.itemNationalAddress.root.visibility = View.VISIBLE
-                binding.itemNationalAddress.textItem.text = pkg?.nationalAddress
+                binding.itemNationalAddress.textItem.text = pkg?.destinationAddress?.nationalAddress
             } else {
                 binding.itemNationalAddress.root.visibility = View.GONE
             }
