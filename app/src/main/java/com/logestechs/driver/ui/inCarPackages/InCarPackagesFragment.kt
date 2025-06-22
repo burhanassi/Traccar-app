@@ -100,6 +100,7 @@ import org.json.JSONObject
 import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -1209,15 +1210,20 @@ class InCarPackagesFragment(
 
         GlobalScope.launch(Dispatchers.IO) {
             try {
-                val videoPath = Helper.getRealPathFromURI(super.getContext(), videoUri) ?: ""
-                val videoFile = File(videoPath)
+                val inputStream = requireContext().contentResolver.openInputStream(videoUri)
+                val tempVideoFile = File(requireContext().cacheDir, "input_${System.currentTimeMillis()}.mp4")
+                inputStream?.use { input ->
+                    FileOutputStream(tempVideoFile).use { output ->
+                        input.copyTo(output)
+                    }
+                }
 
                 val retriever = MediaMetadataRetriever()
-                retriever.setDataSource(super.getContext(), videoUri)
-                val duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong() ?: 0
+                retriever.setDataSource(tempVideoFile.absolutePath)
+                val durationMs = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong() ?: 0L
                 retriever.release()
 
-                if (duration > 15000) {
+                if (durationMs > 15000) {
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                         Toast.makeText(
@@ -1229,7 +1235,7 @@ class InCarPackagesFragment(
                     return@launch
                 }
 
-                val compressedVideoFile = compressVideo(videoFile)
+                val compressedVideoFile = compressVideo(tempVideoFile)
 
                 uploadVideoFile(compressedVideoFile)
 

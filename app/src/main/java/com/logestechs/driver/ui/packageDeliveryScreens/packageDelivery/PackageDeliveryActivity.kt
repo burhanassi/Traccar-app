@@ -652,15 +652,20 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
 
         GlobalScope.launch(Dispatchers.IO) {
             try {
-                val videoPath = Helper.getRealPathFromURI(super.getContext(), videoUri) ?: ""
-                val videoFile = File(videoPath)
+                val inputStream = applicationContext.contentResolver.openInputStream(videoUri)
+                val tempVideoFile = File(applicationContext.cacheDir, "input_${System.currentTimeMillis()}.mp4")
+                inputStream?.use { input ->
+                    FileOutputStream(tempVideoFile).use { output ->
+                        input.copyTo(output)
+                    }
+                }
 
                 val retriever = MediaMetadataRetriever()
-                retriever.setDataSource(super.getContext(), videoUri)
-                val duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong() ?: 0
+                retriever.setDataSource(tempVideoFile.absolutePath)
+                val durationMs = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong() ?: 0L
                 retriever.release()
 
-                if (duration > 15000) {
+                if (durationMs > 15000) {
                     withContext(Dispatchers.Main) {
                         hideWaitDialog()
                         Toast.makeText(
@@ -672,7 +677,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
                     return@launch
                 }
 
-                val compressedVideoFile = compressVideo(videoFile)
+                val compressedVideoFile = compressVideo(tempVideoFile)
 
                 uploadVideoFile(compressedVideoFile)
 
