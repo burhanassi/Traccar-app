@@ -39,8 +39,7 @@ class ReturnPackageDialog(
     var listener: ReturnPackageDialogListener?,
     var pkg: Package?,
     var loadedImagesList: ArrayList<LoadedImage>,
-    var takeVideoEnable: Boolean = false,
-    var videoUrl: String = ""
+    var takeVideoEnable: Boolean = false
 ) : RadioGroupListListener , ThumbnailsListListener{
 
     lateinit var binding: DialogReturnPackageBinding
@@ -48,6 +47,8 @@ class ReturnPackageDialog(
     private var companyInfo: GetDriverCompanySettingsResponse? = SharedPreferenceWrapper.getDriverCompanySettings()
     private var companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
+
+    private var videoUrl: String = ""
 
     fun showDialog() {
         val dialogBuilder = AlertDialog.Builder(context, 0)
@@ -223,6 +224,7 @@ class ReturnPackageDialog(
     }
 
     private fun getPodImagesUrls(): List<String?>? {
+        videoUrl = SharedPreferenceWrapper.getVideoUrl()
         return if (loadedImagesList.isNotEmpty()  || videoUrl.isNotEmpty()) {
             val list: ArrayList<String?> = ArrayList()
             for (item in loadedImagesList) {

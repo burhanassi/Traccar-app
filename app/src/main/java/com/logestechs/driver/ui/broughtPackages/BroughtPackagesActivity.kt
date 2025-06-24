@@ -987,7 +987,7 @@ class BroughtPackagesActivity : LogesTechsActivity(), InCarPackagesCardListener,
 
     override fun onShowFailDeliveryDialog(pkg: Package?) {
         loadedImagesList.clear()
-        failDeliveryDialog = FailDeliveryDialog(this, this, pkg, loadedImagesList)
+        failDeliveryDialog = FailDeliveryDialog(this, this, pkg, loadedImagesList, false)
         failDeliveryDialog?.showDialog()
     }
 

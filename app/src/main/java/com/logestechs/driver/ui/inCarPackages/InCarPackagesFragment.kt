@@ -1542,6 +1542,7 @@ class InCarPackagesFragment(
                                 getString(R.string.success_upload_video)
                             )
                             videoUrl = response.body()!!.fileUrl!!
+                            SharedPreferenceWrapper.saveVideoUrl(videoUrl)
                         }
                     } else {
                         // Handle error
@@ -1549,6 +1550,7 @@ class InCarPackagesFragment(
                             super.getContext(),
                             getString(R.string.error_video_capture_failed)
                         )
+                        SharedPreferenceWrapper.saveVideoUrl("")
                     }
                 }
             } catch (e: Exception) {
@@ -1859,7 +1861,8 @@ class InCarPackagesFragment(
 
     override fun onShowReturnPackageDialog(pkg: Package?) {
         loadedImagesList.clear()
-        returnPackageDialog = ReturnPackageDialog(requireContext(), this, pkg, loadedImagesList, true, videoUrl)
+        SharedPreferenceWrapper.saveVideoUrl("")
+        returnPackageDialog = ReturnPackageDialog(requireContext(), this, pkg, loadedImagesList, true)
         packageIdToUpload = returnPackageDialog?.pkg?.id
         addPackageNoteDialog = null
         failDeliveryDialog = null
@@ -1914,7 +1917,8 @@ class InCarPackagesFragment(
 
     override fun onShowFailDeliveryDialog(pkg: Package?) {
         loadedImagesList.clear()
-        failDeliveryDialog = FailDeliveryDialog(requireContext(), this, pkg, loadedImagesList, true, videoUrl)
+        SharedPreferenceWrapper.saveVideoUrl("")
+        failDeliveryDialog = FailDeliveryDialog(requireContext(), this, pkg, loadedImagesList, true)
         failDeliveryDialog?.showDialog()
         packageIdToUpload = failDeliveryDialog?.pkg?.id
         addPackageNoteDialog = null
@@ -1925,7 +1929,8 @@ class InCarPackagesFragment(
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onShowPostponePackageDialog(pkg: Package?) {
         loadedImagesList.clear()
-        postponePackageDialog = PostponePackageDialog(requireContext(), this, pkg, loadedImagesList, true, videoUrl)
+        SharedPreferenceWrapper.saveVideoUrl("")
+        postponePackageDialog = PostponePackageDialog(requireContext(), this, pkg, loadedImagesList, true)
         postponePackageDialog?.showDialog()
         packageIdToUpload = postponePackageDialog?.pkg?.id
         failDeliveryDialog = null

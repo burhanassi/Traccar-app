@@ -46,8 +46,7 @@ class PostponePackageDialog(
     var listener: PostponePackageDialogListener?,
     var pkg: Package?,
     var loadedImagesList: ArrayList<LoadedImage>,
-    var takeVideoEnable: Boolean = false,
-    var videoUrl: String = ""
+    var takeVideoEnable: Boolean = false
 ) : RadioGroupListListener, ThumbnailsListListener {
 
     lateinit var binding: DialogPostponePackageBinding
@@ -60,8 +59,11 @@ class PostponePackageDialog(
     private var companyConfigurations: DriverCompanyConfigurations? =
         SharedPreferenceWrapper.getDriverCompanySettings()?.driverCompanyConfigurations
     private val loginResponse = SharedPreferenceWrapper.getLoginResponse()
+
+    private var videoUrl: String = ""
+
     @RequiresApi(Build.VERSION_CODES.O)
-    @SuppressLint("MissingPermission")
+    @SuppressLint("MissingPermission", "SoonBlockedPrivateApi")
     fun showDialog() {
         val dialogBuilder = AlertDialog.Builder(context, 0)
         val binding: DialogPostponePackageBinding = DataBindingUtil.inflate(
@@ -316,6 +318,7 @@ class PostponePackageDialog(
     }
 
     private fun getPodImagesUrls(): List<String?>? {
+        videoUrl = SharedPreferenceWrapper.getVideoUrl()
         return if (loadedImagesList.isNotEmpty() || videoUrl.isNotEmpty()) {
             val list: ArrayList<String?> = ArrayList()
             for (item in loadedImagesList) {

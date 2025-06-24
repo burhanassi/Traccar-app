@@ -38,8 +38,7 @@ class FailDeliveryDialog(
     var listener: FailDeliveryDialogListener?,
     var pkg: Package?,
     var loadedImagesList: ArrayList<LoadedImage>,
-    var takeVideoEnable: Boolean = false,
-    var videoUrl: String = ""
+    var takeVideoEnable: Boolean = false
 ) : RadioGroupListListener, ThumbnailsListListener {
 
     lateinit var binding: DialogFailDeliveryBinding
@@ -50,6 +49,7 @@ class FailDeliveryDialog(
 
     private val loginResponse = SharedPreferenceWrapper.getLoginResponse()
 
+    private var videoUrl: String? = ""
     fun showDialog() {
         val dialogBuilder = AlertDialog.Builder(context, 0)
         val binding: DialogFailDeliveryBinding = DataBindingUtil.inflate(
@@ -161,7 +161,8 @@ class FailDeliveryDialog(
     }
 
     private fun getPodImagesUrls(): List<String?>? {
-        return if (loadedImagesList.isNotEmpty() || videoUrl.isNotEmpty()) {
+        videoUrl = SharedPreferenceWrapper.getVideoUrl()
+        return if (loadedImagesList.isNotEmpty() || videoUrl?.isNotEmpty() == true) {
             val list: ArrayList<String?> = ArrayList()
             for (item in loadedImagesList) {
                 list.add(item.imageUrl)

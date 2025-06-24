@@ -163,6 +163,15 @@ class SharedPreferenceWrapper {
             return prefs.pull(SharedPrefsKeys.SELECTED_SERVER_IP.value, "")
         }
 
+        //Driver Company Settings
+        fun saveVideoUrl(url: String) {
+            prefs.push(SharedPrefsKeys.VIDEO_URL.value, url)
+        }
+
+        fun getVideoUrl(): String {
+            return prefs.pull(SharedPrefsKeys.VIDEO_URL.value, "")
+        }
+
         //Notifications Count
         fun saveNotificationsCount(notificationsCount: String) {
             prefs.push(SharedPrefsKeys.NOTIFICATIONS_COUNT.value, notificationsCount)
@@ -218,4 +227,5 @@ private enum class SharedPrefsKeys(val value: String) {
     QUANTITY("quantity"),
     IS_PARTIALLY_DELIVERED("is_partially_delivered"),
     DRIVER_COMPANY_INFO("driver_company_info"),
+    VIDEO_URL("video_url"),
 }
