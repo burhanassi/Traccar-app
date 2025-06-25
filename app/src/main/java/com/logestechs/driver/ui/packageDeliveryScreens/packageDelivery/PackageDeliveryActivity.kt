@@ -203,7 +203,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
             binding.containerPaymentType.visibility = View.GONE
         }
 
-        if (pkg?.shipmentType == PackageType.REGULAR.name) {
+        if (pkg?.shipmentType == PackageType.REGULAR.name || pkg?.cod == 0.0) {
             binding.containerPaymentType.visibility = View.GONE
         }
 
@@ -217,7 +217,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
         binding.textPaymentAmount.visibility = View.GONE
 
-        if (pkg?.shipmentType == PackageType.REGULAR.name) {
+        if (pkg?.shipmentType == PackageType.REGULAR.name || pkg?.cod == 0.0) {
             binding.containerPaymentType.visibility = View.GONE
         }
 
@@ -2447,7 +2447,7 @@ class PackageDeliveryActivity : LogesTechsActivity(), View.OnClickListener, Thum
         }
         if (paymentDataList.isNotEmpty() && sum == packageCodToPay){
             callPayMultiWay()
-        } else if (pkg?.shipmentType == PackageType.REGULAR.name) {
+        } else if (pkg?.shipmentType == PackageType.REGULAR.name || pkg?.cod == 0.0) {
             makePackageDelivery()
         } else {
             Helper.showErrorMessage(
