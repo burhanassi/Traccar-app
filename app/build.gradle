@@ -14,8 +14,6 @@ android {
         Properties properties = new Properties()
         properties.load(project.rootProject.file("local.properties").newDataInputStream())
         release {
-//            storeFile file('/Users/sawsanalkhdair/Documents/logestech/mobile/Android App Submission Info/key2/logestechs-customer-key.jks')
-//            storeFile file(properties.getProperty("storeFilePath", "/Users/abdulsalammansour/projects/keys/android customer/logestechs-customer-key.jks"))
             storeFile file(properties.getProperty("storeFilePath", "/Users/ali-logestechs/Documents/Android App Submission Info/key2/logestechs-customer-key.jks"))
             storePassword 'logestechs@password1!'
             keyPassword 'logestechs@password1!'
@@ -23,30 +21,21 @@ android {
         }
     }
     defaultConfig {
-        applicationId "com.logestechs.driver"
+        applicationId "com.logestechs.traccarApp"
         minSdk 21
-        targetSdk 34
-        versionCode 102
-        versionName "1.5.44"
+        targetSdk 29
+        versionCode 1
+        versionName "1.0"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', 'base_url', '\"https://apisv5.logestechs.com/api/\"'
-            manifestPlaceholders = [crashlyticsCollectionEnabled: "true"]
-            signingConfig signingConfigs.release
-        }
-
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguaLB-10875 rd-rules.pro'
-            buildConfigField 'String', 'base_url', '\"http://pal-ship.com:8080/api/\"'
-//            buildConfigField 'String', 'base_url', '\"http://192.168.1.56:8080/\"'
+            buildConfigField 'String', 'base_url', '\"http://192.168.1.127:8082/api/\"'
             manifestPlaceholders = [crashlyticsCollectionEnabled: "false"]
         }
     }
@@ -72,78 +61,26 @@ android {
         jvmTarget = '17'
     }
 
-    flavorDimensions 'driver'
+    flavorDimensions 'traccarApp'
     productFlavors {
-        interCity {
-            dimension 'driver'
-            resValue 'string', 'app_name', 'InterCity Driver'
-            buildConfigField 'int', 'company_id', '357'
-            buildConfigField 'String', 'company_name', '\"InterCity\"'
-            applicationId 'com.logestechs.driver_interCity'
-        }
-
-        logesTechs {
-            dimension 'driver'
-            resValue 'string', 'app_name', 'LogesTechs Driver'
-            buildConfigField 'int', 'company_id', '0'
-            buildConfigField 'String', 'company_name', '\"LogesTechs\"'
-        }
-
-        sare3 {
-            dimension 'driver'
-            resValue 'string', 'app_name', 'Sare3 Driver'
-            buildConfigField 'int', 'company_id', '209'
-            buildConfigField 'String', 'company_name', '\"Sare3\"'
-            applicationId 'com.logestechs.driver_sare3'
-        }
-
-        sprint {
-            dimension 'driver'
-            resValue 'string', 'app_name', 'Sprint Driver'
-            buildConfigField 'int', 'company_id', '313'
-            buildConfigField 'String', 'company_name', '\"Sprint\"'
-            applicationId 'com.logestechs.driver_sprint'
-        }
 
         backend {
-            dimension 'driver'
-            resValue 'string', 'app_name', 'Driver Backend'
+            dimension 'traccarApp'
+            resValue 'string', 'app_name', 'Traccar App'
             buildConfigField 'int', 'company_id', '-1'
             buildConfigField 'String', 'company_name', '\"LogesTechs\"'
-            applicationId 'com.logestechs.driver_backend'
+            applicationId 'com.logestechs.traccarApp'
         }
     }
 
     sourceSets {
-        interCity{
-            res {
-                srcDirs 'src\\interCity\\res'
-            }
-        }
-        logesTechs {
-            res {
-                srcDirs 'src\\logesTechs\\res'
-            }
-        }
-        sare3 {
-            res {
-                srcDirs 'src\\sare3\\res'
-            }
-        }
-
-        sprint {
-            res {
-                srcDirs 'src\\sprint\\res'
-            }
-        }
-
         backend {
             res {
-                srcDirs 'src\\backend\\res'
+                srcDirs 'src\\traccarApp\\res'
             }
         }
     }
-    namespace 'com.logestechs.driver'
+    namespace 'com.logestechs.traccarApp'
 
 }
 
@@ -216,4 +153,7 @@ dependencies {
 
     //NearPay
     implementation "io.nearpay:nearpay-sdk-store:2.1.87"
+
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
 }

@@ -262,7 +262,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:122047361434:android:507d82468391cb55024a23",
         "android_client_info": {
-          "package_name": "com.logestechs.driver_backend"
+          "package_name": "com.logestechs.traccarApp"
         }
       },
       "oauth_client": [

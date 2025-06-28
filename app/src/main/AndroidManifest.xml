@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.logestechs.driver">
+    package="com.logestechs.traccarApp">
 
     <uses-feature
         android:name="android.hardware.telephony"
@@ -10,14 +10,9 @@
         android:name="android.hardware.camera"
         android:required="false" />
 
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CALL_PHONE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -27,11 +22,6 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
 
     <queries>
         <intent>
@@ -48,12 +38,6 @@
 
             <data android:scheme="http" />
         </intent>
-
-        <package android:name="com.whatsapp" />
-        <package android:name="com.whatsapp.w4b" />
-        <package android:name="com.google.android.apps.maps" />
-        <package android:name="com.interpaymea.softpos" />
-        <package android:name="com.waze"/>
     </queries>
 
     <application
@@ -61,10 +45,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_customer_logo"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Design.Light.NoActionBar"
         android:usesCleartextTraffic="true"
@@ -72,223 +55,16 @@
         <activity
             android:name=".utils.PermissionRequestActivity"
             android:exported="false" />
-        <activity
-            android:name=".ui.barcodeScanner.FulfilmentReturnOrderBarcodeScannerActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.deliverToWarehouse.DeliverToWarehouseActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.returnedFulfilmentOrders.ReturnedFulfillmentOrdersActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.deliverToWarehouse.deliverOrderToWarehouseScreen.OrderDeliverToWarehouseActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.barcodeScanner.FulfilmentChangeBinLocationBarcodeScannerActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.checkInActivity.CheckInActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.findPackagesActivity.FindPackagesActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.unloadContainerActivity.UnloadContainerActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.unloadFromCustomerActivity.UnloadFromCustomerActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.barcodeScanner.FulfilmentPackerBarcodeScannerActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.verifyPackageDelivery.VerifyPackageDeliveryActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.sortOnShelveActivity.SortOnShelveActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.trackInventoryItemsActivity.TrackInventoryItemActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.driverRouteActivity.DriverRouteActivity"
-            android:exported="false"
-            tools:ignore="Instantiatable" />
-        <activity
-            android:name=".ui.broughtPackages.BroughtPackagesActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.serverSelectionActivity.ServerSelectionActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".ui.googleMapActivity.GoogleMapActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".ui.barcodeScanner.SubBundlesBarcodeScannerActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".ui.warehousePackagesByStatusViewPager.WarehousePackagesByStatusViewPagerActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".ui.barcodeScanner.ShippingPlanBarcodeScanner"
-            android:exported="false"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".ui.arrivedShippingPlans.ArrivedShippingPlansActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".ui.barcodeScanner.FulfilmentPickerBarcodeScannerActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".ui.barcodeScanner.FulfilmentPickerMultiPickingBarcodeScannerActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".ui.pickedFulfilmentOrdersActivity.PickedFulfilmentOrdersActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".ui.newFulfilmentOrders.NewFulfilmentOrdersActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".ui.barcodeScanner.FulfilmentSorterBarcodeScannerActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".ui.dashboard.FulfilmentSorterDashboardActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".ui.dashboard.HandlerDashboardActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".ui.packageDeliveryScreens.massCodReportDelivery.MassCodReportDeliveryActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".ui.packageDeliveryScreens.returnedPackageDelivery.ReturnedPackageDeliveryActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".ui.signUp.SignUpActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".ui.barcodeScanner.DraftPickupsBarcodeScanner"
-            android:exported="false"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".ui.driverDraftPickupsByStatusViewPager.DriverDraftPickupsByStatusViewPagerActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".ui.massCodReports.MassCodReportsActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".ui.returnedPackages.ReturnedPackagesActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".ui.profile.ProfileActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme" />
 
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="barcode" />
-
-        <activity
-            android:name=".ui.packageDeliveryScreens.packageDelivery.PackageDeliveryActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".ui.singleScanBarcodeScanner.SingleScanBarcodeScanner"
-            android:exported="false"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".ui.barcodeScanner.BarcodeScannerActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".ui.barcodeScanner.BarcodeScannerCheckInActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".ui.barcodeScanner.BarcodeScannerCheckOutActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".ui.driverPackagesByStatusViewPager.DriverPackagesByStatusViewPagerActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme" />
         <activity
             android:name=".ui.dashboard.DriverDashboardActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".ui.login.LoginActivity"
+            android:name=".ui.registerDevice.RegisterDeviceActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />
         <activity

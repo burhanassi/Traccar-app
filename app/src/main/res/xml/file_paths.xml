@@ -18,5 +18,5 @@
 
     <external-path
         name="my_images"
-        path="Android/data/com.logestechs.driver/files/Pictures" />
+        path="Android/data/com.logestechs.traccarApp/files/Pictures" />
 </paths>

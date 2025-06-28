@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Selected tab text color (white) -->
-    <item android:color="@android:color/white" android:state_selected="true" />
-
-    <!-- Unselected tab text color (pale color) -->
-    <item android:color="#E0E0E0" />
-</selector>
