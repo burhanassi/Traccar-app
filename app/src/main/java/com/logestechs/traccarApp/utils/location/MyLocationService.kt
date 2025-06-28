@@ -65,7 +65,7 @@ class MyLocationService : Service() {
 
         GlobalScope.launch(Dispatchers.IO) {
             val deviceId = SharedPreferenceWrapper.getUUID()
-            val url = "http://192.168.1.127:8082/?id=$deviceId" +
+            val url = "http://192.168.1.127:5055/?id=$deviceId" +
                     "&lat=0.0&lon=0.0" +
                     "&timestamp=${System.currentTimeMillis()}" +
                     "&status=stopped"
@@ -208,7 +208,7 @@ class MyLocationService : Service() {
     private fun updateLocation(location: Location) {
         GlobalScope.launch(Dispatchers.IO) {
             val deviceId = SharedPreferenceWrapper.getUUID() // Unique device ID
-            val url = "http://192.168.1.127:8082/?id=$deviceId" +
+            val url = "http://192.168.1.127:5055/?id=$deviceId" +
                     "&lat=${location.latitude}" +
                     "&lon=${location.longitude}" +
                     "&timestamp=${System.currentTimeMillis()}" +

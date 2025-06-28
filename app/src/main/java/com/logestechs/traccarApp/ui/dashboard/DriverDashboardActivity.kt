@@ -190,7 +190,7 @@ class DriverDashboardActivity : LogesTechsActivity(), View.OnClickListener {
         if (Helper.isInternetAvailable(super.getContext())) {
             GlobalScope.launch(Dispatchers.IO) {
                 val deviceId = SharedPreferenceWrapper.getUUID() // Unique device ID
-                val url = "http://192.168.1.127:8082/?id=$deviceId" +
+                val url = "http://192.168.1.127:5055/?id=$deviceId" +
                         "&lat=${location.latitude}" +
                         "&lon=${location.longitude}" +
                         "&timestamp=${System.currentTimeMillis()}" +
